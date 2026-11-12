@@ -604,3 +604,21 @@ ja:{ apropos_voix:"録音された音声は GitHub Pages 上の reparole.fr か�
 };
 for(const l in V) if(window.TEXTES[l]) Object.assign(window.TEXTES[l], V[l]);
 })();
+
+// ── v4.4 : apprendre avant de jouer (leçons, mots présentés) ──
+(function(){
+const V = {
+fr:{ apprendre:"Apprendre 5 mots", nouveau_mot:"Nouveau mot !", a_nouveau_mot:"Regardez, écoutez, puis on joue avec ce mot.", compris:"J'ai compris", deja_connu:"Je le connais déjà", lecon_fin:n => `${n} nouveaux mots !`, lecon_rien:"Vous avez découvert tous les mots. Révisez-les dans « À revoir »." },
+en:{ apprendre:"Learn 5 words", nouveau_mot:"New word!", a_nouveau_mot:"Look, listen, then we'll play with this word.", compris:"Got it", deja_connu:"I already know it", lecon_fin:n => `${n} new words!`, lecon_rien:"You've discovered every word. Practise them in Review." },
+es:{ apprendre:"Aprender 5 palabras", nouveau_mot:"¡Palabra nueva!", a_nouveau_mot:"Mira, escucha y luego jugamos con esta palabra.", compris:"Entendido", deja_connu:"Ya la conozco", lecon_fin:n => `¡${n} palabras nuevas!`, lecon_rien:"Has descubierto todas las palabras. Repásalas en «Repasar»." },
+it:{ apprendre:"Impara 5 parole", nouveau_mot:"Parola nuova!", a_nouveau_mot:"Guarda, ascolta, poi giochiamo con questa parola.", compris:"Ho capito", deja_connu:"La conosco già", lecon_fin:n => `${n} parole nuove!`, lecon_rien:"Hai scoperto tutte le parole. Ripassale in «Da ripassare»." },
+pt:{ apprendre:"Aprender 5 palavras", nouveau_mot:"Palavra nova!", a_nouveau_mot:"Olhe, ouça e depois jogamos com esta palavra.", compris:"Percebi", deja_connu:"Já a conheço", lecon_fin:n => `${n} palavras novas!`, lecon_rien:"Já descobriu todas as palavras. Reveja-as em «Rever»." },
+de:{ apprendre:"5 Wörter lernen", nouveau_mot:"Neues Wort!", a_nouveau_mot:"Schau, hör zu, dann spielen wir mit diesem Wort.", compris:"Verstanden", deja_connu:"Kenne ich schon", lecon_fin:n => `${n} neue Wörter!`, lecon_rien:"Du hast alle Wörter entdeckt. Wiederhole sie unter „Wiederholen“." },
+ar:{ apprendre:"تعلّم 5 كلمات", nouveau_mot:"كلمة جديدة!", a_nouveau_mot:"انظر واستمع، ثم نلعب بهذه الكلمة.", compris:"فهمت", deja_connu:"أعرفها من قبل", lecon_fin:n => `${n} كلمات جديدة!`, lecon_rien:"اكتشفت كل الكلمات. راجعها في «للمراجعة»." },
+tr:{ apprendre:"5 kelime öğren", nouveau_mot:"Yeni kelime!", a_nouveau_mot:"Bak, dinle, sonra bu kelimeyle oynayalım.", compris:"Anladım", deja_connu:"Zaten biliyorum", lecon_fin:n => `${n} yeni kelime!`, lecon_rien:"Tüm kelimeleri keşfettin. Onları «Tekrar» bölümünde tekrar et." },
+pl:{ apprendre:"Naucz się 5 słów", nouveau_mot:"Nowe słowo!", a_nouveau_mot:"Popatrz, posłuchaj, potem zagramy tym słowem.", compris:"Rozumiem", deja_connu:"Już je znam", lecon_fin:n => `Nowe słowa: ${n}!`, lecon_rien:"Poznałeś wszystkie słowa. Powtórz je w „Do powtórki”." },
+uk:{ apprendre:"Вивчити 5 слів", nouveau_mot:"Нове слово!", a_nouveau_mot:"Подивись, послухай, а потім пограємо з цим словом.", compris:"Зрозуміло", deja_connu:"Я вже знаю", lecon_fin:n => `Нових слів: ${n}!`, lecon_rien:"Ти відкрив усі слова. Повторюй їх у розділі «Повторити»." },
+ja:{ apprendre:"5つのことばを学ぶ", nouveau_mot:"新しいことば！", a_nouveau_mot:"見て、聞いて、それからこのことばで遊ぼう。", compris:"わかった", deja_connu:"もう知っている", lecon_fin:n => `新しいことば ${n}個！`, lecon_rien:"すべてのことばを見つけました。「復習」でおさらいしましょう。" }
+};
+for(const l in V) if(window.TEXTES[l]) Object.assign(window.TEXTES[l], V[l]);
+})();

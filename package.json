@@ -1,6 +1,6 @@
 {
   "name": "ami-des-mots",
-  "version": "4.3.0",
+  "version": "4.4.0",
   "private": true,
   "description": "Ami des mots — un jeu pour apprendre des mots en images, dans 16 langues.",
   "scripts": {

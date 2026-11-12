@@ -16,12 +16,12 @@ function page(langue, config, avant){
   w.HTMLMediaElement.prototype.pause = () => {};
   w.HTMLMediaElement.prototype.play = function(){ w.__audio.push(this.src); return Promise.reject(new Error('hors ligne')); };
   w.matchMedia = () => ({ matches:true }); w.scrollTo = () => {};
-  w.CONFIG_JEU = config === undefined ? { MODE_PAYANT:false } : config;
+  w.CONFIG_JEU = Object.assign({ PRESENTER_NOUVEAUX:false }, config === undefined ? { MODE_PAYANT:false } : config || {});
   Object.defineProperty(w, 'crypto', { value:require('crypto').webcrypto, configurable:true });
   w.TextEncoder = TextEncoder; w.TextDecoder = TextDecoder;
   w.__fetch = []; w.fetch = async (u) => { w.__fetch.push(String(u)); return { ok:true, json:async () => (w.__reponse || { actif:false }) }; };
   if(avant) avant(w);
-  for(const f of ['js/donnees.js', 'js/textes.js', 'js/articulation.js', 'js/jeu.js']) w.eval(lire(f));
+  for(const f of ['js/donnees.js', 'js/voix.js', 'js/textes.js', 'js/articulation.js', 'js/jeu.js']) w.eval(lire(f));
   return w;
 }
 // Certificats d'abonnement comme les signe le serveur (même format que serveur/functions/ami-abonnement).
@@ -300,6 +300,36 @@ await test('lecture facile : se règle par joueur, 3 choix au plus, consigne à 
   assert.strictEqual(d.documentElement.dataset.facile, undefined);
 });
 
+console.log('Apprendre avant de jouer');
+await test('un mot jamais vu est présenté (image, mot, traduction) avant d\'être demandé', () => {
+  const w = page('fr-FR', { MODE_PAYANT:false, PRESENTER_NOUVEAUX:true }); const A = w.AmiDesMots, d = w.document;
+  A.base.cible = 'en'; A.choisirJeu('animaux'); A.commencer('quel_mot:n');
+  assert.match(d.querySelector('h2').textContent, /Nouveau mot/);
+  const e = d.querySelector('[data-a="compris"]').dataset.v;
+  assert.match(d.querySelector('.trad-nouveau').textContent, new RegExp(A.affiche('fr', w.MOTS[e].fr)));
+  clic(w, '[data-a="compris"]');
+  assert.ok(d.querySelector('[data-a="repondre"][data-v="' + e + '"]'), 'puis la question sur ce même mot');
+  assert.ok(A.J().mots['en:' + e], 'le mot est dans le carnet');
+});
+await test('« Je le connais déjà » passe la présentation', () => {
+  const w = page('fr-FR', { MODE_PAYANT:false, PRESENTER_NOUVEAUX:true }); const A = w.AmiDesMots, d = w.document;
+  A.base.cible = 'en'; A.choisirJeu('animaux'); A.commencer('ecoute:n');
+  const e = d.querySelector('[data-a="deja-connu"]').dataset.v;
+  clic(w, '[data-a="deja-connu"]');
+  assert.strictEqual(A.J().mots['en:' + e].b, 1);
+  assert.ok(d.querySelector('[data-a="repondre"]'));
+});
+await test('leçon : 5 mots d\'un thème, présentés puis demandés 2 fois chacun, avec des choix parmi eux', () => {
+  const w = page('fr-FR', { MODE_PAYANT:false, PRESENTER_NOUVEAUX:true }); const A = w.AmiDesMots, d = w.document;
+  A.base.cible = 'en';
+  clic(w, '[data-a="lecon"]');
+  assert.match(d.querySelector('h2').textContent, /Nouveau mot/);
+  assert.strictEqual(d.querySelector('.progres').getAttribute('aria-valuemax'), '10');
+  const vus = new Set();
+  for(let k = 0; k < 5; k++){ const b = d.querySelector('[data-a="compris"]'); if(!b) break; vus.add(b.dataset.v); b.click(); const r = d.querySelector('[data-a="repondre"][data-v="' + b.dataset.v + '"]') || d.querySelector('[data-a="vf"]'); assert.ok(r); A.noter(b.dataset.v, true); A.base.joueurs[0]; }
+  const th = new Set([...vus].map(e => w.MOTS[e].theme)); assert.strictEqual(th.size, 1, 'un seul thème');
+});
+
 console.log('Gratuit et Ami des mots Plus');
 await test('gratuit : 3 thèmes et 3 jeux ouverts ; les autres mènent à la page Plus', () => {
   const w = page(undefined, null); const A = w.AmiDesMots, d = w.document;
@@ -427,6 +457,16 @@ await test('sauvegarde piégée : valeurs absurdes bornées, clés inconnues ign
 await test('langues : le choix de langue n\'affiche que le nom de la langue', () => {
   const w = page(); const d = w.document;
   assert.strictEqual(d.querySelector('#cible option[value="ko"]').textContent, '한국어');
+});
+await test('voix : le texte prononcé est celui que ReParole a enregistré (minuscules), pas la majuscule de la banque', () => {
+  const w = page(); const A = w.AmiDesMots;
+  A.base.cible = 'fr';
+  const e = Object.keys(w.MOTS).find(k => w.MOTS[k].fr === 'POISSON');
+  assert.strictEqual(A.aDire(e), 'poisson');
+  assert.match(A.urlVoix('fr', A.aDire(e)), new RegExp('/fr/' + A.fnv1a('poisson') + '\.mp3$'));
+  let total = 0, sans = 0;
+  for(const l of ['fr', 'en', 'es', 'it', 'pt', 'de', 'tr', 'pl', 'uk']){ A.base.cible = l; for(const k of Object.keys(w.MOTS)) if(w.MOTS[k][l]){ total++; if(A.aDire(k) === w.MOTS[k][l] && /^[^a-zа-яàâçéèêëîïôûùüÿñæœäöüßığşéąęćłńóśźżєіїґ]+$/.test(w.MOTS[k][l])) sans++; } }
+  assert.strictEqual(sans, 0, 'aucun mot tout en majuscules envoyé à la voix');
 });
 await test('interface en arabe : de droite à gauche, aucun texte français (accueil et page Plus)', () => {
   const w = page('ar', null); const d = w.document;

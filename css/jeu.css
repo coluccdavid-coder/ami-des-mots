@@ -417,3 +417,69 @@ html[data-facile] .reponse{ gap:4px; }
 html[data-facile] .lire-consigne{ width:46px; height:46px; font-size:1.2rem; background:linear-gradient(180deg, #FFE27A, var(--lune)); border:0; box-shadow:0 3px 0 var(--lune-f), 0 0 18px rgba(255,201,60,.5); }
 .reglage-facile{ border-radius:20px; padding:12px 14px; margin-bottom:12px; }
 .reglage-facile > span{ display:flex; flex-direction:column; gap:2px; }
+
+/* =====================================================================
+   GRAND ÉCRAN (ordinateur, tablette à l'horizontale)
+   La question à gauche, les réponses à droite : tout tient sans défiler.
+   ===================================================================== */
+@media (min-width:900px){
+  body{ font-size:19px; }
+  .barre{ max-width:1180px; padding:18px 32px; }
+  main{ max-width:1180px; padding:8px 32px 64px; }
+  /* Accueil : le ciel prend toute la largeur, le reste reste centré */
+  .ciel{ border-radius:0 0 56px 56px; padding-bottom:70px; }
+  .ciel-in{ max-width:720px; }
+  .perchoir{ transform:scale(1.25); transform-origin:50% 100%; margin-top:24px; margin-bottom:24px; }
+  .ciel h1{ font-size:4.6rem; }
+  .accueil{ max-width:760px; }
+  .gros.defi, .actions.serrees, .bandeau-plus, .raccourcis{ max-width:620px; }
+  .raccourcis{ grid-template-columns:repeat(4, 1fr); }
+  /* Thèmes : 4 par ligne */
+  .grille{ grid-template-columns:repeat(4, 1fr); gap:22px; }
+  .grille.accs, .joueurs{ grid-template-columns:repeat(auto-fill, minmax(170px, 1fr)); }
+  /* Liste des jeux : 2 colonnes */
+  .liste-jeux{ display:grid; grid-template-columns:1fr 1fr; gap:14px; }
+  /* Une partie : question à gauche, réponses à droite */
+  .partie{ max-width:1180px; }
+  .scene{ display:grid; grid-template-columns:1fr; gap:0 48px; align-items:start; }
+  .scene > *{ grid-column:1 / -1; }
+  .scene:has(> .centre:first-child + *){ grid-template-columns:minmax(0, 1fr) minmax(0, 1.1fr); }
+  .scene > .centre:first-child{ grid-column:1; grid-row:1 / span 6; position:sticky; top:20px; padding-top:8px; }
+  .scene > .centre:first-child ~ *{ grid-column:2; }
+  .scene > .centre:first-child + *{ margin-top:8px; }
+  .partie .pic-grande{ width:min(420px, 100%); height:320px; }
+  .partie .pic-moyenne{ width:min(340px, 100%); height:240px; }
+  .choix-img{ aspect-ratio:1 / 1; max-height:240px; }
+  .choix-images.six .choix-img{ max-height:170px; }
+  .choix-mot{ font-size:1.45rem; padding:24px 10px; }
+  .scene > .centre:first-child .gros{ font-size:1.6rem; padding:26px 54px; margin-top:80px; }
+  .mot-source, .mot-vf{ font-size:3rem; }
+  /* Jeux sans question à gauche : centrés, à une taille raisonnable */
+  .memoire{ max-width:760px; margin:0 auto; grid-template-columns:repeat(4, 1fr)!important; }
+  .relier{ max-width:820px; margin:14px auto 0; }
+  .choix-images:only-child, .scene > .choix-images:first-child{ max-width:820px; margin-inline:auto; grid-template-columns:repeat(4, 1fr); }
+  .carte{ width:380px; }
+  .bulle{ left:50%; right:auto; width:min(640px, 90vw); transform:translate(-50%, 130%); bottom:24px; }
+  .bulle.ok, .bulle.ko{ transform:translate(-50%, 0); }
+  .bulle:empty{ transform:translate(-50%, 130%); }
+  .partie{ padding-bottom:140px; }
+  .fin{ max-width:720px; margin:0 auto; }
+}
+
+/* ── Apprendre avant de jouer ──────────────────────────────────── */
+.gros.apprendre{ display:block; width:100%; max-width:440px; margin:14px auto 0; font-size:1.3rem; }
+.nouveau-mot .mot-source{ margin-top:18px; }
+.trad-nouveau{ font-size:1.3rem; font-weight:800; color:var(--doux); margin:0 0 14px; }
+.mots-appris{ display:flex; flex-wrap:wrap; gap:10px; justify-content:center; margin:14px auto; max-width:620px; }
+.mot-appris{ display:flex; flex-direction:column; align-items:center; gap:2px; min-width:96px; padding:10px; border-radius:18px; border:1px solid var(--bord); background:var(--verre); color:#fff; box-shadow:var(--reflet); }
+.mot-appris span{ color:var(--doux); font-size:.85rem; }
+@media (min-width:900px){
+  .gros.apprendre{ max-width:620px; }
+  .memoire, .relier{ width:100%; }
+  .scene > .choix-images:first-child{ width:100%; }
+}
+@media (min-width:900px){
+  .scene:has(> .nouveau-mot){ grid-template-columns:1fr; }
+  .scene > .nouveau-mot{ grid-column:1 / -1!important; grid-row:auto!important; position:static!important; }
+  .scene > .nouveau-mot ~ .actions{ grid-column:1 / -1!important; max-width:620px; margin:20px auto 0; }
+}

@@ -63,6 +63,39 @@ Tout ce mouvement s'arrête en Lecture facile et si le téléphone demande de
 réduire les animations. Couleurs : variables au début de `css/jeu.css`.
 Polices : Nunito et Andika (licence OFL, dans `fonts/`).
 
+## Voix : le jeu réutilise celles de ReParole
+
+ReParole nomme chaque fichier son d'après le texte exact prononcé
+(`audio/<langue>/<fnv1a(texte)>.mp3`). Les banques écrivent les mots en
+majuscules (« POISSON ») mais ReParole les prononce en minuscules
+(« poisson ») : `js/voix.js` donne, pour chaque mot et chaque langue,
+l'écriture exacte enregistrée par ReParole (1630 / 1630 trouvées).
+À relancer quand les mots changent : `node outils/voix-reparole.js <dossier ReParole>`.
+
+**Tant que les voix ne sont pas générées et publiées sur reparole.fr**, le jeu
+utilise la voix du téléphone (« voix robot »). Pour les vraies voix : dans
+ReParole, facturation Google activée, `node scripts/voix.js`, puis publier le
+dossier `audio/`. Vérification : https://reparole.fr/audio/fr/1u7v83w.mp3 (« poisson ») doit
+jouer un son. `outils/mots-sans-voix.json` liste les mots que ReParole n'a pas
+du tout (vide aujourd'hui).
+
+## Apprendre avant de jouer (v4.4)
+
+- Un mot jamais vu est **présenté** avant d'être demandé : « Nouveau mot ! »
+  (image, mot, traduction, voix), puis la question. « Je le connais déjà »
+  passe la présentation. Réglage : `PRESENTER_NOUVEAUX` dans `CONFIG`.
+- **Apprendre 5 mots** (accueil) : 5 mots nouveaux d'un même thème, présentés
+  puis demandés 2 fois chacun (écoute, quel mot, vrai ou faux, traduction),
+  les réponses proposées étant prises parmi ces mots. Fin : les 5 mots avec
+  leur traduction, à réécouter.
+- En vrai ou faux, le mot affiché est aussi prononcé ; après chaque réponse,
+  la traduction s'affiche.
+
+## Ordinateur et tablette (v4.4)
+
+Au-delà de 900 px de large : question à gauche, réponses à droite (tout tient
+sans défiler), thèmes sur 4 colonnes, jeux sur 2 colonnes, accueil agrandi.
+
 ## Ce qu'il ne fait PAS — volontairement
 
 - **Aucune promesse de santé.** C'est ce qui le distingue d'un dispositif

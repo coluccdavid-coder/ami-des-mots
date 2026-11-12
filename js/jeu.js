@@ -36,6 +36,9 @@
     // Fonction serveur qui dit si un code d'abonnement est actif
     // (serveur/functions/ami-abonnement). Vide : rien n'est vérifié.
     API_ABONNEMENT:'',
+    // On ne demande jamais un mot jamais vu : il est d'abord présenté
+    // (« Nouveau mot ! » : image, mot, traduction, voix).
+    PRESENTER_NOUVEAUX:true,
     // Clé PUBLIQUE (JWK, ECDSA P-256) qui vérifie les certificats signés par
     // le serveur : node outils/generer-cles.js. Sans elle, Plus ne s'ouvre pas.
     CLE_PUBLIQUE:null
@@ -190,7 +193,9 @@
     u.lang = loc; u.rate = .9;
     const v = voix.find(x => /natural|neural|premium|enhanced|google/i.test(x.name)) || voix[0];
     if(v) u.voice = v;
-    speechSynthesis.cancel(); speechSynthesis.speak(u);
+    // Chrome ignore parfois un speak() lancé juste après cancel() : petit délai.
+    speechSynthesis.cancel();
+    setTimeout(() => { try{ speechSynthesis.resume(); speechSynthesis.speak(u); }catch(e){} }, 80);
     return true;
   }
   // Les consignes (dans la langue du joueur) sont lues par la voix du téléphone.
@@ -210,9 +215,11 @@
   };
   function precharger(emojis){
     if(navigator.connection && navigator.connection.saveData) return;
-    emojis.forEach(e => { const m = MOTS[e][base.cible]; if(m){ const a = new Audio(); a.preload = 'auto'; a.src = urlVoix(base.cible, m); } });
+    emojis.forEach(e => { const m = aDire(e); if(m){ const a = new Audio(); a.preload = 'auto'; a.src = urlVoix(base.cible, m); } });
   }
-  const dire = e => window.speak(MOTS[e][base.cible]);
+  // Le texte exact que ReParole a enregistré (js/voix.js) : « poisson », pas « POISSON ».
+  function aDire(e){ const v = window.VOIX && VOIX[base.cible]; return (v && v[e]) || MOTS[e][base.cible]; }
+  const dire = e => window.speak(aDire(e));
   // Bruitages fabriqués sur place (aucun fichier) ; coupés dans les réglages.
   let ctx = null;
   function bruit(sorte){
@@ -316,8 +323,9 @@
         '</div></div></section>' +
       '<main class="accueil">' +
         '<button class="gros defi' + (defiFait ? ' fait' : '') + '" data-a="defi">' + (defiFait ? '✓ ' : '⚡ ') + esc(t('defi')) + '</button>' +
+        '<button class="gros apprendre" data-a="lecon">📚 ' + esc(t('apprendre')) + '</button>' +
         '<div class="actions serrees">' +
-          '<button class="moyen plein" data-a="themes">▶ ' + esc(t('jouer')) + '</button>' +
+          '<button class="moyen" data-a="themes">▶ ' + esc(t('jouer')) + '</button>' +
           '<button class="moyen" data-a="revoir">🔁 ' + esc(t('revoir')) + (rev ? ' <span class="pastille">' + rev + '</span>' : '') + '</button>' +
         '</div>' +
         '<p class="objectif"><span>' + esc(fait ? t('objectif_fait') : t('objectif')) + '</span>' + (s ? '<span class="serie">🔥 ' + esc(t('serie', s)) + '</span>' : '') + '</p>' +
@@ -452,7 +460,7 @@
     const th = partie.mode === 'theme' ? theme : MOTS[motI()] && MOTS[motI()].theme;
     poser(barre(retourPartie()) + '<main class="partie" style="--th:' + couleurDe(th) + '">' +
       '<div class="tete"><div class="ami-petit" id="ami-partie">' + ami('content') + '</div><span class="combo' + ((partie.combo || 0) >= 2 ? ' vu' : '') + '" id="combo" aria-hidden="true">' + ((partie.combo || 0) >= 2 ? '🔥 ×' + partie.combo : '') + '</span><div><h2>' + esc(titre) + '</h2><p class="aide"><span id="consigne">' + esc(aide) + '</span> <button class="lire-consigne" data-a="consigne" aria-label="' + esc(t('lire_consigne')) + '">🔊</button></p></div></div>' +
-      chrono + prog + corps + '<p class="bulle" id="bulle" role="status" aria-live="polite"></p><p class="note" id="note-voix" aria-live="polite"></p></main>');
+      chrono + prog + '<div class="scene">' + corps + '</div>' + '<p class="bulle" id="bulle" role="status" aria-live="polite"></p><p class="note" id="note-voix" aria-live="polite"></p></main>');
     if(facile() && partie.i === 0 && !partie.consigneLue){ partie.consigneLue = true; setTimeout(() => lireConsigne(aide), 250); }
   }
   function amiDit(txt, humeur){
@@ -486,6 +494,7 @@
     if(meca === 'panier') partie.total = mots.length;
     if(meca === 'grand_quiz') partie.total = 15;
     if(mode !== 'theme') partie.total = mots.length;
+    if(mode === 'lecon') partie.total = mots.length;
     if(!/^(memoire|relier|grand_quiz|chrono)/.test(meca)) partie.total = Math.min(partie.total, mots.length);
     if(meca === 'chrono' && facile()) partie.total = 12;
     if(meca === 'chrono' && !facile()){
@@ -505,7 +514,7 @@
     const e = motI();
     if(base.ui !== base.cible && MOTS[e][base.ui]) l.push('traduction', 'traduction_inverse');
     if(!SANS_LETTRES.includes(base.cible) && lettresPossibles([e]).length) l.push('premiere_lettre');
-    return partie.mode === 'theme' ? l : l.slice(0, 3);
+    return partie.mode === 'theme' ? l : partie.mode === 'lecon' ? l.filter(x => x !== 'ombre') : l.slice(0, 3);
   }
   const motI = () => partie.liste[partie.i % partie.liste.length];
   const Q = {};
@@ -514,6 +523,10 @@
     if(partie.finir || (partie.chronoFin && Date.now() >= partie.chronoFin)) return fin();
     if(partie.i >= partie.total) return fin();
     partie.deja = false;
+    // Un mot jamais vu est présenté avant d'être demandé.
+    const QUESTION_MOT = ['ecoute', 'ecoute_mot', 'quel_mot', 'vrai_faux', 'ombre', 'devinette', 'traduction', 'traduction_inverse', 'premiere_lettre', 'lettre_manquante', 'lettres', 'chrono', 'grand_quiz'];
+    const m0 = partie.liste[partie.i % partie.liste.length];
+    if(CONFIG.PRESENTER_NOUVEAUX && m0 && !fiche(m0) && !(partie.presentes || (partie.presentes = new Set())).has(m0) && (partie.mode !== 'theme' || QUESTION_MOT.includes(partie.meca))) return presenter(m0);
     let j = partie.meca;
     if(partie.mode !== 'theme') { const l = mixte(); j = l[(partie.i + (partie.decal || (partie.decal = 1 + Math.floor(Math.random() * 3)))) % l.length]; }
     else if(j === 'chrono' || j === 'grand_quiz'){ const l = mixte(); j = l[Math.floor(Math.random() * l.length)]; }
@@ -534,11 +547,23 @@
     return melanger([bonne].concat(autres.slice(0, k - 1)));
   }
   const traduction = e => (base.ui !== base.cible && MOTS[e][base.ui]) ? affiche(base.ui, MOTS[e][base.ui]) : '';
-  const titreDe = j => partie.mode === 'defi' ? t('defi') : partie.mode === 'revoir' ? t('revoir') : partie.meca === 'chrono' || partie.meca === 'grand_quiz' ? t('j_' + partie.meca) : nomJeu(partie.jeu);
+  const titreDe = j => partie.mode === 'defi' ? t('defi') : partie.mode === 'revoir' ? t('revoir') : partie.mode === 'lecon' ? t('apprendre') : partie.meca === 'chrono' || partie.meca === 'grand_quiz' ? t('j_' + partie.meca) : nomJeu(partie.jeu);
   const boutonsImages = ch => '<div class="choix-images' + (ch.length > 4 ? ' six' : '') + '">' + ch.map(x => '<button class="choix-img" data-a="repondre" data-v="' + x + '" aria-label="' + esc(nomMot(x)) + '">' + image(x) + '</button>').join('') + '</div>';
   const boutonsMots = (ch, aff, dir) => '<div class="choix-mots' + (ch.length > 4 ? ' six' : '') + '">' + ch.map(x => '<button class="choix-mot" data-a="repondre" data-v="' + x + '" dir="' + (dir || dirCible()) + '">' + esc(aff ? aff(x) : nomMot(x)) + '</button>').join('') + '</div>';
   const ecouteBtn = (e, gros) => '<button class="' + (gros ? 'gros' : 'moyen') + '" data-a="ecouter" data-v="' + e + '">🔊 ' + esc(t('ecouter')) + '</button>';
 
+  // « Nouveau mot ! » : la carte de découverte, puis la question sur ce mot.
+  function presenter(e){
+    partie.presentes.add(e);
+    const tr = traduction(e);
+    cadre(t('nouveau_mot'), t('a_nouveau_mot'),
+      '<div class="centre nouveau-mot">' + image(e, 'pic-grande') +
+      '<p class="mot-source" dir="' + dirCible() + '">' + esc(nomMot(e)) + '</p>' + (tr ? '<p class="trad-nouveau" dir="auto">= ' + esc(tr) + '</p>' : '') +
+      ecouteBtn(e) + '</div>' +
+      '<div class="actions"><button class="moyen plein" data-a="compris" data-v="' + e + '">' + esc(t('compris')) + ' ›</button>' +
+      '<button class="moyen" data-a="deja-connu" data-v="' + e + '">' + esc(t('deja_connu')) + '</button></div>');
+    precharger([e]); setTimeout(() => dire(e), delaiMot());
+  }
   Q.decouvrir = function(){
     const e = partie.liste[partie.i], tr = traduction(e);
     cadre(t('j_decouvrir'), t('retourner'),
@@ -607,7 +632,7 @@
     cadre(titreDe('vrai_faux'), t('a_vrai_faux'),
       '<div class="centre">' + image(e, 'pic-grande') + '<p class="mot-vf" dir="' + dirCible() + '">' + esc(nomMot(vrai ? e : autre)) + '</p></div>' +
       '<div class="choix-vf"><button class="choix-mot vf-oui" data-a="vf" data-v="1">✓ ' + esc(t('vrai')) + '</button><button class="choix-mot vf-non" data-a="vf" data-v="0">✗ ' + esc(t('faux')) + '</button></div>');
-    precharger([e]);
+    precharger([e]); setTimeout(() => dire(vrai ? e : autre), delaiMot());
   };
   // L'intrus : des images d'un thème, et une d'un autre.
   Q.intrus = function(){
@@ -673,7 +698,7 @@
       partie.verrou = true;
       btn.classList.add('juste'); bruit('juste');
       document.querySelectorAll('.ombre, .flou').forEach(i => i.classList.add('revele'));
-      const tr = /quel_mot|ombre|devinette|ecoute_mot/.test(partie.courant) ? traduction(partie.bonne) : '';
+      const tr = /quel_mot|ombre|devinette|ecoute_mot|vrai_faux|ecoute|lettre/.test(partie.courant) ? traduction(partie.bonne) : '';
       amiDit(melanger(t('bravo'))[0] + (tr ? ' — ' + tr : ''), 'fete');
       dire(partie.bonne);
       setTimeout(() => { partie.verrou = false; partie.i++; question(); }, partie.chronoFin ? 900 : 1500);
@@ -682,7 +707,8 @@
       btn.classList.add('faux');
       if(reessai){ btn.disabled = true; amiDit(t('rate'), 'surpris'); if(partie.courant === 'ecoute' || partie.courant === 'ecoute_mot') setTimeout(() => dire(partie.bonne), 500); }
       else {
-        partie.verrou = true; amiDit(t('c_etait', partie.courant === 'panier' ? t('th_' + MOTS[partie.bonne].theme) : nomMot(partie.bonne)), 'surpris'); dire(partie.bonne);
+        const tr = traduction(partie.bonne);
+        partie.verrou = true; amiDit(t('c_etait', partie.courant === 'panier' ? t('th_' + MOTS[partie.bonne].theme) : nomMot(partie.bonne) + (tr ? ' (' + tr + ')' : '')), 'surpris'); dire(partie.bonne);
         setTimeout(() => { partie.verrou = false; partie.i++; question(); }, 2200);
       }
     }
@@ -846,7 +872,8 @@
     bruit('fin');
     const retour = partie.mode === 'theme' ? 'theme-retour' : 'accueil';
     poser(barre(retour) + '<main class="centre fin">' +
-      '<div class="ami-moyen">' + ami('fete') + '</div><h2>' + esc(premierDefi ? t('defi_fait') : m === 'chrono' && partie.chronoFin ? t('temps_fini') : t('fin_titre')) + '</h2>' +
+      '<div class="ami-moyen">' + ami('fete') + '</div><h2>' + esc(premierDefi ? t('defi_fait') : partie.mode === 'lecon' ? t('lecon_fin', partie.appris.length) : m === 'chrono' && partie.chronoFin ? t('temps_fini') : t('fin_titre')) + '</h2>' +
+      (partie.mode === 'lecon' ? '<div class="mots-appris">' + partie.appris.map(e => '<button class="mot-appris" data-a="ecouter" data-v="' + e + '">' + image(e, 'pic-mini') + '<strong dir="' + dirCible() + '">' + esc(nomMot(e)) + '</strong><span dir="auto">' + esc(traduction(e)) + '</span></button>').join('') + '</div>' : '') +
       (m === 'chrono' && partie.chronoFin ? '<p class="gain">' + esc(t('score', partie.bonnes)) + '</p>' : '') +
       '<p class="grosses-etoiles" aria-label="' + etoiles + '/3">' + '★'.repeat(etoiles) + '<span class="vide">' + '★'.repeat(3 - etoiles) + '</span></p>' +
       '<p class="gain">🪶 <span id="gain-plumes" data-n="' + gain + '">' + esc(t('fin_plumes', gain)) + '</span>' + (premierDefi ? ' (×2)' : '') + '</p>' +
@@ -869,6 +896,24 @@
     const choisis = [];
     while(choisis.length < Math.min(DEFI, pool.length)){ const e = pool[Math.floor(alea() * pool.length)]; if(!choisis.includes(e)) choisis.push(e); }
     commencer('defi:n', 'defi', choisis);
+  }
+  // Leçon : 5 mots nouveaux d'un même thème, présentés puis joués 10 fois.
+  function lecon(){
+    const libres = THEMES.filter(ouvert);
+    let choisis = [];
+    for(const th of libres){
+      const neufs = distincts(motsDu(th, base.cible), base.cible).filter(e => !fiche(e));
+      if(neufs.length >= 3){ choisis = neufs.slice(0, 5); break; }
+    }
+    if(!choisis.length){
+      poser(barre('accueil') + '<main class="centre"><div class="ami-moyen">' + ami('fete') + '</div><h2>📚 ' + esc(t('apprendre')) + '</h2><p>' + esc(t('lecon_rien')) + '</p>' +
+        '<p><button class="moyen plein" data-a="revoir">🔁 ' + esc(t('revoir')) + '</button></p></main>');
+      return;
+    }
+    const tours = melanger(choisis).concat(melanger(choisis));
+    commencer('lecon:n', 'lecon', tours);
+    partie.tous = choisis.concat(distincts(motsOuverts(base.cible), base.cible).filter(e => !choisis.includes(e) && fiche(e)));
+    partie.appris = choisis;
   }
   function revoir(){
     const dus = aRevoir().slice(0, 10);
@@ -1008,6 +1053,9 @@
       case 'theme-retour': return choisirJeu(theme);
       case 'jeu': return commencer(v);
       case 'defi': return defi();
+      case 'lecon': return lecon();
+      case 'compris': if(!fiche(v)){ J().mots[cleMot(v)] = { b:0, d:jour() }; garder(); } return question();
+      case 'deja-connu': J().mots[cleMot(v)] = { b:1, d:jour(1) }; garder(); return question();
       case 'revoir': return revoir();
       case 'ecouter': return dire(v);
       case 'suivant': partie.i++; return question();
@@ -1071,7 +1119,7 @@
   if(retourPaiement) [5000, 15000, 40000].forEach(ms => setTimeout(() => { if(!plus()) rafraichir(true); }, ms));
   if(window.Articulation) try{ Articulation.init(); }catch(e){}
   if('serviceWorker' in navigator && location.protocol === 'https:') navigator.serviceWorker.register('sw.js').catch(() => {});
-  window.AmiDesMots = { base, J, affiche, fnv1a, urlVoix, accueil, themes, choisirJeu, commencer, lettresPossibles, distincts, motsDu, CATALOGUE, MECAS, disponible, nomJeu, aRevoir, noter, jour, defi, revoir, carnet, reglages, CONFIG, facile, nbMots, restaurer, verifierJeton, plus, ecranPlus, formatCode, rafraichir,
+  window.AmiDesMots = { base, J, affiche, fnv1a, urlVoix, accueil, themes, choisirJeu, commencer, lettresPossibles, distincts, motsDu, aDire, CATALOGUE, MECAS, disponible, nomJeu, aRevoir, noter, jour, defi, revoir, lecon, carnet, reglages, CONFIG, facile, nbMots, restaurer, verifierJeton, plus, ecranPlus, formatCode, rafraichir,
     get etat(){ return J(); } };
   garder();
   accueil();

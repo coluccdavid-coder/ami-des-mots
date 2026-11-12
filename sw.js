@@ -1,13 +1,14 @@
 // GÉNÉRÉ par outils/construire-sw.js — ne pas éditer.
 // Le jeu entier est gardé pour jouer hors connexion. Les voix (autre site)
 // ne sont pas gardées ici : sans réseau, c'est la voix du téléphone.
-const CACHE = 'amidesmots-09b000b7ac';
+const CACHE = 'amidesmots-01f68cf28e';
 const FICHIERS = [
  "./",
  "index.html",
  "manifest.webmanifest",
  "css/jeu.css",
  "js/donnees.js",
+ "js/voix.js",
  "js/textes.js",
  "js/articulation.js",
  "js/jeu.js",
