@@ -33,13 +33,20 @@ function finDe(sub: Stripe.Subscription): string | null {
   return s ? new Date(s * 1000).toISOString() : null;
 }
 
+// Erreur de base ou de Stripe : on répond 500 → Stripe renvoie l'événement plus tard
+// (il réessaie pendant 3 jours). Un événement n'est « reçu » que s'il est vraiment enregistré.
+class Echec extends Error {}
+const verifierEcriture = (r: { error: unknown }) => { if(r.error) throw new Echec(String((r.error as any).message ?? r.error)); };
+
 Deno.serve(async (req) => {
   if(req.method === 'OPTIONS') return new Response(null, { headers:entetes });
 
   if(req.method === 'GET'){
     const code = new URL(req.url).searchParams.get('code') ?? '';
     if(!FORMAT.test(code)) return json({ actif:false });
-    const { data } = await db.from('ami_abonnements').select('statut, fin').eq('code', code).maybeSingle();
+    const { data, error } = await db.from('ami_abonnements').select('statut, fin').eq('code', code).maybeSingle();
+    // Base injoignable : 503, pas « inactif » — sinon l'appareil effacerait un certificat valable.
+    if(error) return json({ erreur:'indisponible' }, 503);
     const actif = !!data && ACTIFS.includes(data.statut) && !!data.fin && Date.parse(data.fin) > Date.now();
     return json({ actif, fin:data?.fin ?? null, jeton:actif ? await signer(code, data!.fin) : null });
   }
@@ -50,17 +57,26 @@ Deno.serve(async (req) => {
       ev = await stripe.webhooks.constructEventAsync(await req.text(), req.headers.get('stripe-signature') ?? '', SECRET, undefined, Stripe.createSubtleCryptoProvider());
     }catch(_){ return new Response('signature invalide', { status:400 }); }
 
-    if(ev.type === 'checkout.session.completed'){
-      const s = ev.data.object as Stripe.Checkout.Session;
-      const code = s.client_reference_id ?? '';
-      if(s.mode === 'subscription' && FORMAT.test(code) && s.subscription){
-        const sub = await stripe.subscriptions.retrieve(String(s.subscription));
-        await db.from('ami_abonnements').upsert({ code, client:String(s.customer ?? ''), abonnement:sub.id, statut:sub.status, fin:finDe(sub), maj:new Date().toISOString() });
+    try{
+      if(ev.type === 'checkout.session.completed'){
+        const s = ev.data.object as Stripe.Checkout.Session;
+        const code = s.client_reference_id ?? '';
+        if(s.mode === 'subscription' && FORMAT.test(code) && s.subscription){
+          const sub = await stripe.subscriptions.retrieve(String(s.subscription));
+          verifierEcriture(await db.from('ami_abonnements').upsert({ code, client:String(s.customer ?? ''), abonnement:sub.id, statut:sub.status, fin:finDe(sub), maj:new Date().toISOString() }));
+        }
       }
-    }
-    if(ev.type === 'customer.subscription.updated' || ev.type === 'customer.subscription.deleted'){
-      const sub = ev.data.object as Stripe.Subscription;
-      await db.from('ami_abonnements').update({ statut:sub.status, fin:finDe(sub), maj:new Date().toISOString() }).eq('abonnement', sub.id);
+      if(ev.type === 'customer.subscription.updated' || ev.type === 'customer.subscription.deleted'){
+        // Stripe ne garantit pas l'ordre des événements : on relit l'état ACTUEL de
+        // l'abonnement plutôt que de croire l'événement (un « updated » en retard
+        // ne doit pas rouvrir un abonnement déjà terminé).
+        const id = (ev.data.object as Stripe.Subscription).id;
+        const sub = await stripe.subscriptions.retrieve(id);
+        verifierEcriture(await db.from('ami_abonnements').update({ statut:sub.status, fin:finDe(sub), maj:new Date().toISOString() }).eq('abonnement', sub.id));
+      }
+    }catch(e){
+      console.error('ami-abonnement', ev.type, ev.id, e instanceof Error ? e.message : e);
+      return json({ recu:false }, 500);
     }
     return json({ recu:true });
   }

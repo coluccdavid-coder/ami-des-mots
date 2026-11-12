@@ -155,7 +155,22 @@ proportionné à un abonnement de quelques euros.
   déjà un abonnement » sur l'autre appareil).
 - *Paiement refusé* : Stripe relance pendant quelques jours (statut
   « past_due ») ; le jeu reste ouvert, puis se referme si Stripe abandonne.
-À tester pour de vrai en **mode test Stripe** avant le lancement.
+Robustesse du serveur (v4.3) : si la base ne peut pas enregistrer un
+événement Stripe, la fonction répond 500 et Stripe le renvoie plus tard
+(il réessaie pendant 3 jours) ; les événements d'abonnement relisent l'état
+actuel chez Stripe, car leur ordre d'arrivée n'est pas garanti ; si la base
+est injoignable quand le jeu vérifie un code, la réponse est 503 et
+l'appareil garde son certificat (comme hors connexion).
+
+**Recette en mode test Stripe** (carte 4242 4242 4242 4242, toute date future) :
+1. Payer → retour sur le jeu avec `?abonne=1` → Plus s'ouvre en quelques secondes.
+2. Réglages → noter le code → autre navigateur → « J'ai déjà un abonnement » → Plus s'ouvre.
+3. Portail client → résilier → le jeu reste Plus jusqu'à la fin de la période
+   (avec une *test clock* Stripe, avancer le temps : Plus se referme).
+4. Carte refusée au renouvellement (4000 0000 0000 0341) → « past_due » → le
+   jeu reste ouvert, puis se referme quand Stripe abandonne.
+5. Dans Stripe → Webhooks : chaque événement doit être en « 200 ». Un « 500 »
+   = regarder les journaux de la fonction dans Supabase.
 
 Comment ça marche : chaque appareil tire un code anonyme ; le bouton
 « S'abonner » l'envoie à Stripe (`client_reference_id`) ; le webhook
@@ -201,7 +216,7 @@ reste ouvert 3 jours après la date connue.
   `node outils/construire-sw.js`.
 - Toute modification d'un fichier : relancer `node outils/construire-sw.js`
   (sinon les joueurs gardent l'ancienne version hors connexion).
-- Tests : `npm install` une fois, puis `npm test` (35 tests). `npm run verifier`
+- Tests : `npm install` une fois, puis `npm test` (le résumé final donne le nombre de tests réussis ; aucun nombre n'est écrit ici pour qu'il ne se périme pas). `npm run verifier`
   reconstruit le service worker puis lance les tests.
 - **Sauvegarde des progrès** : Réglages → Mes progrès → Sauvegarder (fichier
   `.json`) / Restaurer. Utile car Safari peut vider le stockage d'un site non
