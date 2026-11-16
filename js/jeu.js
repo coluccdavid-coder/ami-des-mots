@@ -640,22 +640,318 @@
     const l = J().langueBlagues;
     return l === 'en' ? 'en' : l === 'fr' ? 'fr' : (base.ui === 'en' ? 'en' : 'fr');
   }
-  function blague(){
-    const niveau = niveauHumour();
+  function blague(mauvaise, bonne){
     const langue = langueBlagues();
-    const formats = BLAGUES_AMI[langue][niveau];
-    if(!formats) return langue === 'en' ? 'Oops! My owl brain got its feathers in a twist!' : 'Oups ! Mon cerveau de hibou a emmêlé ses plumes !';
-    const types = ['eclair','devinette','chute'];
-    const type = types[Math.floor(Math.random() * types.length)];
-    const liste = formats[type];
-    if(!Array.isArray(liste) || !liste.length) return langue === 'en' ? 'Oops! Let’s try that again!' : 'Oups ! On réessaie ?';
-    let k;
-    do{ k = Math.floor(Math.random() * liste.length); }while(liste.length > 1 && k === derniereBlague);
-    derniereBlague = k;
-    const prefixe = langue === 'en'
-      ? (type === 'devinette' ? 'Quick riddle! ' : type === 'chute' ? '' : '')
-      : (type === 'devinette' ? 'Devinette ! ' : type === 'chute' ? '' : '');
-    return prefixe + liste[k];
+    const niveau = niveauHumour();
+    if(!mauvaise || !bonne || mauvaise === bonne){
+      return langue === 'en'
+        ? "Ami, the labels are scrambled. Your dictionary has requested a transfer!"
+        : "Ami, tu as mélangé les étiquettes ! Le dictionnaire demande sa mutation !";
+    }
+    const nomVanne = e => {
+      const valeur = MOTS[e] && (MOTS[e][langue] || MOTS[e][base.cible] || MOTS[e][base.ui]);
+      return valeur ? affiche(langue, valeur).toLowerCase() : String(e).replace(/_/g,' ');
+    };
+    const faux = nomVanne(mauvaise), juste = nomVanne(bonne);
+    const theme = String((MOTS[bonne] && MOTS[bonne].theme) || (MOTS[mauvaise] && MOTS[mauvaise].theme) || '').toLowerCase();
+    const catalogues = {
+      fr: {
+        animaux: [
+          [`Tu as pris « ${faux} » pour « ${juste} » ? C’est mignon, ton safari imaginaire !`,
+           `« ${faux} » à la place de « ${juste} »… Le zoo vient de mettre ton badge visiteur en quarantaine.`,
+           `Ami, tu confonds « ${faux} » et « ${juste} » ? Même la chèvre du zoo a mieux identifié ses voisins.`,
+           `Un « ${faux} » pour un « ${juste} » ? Le vétérinaire veut te retirer le droit de nommer les animaux !`],
+          [`Tu as confondu « ${faux} » et « ${juste} » ! Le zoo vient de déplacer les panneaux… loin de toi.`,
+           `Ami, « ${faux} » n’est pas « ${juste} ». Même un perroquet aurait répété la bonne réponse !`,
+           `Tu viens d’inventer une nouvelle espèce : le faux-juste. Félicitations, Darwin pleure.`,
+           `Le gardien t’a vu étiqueter « ${juste} » comme « ${faux} ». Il a appelé la sécurité… animale.`],
+          [`« ${faux} » ou « ${juste} », tu joues à Pokémon sans regarder les cartes ?`,
+           `Ami, tu viens de faire un safari les yeux fermés. Les animaux demandent un autre guide.`,
+           `Tu as confondu « ${faux} » avec « ${juste} » ! Même la mouche sur l’écran a trouvé la bonne réponse.`,
+           `Le zoo t’interdit les visites guidées. Tu viens d’appeler un canard « ${juste} » !`],
+          [`Ami, tu confonds « ${faux} » avec « ${juste} » ? Tes yeux sont partis migrer sans prévenir !`,
+           `Le zoo vient de porter plainte : tu traumatises les panneaux indicateurs.`,
+           `« ${faux} » pour « ${juste} »… Même une taupe avec des lunettes ferait mieux. Et elle les a perdues !`,
+           `Alerte : Ami a encore renommé les animaux. Le dictionnaire demande une cage… pour le hibou !`]
+        ],
+        manger: [
+          [`Tu as choisi « ${faux} » au lieu de « ${juste} » ? Ça fait une recette… très courageuse !`,
+           `Ami, le chef a vu ton choix. Il vient de fermer la cuisine pour travaux.`,
+           `« ${faux} » à la place de « ${juste} » ? Bon appétit… je crois ?`,
+           `Tu cuisines comme tu réponds : avec beaucoup d’audace et peu de preuves !`],
+          [`Tu as mélangé « ${faux} » et « ${juste} » ! Même le micro-ondes a refusé de réchauffer ça.`,
+           `Le chef goûte ton idée et demande immédiatement un verre d’eau. Puis un avocat.`,
+           `Ami, ce n’est pas un menu, c’est une expérience scientifique qui a mal tourné.`,
+           `« ${faux} » au lieu de « ${juste} » ? La recette vient de déposer sa démission.`],
+          [`Tu viens d’inventer le plat « ${faux} façon ${juste} ». Personne ne l’a commandé, même pas toi.`,
+           `Ami, tes papilles ont du goût. Dommage que tes yeux aient choisi le menu.`,
+           `Le chef a goûté ta réponse. Il a demandé à être transféré dans un autre restaurant.`,
+           `Cette confusion mérite une étoile… au guide des catastrophes culinaires.`],
+          [`Ami, tu confonds « ${faux} » et « ${juste} » ? Même un grille-pain aurait mieux suivi la recette !`,
+           `Le restaurant vient de t’interdire l’accès aux menus. Tu fais peur aux ingrédients.`,
+           `Ton choix est tellement indigeste que la vaisselle vient de se casser toute seule.`,
+           `La cuisine est en flammes. Pas à cause du four : à cause de ton association d’idées !`]
+        ],
+        maison: [
+          [`Tu as pris « ${faux} » pour « ${juste} » ? La maison a besoin d’un plan… et toi d’une boussole !`,
+           `Ami, le meuble vient de te regarder bizarrement. Il a compris avant toi.`,
+           `« ${faux} » au lieu de « ${juste} » ? Bienvenue dans la maison à l’envers !`,
+           `Le décorateur adore ton audace. Il a juste demandé à ne plus jamais travailler avec toi.`],
+          [`Tu as confondu « ${faux} » et « ${juste} ». IKEA vient de retirer la notice de ton compte.`,
+           `Ami, même les meubles en kit trouvent que tu pars dans tous les sens.`,
+           `Le canapé a demandé à changer de pièce. Il ne se sent plus en sécurité.`,
+           `Tu viens de redécorer la maison avec une réponse complètement à côté du mur.`],
+          [`« ${faux} » pour « ${juste} » ? Ton sens de l’orientation est monté au grenier et s’y est perdu.`,
+           `Ami, ne touche plus à la déco. Les coussins viennent de créer un syndicat.`,
+           `Le plan de la maison a démissionné. Il refuse de participer à tes travaux.`,
+           `Tu as confondu les objets ? Le marteau vient de se cacher dans la boîte à outils.`],
+          [`Ami, avec cette réponse, même une porte ne sait plus dans quelle pièce elle donne !`,
+           `Le décorateur a vu ton choix. Il a rendu les clés et changé de métier.`,
+           `Tu confonds « ${faux} » et « ${juste} » ? La maison vient de mettre une annonce : « cherche nouveau propriétaire ».`,
+           `Urgence déco : Ami a encore déplacé les meubles avec ses yeux. Ils demandent un déménagement.`]
+        ],
+        habits: [
+          [`Tu as confondu « ${faux} » et « ${juste} » ? Le miroir ne sait plus comment te regarder !`,
+           `Ami, ce choix ne va avec rien. Même les chaussettes refusent l’association.`,
+           `« ${faux} » à la place de « ${juste} » ? La mode vient de faire une pause syndicale.`,
+           `Le placard est formel : il n’a jamais vu une tenue pareille.`],
+          [`Ami, tu habilles les mots au hasard ? Même ton cintre a plus de style !`,
+           `Tu as mélangé « ${faux} » et « ${juste} » : le défilé vient d’être annulé.`,
+           `Le miroir t’a vu répondre. Il s’est retourné contre le mur.`,
+           `Cette association est tellement improbable que le pantalon a appelé son avocat.`],
+          [`« ${faux} » pour « ${juste} » ? La fashion police vient de faire demi-tour… par prudence.`,
+           `Ami, ton dressing demande un droit de retrait. Il ne veut plus être associé à tes choix.`,
+           `Le styliste a vu ta réponse et s’est cousu les yeux. C’est dire.`,
+           `Tu viens de lancer une nouvelle tendance : le « je clique et on verra ». Personne ne suit.`],
+          [`Ami, même un cintre aveugle aurait mieux assorti ces deux mots !`,
+           `Le miroir a demandé à être remplacé. Il ne veut plus témoigner.`,
+           `Ton sens de la mode est peut-être discutable, mais là, ton sens des mots est en grève !`,
+           `La garde-robe vient de déménager. Elle ne supportait plus tes essayages linguistiques.`]
+        ],
+        nature: [
+          [`Tu as confondu « ${faux} » et « ${juste} » ? La forêt vient de perdre le nord !`,
+           `Ami, même l’arbre le plus lent a compris avant toi.`,
+           `La nature est magnifique. Ton choix, lui, est un accident de randonnée.`,
+           `Le petit écureuil avait la bonne réponse. Il te propose des cours.`],
+          [`Tu as pris « ${faux} » pour « ${juste} » ? Les champignons refusent de pousser dans cette logique.`,
+           `Ami, tu viens de te perdre dans une forêt de mots. Même le GPS a raccroché.`,
+           `La forêt t’a entendu répondre. Les oiseaux ont arrêté de chanter.`,
+           `Le guide nature vient de remplacer ta boussole par un panneau « bonne chance ».`],
+          [`Même la feuille qui tombe au ralenti a repéré ton erreur avant toi !`,
+           `Ami, tu as besoin d’une randonnée… jusqu’au bon mot. Prévois une tente.`,
+           `La nature est pleine de merveilles. Ta réponse n’en fait pas partie.`,
+           `Le GPS annonce : « Faites demi-tour dès que possible », depuis trois questions.`],
+          [`Ami, tu confonds « ${faux} » avec « ${juste} » ? La forêt demande qu’on la laisse hors de tes expériences.`,
+           `Même les cailloux ont mieux suivi la leçon. Et eux, ils ne bougent pas !`,
+           `Le garde forestier t’a retiré ta carte. Tu es capable de te perdre dans un pot de fleurs.`,
+           `La planète est en danger. Pas à cause du climat : à cause de ton sens de l’orientation !`]
+        ],
+        ville: [
+          [`Tu as confondu « ${faux} » et « ${juste} » ? Le GPS vient de recalculer… puis d’abandonner.`,
+           `Ami, tu viens de prendre la mauvaise rue des mots. Le panneau te fait coucou de loin !`,
+           `Même le feu rouge a vu ton erreur. Il est passé au vert par compassion.`,
+           `Le bus de la bonne réponse est passé. Tu étais à l’arrêt d’à côté.`],
+          [`Tu as choisi « ${faux} » au lieu de « ${juste} » : ton GPS te propose maintenant une autre ville.`,
+           `Ami, tu t’es trompé de quartier… et de planète, à ce niveau.`,
+           `Le GPS a dit « recalcul en cours ». Il calcule toujours. Depuis hier.`,
+           `La mairie vient de créer une rue à ton nom : l’impasse de la bonne réponse.`],
+          [`Tu as raté la bonne réponse avec une précision de satellite… mais dans le mauvais sens.`,
+           `Ami, même le GPS de ma grand-mère aurait trouvé. Et il demande encore où est la maison.`,
+           `Tu es parti vers « ${faux} » alors que « ${juste} » était juste devant. Beau détour touristique !`,
+           `La ville vient de déplacer ses panneaux pour ne plus être mêlée à tes choix.`],
+          [`Ami, ton GPS intérieur est réglé sur « n’importe où sauf la bonne réponse ».`,
+           `Tu viens de te perdre sur une ligne droite. La mairie organise une cérémonie.`,
+           `Même les pigeons de la place ont trouvé le bon mot. Et ils mangent les tickets de bus !`,
+           `La ville te remercie : grâce à toi, l’impasse vient de devenir une destination touristique.`]
+        ],
+        musique: [
+          [`Tu as confondu « ${faux} » et « ${juste} » ? Ce n’est pas la bonne note, chef !`,
+           `Ami, ton choix sonne faux. Même la casserole a plus d’oreille.`,
+           `Le chef d’orchestre vient de poser sa baguette. Il a besoin d’un instant.`,
+           `Tu as joué la mauvaise partition. Le public applaudit par politesse.`],
+          [`Cette réponse est tellement fausse que le métronome a perdu le rythme.`,
+           `Ami, tu joues à côté de la note… et de la portée !`,
+           `Le piano vient de se mettre en silencieux pour ne pas entendre ça.`,
+           `Tu as confondu les mots : même le triangle a trouvé ça dissonant.`],
+          [`Le concert est annulé. Ton choix a fait fuir les notes de musique.`,
+           `Ami, même un disque rayé aurait donné une réponse plus cohérente.`,
+           `Tu viens d’inventer un nouveau genre : le jazz de la mauvaise réponse.`,
+           `La fanfare joue faux exprès pour être à ton niveau. Elle regrette déjà.`],
+          [`Ami, tes oreilles sont en vacances et tes neurones font un karaoké sans paroles !`,
+           `Même la sourdine a demandé à ne plus être associée à cette réponse.`,
+           `Le chef d’orchestre a rangé sa baguette. Il préfère élever des chèvres.`,
+           `Tu as tellement massacré la partition que les notes ont demandé l’asile musical.`]
+        ],
+        atelier: [
+          [`Tu as confondu « ${faux} » et « ${juste} » ? Range les outils, on va éviter l’accident !`,
+           `Ami, le tournevis a compris la question. Lui, au moins, a le bon embout.`,
+           `L’atelier est fermé pour inventaire… et pour protéger les outils de tes idées.`,
+           `Tu bricoles les réponses comme un meuble sans notice !`],
+          [`Ami, tu viens de monter la mauvaise réponse à l’envers. Même la visserie soupire.`,
+           `Le marteau a demandé à changer d’atelier. Il ne veut pas participer.`,
+           `Tu as choisi « ${faux} » au lieu de « ${juste} » : le bricolage vient de déposer le bilan.`,
+           `La perceuse a tourné dans le vide. Elle dit qu’elle te comprend.`],
+          [`Ton raisonnement tient avec du ruban adhésif… et encore, il se décolle !`,
+           `Ami, tu as bricolé une réponse. Le résultat n’est homologué nulle part.`,
+           `Le niveau à bulle vient de se retourner. Il ne veut pas cautionner ça.`,
+           `Même la notice IKEA vient de te dire : « Débrouille-toi, champion ».`,
+          ],
+          [`Ami, tu confonds « ${faux} » avec « ${juste} » ? Pose les outils, tu es dangereux pour la logique !`,
+           `L’atelier a déclenché l’alarme. Ce n’est pas un exercice, c’est un chantier !`,
+           `Le marteau a demandé une mutation. Il préfère taper des clous que corriger tes réponses.`,
+           `Ton cerveau a monté la réponse sans lire la notice. Résultat : il reste trois vis et aucune logique !`]
+        ]
+      },
+      en: {
+        animaux: [
+          [`You picked "${faux}" for "${juste}"? That's one confused safari!`,
+           `You mixed up "${faux}" and "${juste}". The zoo has quarantined your visitor badge.`,
+           `Even the goat at the zoo knows who its neighbours are, Ami!`,
+           `A "${faux}" instead of a "${juste}"? The vet wants to revoke your animal-label licence!`],
+          [`You mixed up "${faux}" and "${juste}"! The zoo moved every sign away from you.`,
+           `Ami, a "${faux}" is not a "${juste}". Even a parrot could repeat the right answer!`,
+           `You just discovered a new species: the wrong-just. Darwin is crying.`,
+           `The zookeeper saw your labels and called animal control!`],
+          [`"${faux}" or "${juste}"? Are you playing Pokémon without looking at the cards?`,
+           `Ami, that safari was clearly done with your eyes closed. The animals want a new guide.`,
+           `Even the fly on the screen spotted the right answer before you!`,
+           `The zoo has banned you from guided tours. You just called a duck a "${juste}"!`],
+          [`Ami, your eyes have migrated without telling you. Wrong season, wrong animal!`,
+           `The zoo is filing a complaint. You are traumatising the signposts.`,
+           `Even a mole wearing lost glasses would do better than that!`,
+           `Breaking news: Ami renamed the animals again. The dictionary wants the owl in a cage!`]
+        ],
+        manger: [
+          [`You picked "${faux}" instead of "${juste}"? That's a brave recipe!`,
+           `The chef saw your answer and closed the kitchen for repairs.`,
+           `"${faux}" instead of "${juste}"? Bon appétit… I guess?`,
+           `You cook like you answer: bold choices, zero evidence!`],
+          [`You mixed up "${faux}" and "${juste}". Even the microwave refused to heat that up.`,
+           `The chef tasted your idea and asked for water. Then a lawyer.`,
+           `Ami, that's not a menu. That's a science experiment gone wrong.`,
+           `The recipe just resigned after seeing your answer.`],
+          [`You invented "${faux}" à la "${juste}". Nobody ordered it. Not even you.`,
+           `Your taste buds are great, Ami. Shame your eyes picked the menu.`,
+           `The chef tasted your answer and requested a transfer to another restaurant.`,
+           `That mix-up deserves a star… in the disaster food guide.`],
+          [`Ami, even a toaster would follow the recipe better than that!`,
+           `The restaurant has banned you from reading menus. You scare the ingredients.`,
+           `That answer was so hard to swallow the plates smashed themselves.`,
+           `The kitchen is on fire. Not the oven — your word combination!`]
+        ],
+        maison: [
+          [`You picked "${faux}" for "${juste}"? This house needs a map… and you need a compass!`,
+           `Ami, the furniture is giving you a very strange look. It got it before you did.`,
+           `"${faux}" instead of "${juste}"? Welcome to the upside-down house!`,
+           `The decorator loves your confidence. They just never want to work with you again.`],
+          [`You mixed up "${faux}" and "${juste}". IKEA just removed the instructions from your account.`,
+           `Even flat-pack furniture thinks you're all over the place, Ami.`,
+           `The sofa asked to move rooms. It no longer feels safe.`,
+           `You just redecorated the house with an answer that missed the wall.`],
+          [`"${faux}" for "${juste}"? Your sense of direction went to the attic and got lost.`,
+           `Ami, stop decorating. The cushions have formed a union.`,
+           `The house plan resigned. It refuses to take part in your renovations.`,
+           `You mixed up the objects? The hammer is hiding in the toolbox.`],
+          [`Ami, after that answer even a door doesn't know which room it leads to!`,
+           `The decorator saw your choice, returned the keys and changed careers.`,
+           `You mix up "${faux}" and "${juste}"? The house is advertising for a new owner.`,
+           `Interior design emergency: Ami moved the furniture with his eyes again.`]
+        ],
+        habits: [
+          [`You mixed up "${faux}" and "${juste}"? The mirror doesn't know how to look at you!`,
+           `Ami, that goes with nothing. Even the socks refuse the outfit.`,
+           `"${faux}" instead of "${juste}"? Fashion has called a strike.`,
+           `The wardrobe has never seen an outfit quite like your answer.`],
+          [`Ami, dressing words at random? Even your coat hanger has more style!`,
+           `You mixed up "${faux}" and "${juste}". The fashion show is cancelled.`,
+           `The mirror saw your answer and turned to face the wall.`,
+           `That combination is so wild the trousers called a lawyer.`],
+          [`"${faux}" for "${juste}"? Fashion police turned around for their own safety.`,
+           `Ami, your wardrobe is claiming a right to refuse your choices.`,
+           `The stylist saw your answer and sewed their eyes shut. Seriously.`,
+           `You launched a new trend: "click first, think never". Nobody's following.`],
+          [`Even a blind coat hanger could match those words better, Ami!`,
+           `The mirror asked to be replaced. It refuses to testify.`,
+           `Your fashion sense is debatable; your word sense is officially on strike!`,
+           `The wardrobe moved out. It couldn't take another fitting.`]
+        ],
+        nature: [
+          [`You mixed up "${faux}" and "${juste}"? The forest has lost its way!`,
+           `Ami, even the slowest tree got it before you did.`,
+           `Nature is beautiful. Your answer is a hiking accident.`,
+           `The squirrel knew the answer. It offers you lessons.`],
+          [`You picked "${faux}" for "${juste}"? Even the mushrooms refuse to grow in that logic.`,
+           `Ami, you're lost in a forest of words. Even the GPS hung up.`,
+           `The forest heard your answer. The birds stopped singing.`,
+           `The nature guide replaced your compass with a "good luck" sign.`],
+          [`Even the slow-falling leaf spotted your mistake before you did!`,
+           `Ami, you need a hike… all the way to the right word. Pack a tent.`,
+           `Nature is full of wonders. Your answer isn't one of them.`,
+           `The GPS says "turn around" for the third question in a row.`],
+          [`Ami, stop experimenting with nature. The forest wants no part of this.`,
+           `Even the rocks followed the lesson better. And they don't move!`,
+           `The ranger took your map. You're capable of getting lost in a flowerpot.`,
+           `The planet is in danger. Not from climate change — from your sense of direction!`]
+        ],
+        ville: [
+          [`You mixed up "${faux}" and "${juste}"? The GPS recalculated… then gave up.`,
+           `Ami, wrong street in Word Town. The sign is waving at you from far away!`,
+           `Even the traffic light saw your mistake. It turned green out of pity.`,
+           `The bus to the right answer left. You were at the wrong stop.`],
+          [`You picked "${faux}" instead of "${juste}". Your GPS suggests a different city now.`,
+           `Ami, wrong neighbourhood… and possibly wrong planet.`,
+           `The GPS said "recalculating". It's still calculating. Since yesterday.`,
+           `City Hall named a street after you: Dead-End Avenue.`],
+          [`You missed the right answer with satellite-level precision… in the wrong direction.`,
+           `Even my grandma's GPS would've found it. And it still asks where home is.`,
+           `You headed for "${faux}" while "${juste}" was right there. Lovely sightseeing detour!`,
+           `The city moved all its signs to avoid being involved in your choices.`],
+          [`Ami, your inner GPS is set to "anywhere but the right answer".`,
+           `You got lost on a straight road. The city is holding a ceremony.`,
+           `Even the pigeons in the square found the right word. And they eat bus tickets!`,
+           `Thanks to you, Dead-End Street is now a tourist attraction.`]
+        ],
+        musique: [
+          [`You mixed up "${faux}" and "${juste}"? That's the wrong note, maestro!`,
+           `Ami, that answer sounds wrong. Even a saucepan has better ears.`,
+           `The conductor put down the baton. They need a moment.`,
+           `You played the wrong score. The audience is clapping politely.`],
+          [`That answer was so wrong the metronome lost the beat.`,
+           `Ami, you're off the note… and off the page!`,
+           `The piano switched itself to mute to avoid hearing that.`,
+           `You mixed up the words. Even the triangle found it dissonant.`],
+          [`The concert is cancelled. Your answer scared all the notes away.`,
+           `Ami, even a scratched record would make more sense.`,
+           `You invented a new genre: wrong-answer jazz.`,
+           `The band is playing badly on purpose to match your level. They regret it.`],
+          [`Ami, your ears are on holiday and your brain is doing karaoke without lyrics!`,
+           `Even the mute button wants nothing to do with that answer.`,
+           `The conductor put away the baton. They'd rather raise goats.`,
+           `You butchered the score so badly the notes requested musical asylum.`]
+        ],
+        atelier: [
+          [`You mixed up "${faux}" and "${juste}"? Put the tools down. Safety first!`,
+           `Ami, the screwdriver understood the question. At least it has the right bit.`,
+           `The workshop is closed for inventory… and to protect the tools from your ideas.`,
+           `You build answers like flat-pack furniture without instructions!`],
+          [`Ami, you assembled the wrong answer backwards. Even the screws are sighing.`,
+           `The hammer requested a transfer. It wants no part of this.`,
+           `You picked "${faux}" instead of "${juste}". DIY has filed for bankruptcy.`,
+           `The drill spun in the air. It says it understands you.`],
+          [`Your logic is held together with tape… and the tape is peeling off!`,
+           `Ami, you built an answer. It isn't approved anywhere.`,
+           `The spirit level turned upside down. It refuses to endorse this.`,
+           `Even the IKEA manual just said: "You're on your own, mate".`],
+          [`Ami, put the tools down. You're a danger to logic and basic assembly!`,
+           `The workshop alarm is ringing. This isn't a quiz anymore; it's a construction disaster!`,
+           `The hammer requested a new job. It would rather hit nails than fix your answers.`,
+           `Your brain built the answer without reading the manual. Three screws left, zero logic!`]
+        ]
+      }
+    };
+    const cle = ({animaux:'animaux',manger:'manger',maison:'maison',habits:'habits',nature:'nature',ville:'ville',musique:'musique',atelier:'atelier'})[theme] || 'animaux';
+    const liste = catalogues[langue][cle][niveau];
+    return liste[Math.floor(Math.random() * liste.length)];
   }
   function correctionDansLangue(mot){
     return langueBlagues() === 'en' ? 'The correct answer was: ' + mot : "C'était : " + mot;
@@ -922,7 +1218,7 @@
       const bonneReponse = partie.courant === 'panier'
         ? t('th_' + MOTS[partie.bonne].theme)
         : nomMot(partie.bonne) + (tr ? ' (' + tr + ')' : '');
-      const message = blague() + ' ' + correctionDansLangue(bonneReponse);
+      const message = blague(btn.dataset.v, partie.bonne) + ' ' + correctionDansLangue(bonneReponse);
       amiDit(message, 'surpris');
       const suite = $('#continuer-erreur');
       if(suite){ suite.hidden = false; suite.focus({preventScroll:true}); }
@@ -1012,7 +1308,7 @@
       noter(btn.dataset.v, true); garder(); bruit('juste'); dire(btn.dataset.v); R.faits++; eclat(btn); vibrer(true);
       if(R.faits === R.k){ amiDit(melanger(t('bravo'))[0], 'fete'); setTimeout(() => { partie.i++; question(); }, 1100); }
     }else{
-      partie.erreurs++; bruit('faux'); amiDit(blague(), 'surpris');
+      partie.erreurs++; bruit('faux'); amiDit(blague(a.dataset.v, btn.dataset.v), 'surpris');
       [a, btn].forEach(x => { x.classList.add('faux'); setTimeout(() => x.classList.remove('faux'), 600); });
     }
   }
@@ -1049,7 +1345,7 @@
       setTimeout(() => { partie.i++; question(); }, 1500);
     }else{
       partie.erreurs++; L.faute = true; $('#reponse').classList.add('faux'); bruit('faux');
-      amiDit(blague(), 'surpris');
+      amiDit(blague(btn.dataset.v, partie.attendu), 'surpris');
       setTimeout(effacer, 900);
     }
   }
@@ -1270,7 +1566,7 @@
     const p=atelierPhrase, tokens=p.liste[p.index].split(' ');
     const zone=$('#retour-phrase');
     if(p.choisis.length!==tokens.length || p.choisis.some((v,i)=>v!==i)){
-      if(zone) zone.textContent=blague();
+      if(zone) zone.textContent = langueBlagues()==='en' ? 'Oops! My words have gone on an adventure without me.' : 'Oups ! Mes mots sont partis faire une phrase sans moi !';
       const amiEl=$('#ami-phrase'); if(amiEl){amiEl.classList.remove('ami-raté'); void amiEl.offsetWidth; amiEl.classList.add('ami-raté');}
       bruit('faux');
       return;

@@ -430,3 +430,21 @@ L'atelier est une première version pédagogique. Les phrases et leur adaptation
 - Trois formats conservés mais raccourcis : punchline, devinette express et mini-dialogue.
 - Répliques volontairement brèves, centrées sur les maladresses d'Ami et les jeux de mots.
 - La bonne réponse reste annoncée séparément après la vanne.
+
+
+## v5.15 — vannes qui collent à l'erreur
+
+- Les retours des exercices à choix utilisent maintenant le mot choisi à tort ET le mot attendu.
+- Répliques personnalisées autour de la confusion réelle : « tu confonds X avec Y », ophtalmo, lunettes, zoo, cuisine ou décoration selon le contexte.
+- Quatre intensités de taquinerie, toujours dirigées vers Ami et jamais contre la personne qui joue.
+- Les exercices d'association utilisent les deux mots sélectionnés ; l'atelier de phrases garde une réplique spécifique à la construction de phrase.
+- Les langues des blagues restent indépendantes de la langue apprise.
+
+
+## v5.16 — Ami lâche les vannes
+
+- Refonte du moteur de répliques contextuelles : 8 univers (animaux, nourriture, maison, vêtements, nature, ville, musique, atelier).
+- 4 niveaux d'humour, chacun avec 4 répliques par univers et par langue (français/anglais), soit 256 variantes.
+- Chaque vanne reprend explicitement le mot choisi à tort et le mot attendu lorsque le format s'y prête.
+- Ton plus mordant, absurde et théâtral : le personnage Ami est la cible de la plaisanterie, jamais la personne qui apprend.
+- Tirage aléatoire pour éviter les répétitions immédiates.

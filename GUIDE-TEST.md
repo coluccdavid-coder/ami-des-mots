@@ -120,3 +120,18 @@ Ne pas utiliser de vrais paiements pendant les essais. Pour tester l'abonnement,
 - Vérifier que la correction « C'était : ... » reste claire après la vanne.
 - Tester les quatre niveaux d'humour en français et en anglais.
 - Vérifier l'affichage mobile et l'écoute vocale des messages courts.
+
+
+## Nouveauté v5.15 — pertinence des blagues
+- Sur une image de chat, choisir un mauvais mot : la vanne doit citer « chat » et le mot choisi, sans histoire sans rapport.
+- Tester les 4 niveaux d'humour : le ton devient plus piquant, sans viser ou humilier le joueur.
+- Tester les blagues en français pendant l'apprentissage de l'anglais, puis en anglais.
+- Tester aussi les associations, les lettres et l'atelier de phrases.
+
+
+## Nouveauté v5.16 — humour renforcé
+- Faire des erreurs dans chaque thème : animaux, manger, maison, habits, nature, ville, musique, atelier.
+- Vérifier que la vanne cite bien le mot attendu et le mot sélectionné lorsque disponibles.
+- Tester les 4 niveaux : le niveau 4 est plus piquant mais continue de se moquer d'Ami, pas du joueur.
+- Changer plusieurs fois de niveau et refaire les mêmes exercices pour vérifier l'aléatoire.
+- Tester français et anglais, y compris lorsque la langue apprise est différente de la langue des blagues.
