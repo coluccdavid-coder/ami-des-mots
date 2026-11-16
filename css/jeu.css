@@ -1032,3 +1032,272 @@ body::after{
   body::after,.ami-3d-wrap,.ami-3d-wrap::before,.ami-3d-fete,.ami-3d-surpris,.ami-3d-triste{animation:none!important}
   .ami-3d{transform:none}
 }
+
+
+/* v5.17 — garde-fou d'affichage des réponses illustrées. */
+.choix-images{
+  display:grid !important;
+  width:100%;
+  min-width:0;
+  grid-template-columns:repeat(2,minmax(0,1fr)) !important;
+  align-items:stretch;
+}
+.choix-images.six{
+  grid-template-columns:repeat(3,minmax(0,1fr)) !important;
+}
+.choix-images > .choix-img{
+  display:flex !important;
+  align-items:center;
+  justify-content:center;
+  width:100% !important;
+  min-width:0;
+  min-height:clamp(132px,18vw,250px);
+  aspect-ratio:4 / 3;
+  height:auto;
+  padding:10px;
+  overflow:hidden;
+}
+.choix-images > .choix-img > img{
+  display:block !important;
+  width:100% !important;
+  height:100% !important;
+  min-width:0;
+  min-height:0;
+  max-width:100%;
+  max-height:100%;
+  object-fit:contain !important;
+  flex:1 1 auto;
+}
+.choix-images.six > .choix-img{ min-height:clamp(105px,14vw,185px); }
+.picto-secours{
+  display:grid;
+  place-items:center;
+  width:100%;
+  height:100%;
+  min-height:100px;
+  font-size:clamp(3rem,7vw,6rem);
+  line-height:1;
+}
+@media(max-width:600px){
+  .choix-images > .choix-img{ min-height:clamp(118px,34vw,190px); }
+  .choix-images.six > .choix-img{ min-height:clamp(96px,26vw,145px); }
+}
+
+
+/* ================================================================
+   v5.18 — AMI ARCADE : refonte visuelle vivante et comique
+   2.5D CSS légère : profondeur, lumière, réactions et mouvement.
+   Aucun moteur lourd ajouté : priorité à la fluidité mobile/offline.
+   ================================================================ */
+:root{
+  --arcade-violet:#30208f;
+  --arcade-rose:#ff78bd;
+  --arcade-cyan:#5cecff;
+  --arcade-gold:#ffe27a;
+  --arcade-glass:rgba(42,31,112,.66);
+}
+
+/* Un ciel plus profond, avec des halos colorés qui respirent. */
+body{
+  background:
+    radial-gradient(ellipse at 12% 18%,rgba(116,82,255,.22),transparent 32%),
+    radial-gradient(ellipse at 88% 62%,rgba(31,218,190,.13),transparent 30%),
+    linear-gradient(145deg,#10092f 0%,#171044 48%,#0c1233 100%);
+}
+body::after{
+  content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;opacity:.42;
+  background-image:
+    radial-gradient(2px 2px at 7% 18%,#fff 98%,transparent),
+    radial-gradient(2px 2px at 19% 74%,#ffe69a 98%,transparent),
+    radial-gradient(1.5px 1.5px at 37% 31%,#fff 98%,transparent),
+    radial-gradient(2px 2px at 61% 13%,#8ff5ff 98%,transparent),
+    radial-gradient(1.5px 1.5px at 83% 39%,#fff 98%,transparent),
+    radial-gradient(2px 2px at 92% 82%,#ffe69a 98%,transparent);
+  background-size:310px 260px;
+  animation:arcade-etoiles 18s linear infinite;
+}
+@keyframes arcade-etoiles{to{background-position:155px -260px}}
+
+/* Accueil : boutons façon jeu d'arcade, avec ressort au survol. */
+.gros,.moyen,.bouton-rond,.choix-mot,.choix-img,.tuile,.rel{
+  transform-style:preserve-3d;
+  transition:transform .22s cubic-bezier(.2,.9,.25,1.25),filter .22s,box-shadow .22s;
+}
+@media(hover:hover){
+  .gros:hover,.moyen:hover,.choix-mot:hover,.tuile:hover,.rel:hover{
+    transform:translateY(-4px) scale(1.025);
+    filter:brightness(1.12) saturate(1.12);
+  }
+  .choix-img:hover{
+    transform:translateY(-7px) rotateX(3deg) rotateY(-2deg) scale(1.025);
+    box-shadow:inset 0 1px 0 #fff,0 9px 0 #a99bdc,0 24px 34px rgba(0,0,0,.34),0 0 28px rgba(112,151,255,.2);
+  }
+}
+.gros.apprendre,.gros.phrases-accueil,.gros.village-accueil{
+  position:relative;overflow:hidden;
+  background:linear-gradient(120deg,#35e7c0 0%,#19cfae 48%,#20b8c7 100%);
+  color:#062e37;
+  box-shadow:inset 0 2px 0 rgba(255,255,255,.55),inset 0 -5px 0 rgba(0,0,0,.12),0 7px 0 #087e78,0 16px 28px rgba(0,0,0,.25);
+}
+.gros.phrases-accueil{background:linear-gradient(120deg,#ff9ad5,#d98bff);color:#35104e;box-shadow:inset 0 2px 0 rgba(255,255,255,.55),inset 0 -5px 0 rgba(0,0,0,.12),0 7px 0 #8545a7,0 16px 28px rgba(0,0,0,.25)}
+.gros.village-accueil{background:linear-gradient(120deg,#8bdcff,#7f9dff);color:#101d55;box-shadow:inset 0 2px 0 rgba(255,255,255,.55),inset 0 -5px 0 rgba(0,0,0,.12),0 7px 0 #4054a8,0 16px 28px rgba(0,0,0,.25)}
+.gros.apprendre::after,.gros.phrases-accueil::after,.gros.village-accueil::after{
+  content:"";position:absolute;top:-80%;left:-35%;width:24%;height:260%;
+  transform:rotate(25deg);background:linear-gradient(90deg,transparent,rgba(255,255,255,.48),transparent);
+  animation:arcade-reflet 5.8s ease-in-out infinite;
+}
+@keyframes arcade-reflet{0%,55%{left:-35%}85%,100%{left:125%}}
+
+/* Le plateau de jeu devient une scène lumineuse, pas un grand vide noir. */
+.partie{
+  position:relative;isolation:isolate;
+  width:min(100% - 28px,1480px);max-width:1480px;
+  margin:12px auto 34px;padding:clamp(18px,2.6vw,34px);
+  border:1px solid rgba(195,183,255,.2);
+  border-radius:34px;
+  background:
+    radial-gradient(ellipse at 8% 4%,rgba(113,83,255,.22),transparent 36%),
+    radial-gradient(ellipse at 96% 88%,rgba(31,211,188,.12),transparent 32%),
+    linear-gradient(145deg,rgba(31,23,83,.84),rgba(10,8,39,.94));
+  box-shadow:0 24px 70px rgba(0,0,0,.34),inset 0 1px 0 rgba(255,255,255,.16);
+  overflow:hidden;
+}
+.partie::before{
+  content:"";position:absolute;z-index:-1;pointer-events:none;
+  width:clamp(180px,28vw,420px);aspect-ratio:1;right:-9%;top:8%;
+  border-radius:50%;
+  background:radial-gradient(circle,rgba(101,221,255,.12),rgba(137,95,255,.06) 48%,transparent 70%);
+  animation:arcade-orbe 12s ease-in-out infinite alternate;
+}
+.partie::after{
+  content:"✦";position:absolute;z-index:-1;pointer-events:none;
+  right:4%;bottom:8%;font-size:clamp(3rem,8vw,7rem);color:rgba(255,226,122,.10);
+  text-shadow:0 0 35px rgba(255,226,122,.2);
+  animation:arcade-etoile 4s ease-in-out infinite;
+}
+@keyframes arcade-orbe{to{transform:translate(-30px,24px) scale(1.18)}}
+@keyframes arcade-etoile{0%,100%{transform:rotate(-12deg) scale(.9);opacity:.35}50%{transform:rotate(12deg) scale(1.12);opacity:.8}}
+
+/* En-tête : une petite carte de mission. */
+.partie .tete{
+  position:relative;z-index:1;gap:16px;
+  padding:10px 16px;margin:0 0 16px;
+  border:1px solid rgba(255,255,255,.13);border-radius:24px;
+  background:linear-gradient(110deg,rgba(255,255,255,.095),rgba(255,255,255,.025));
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.12),0 10px 26px rgba(0,0,0,.12);
+}
+.partie .tete h2{font-size:clamp(1.25rem,2.4vw,1.85rem);letter-spacing:-.025em}
+.partie .aide{font-size:clamp(.95rem,1.5vw,1.15rem)}
+.partie .progres{
+  height:18px;margin:18px 0 26px;padding:3px;
+  background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);
+  box-shadow:inset 0 3px 8px rgba(0,0,0,.35),0 4px 12px rgba(0,0,0,.16);
+}
+.partie .progres span{position:relative;overflow:hidden}
+.partie .progres span::after{
+  content:"";position:absolute;inset:0;width:45%;
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,.55),transparent);
+  animation:arcade-reflet 3.8s ease-in-out infinite;
+}
+
+/* Scène et cartes : les réponses prennent enfin leur place. */
+.partie .scene{position:relative;z-index:1;gap:clamp(18px,3vw,42px);align-items:center}
+.partie .choix-images{
+  width:min(100%,1000px);max-width:1000px;margin:clamp(10px,2vw,26px) auto;
+  gap:clamp(14px,2vw,24px);
+}
+.partie .choix-images > .choix-img{
+  position:relative;isolation:isolate;
+  border:3px solid rgba(255,255,255,.86);border-radius:clamp(18px,2.2vw,30px);
+  background:linear-gradient(145deg,#fff,#edf1ff);
+  min-height:clamp(150px,20vw,270px);
+  box-shadow:inset 0 2px 0 #fff,0 7px 0 #9585d5,0 18px 32px rgba(0,0,0,.26);
+  animation:carte-arrivee .55s both cubic-bezier(.2,1.25,.35,1);
+}
+.partie .choix-img:nth-child(2){animation-delay:.07s}
+.partie .choix-img:nth-child(3){animation-delay:.14s}
+.partie .choix-img:nth-child(4){animation-delay:.21s}
+@keyframes carte-arrivee{from{opacity:0;transform:translateY(18px) scale(.94)}to{opacity:1;transform:translateY(0) scale(1)}}
+.partie .choix-images > .choix-img > img{
+  width:100%;height:100%;max-width:100%;max-height:100%;object-fit:contain;
+  filter:drop-shadow(0 7px 7px rgba(35,25,70,.12));
+  transition:transform .25s cubic-bezier(.2,.9,.3,1.2);
+}
+@media(hover:hover){.partie .choix-img:hover img{transform:scale(1.07) rotate(-1.5deg)}}
+.partie .choix-mots{width:min(100%,900px);margin:16px auto;gap:14px}
+.partie .choix-mot{
+  min-height:76px;border-radius:22px;padding:18px 16px;
+  background:linear-gradient(145deg,rgba(104,87,191,.72),rgba(39,29,103,.96));
+  border:1px solid rgba(255,255,255,.2);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.24),inset 0 -4px 0 rgba(0,0,0,.18),0 7px 0 rgba(5,3,30,.35),0 14px 24px rgba(0,0,0,.2);
+  font-size:clamp(1.05rem,2vw,1.45rem);
+}
+.partie .choix-mot:active{transform:translateY(5px) scale(.98)}
+.partie .choix-img.juste,.partie .choix-mot.juste{animation:bonne-reponse .65s cubic-bezier(.2,1.6,.3,1)}
+@keyframes bonne-reponse{0%{transform:scale(1)}35%{transform:scale(1.09) rotate(1deg)}65%{transform:scale(.98) rotate(-1deg)}100%{transform:scale(1)}}
+.partie .choix-img.faux,.partie .choix-mot.faux{animation:mauvaise-reponse .42s ease-in-out}
+@keyframes mauvaise-reponse{0%,100%{transform:translateX(0) rotate(0)}20%{transform:translateX(-7px) rotate(-1deg)}45%{transform:translateX(7px) rotate(1deg)}70%{transform:translateX(-4px)}}
+
+/* Le hibou réagit physiquement : petit bond, roulade ou danse. */
+.ami-3d-wrap{will-change:transform;animation:ami-arcade-flotte 3.1s ease-in-out infinite}
+@keyframes ami-arcade-flotte{0%,100%{transform:translateY(0) rotate(-1deg)}50%{transform:translateY(-9px) rotate(1.5deg)}}
+.ami-3d-surpris{animation:ami-arcade-choc .58s ease-in-out 2!important}
+.ami-3d-surpris .ami-3d{animation:ami-arcade-yeux .58s ease-in-out 2}
+@keyframes ami-arcade-choc{0%,100%{transform:translateX(0) rotate(0)}18%{transform:translateX(-8px) rotate(-8deg)}38%{transform:translateX(8px) rotate(8deg)}58%{transform:translateX(-5px) rotate(-4deg)}78%{transform:translateX(4px) rotate(4deg)}}
+@keyframes ami-arcade-yeux{0%,100%{filter:drop-shadow(0 8px 14px rgba(255,205,115,.12))}50%{filter:drop-shadow(0 0 22px rgba(255,112,145,.85))}}
+.ami-3d-fete{animation:ami-arcade-victoire .85s cubic-bezier(.2,1.5,.4,1) 2!important}
+@keyframes ami-arcade-victoire{0%{transform:translateY(0) rotate(0) scale(1)}28%{transform:translateY(-24px) rotate(-12deg) scale(1.1)}55%{transform:translateY(-5px) rotate(12deg) scale(1.08)}78%{transform:translateY(-17px) rotate(-7deg) scale(1.12)}100%{transform:translateY(0) rotate(0) scale(1)}}
+.ami-petit,.ami-mini,.ami-moyen{position:relative}
+.ami-petit::after{
+  content:"✦";position:absolute;right:-4px;top:-8px;color:#ffe27a;
+  font-size:18px;text-shadow:0 0 12px rgba(255,226,122,.9);
+  animation:ami-etincelle 2.2s ease-in-out infinite;
+}
+@keyframes ami-etincelle{0%,100%{transform:scale(.65) rotate(0);opacity:.3}50%{transform:scale(1.25) rotate(70deg);opacity:1}}
+
+/* La bulle de correction devient une vraie bulle de BD. */
+.partie .bulle{
+  max-width:min(760px,calc(100vw - 28px));left:50%;right:auto;
+  width:max-content;min-width:min(280px,calc(100vw - 28px));
+  transform:translate(-50%,140%) scale(.94);
+  border-radius:26px 26px 26px 8px;
+  font-size:clamp(1rem,1.7vw,1.28rem);
+  line-height:1.45;padding:18px 24px calc(18px + env(safe-area-inset-bottom));
+  box-shadow:0 18px 42px rgba(0,0,0,.4),inset 0 1px 0 rgba(255,255,255,.22);
+}
+.partie .bulle.ok,.partie .bulle.ko{transform:translate(-50%,0) scale(1);animation:bulle-bd .38s cubic-bezier(.2,1.45,.35,1)}
+@keyframes bulle-bd{from{opacity:0;transform:translate(-50%,18px) scale(.78) rotate(-2deg)}to{opacity:1;transform:translate(-50%,0) scale(1) rotate(0)}}
+.partie .continuer-erreur{border-radius:20px;box-shadow:inset 0 2px 0 rgba(255,255,255,.65),inset 0 -4px 0 rgba(0,0,0,.12),0 6px 0 #b78000,0 14px 24px rgba(0,0,0,.24)}
+
+/* Récompenses et petites réactions */
+.partie .combo.vu{animation:combo-arcade .6s cubic-bezier(.2,1.7,.3,1)}
+@keyframes combo-arcade{0%{transform:scale(.5) rotate(-12deg)}65%{transform:scale(1.3) rotate(7deg)}100%{transform:scale(1) rotate(0)}}
+
+/* Tablette et téléphone : on garde le spectacle sans écraser les contenus. */
+@media(min-width:900px){
+  .partie{min-height:calc(100vh - 110px)}
+  .partie .scene{min-height:clamp(420px,58vh,760px)}
+  .partie .choix-images{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+  .partie .choix-images.six{grid-template-columns:repeat(3,minmax(0,1fr))!important}
+}
+@media(max-width:899px){
+  .partie{width:calc(100% - 16px);margin:8px auto 20px;border-radius:26px;padding:14px 12px 150px}
+  .partie .scene{gap:14px}
+  .partie .choix-images{gap:12px;margin:10px auto}
+  .partie .choix-images > .choix-img{min-height:clamp(125px,34vw,205px);border-radius:20px;padding:8px}
+  .partie .choix-mots{gap:10px}
+  .partie .choix-mot{min-height:62px;padding:14px 10px;border-radius:18px}
+  .partie .tete{padding:8px 10px;gap:10px}
+  .partie .ami-petit{flex-basis:58px;width:58px}
+  .partie .bulle{bottom:8px}
+}
+@media(max-width:420px){
+  .partie .choix-images{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+  .partie .choix-images.six{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+  .partie .choix-images > .choix-img{min-height:clamp(112px,37vw,155px)}
+}
+@media(prefers-reduced-motion:reduce){
+  body::after,.partie::before,.partie::after,.gros.apprendre::after,.gros.phrases-accueil::after,.gros.village-accueil::after,
+  .partie .choix-img,.ami-3d-wrap,.ami-3d-surpris,.ami-3d-fete,.ami-petit::after{animation:none!important}
+  .partie .bulle.ok,.partie .bulle.ko{animation:none!important}
+}

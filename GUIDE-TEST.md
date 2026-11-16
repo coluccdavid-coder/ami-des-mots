@@ -135,3 +135,20 @@ Ne pas utiliser de vrais paiements pendant les essais. Pour tester l'abonnement,
 - Tester les 4 niveaux : le niveau 4 est plus piquant mais continue de se moquer d'Ami, pas du joueur.
 - Changer plusieurs fois de niveau et refaire les mêmes exercices pour vérifier l'aléatoire.
 - Tester français et anglais, y compris lorsque la langue apprise est différente de la langue des blagues.
+
+
+## Nouveauté v5.17 — affichage des choix illustrés
+- Sur ordinateur, lancer un exercice « Écoutez, puis touchez la bonne image » : les 4 cartes doivent être visibles en 2 × 2, avec des images grandes.
+- Vérifier qu'aucune carte ne se réduit à un point blanc.
+- Tester un exercice à 6 images et vérifier la grille à 3 colonnes.
+- Sur téléphone, vérifier que les images restent assez grandes et que la page défile normalement.
+- En cas d'image manquante, vérifier qu'un emoji de secours reste affiché et sélectionnable.
+
+
+## Nouveauté v5.18 — direction artistique Ami Arcade
+- Accueil : vérifier les boutons colorés, leurs reflets et le fond étoilé.
+- PC : vérifier que le plateau de jeu occupe l'espace sans étirer les images.
+- Mobile : vérifier que les choix restent visibles, tactiles et sans débordement horizontal.
+- Bonne réponse : la carte doit rebondir et Ami doit faire sa petite danse.
+- Mauvaise réponse : le choix doit trembler et Ami réagir ; la bulle BD doit rester lisible.
+- Activer la préférence système « réduire les animations » : les animations décoratives doivent se couper.

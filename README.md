@@ -448,3 +448,28 @@ L'atelier est une première version pédagogique. Les phrases et leur adaptation
 - Chaque vanne reprend explicitement le mot choisi à tort et le mot attendu lorsque le format s'y prête.
 - Ton plus mordant, absurde et théâtral : le personnage Ami est la cible de la plaisanterie, jamais la personne qui apprend.
 - Tirage aléatoire pour éviter les répétitions immédiates.
+
+
+## v5.17 — correction de l'affichage des images de réponse
+
+- Grille des choix illustrés forcée en colonnes flexibles, avec largeur et hauteur minimales explicites.
+- Images contraintes à remplir leur carte sans déformation, sur ordinateur comme sur mobile.
+- Si un fichier image ne charge pas, un pictogramme emoji de secours apparaît à la place d'une pastille vide.
+- Service worker régénéré pour prendre en compte les nouveaux fichiers CSS et JavaScript.
+
+
+## v5.18 — Ami Arcade : refonte graphique animée
+
+- Nouvelle direction visuelle arcade/cartoon avec halos colorés, ciel étoilé animé et plateau de jeu lumineux.
+- Cartes illustrées plus généreuses, relief renforcé, arrivée échelonnée et réactions au survol.
+- Boutons d'accueil colorés avec reflet animé.
+- Animations CSS du hibou : flottement, surprise et victoire, sans dépendance à un moteur 3D externe.
+- Bulles de correction façon bande dessinée et animations de combo.
+- Adaptation PC/tablette/mobile et respect de `prefers-reduced-motion`.
+- Aucun changement aux données, aux langues, aux voix, aux sauvegardes ou aux règles d'abonnement.
+
+Note technique : cette édition est une refonte 2.5D CSS/WebP. Elle ne prétend pas être un monde 3D WebGL complet ; elle privilégie un rendu expressif et fluide sur les appareils modestes.
+
+
+## Lancer la version de test
+Décompressez l'archive puis double-cliquez sur `LANCER-TEST.bat` sous Windows. Pour macOS/Linux, lancez `sh lancer-test.sh`. Voir `LIRE-POUR-TESTER.md`.

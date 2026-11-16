@@ -165,6 +165,22 @@
     return liste.filter(e => { const m = affiche(lang, MOTS[e][lang]).toLowerCase(); if(vu.has(m)) return false; vu.add(m); return true; });
   }
   const image = (e, cls) => '<img class="' + (cls || 'pic') + '" src="img/pictos/' + MOTS[e].img + '.webp" alt="" draggable="false">';
+
+  // Si une image ne se charge pas (fichier absent ou cache incomplet),
+  // garder une réponse visible et jouable plutôt qu'une pastille vide.
+  document.addEventListener('error', ev => {
+    const img = ev.target;
+    if(!img || !img.matches || !img.matches('.choix-img img')) return;
+    const bouton = img.closest('.choix-img');
+    if(!bouton || bouton.querySelector('.picto-secours')) return;
+    img.hidden = true;
+    const secours = document.createElement('span');
+    secours.className = 'picto-secours';
+    secours.setAttribute('aria-hidden', 'true');
+    secours.textContent = bouton.dataset.v || '🦉';
+    bouton.appendChild(secours);
+  }, true);
+
   const dirCible = () => RTL.includes(base.cible) ? 'rtl' : 'ltr';
   const nomMot = e => affiche(base.cible, MOTS[e][base.cible]);
 
