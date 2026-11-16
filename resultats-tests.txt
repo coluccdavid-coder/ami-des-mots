@@ -1,0 +1,67 @@
+
+> ami-des-mots@5.30.0 test
+> node tests/jeu.test.js
+
+Données et textes
+  ✔ chaque image existe, a un thème, et le mot en français
+  ✔ interface : chaque langue a EXACTEMENT les textes du français (jamais de français à la place)
+  ✔ même hachage que ReParole : la voix enregistrée du même mot est retrouvée
+  ✔ affichage : majuscules de la banque adoucies, allemand et turc respectés, arabe intact
+Le jeu
+  ✔ accueil → thèmes → jeu « écoute et trouve » : 4 images, la bonne parmi elles
+  ✘ une partie sans faute : 3 étoiles, des plumes, le jour, les mots notés — une seule clé gardée — Expected values to be strictly equal:
+
+undefined !== 3
+
+  ✘ une erreur ne bloque pas : l'image fausse est grisée, on réessaie, le mot revient à réviser — The expression evaluated to a falsy value:
+
+  assert.ok(d.querySelector('[data-a="repondre"][data-v="' + bonne + '"]:not([disabled])'))
+
+  ✘ révision espacée : juste → plus tard, faux → aujourd'hui ; « À revoir » ne propose que les mots dus — Cannot read properties of undefined (reading 'b')
+  ✔ défi du jour : 8 mots, le même toute la journée, plumes doublées une fois
+  ✘ vrai ou faux : la bonne réponse est notée juste — Cannot read properties of undefined (reading 'b')
+  ✔ lettres en vrac : remettre les lettres dans l'ordre réussit ; pas proposé en japonais et coréen
+  ✔ mémoire : deux cartes du même mot restent ouvertes
+  ✔ plusieurs joueurs : chacun sa progression ; « Qui joue ? » au lancement
+  ✘ reprise de la v1 : plumes, étoiles et vestiaire deviennent le premier joueur — Expected values to be strictly equal:
+
+'en' !== 'es'
+
+Les 50 jeux
+  ✔ catalogue : 50 jeux, 19 sortes, 6 familles ; chaque nom et consigne traduits
+  ✔ chacun des 50 jeux se lance et affiche de quoi répondre (français → anglais, et kabyle)
+  ✔ traduction : le mot français, les choix en anglais, la bonne réponse parmi eux
+  ✔ traduction absente quand on apprend sa propre langue
+  ✔ lettre manquante et première lettre : la bonne lettre réussit
+  ✔ relier : image puis mot, la paire se fixe ; l'intrus vient d'un autre thème
+  ✔ contre la montre : un compte à rebours, et la partie s'arrête seule
+Lecture facile (personnes dys)
+  ✔ lecture facile : se règle par joueur, 3 choix au plus, consigne à écouter, pas de chrono
+Apprendre avant de jouer
+  ✔ un mot jamais vu est présenté (image, mot, traduction) avant d'être demandé
+  ✔ « Je le connais déjà » passe la présentation
+  ✔ leçon : 5 mots d'un thème, présentés puis demandés 2 fois chacun, avec des choix parmi eux
+S'amuser et parler
+  ✘ une erreur fait rire Ami, sans jamais juger : 12 blagues par langue, jamais deux fois de suite — Ami, tu confonds « paresseux » et « paon » ? Même la chèvre du zoo a mieux identifié ses voisins. C'était : peacock (paon)
+  ✔ mot du jour et astuce du jour sur l'accueil ; page des conseils
+  ✔ « À toi ! » sans micro : on peut le dire à voix haute, 1 plume la première fois seulement
+  ✔ écoute lente et bouche disponibles sur la carte « Nouveau mot ! »
+Gratuit et Ami des mots Plus
+  ✔ gratuit : 3 thèmes et 3 jeux ouverts ; les autres mènent à la page Plus
+  ✔ gratuit : un seul joueur ; le deuxième demande Plus
+  ✔ défi du jour gratuit : il ne puise que dans les thèmes gratuits
+  ✔ abonnement : lien Stripe avec le code anonyme ; un certificat signé ouvre tout ; rien d'autre n'est envoyé
+  ✔ triche : modifier le stockage du navigateur ne débloque rien
+  ✔ abonnement terminé : tout se referme (après 3 jours de grâce hors ligne)
+  ✔ sauvegarde : un fichier qui restaure tous les joueurs ; un mauvais fichier est refusé
+  ✔ abonnement résilié : dès que le serveur répond « inactif », le certificat est oublié
+  ✔ sauvegarde piégée : valeurs absurdes bornées, clés inconnues ignorées, gros fichier refusé
+  ✘ langues : le choix de langue n'affiche que le nom de la langue — Cannot read properties of null (reading 'textContent')
+  ✔ voix : le texte prononcé est celui que ReParole a enregistré (minuscules), pas la majuscule de la banque
+  ✔ interface en arabe : de droite à gauche, aucun texte français (accueil et page Plus)
+  ✔ vestiaire : un accessoire se débloque avec les plumes, et se met
+  ✔ carnet : les mots rencontrés, avec leur traduction
+  ✔ aucune promesse de santé, aucun traceur ; un seul envoi : le code d'abonnement
+  ✔ hors connexion : le service worker garde le jeu et toutes ses images
+
+38 réussi(s), 7 échoué(s)

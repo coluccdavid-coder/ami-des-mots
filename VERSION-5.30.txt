@@ -1,0 +1,16 @@
+AMI DES MOTS — VERSION 5.30
+Le quartier vivant : édition aventure
+
+Nouveautés conservées de la v5.25 :
+- Voitures animées, oiseaux en vol, papillons, lucioles, soleil/lune/étoiles.
+- Quatre ambiances : journée, crépuscule, nuit magique et averse avec pluie.
+- Habitants qui se promènent et animations 3D.
+
+Nouvelles activités :
+- Paco le chien et Mina la chatte : deux compagnons 3D animés, avec promenades, oreilles, pattes et queues mobiles.
+- Deux mini-missions de vocabulaire autour des animaux, avec réponses et retours humoristiques liés à l'erreur.
+- Atelier des mots : un tableau dans le quartier propose un défi de grammaire, puis un défi bonus.
+- Interactions accessibles avec la touche E et le bouton à l'écran.
+- Progression des missions bonus sauvegardée localement.
+
+Le jeu conserve son univers graphique original et ses exercices existants.

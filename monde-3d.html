@@ -1,0 +1,505 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<meta name="theme-color" content="#171044">
+<title>Ami des Mots — Le quartier des découvertes</title>
+<style>
+:root{color-scheme:dark;--gold:#ffe27a;--mint:#37e0bd;--violet:#34248d}
+*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#11102d;color:#fff;font-family:Nunito,"Trebuchet MS",system-ui,sans-serif}
+#game{position:fixed;inset:0}canvas{display:block;width:100%;height:100%}
+#top{position:fixed;z-index:4;left:16px;right:16px;top:14px;display:flex;align-items:flex-start;justify-content:space-between;gap:12px;pointer-events:none}
+.panel{background:linear-gradient(145deg,rgba(38,28,100,.91),rgba(13,13,43,.9));border:1px solid rgba(255,255,255,.2);box-shadow:0 12px 35px #05051c66,inset 0 1px #ffffff24;backdrop-filter:blur(12px);border-radius:18px;padding:12px 16px}
+#brand{display:flex;align-items:center;gap:10px;font-weight:1000;font-size:clamp(16px,2vw,22px)}
+#brand img{width:42px;height:48px;object-fit:contain;filter:drop-shadow(0 4px 8px #0008)}
+#mission{max-width:min(420px,48vw);font-size:14px;line-height:1.35}
+#mission strong{display:block;color:var(--gold);font-size:12px;text-transform:uppercase;letter-spacing:.1em;margin-bottom:4px}
+#back{pointer-events:auto;color:white;text-decoration:none;font-weight:900;display:inline-flex;gap:7px;align-items:center}
+#hint{position:fixed;z-index:3;top:88px;left:50%;transform:translateX(-50%);text-align:center;white-space:nowrap;background:#100d38b8;border:1px solid #ffffff25;padding:8px 14px;border-radius:99px;font-size:13px;color:#e5ddff}
+#interact{position:fixed;z-index:5;bottom:22px;left:50%;transform:translateX(-50%);border:0;border-radius:999px;padding:15px 25px;background:linear-gradient(120deg,#ffe98d,#ffbd4c);color:#392300;font-size:16px;font-weight:1000;box-shadow:0 6px 0 #aa741b,0 14px 30px #0005;display:none}
+#dialog{position:fixed;z-index:8;left:50%;bottom:22px;transform:translateX(-50%);width:min(560px,calc(100% - 28px));display:none}
+#dialog h2{margin:0 0 6px;color:var(--gold);font-size:20px}
+#dialog p{margin:0 0 14px;line-height:1.5}#dialog{max-height:76vh;overflow:auto}
+.answers{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+.answers button,.close{border:1px solid #ffffff30;border-radius:13px;background:#ffffff15;color:#fff;padding:12px;font-weight:850;font-size:14px}
+.answers button:hover,.close:hover{background:#ffffff2b}
+#toast{position:fixed;z-index:9;left:50%;top:22%;transform:translate(-50%,-12px);opacity:0;pointer-events:none;background:#173f4b;border:1px solid #62f4d0;color:#dffff7;padding:12px 18px;border-radius:15px;font-weight:900;transition:.25s}
+#toast.show{opacity:1;transform:translate(-50%,0)}
+#controls{position:fixed;z-index:4;left:18px;bottom:20px;display:grid;grid-template-columns:48px 48px 48px;grid-template-rows:48px 48px;gap:5px;opacity:.88}
+#controls button{border:1px solid #ffffff40;border-radius:14px;background:#241c64b8;color:#fff;font-size:20px;font-weight:900;touch-action:none}
+#controls [data-dir=up]{grid-column:2}#controls [data-dir=left]{grid-column:1;grid-row:2}#controls [data-dir=down]{grid-column:2;grid-row:2}#controls [data-dir=right]{grid-column:3;grid-row:2}
+#help{position:fixed;z-index:3;right:18px;bottom:22px;max-width:230px;font-size:12px;line-height:1.4;color:#e2ddff;text-align:right;text-shadow:0 2px 8px #000}
+#progress{height:5px;border-radius:9px;background:#ffffff22;margin-top:8px;overflow:hidden}#progress span{display:block;height:100%;width:0;background:linear-gradient(90deg,#48e6bf,#ffe27a);transition:width .3s}
+#journal{display:none;position:fixed;z-index:7;right:18px;top:105px;width:min(350px,calc(100% - 36px));}
+#journal h2{margin:0 0 8px;color:var(--gold)}#journal p{line-height:1.4}
+#journal ul{padding-left:22px;line-height:2.1}#journal li.done{color:#74f1cf;text-decoration:line-through}
+.journal-tip{font-size:12px;color:#d9d0ff;border-top:1px solid #ffffff22;padding-top:9px}
+.top-actions{display:flex;align-items:center;gap:12px;font-weight:900;pointer-events:auto}
+.ui-btn{border:1px solid #ffffff30;border-radius:10px;background:#ffffff18;color:#fff;padding:7px 10px;font-weight:850}
+#mapPanel{display:none;position:fixed;z-index:7;right:18px;top:110px;width:290px}
+.map-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;color:var(--gold)}
+#mapCanvas{display:block;width:100%;height:auto;border-radius:12px;background:#182b43;border:1px solid #ffffff33}
+#mapPanel small{display:block;margin-top:7px;color:#ded7ff;font-size:11px}
+
+/* v5.24 — tactile feedback and richer game HUD */
+#controls{gap:7px;filter:drop-shadow(0 8px 18px #09082088)}
+#controls button{border:1px solid #ffffff70;border-radius:17px;background:linear-gradient(145deg,#5d5a9d,#24204f);box-shadow:inset 0 1px 0 #ffffff55,0 5px 0 #0a0925;color:#fff;font-size:23px;transition:transform .08s,filter .12s}
+#controls button:active{transform:translateY(4px) scale(.97);filter:brightness(1.25);box-shadow:inset 0 1px 0 #ffffff55,0 1px 0 #0a0925}
+#top,.panel{backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px)}
+@media(max-width:650px){#mapPanel{top:90px;right:8px;width:245px}.top-actions{max-width:68vw;flex-wrap:wrap;justify-content:flex-end}.top-actions #back{font-size:10px}}
+@media(max-width:650px){.top-actions{gap:7px;padding:8px}.top-actions #back{font-size:11px}.top-actions #feathers{font-size:12px}.ui-btn{font-size:11px;padding:6px 8px}#journal{top:90px;right:8px}}
+@media(max-width:650px){#top{left:8px;right:8px;top:8px}#brand{font-size:14px}#brand img{width:32px;height:38px}#mission{font-size:11px;max-width:48vw;padding:9px}#hint{top:72px;font-size:11px}#help{display:none}#controls{left:10px;bottom:12px;transform:scale(.9);transform-origin:bottom left}#interact{bottom:18px;left:auto;right:12px;transform:none;padding:14px 18px}#dialog{bottom:10px}.panel{padding:10px 12px}}
+</style>
+</head>
+<body>
+<div id="game"></div>
+<div id="top">
+ <div class="panel" id="brand"><img src="img/ami-3d.webp" alt=""> <span>AMI DES MOTS<br><small style="font-size:11px;color:#c9c0ff;font-weight:700">Le quartier des découvertes · aventure 3D</small></span></div>
+ <div class="panel" id="mission"><strong>🎯 Ta première mission</strong><span id="missionText">Va parler à Léa, la marchande du marché.</span><div id="progress"><span id="progressBar"></span></div></div>
+ <div class="panel top-actions"><span id="feathers">🪶 0</span><button id="journalBtn" class="ui-btn">📖 Carnet</button><button id="mapBtn" class="ui-btn">🗺️ Carte</button><button id="skyBtn" class="ui-btn">🌅 Ambiance</button><a id="back" href="index.html">← Retour</a></div>
+</div>
+<div id="hint">ZQSD / WASD ou flèches : marcher · E : parler, jouer ou caresser · Maj : courir</div>
+<div id="toast"></div>
+<div id="mapPanel" class="panel"><div class="map-head"><b>🗺️ Le quartier</b><button id="mapClose" class="close">✕</button></div><canvas id="mapCanvas" width="260" height="220"></canvas><small>● Toi　● Habitants　✦ Plumes</small></div>
+<div id="journal" class="panel">
+ <button id="journalClose" class="close" style="float:right">✕</button>
+ <h2>📖 Carnet d'Ami</h2>
+ <p>Ton aventure dans le quartier des mots.</p>
+ <ul id="journalList">
+  <li data-step="0">🍎 Aider Léa à préparer sa tarte</li>
+  <li data-step="1">🏫 Aider Max à trouver l'école</li>
+  <li data-step="2">🌳 Répondre à la devinette de Zoé</li><li data-step="3">☕ Aider Milo au café</li>
+ </ul>
+ <p class="journal-tip">Astuce : explore la place pour trouver les plumes dorées cachées !</p>
+ <button id="resetAdventure" class="close" style="width:100%">↻ Recommencer l’aventure (test)</button>
+</div>
+<button id="interact">Parler / Interagir&nbsp; E</button>
+<div id="controls">
+ <button data-dir="up" aria-label="Avancer">▲</button><button data-dir="left" aria-label="Gauche">◀</button><button data-dir="down" aria-label="Reculer">▼</button><button data-dir="right" aria-label="Droite">▶</button>
+</div>
+<div id="help">🖥️ Flèches / ZQSD / WASD : marcher<br>↔ Glisser : orienter la caméra<br>⌨️ E : parler / interagir<br>🏃 Maj : courir · Espace : saut</div>
+<div id="dialog" class="panel">
+ <h2 id="dialogTitle">Bonjour !</h2><p id="dialogText"></p><div class="answers" id="answers"></div>
+ <button class="close" id="closeDialog" style="margin-top:9px;width:100%">Fermer</button>
+</div>
+<script type="importmap">
+{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js"}}
+</script>
+<script type="module">
+import * as THREE from 'three';
+const root=document.querySelector('#game');
+const scene=new THREE.Scene();scene.background=new THREE.Color(0x8cc9f2);scene.fog=new THREE.Fog(0x8cc9f2,32,90);
+const camera=new THREE.PerspectiveCamera(53,innerWidth/innerHeight,.1,180);
+const renderer=new THREE.WebGLRenderer({antialias:true,powerPreference:'high-performance'});
+renderer.setPixelRatio(Math.min(devicePixelRatio,2));renderer.setSize(innerWidth,innerHeight);renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap;renderer.outputColorSpace=THREE.SRGBColorSpace;renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.2;root.appendChild(renderer.domElement);
+scene.add(new THREE.HemisphereLight(0xd9efff,0x60704b,2));
+const sun=new THREE.DirectionalLight(0xffedcf,3.2);sun.position.set(-18,30,12);sun.castShadow=true;sun.shadow.mapSize.set(2048,2048);sun.shadow.bias=-0.00018;sun.shadow.normalBias=.025;sun.shadow.camera.left=-40;sun.shadow.camera.right=40;sun.shadow.camera.top=40;sun.shadow.camera.bottom=-40;scene.add(sun);
+const mat=(color,roughness=.85)=>new THREE.MeshStandardMaterial({color,roughness});
+const grass=mat(0x6cbf83),road=mat(0x555c70),sidewalk=mat(0xc8c4bd),white=mat(0xffffff),wood=mat(0x8d5735),roof=mat(0x934e4a),glass=mat(0x83d9ed,.35),leaf=mat(0x3c9d68),gold=mat(0xffd45c),dark=mat(0x253047);
+function box(parent,x,y,z,w,h,d,material){const m=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),material);m.position.set(x,y,z);m.castShadow=true;m.receiveShadow=true;parent.add(m);return m}
+function sphere(parent,x,y,z,r,material,scale=[1,1,1]){const m=new THREE.Mesh(new THREE.SphereGeometry(r,20,16),material);m.position.set(x,y,z);m.scale.set(...scale);m.castShadow=true;parent.add(m);return m}
+const ground=box(scene,0,-.35,0,100,.5,100,grass);
+box(scene,0,-.05,0,13,.18,100,road);box(scene,0,-.02,0,15,.16,100,sidewalk);
+box(scene,-20,-.05,0,27,.18,10,road);box(scene,-20,-.01,0,27,.16,12,sidewalk);
+for(let z=-43;z<48;z+=8){box(scene,0,.055,z, .25,.03,3,mat(0xf5e6a9))}
+function tree(x,z,s=1){const g=new THREE.Group();g.position.set(x,0,z);scene.add(g);box(g,0,1*s,0,.42*s,2*s,.42*s,wood);sphere(g,0,2.6*s,0,1.25*s,leaf,[1,1.15,1]);sphere(g,-.65*s,2.25*s,.12*s,.8*s,mat(0x55b978));sphere(g,.6*s,2.35*s,-.1*s,.85*s,mat(0x318e5b))}
+for(const [x,z] of [[-10,-20],[10,-22],[-11,-7],[11,-6],[-11,13],[11,18],[-24,-17],[-25,9],[22,-20],[23,12]])tree(x,z,.85+Math.random()*.35);
+function building(x,z,w,d,h,color,label){const g=new THREE.Group();g.position.set(x,0,z);scene.add(g);box(g,0,h/2,0,w,h,d,mat(color));const r=new THREE.Mesh(new THREE.ConeGeometry(Math.max(w,d)*.78, h*.28,4),roof);r.position.y=h+h*.14;r.rotation.y=Math.PI/4;r.scale.set(1,.7,d/w);r.castShadow=true;g.add(r);for(let wx=-w*.28;wx<=w*.29;wx+=w*.56){box(g,wx,h*.57,d/2+.02,w*.18,h*.2,.08,glass);box(g,wx,h*.57,d/2+.08,.06,h*.24,.06,wood)}box(g,0,h*.22,d/2+.08,w*.2,h*.42,.1,wood);const sign=box(g,0,h*.84,d/2+.1,w*.82,.48,.12,gold);sign.material=mat(0xffd66b);const canvas=document.createElement('canvas');canvas.width=512;canvas.height=128;const ctx=canvas.getContext('2d');ctx.fillStyle='#3a276e';ctx.font='bold 54px system-ui';ctx.textAlign='center';ctx.fillText(label,256,82);const tex=new THREE.CanvasTexture(canvas);const sm=new THREE.Mesh(new THREE.PlaneGeometry(w*.8,.42),new THREE.MeshBasicMaterial({map:tex,transparent:true}));sm.position.set(0,h*.84,d/2+.17);g.add(sm);return g}
+building(-9,-17,7,6,5.5,0xffc98e,'LE MARCHÉ');building(9,-17,7,6,5.8,0xf3a4a0,'ÉCOLE');building(-9,15,7,6,5.4,0xa4c9f0,'MAISON');building(9,15,7,6,5.8,0xf0d08c,'CAFÉ');
+function bench(x,z){const g=new THREE.Group();g.position.set(x,0,z);scene.add(g);box(g,0,.65,0,2,.18,.6,wood);for(const dx of [-.7,.7])box(g,dx,.32,0,.15,.65,.5,dark);box(g,0,1, -.23,2,.55,.15,wood)}
+bench(-5,-4);bench(5,8);
+const fountain=new THREE.Group();fountain.position.set(0,0,4);scene.add(fountain);const stone=mat(0xaaaec1);const basin=new THREE.Mesh(new THREE.CylinderGeometry(2.2,2.5,.45,32),stone);basin.position.y=.25;basin.receiveShadow=true;fountain.add(basin);const water=new THREE.Mesh(new THREE.CylinderGeometry(1.95,1.95,.12,32),mat(0x53c9e8,.25));water.position.y=.51;fountain.add(water);const pillar=new THREE.Mesh(new THREE.CylinderGeometry(.25,.4,1.6,16),stone);pillar.position.y=1.2;fountain.add(pillar);sphere(fountain,0,2.1,0,.55,gold);
+function makeOwl(){const g=new THREE.Group();const brown=mat(0x98603d),cream=mat(0xffe8c8),orange=mat(0xf4a33c),black=mat(0x17231f),eye=mat(0xffffff);sphere(g,0,1.25,0,.65,brown,[.78,1.12,.62]);for(const x of [-.38,.38]){const ear=new THREE.Mesh(new THREE.ConeGeometry(.19,.55,4),brown);ear.position.set(x,2.02,0);ear.rotation.z=x<0?-.3:.3;g.add(ear);sphere(g,x*.78,1.48,.48,.31,cream,[1,1,.42]);sphere(g,x*.78,1.49,.62,.2,eye);sphere(g,x*.78,1.49,.78,.105,black)}const beak=new THREE.Mesh(new THREE.ConeGeometry(.13,.24,4),orange);beak.position.set(0,1.25,.69);beak.rotation.x=Math.PI/2;g.add(beak);sphere(g,0,.9,.43,.38,cream,[.75,.8,.22]);for(const x of [-.28,.28]){const wing=sphere(g,x,1.12,0,.22,mat(0x805034),[.55,1.15,.5]);wing.rotation.z=x<0?-.45:.45}for(const x of [-.2,.2]){box(g,x,.25,.02,.09,.3,.1,orange);box(g,x,.1,.13,.23,.07,.28,orange)}return g}
+// Petits détails vivants : lampadaires, jardinières, bancs fleuris et nuages.
+const lampMat=new THREE.MeshStandardMaterial({color:0x39445e,metalness:.55,roughness:.35});
+const glowMat=new THREE.MeshStandardMaterial({color:0xffefb0,emissive:0xffc85a,emissiveIntensity:1.4});
+const lamps=[];
+for(const [x,z] of [[-7,-4],[7,-4],[-7,8],[7,20],[-15,18],[15,-23]]){
+ const lg=new THREE.Group();lg.position.set(x,0,z);scene.add(lg);
+ const pole=new THREE.Mesh(new THREE.CylinderGeometry(.07,.11,3.2,10),lampMat);pole.position.y=1.6;lg.add(pole);
+ const arm=new THREE.Mesh(new THREE.BoxGeometry(.75,.08,.08),lampMat);arm.position.set(.3,3.1,0);lg.add(arm);
+ const bulb=new THREE.Mesh(new THREE.SphereGeometry(.2,12,10),glowMat);bulb.position.set(.62,3.02,0);lg.add(bulb);
+ const light=new THREE.PointLight(0xffd98a,0,9,2);light.position.copy(bulb.position);lg.add(light);lamps.push(light);
+}
+for(const [x,z] of [[-4,3],[4,3],[-14,10],[14,10],[-14,-26],[14,-26]]){
+ const planter=new THREE.Group();planter.position.set(x,0,z);scene.add(planter);
+ const pot=new THREE.Mesh(new THREE.BoxGeometry(1.8,.42,.9),mat(0xb87959));pot.position.y=.22;planter.add(pot);
+ for(let i=0;i<5;i++){const fl=sphere(planter,-.68+i*.34,.65,0,.18,mat([0xff8aa6,0xffd36b,0xb9a0ff][i%3]));sphere(planter,-.68+i*.34,.84,0,.1,gold)}
+}
+const clouds=[];
+for(let i=0;i<7;i++){const c=new THREE.Group();c.position.set(-35+i*11,18+(i%3)*2,-30+(i%4)*18);scene.add(c);for(let j=0;j<4;j++){const puff=new THREE.Mesh(new THREE.SphereGeometry(1.8+(j%2)*.4,12,10),new THREE.MeshStandardMaterial({color:0xffffff,roughness:1,transparent:true,opacity:.82}));puff.position.set((j-1.5)*1.55,(j%2)*.45,0);c.add(puff)}clouds.push(c)}
+const player=makeOwl();player.position.set(0,0,27);scene.add(player);
+function npc(x,z,name,shirt,skin=0xffd0a8,hair=0x573b32){
+ const g=new THREE.Group();g.position.set(x,0,z);scene.add(g);
+ const skinMat=mat(skin,.86),shirtMat=mat(shirt,.82),pants=mat(0x35415f,.9),shoe=mat(0x3a2c28,.8),hairMat=mat(hair,.95),white=mat(0xfff4df,.7);
+ // Body and head: deliberately rounded, storybook 3D proportions.
+ const torso=new THREE.Group();torso.position.y=.95;g.add(torso);
+ sphere(torso,0,.05,0,.43,shirtMat,[.9,1.12,.62]);
+ sphere(torso,0,.69,.015,.34,skinMat,[.92,1.04,.9]);
+ sphere(torso,0,.9,-.055,.34,hairMat,[1.03,.5,.95]);
+ // Hair cap / fringe and friendly expressive eyes.
+ sphere(torso,-.13,.75,.3,.055,white,[1,1,.45]);sphere(torso,.13,.75,.3,.055,white,[1,1,.45]);
+ sphere(torso,-.13,.75,.34,.027,mat(0x25202a));sphere(torso,.13,.75,.34,.027,mat(0x25202a));
+ sphere(torso,0,.59,.33,.045,mat(0xe78c78),[1,.55,.55]);
+ // Neck scarf / collar and shirt detail.
+ sphere(torso,0,.39,.23,.13,mat(0xffd36c),[1,.42,.38]);
+ box(torso,0,.02,.255,.22,.055,.025,mat(0xffffff));
+ const arms=[],legs=[];
+ for(const side of [-1,1]){
+  const arm=new THREE.Group();arm.position.set(side*.39,.28,0);torso.add(arm);
+  const sleeve=new THREE.Mesh(new THREE.CapsuleGeometry(.105,.34,4,8),shirtMat);sleeve.rotation.z=side*-.18;sleeve.position.y=-.2;arm.add(sleeve);
+  const hand=sphere(arm,side*-.025,-.44,.02,.105,skinMat,[.9,1,.9]);arms.push(arm);
+  const leg=new THREE.Group();leg.position.set(side*.18,-.36,0);g.add(leg);
+  const thigh=new THREE.Mesh(new THREE.CapsuleGeometry(.12,.33,4,8),pants);thigh.position.y=-.22;leg.add(thigh);
+  const foot=box(leg,0,-.44,.11,.22,.13,.34,shoe);legs.push(leg);
+ }
+ // Small backpack, so the characters read as people with their own roles.
+ const pack=box(g,0,1.12,-.34,.42,.5,.2,mat(name.includes('Max')?0x5475a8:name.includes('Zoé')?0x478a69:0x9c6842));
+ const marker=new THREE.Mesh(new THREE.TorusGeometry(.55,.07,8,24),gold);marker.position.y=2.35;g.add(marker);
+ const dot=sphere(g,0,2.78,0,.16,gold);
+ return {g,name,marker,dot,arms,legs,torso,home:new THREE.Vector3(x,0,z),phase:Math.random()*6.28,waypoints:[],waypoint:0,pause:0,walk:0};
+}
+const lea=npc(-6,-11,'Léa la marchande',0xe65b82,0xf1c49d,0x70452f),max=npc(7,-10,'Max le curieux',0x4c89d9,0xd99d73,0x49352b),zoe=npc(0,14,'Zoé',0x55b98a,0xf2c7a5,0x754b36),milo=npc(9,11,'Milo le chef',0xe7a23e,0xc98b61,0x49332c);
+
+milo.g.scale.setScalar(.94);
+// Chaque habitant suit une petite promenade autour de son lieu de vie.
+// Les trajets sont courts pour garder les interactions faciles à trouver.
+lea.waypoints=[[-7.4,-12.2],[-4.9,-12.5],[-4.6,-9.7],[-7.1,-9.2]].map(([x,z])=>new THREE.Vector3(x,0,z));
+max.waypoints=[[6,-11.5],[8.7,-11.4],[9,-8.7],[6.1,-8.6]].map(([x,z])=>new THREE.Vector3(x,0,z));
+zoe.waypoints=[[-1.5,13],[1.5,12.4],[1.9,15.3],[-1.3,15.7]].map(([x,z])=>new THREE.Vector3(x,0,z));
+milo.waypoints=[[8,10],[10.5,9.8],[10.8,12.2],[8.2,12.5]].map(([x,z])=>new THREE.Vector3(x,0,z));
+const residents=[lea,max,zoe,milo];
+
+// --- NOUVEAUX COMPAGNONS : Paco le chien et Mina la chatte ---
+function makePet(kind,x,z,fur,accent){
+ const g=new THREE.Group();g.position.set(x,0,z);scene.add(g);
+ const coat=mat(fur,.9),detail=mat(accent,.92),dark=mat(0x29242a,.65),eye=mat(0xfff7df,.45),nose=mat(0x29232b,.5);
+ const body=sphere(g,0,.48,0,.48,coat,[1.35,.78,.82]);
+ const head=new THREE.Group();head.position.set(0,.85,.42);g.add(head);
+ sphere(head,0,0,0,.34,coat,[1,.95,.9]);
+ sphere(head,-.12,-.1,.27,.11,eye,[1,1,.55]);sphere(head,.12,-.1,.27,.11,eye,[1,1,.55]);
+ sphere(head,-.12,-.1,.34,.052,dark);sphere(head,.12,-.1,.34,.052,dark);
+ sphere(head,0,-.22,.31,.07,nose,[1,.65,.65]);
+ const ears=[];
+ for(const side of [-1,1]){
+  const ear=sphere(head,side*.24,.22,-.015,kind==='dog'?.17:.14,detail,[.68,1.4,.5]);
+  ear.rotation.z=side*(kind==='dog'?.2:.48);ears.push(ear);
+ }
+ const legs=[];
+ for(const sx of [-1,1])for(const sz of [-1,1]){
+  const leg=new THREE.Group();leg.position.set(sx*.28,.38,sz*.25);g.add(leg);
+  const limb=new THREE.Mesh(new THREE.CapsuleGeometry(.085,.3,4,8),coat);limb.position.y=-.17;leg.add(limb);
+  sphere(leg,0,-.34,.035,.1,detail,[1,.5,1]);legs.push(leg);
+ }
+ const tail=new THREE.Group();tail.position.set(0,.68,-.55);g.add(tail);
+ const tailMesh=new THREE.Mesh(new THREE.CapsuleGeometry(.075,kind==='dog'?.48:.35,4,8),coat);
+ tailMesh.position.set(0,.23,-.08);tailMesh.rotation.x=kind==='dog'?-.85:-.45;tail.add(tailMesh);
+ if(kind==='cat')tail.rotation.x=-.9;
+ // Collar and tiny tag.
+ const collar=new THREE.Mesh(new THREE.TorusGeometry(.19,.045,8,20),detail);collar.position.set(0,.78,.43);collar.rotation.x=Math.PI/2;g.add(collar);
+ sphere(g,0,.72,.62,.055,gold,[.85,1,.5]);
+ return {g,head,legs,tail,ears,kind,name:kind==='dog'?'Paco le chien 🐶':'Mina la chatte 🐱',phase:Math.random()*6.28,walk:0,waypoints:[],waypoint:0,pause:0,home:new THREE.Vector3(x,0,z)};
+}
+const paco=makePet('dog',-10,4,0xc68b56,0xffe0a0);
+const mina=makePet('cat',11,3,0x9da5b2,0xf4d8a8);
+paco.waypoints=[[-10,4],[-7,3],[-7,6],[-11,7]].map(([x,z])=>new THREE.Vector3(x,0,z));
+mina.waypoints=[[11,3],[13,2],[13,5],[10,6]].map(([x,z])=>new THREE.Vector3(x,0,z));
+const petResidents=[paco,mina];
+const petQuest=JSON.parse(localStorage.getItem('ami3d_pet_quest')||'{}');
+
+// --- ATELIER DES MOTS : un petit espace de défi au cœur du quartier ---
+const wordBoard=new THREE.Group();wordBoard.position.set(0,0,-3.8);scene.add(wordBoard);
+const boardWood=mat(0x805239,.78),chalk=mat(0x173d3c,.95),chalkFrame=mat(0xf0c982,.7);
+box(wordBoard,0,1.65,0,3.9,2.35,.22,boardWood);
+box(wordBoard,0,1.67,.14,3.55,1.95,.08,chalk);
+for(const x of [-1.55,1.55])box(wordBoard,x,.85,0,.16,1.7,.18,boardWood);
+box(wordBoard,0,.62,.12,4.15,.15,.48,boardWood);
+const boardCanvas=document.createElement('canvas');boardCanvas.width=768;boardCanvas.height=320;
+const bctx=boardCanvas.getContext('2d');bctx.fillStyle='#e7f2d9';bctx.textAlign='center';
+bctx.font='bold 52px system-ui';bctx.fillText('ATELIER DES MOTS',384,105);
+bctx.font='34px system-ui';bctx.fillText('Un mot juste, une plume de plus !',384,180);
+const boardTex=new THREE.CanvasTexture(boardCanvas);
+const boardLabel=new THREE.Mesh(new THREE.PlaneGeometry(3.4,1.42),new THREE.MeshBasicMaterial({map:boardTex,transparent:true}));
+boardLabel.position.set(0,1.68,.205);wordBoard.add(boardLabel);
+const chalks=box(wordBoard,-1.25,.78,.34,.42,.07,.12,mat(0xffdf83));
+wordBoard.name='Atelier des mots ✏️';wordBoard.g=wordBoard;
+const boardQuest=JSON.parse(localStorage.getItem('ami3d_board_quest')||'{}');
+
+
+
+
+// Plumes à collectionner : elles guident l'exploration et donnent un petit son de récompense.
+const pickups=[];
+const featherSpots=[[-3,-23],[4,-13],[-12,4],[12,5],[1,24],[-20,-3],[20,1],[0,-31],[-18,24],[18,27]];
+let collected=JSON.parse(localStorage.getItem('ami3d_collected')||'[]');
+if(!Array.isArray(collected))collected=[];
+featherSpots.forEach(([x,z],i)=>{
+ const g=new THREE.Group();g.position.set(x,.9,z);scene.add(g);
+ const stem=new THREE.Mesh(new THREE.CapsuleGeometry(.09,.48,4,8),gold);stem.rotation.z=-.55;g.add(stem);
+ const feather=new THREE.Mesh(new THREE.SphereGeometry(.22,12,10),mat(0xffe58a));feather.scale.set(.55,1.45,.22);feather.position.x=.13;feather.rotation.z=-.5;g.add(feather);
+ const halo=new THREE.Mesh(new THREE.TorusGeometry(.36,.035,6,24),mat(0xffe27a));halo.rotation.x=Math.PI/2;g.add(halo);
+ const taken=collected.includes(i);g.visible=!taken;
+ pickups.push({g,taken,id:i});
+});
+const keys={};addEventListener('keydown',e=>{if(['ArrowUp','ArrowDown','ArrowLeft','ArrowRight',' '].includes(e.key))e.preventDefault();keys[e.key.toLowerCase()]=true;if(e.key.toLowerCase()==='e')interact()});addEventListener('keyup',e=>keys[e.key.toLowerCase()]=false);
+let yaw=0,drag=false,lastX=0,active=null,jumpV=0,cameraDistance=7,mission=Number(localStorage.getItem('ami3d_mission')||0),dialogOpen=false,feathers=Number(localStorage.getItem('ami3d_feathers')||0);
+mission=Math.min(4,Math.max(0,mission));
+document.querySelector('#feathers').textContent='🪶 '+feathers;
+document.querySelector('#journalBtn').onclick=()=>{const j=document.querySelector('#journal');j.style.display=j.style.display==='block'?'none':'block'};
+document.querySelector('#journalClose').onclick=()=>document.querySelector('#journal').style.display='none';
+document.querySelector('#resetAdventure').onclick=()=>{
+ if(!confirm('Recommencer le quartier ? La progression et les plumes de ce monde 3D seront remises à zéro.'))return;
+ mission=0;feathers=0;collected=[];localStorage.removeItem('ami3d_mission');localStorage.removeItem('ami3d_feathers');localStorage.removeItem('ami3d_collected');
+ pickups.forEach(p=>{p.taken=false;p.g.visible=true});
+ document.querySelector('#feathers').textContent='🪶 0';updateMission();document.querySelector('#journal').style.display='none';toast('Nouvelle aventure ! Ami a ciré ses petites pattes. 🦉');
+};
+
+document.querySelector('#mapBtn').onclick=()=>{const m=document.querySelector('#mapPanel');m.style.display=m.style.display==='block'?'none':'block';drawMap()};
+document.querySelector('#mapClose').onclick=()=>document.querySelector('#mapPanel').style.display='none';
+const mapCtx=document.querySelector('#mapCanvas').getContext('2d');
+function drawMap(){
+ const c=mapCtx;c.clearRect(0,0,260,220);c.fillStyle='#294c52';c.fillRect(0,0,260,220);
+ c.fillStyle='#646c7c';c.fillRect(116,0,28,220);c.fillRect(0,100,260,24);
+ c.fillStyle='#b7b0a2';c.fillRect(105,0,50,220);c.fillRect(0,88,260,48);
+ c.fillStyle='#3f805f';for(const [x,y] of [[-6,-11],[7,-10],[0,14],[9,11]]){const px=130+x*3.1,py=110+y*2.4;c.beginPath();c.arc(px,py,7,0,Math.PI*2);c.fill()}
+ c.fillStyle='#ffe27a';for(const [x,z] of featherSpots){if(!collected.includes(featherSpots.findIndex(a=>a[0]===x&&a[1]===z))){c.beginPath();c.arc(130+x*3.1,110+z*2.4,3,0,Math.PI*2);c.fill()}}
+ c.fillStyle='#53e5c2';c.beginPath();c.arc(130+player.position.x*3.1,110+player.position.z*2.4,5,0,Math.PI*2);c.fill();
+}
+let skyMode=0;
+const skyModes=[{name:'☀️ Journée',bg:0x8cc9f2,fog:0x8cc9f2,hemi:2.0,sun:3.2,lamps:0,rain:false},{name:'🌇 Crépuscule',bg:0xf09a83,fog:0xd98b8a,hemi:1.1,sun:1.4,lamps:.45,rain:false},{name:'🌙 Nuit magique',bg:0x101638,fog:0x182044,hemi:.42,sun:.25,lamps:2.2,rain:false},{name:'🌧️ Averse',bg:0x566d89,fog:0x566d89,hemi:.8,sun:.35,lamps:1.4,rain:true}];
+function setSky(){const s=skyModes[skyMode];scene.background.setHex(s.bg);scene.fog.color.setHex(s.fog);scene.children.forEach(o=>{if(o.isHemisphereLight)o.intensity=s.hemi;if(o===sun)o.intensity=s.sun});lamps.forEach(l=>l.intensity=s.lamps);rain.visible=!!s.rain;fireflies.forEach(f=>f.m.visible=skyMode===2);sunOrb.visible=skyMode===0||skyMode===1;moonOrb.visible=skyMode===2;stars.visible=skyMode===2;document.querySelector('#skyBtn').textContent=s.name;toast('Ambiance : '+s.name.replace(/[^\p{L} ]/gu,''))}
+document.querySelector('#skyBtn').onclick=()=>{skyMode=(skyMode+1)%skyModes.length;setSky()};
+
+renderer.domElement.addEventListener('pointerdown',e=>{drag=true;lastX=e.clientX});addEventListener('pointerup',()=>drag=false);addEventListener('pointermove',e=>{if(drag){yaw-=(e.clientX-lastX)*.006;lastX=e.clientX}});
+addEventListener('wheel',e=>{cameraDistance=THREE.MathUtils.clamp(cameraDistance+e.deltaY*.008,4.5,11)},{passive:true});
+const move={up:false,down:false,left:false,right:false};document.querySelectorAll('#controls button').forEach(b=>{const d=b.dataset.dir;const on=e=>{e.preventDefault();move[d]=true;try{b.setPointerCapture(e.pointerId)}catch(_){}},off=e=>{e.preventDefault();move[d]=false};b.addEventListener('pointerdown',on);b.addEventListener('pointerup',off);b.addEventListener('lostpointercapture',off);b.addEventListener('pointercancel',off)});
+let audioCtx=null;
+function sfx(kind='good'){try{audioCtx ||= new (window.AudioContext||window.webkitAudioContext)();if(audioCtx.state==='suspended')audioCtx.resume();const now=audioCtx.currentTime;[0,1,2].slice(0,kind==='bad'?1:3).forEach((v)=>{const o=audioCtx.createOscillator(),g=audioCtx.createGain();o.type='sine';o.frequency.value=(kind==='bad'?180:kind==='pick'?680:520)+v*(kind==='bad'?0:kind==='pick'?180:170);g.gain.setValueAtTime(.0001,now+v*.075);g.gain.exponentialRampToValueAtTime(.08,now+v*.075+.015);g.gain.exponentialRampToValueAtTime(.0001,now+v*.075+.13);o.connect(g);g.connect(audioCtx.destination);o.start(now+v*.075);o.stop(now+v*.075+.14)})}catch(e){}}
+function toast(s){const t=document.querySelector('#toast');t.textContent=s;t.classList.add('show');clearTimeout(window.__amiToast);window.__amiToast=setTimeout(()=>t.classList.remove('show'),2100)}
+function showDialog(title,text,answers){dialogOpen=true;document.querySelector('#dialogTitle').textContent=title;document.querySelector('#dialogText').textContent=text;const a=document.querySelector('#answers');a.innerHTML='';answers.forEach(o=>{const b=document.createElement('button');b.textContent=o.label;b.onclick=()=>o.action();a.appendChild(b)});document.querySelector('#dialog').style.display='block';document.querySelector('#interact').style.display='none'}
+function closeDialog(){dialogOpen=false;document.querySelector('#dialog').style.display='none'}
+document.querySelector('#closeDialog').onclick=closeDialog;
+function updateMission(){
+ const labels=['Va parler à Léa, la marchande du marché.','Retrouve Max devant l’école et aide-le.','Rejoins Zoé près du jardin.','Va aider Milo à préparer le goûter au café.','Bravo ! Le quartier est à toi : explore et ramasse les plumes.'];
+ document.querySelector('#missionText').textContent=labels[mission];
+ document.querySelector('#progressBar').style.width=(mission/4*100)+'%';
+ document.querySelectorAll('#journalList li').forEach((li,i)=>li.classList.toggle('done',i<mission));
+ localStorage.setItem('ami3d_mission',mission);
+}
+function wrong(line){sfx('bad');toast(line)}
+function reward(line){sfx('good');toast(line)}
+function finishStep(){mission=Math.min(4,mission+1);updateMission();closeDialog();reward(mission===4?'Quartier terminé ! Ami réclame une médaille… et une sieste ! 🦉':'Mission réussie ! Une plume pour ton carnet ! 🪶')}
+function interact(){
+ if(!active||dialogOpen)return;
+ if(active===lea){
+  if(mission===0)showDialog('Léa la marchande 🍎','« Je prépare une tarte. Comment dit-on “apple” en français ?',[
+   {label:'🍎 Pomme',action:finishStep},{label:'🚲 Vélo',action:()=>{closeDialog();wrong('Un vélo dans une tarte ? Léa cuisine original, mais non ! 😄')}}]);
+  else showDialog('Léa la marchande','Pour commander, complète : « Je voudrais une ___, s’il vous plaît. »',[{label:'🍎 pomme',action:()=>{closeDialog();reward('Parfait ! La politesse ouvre toutes les portes.')}},{label:'🧦 chaussette',action:()=>{closeDialog();wrong('La tarte à la chaussette n’est pas encore au menu !')}}]);
+ }else if(active===max){
+  if(mission===1)showDialog('Max le curieux 🏫','« Je cherche le bâtiment où les enfants apprennent. En anglais, c’est “school”. Quel est le mot français ? »',[
+   {label:'🏫 École',action:finishStep},{label:'🍰 Gâteau',action:()=>{closeDialog();wrong('Max adore les gâteaux, mais il cherche une école, pas une pâtisserie !')}}]);
+  else showDialog('Max le curieux','Construis la phrase : « Je vais ___ école. »',[{label:'à l’',action:()=>{closeDialog();reward('Exact ! « Je vais à l’école. »')}},{label:'sous le',action:()=>{closeDialog();wrong('À moins que l’école soit enterrée… on dit « à l’école » !')}}]);
+ }else if(active===zoe){
+  if(mission===2)showDialog('Zoé la jardinière 🌳','« Regarde les arbres et l’herbe. Le jardin est de quelle couleur ? »',[
+   {label:'🌳 Vert',action:finishStep},{label:'🍓 Rayé fraise',action:()=>{closeDialog();wrong('Un jardin goût fraise ? Miam… mais il est vert !')}}]);
+  else showDialog('Zoé la jardinière','Complète : « Les oiseaux ___ dans les arbres. »',[{label:'🎶 chantent',action:()=>{closeDialog();reward('Super ! Tu viens de construire une phrase.')}},{label:'🛏️ dorment la vaisselle',action:()=>{closeDialog();wrong('Les oiseaux sont étonnés : ils n’ont jamais fait la vaisselle !')}}]);
+ }else if(active===milo){
+  if(mission===3)showDialog('Milo le chef ☕','« Bienvenue au café ! Pour servir les clients, complète : “Je voudrais un verre ___ eau.” »',[
+   {label:'💧 d’',action:finishStep},{label:'🧀 de fromage',action:()=>{closeDialog();wrong('Un verre de fromage ? Milo ouvre un café, pas une fromagerie !')}}]);
+  else showDialog('Milo le chef','Choisis la phrase polie pour commander :',[{label:'« Un chocolat chaud, s’il vous plaît. »',action:()=>{closeDialog();reward('Milo t’offre un chocolat imaginaire. Il est délicieux !')}},{label:'« Donne ça, robot ! »',action:()=>{closeDialog();wrong('Le robot serveur vient de déposer sa démission. On dit « s’il vous plaît » !')}}]);
+ }else if(active===paco){
+  if(petQuest.paco)showDialog('Paco le chien 🐶','Wouf ! Tu as déjà trouvé mon mot préféré. Tu veux une gratouille derrière l’oreille ?',[
+   {label:'🦴 Oui, bonne idée !',action:()=>{closeDialog();reward('Paco remue la queue si fort qu’il pourrait alimenter le quartier !')}},
+   {label:'🥦 Lui donner un brocoli',action:()=>{closeDialog();wrong('Paco n’est pas une tondeuse à gazon. Il préfère les croquettes !')}}]);
+  else showDialog('Paco le chien 🐶','Mission bonus : comment dit-on « dog » en français ?',[
+   {label:'🐶 Chien',action:()=>{petQuest.paco=true;localStorage.setItem('ami3d_pet_quest',JSON.stringify(petQuest));closeDialog();reward('Bien joué ! Paco remue la queue : mission bonus réussie ! 🪶')}},
+   {label:'🐱 Chat',action:()=>{closeDialog();wrong('Tu viens de présenter Mina à Paco. Ils se connaissent déjà… mais ce n’est pas le bon mot !')}}]);
+ }else if(active===mina){
+  if(petQuest.mina)showDialog('Mina la chatte 🐱','Miaou. Dernière vérification : quel mot anglais correspond à « chat » ?',[
+   {label:'🐱 Cat',action:()=>{closeDialog();reward('Exact ! Mina ronronne en anglais et en français.')}},
+   {label:'🐶 Dog',action:()=>{closeDialog();wrong('Mina te regarde. Elle a quatre pattes, pas un abonnement au chenil !')}}]);
+  else showDialog('Mina la chatte 🐱','Mission bonus : comment dit-on « cat » en français ?',[
+   {label:'🐱 Chat',action:()=>{petQuest.mina=true;localStorage.setItem('ami3d_pet_quest',JSON.stringify(petQuest));closeDialog();reward('Miaou-gnifique ! Tu as gagné la confiance de Mina ! 🪶')}},
+   {label:'🐴 Cheval',action:()=>{closeDialog();wrong('Mina n’a pas henni. Essaie encore : c’est un chat !')}}]);
+ }else if(active===wordBoard){
+  if(boardQuest.done)showDialog('Atelier des mots ✏️','Défi déjà réussi ! On monte le niveau : quelle phrase est correcte ?',[
+   {label:'« Les enfants jouent dans le parc. »',action:()=>{closeDialog();reward('Nickel ! Sujet, verbe, complément : le trio gagnant.')}},
+   {label:'« Les enfants joue dans le parc. »',action:()=>{closeDialog();wrong('Le sujet est au pluriel : le verbe prend aussi son S. La grammaire n’est pas un jeu de cache-cache !')}}]);
+  else showDialog('Atelier des mots ✏️','Défi express : complète la phrase « Demain, nous ___ au marché. »',[
+   {label:'🚶 irons',action:()=>{boardQuest.done=true;localStorage.setItem('ami3d_board_quest',JSON.stringify(boardQuest));closeDialog();reward('Bravo ! « Nous irons » : le futur est dans la poche !')}},
+   {label:'🛌 allez',action:()=>{closeDialog();wrong('« Nous allez » ? Le verbe a pris le mauvais bus : avec NOUS, c’est « irons » !')}}]);
+ }
+}
+document.querySelector('#interact').onclick=interact;
+updateMission();
+function nearest(){let best=null,dist=4.3;for(const n of [lea,max,zoe,milo,paco,mina,wordBoard]){const d=player.position.distanceTo(n.g.position);if(d<dist){dist=d;best=n}}return best}
+
+// --- VIE DU QUARTIER : voitures, oiseaux, papillons, lucioles et pluie ---
+const traffic=[];
+function makeCar(x,z,color,speed,phase=0){
+ const g=new THREE.Group();g.position.set(x,.05,z);scene.add(g);
+ const paint=new THREE.MeshStandardMaterial({color,roughness:.32,metalness:.28});
+ const glassCar=new THREE.MeshStandardMaterial({color:0x9eddf0,roughness:.18,metalness:.12});
+ const body=box(g,0,.48,0,1.55,.58,2.55,paint);
+ box(g,0,.91,-.12,1.25,.55,1.35,glassCar);
+ box(g,0,.25,1.13,1.42,.18,.2,paint);
+ const wheels=[];
+ for(const sx of [-.79,.79])for(const sz of [-.78,.78]){
+  const wheel=new THREE.Mesh(new THREE.CylinderGeometry(.23,.23,.14,16),mat(0x20232b));
+  wheel.rotation.z=Math.PI/2;wheel.position.set(sx,.25,sz);g.add(wheel);wheels.push(wheel);
+  const hub=new THREE.Mesh(new THREE.CylinderGeometry(.105,.105,.145,12),gold);hub.rotation.z=Math.PI/2;hub.position.copy(wheel.position);g.add(hub);
+ }
+ for(const sx of [-.48,.48]){
+  const lamp=new THREE.Mesh(new THREE.BoxGeometry(.28,.13,.07),glowMat);lamp.position.set(sx,.58,1.29);g.add(lamp);
+  const rear=new THREE.Mesh(new THREE.BoxGeometry(.25,.12,.07),mat(0xd83b52));rear.position.set(sx,.52,-1.29);g.add(rear);
+ }
+ traffic.push({g,wheels,speed,phase,baseX:x});
+}
+makeCar(-4.3,-32,0xf2a34a,2.4,0);
+makeCar(4.3,18,0x4f9bd8,-1.9,2);
+makeCar(-4.3,5,0x7cbd79,1.45,1.2);
+
+// Oiseaux stylisés qui traversent le ciel en petits groupes.
+const birds=[];
+for(let i=0;i<5;i++){
+ const g=new THREE.Group();g.position.set(-22+i*10,10+(i%3)*1.2,-18+(i%4)*13);scene.add(g);
+ const body=sphere(g,0,0,0,.17,mat(0x39445b),[1.35,.65,.65]);
+ const wings=[];
+ for(const side of [-1,1]){
+  const wing=sphere(g,side*.23,.04,0,.22,mat(0x39445b),[1.5,.18,.55]);
+  wing.rotation.z=side*.2;wings.push(wing);
+ }
+ birds.push({g,wings,phase:i*.9,speed:.9+i*.13});
+}
+// Papillons au-dessus des massifs : ailes battantes et trajectoire en huit.
+const butterflies=[];
+for(let i=0;i<8;i++){
+ const g=new THREE.Group();g.position.set(-13+(i%4)*8,1.3,-8+Math.floor(i/4)*17);scene.add(g);
+ const hue=[0xff8ec7,0xffd35e,0x8bdcff,0xc6a0ff][i%4];
+ const wingMat=new THREE.MeshStandardMaterial({color:hue,emissive:hue,emissiveIntensity:.12,side:THREE.DoubleSide});
+ const wings=[];
+ for(const side of [-1,1]){
+  const wing=new THREE.Mesh(new THREE.SphereGeometry(.18,12,8),wingMat);
+  wing.scale.set(1.25,.72,.12);wing.position.x=side*.15;g.add(wing);wings.push(wing);
+ }
+ const bodyB=new THREE.Mesh(new THREE.CapsuleGeometry(.035,.2,3,6),mat(0x49364c));bodyB.rotation.x=Math.PI/2;g.add(bodyB);
+ butterflies.push({g,wings,phase:i*1.7,origin:g.position.clone()});
+}
+// Lucioles discrètes, surtout visibles dans l'ambiance nocturne.
+const fireflies=[];
+for(let i=0;i<34;i++){
+ const m=new THREE.Mesh(new THREE.SphereGeometry(.045,8,6),new THREE.MeshBasicMaterial({color:0xffe99a,transparent:true,opacity:.8}));
+ m.position.set(-24+Math.random()*48,.5+Math.random()*4,-30+Math.random()*60);scene.add(m);
+ fireflies.push({m,phase:Math.random()*6.28});
+}
+// Pluie désactivée par défaut ; l'ambiance dédiée l'active.
+
+// Astres décoratifs : le soleil et la lune donnent une identité visuelle aux ambiances.
+const sunOrb=new THREE.Mesh(new THREE.SphereGeometry(2.3,24,18),new THREE.MeshBasicMaterial({color:0xffdc83}));
+sunOrb.position.set(-23,23,-48);scene.add(sunOrb);
+const moonOrb=new THREE.Mesh(new THREE.SphereGeometry(1.65,24,18),new THREE.MeshBasicMaterial({color:0xe2eaff}));
+moonOrb.position.set(20,25,-43);scene.add(moonOrb);moonOrb.visible=false;
+const starGeo=new THREE.BufferGeometry(),starPts=[];
+for(let i=0;i<180;i++)starPts.push(-42+Math.random()*84,12+Math.random()*26,-50+Math.random()*100);
+starGeo.setAttribute('position',new THREE.Float32BufferAttribute(starPts,3));
+const stars=new THREE.Points(starGeo,new THREE.PointsMaterial({color:0xffffff,size:.12,transparent:true,opacity:.85}));
+stars.visible=false;scene.add(stars);
+
+const rainPositions=new Float32Array(420*3);
+for(let i=0;i<420;i++){rainPositions[i*3]=-28+Math.random()*56;rainPositions[i*3+1]=Math.random()*20;rainPositions[i*3+2]=-35+Math.random()*70}
+const rainGeo=new THREE.BufferGeometry();rainGeo.setAttribute('position',new THREE.BufferAttribute(rainPositions,3));
+const rain=new THREE.Points(rainGeo,new THREE.PointsMaterial({color:0xc6e4ff,size:.075,transparent:true,opacity:.7}));
+rain.visible=false;scene.add(rain);
+
+const clock=new THREE.Clock();let walk=0;
+function animate(){requestAnimationFrame(animate);const dt=Math.min(clock.getDelta(),.04);if(!dialogOpen){let f=(keys.w||keys.z||keys.arrowup||move.up?1:0)-(keys.s||keys.arrowdown||move.down?1:0),side=(keys.d||keys.arrowright||move.right?1:0)-(keys.a||keys.q||keys.arrowleft||move.left?1:0);if(f||side){const forwardMove=new THREE.Vector3(Math.sin(yaw),0,Math.cos(yaw));const rightMove=new THREE.Vector3(Math.cos(yaw),0,-Math.sin(yaw));const direction=forwardMove.multiplyScalar(f).add(rightMove.multiplyScalar(side)).normalize();const angle=Math.atan2(direction.x,direction.z);const speed=(keys.shift?8:5);player.position.x+=direction.x*dt*speed;player.position.z+=direction.z*dt*speed;player.rotation.y=angle;walk+=dt*11;player.position.y=Math.abs(Math.sin(walk))*.08}else player.position.y=Math.sin(performance.now()*.002)*.025;if(keys[' ']&&player.position.y<.12)jumpV=.23;if(jumpV){player.position.y+=jumpV;jumpV-=dt*.8;if(player.position.y<0){player.position.y=0;jumpV=0}}player.position.x=THREE.MathUtils.clamp(player.position.x,-28,28);player.position.z=THREE.MathUtils.clamp(player.position.z,-30,38)}
+active=nearest();document.querySelector('#interact').style.display=active&&!dialogOpen?'block':'none';document.querySelector('#interact').textContent=active?'Parler à '+active.name+' · E':'';
+for(const n of residents){
+  n.marker.rotation.z+=dt*.9;
+  n.dot.position.y=2.78+Math.sin(performance.now()*.003+n.home.x)*.12;
+  if(!dialogOpen){
+   const target=n.waypoints[n.waypoint];
+   const dx=target.x-n.g.position.x,dz=target.z-n.g.position.z,dist=Math.hypot(dx,dz);
+   if(n.pause>0)n.pause-=dt;
+   else if(dist>.12){
+    const step=Math.min(dist,dt*(.62+(n.name.includes('Max')?.16:0)));
+    n.g.position.x+=dx/dist*step;n.g.position.z+=dz/dist*step;
+    n.g.rotation.y=Math.atan2(dx,dz);
+    n.walk+=dt*8;
+   }else{
+    n.waypoint=(n.waypoint+1)%n.waypoints.length;
+    n.pause=1.0+((n.waypoint+n.phase)%3)*.55;
+   }
+  }
+  const moving=!dialogOpen&&n.pause<=0;
+  const swing=moving?Math.sin(n.walk)*.62:Math.sin(performance.now()*.0015+n.phase)*.045;
+  n.legs[0].rotation.x=swing;n.legs[1].rotation.x=-swing;
+  n.arms[0].rotation.x=-swing*.7;n.arms[1].rotation.x=swing*.7;
+  n.arms[0].rotation.z=-.08;n.arms[1].rotation.z=.08;
+  n.torso.rotation.z=moving?Math.sin(n.walk*2)*.025:Math.sin(performance.now()*.001+n.phase)*.018;
+  n.g.position.y=moving?Math.abs(Math.sin(n.walk*2))*.035:Math.sin(performance.now()*.0018+n.phase)*.025;
+ }
+for(const c of clouds){c.position.x+=dt*.35;if(c.position.x>42)c.position.x=-42}for(const p of pickups){if(p.taken)continue;p.g.rotation.y+=dt*1.3;p.g.position.y=.9+Math.sin(performance.now()*.002+p.g.position.x)*.14;if(player.position.distanceTo(p.g.position)<1.35){p.taken=true;p.g.visible=false;feathers++;collected.push(p.id);localStorage.setItem('ami3d_collected',JSON.stringify(collected));localStorage.setItem('ami3d_feathers',feathers);document.querySelector('#feathers').textContent='🪶 '+feathers;sfx('pick');toast('Plume trouvée ! Ami la range précieusement. 🪶')}}
+wordBoard.rotation.y=Math.sin(performance.now()*.0007)*.025;
+// Les compagnons ont leurs propres rondes, pauses, oreilles et queues animées.
+for(const p of petResidents){
+ const target=p.waypoints[p.waypoint];
+ if(!dialogOpen && target){
+  const dx=target.x-p.g.position.x,dz=target.z-p.g.position.z,dist=Math.hypot(dx,dz);
+  if(dist<.22){p.pause+=dt;if(p.pause>1.4){p.pause=0;p.waypoint=(p.waypoint+1)%p.waypoints.length}}
+  else{
+   p.g.position.x+=(dx/dist)*dt*.85;p.g.position.z+=(dz/dist)*dt*.85;
+   p.g.rotation.y=Math.atan2(dx,dz);p.walk+=dt*7;
+   p.legs.forEach((leg,i)=>leg.rotation.x=Math.sin(p.walk+(i%2)*Math.PI)*.42);
+  }
+ }
+ const t=performance.now()*.001+p.phase;
+ p.head.rotation.x=Math.sin(t*1.7)*.035;
+ p.tail.rotation.y=Math.sin(t*(p.kind==='dog'?8:3.2))*(p.kind==='dog'?.55:.2);
+ p.ears.forEach((ear,i)=>ear.rotation.z=(i?1:-1)*(.16+Math.sin(t*2.2+i)*.08));
+ if(!target||p.pause>0)p.g.position.y=Math.abs(Math.sin(t*2.2))*.025;
+}
+// Circulation douce : les voitures roulent sur la rue sans couper la route du joueur.
+for(const car of traffic){
+ car.g.position.z+=car.speed*dt;
+ if(car.g.position.z>48)car.g.position.z=-42;
+ if(car.g.position.z< -43)car.g.position.z=47;
+ car.wheels.forEach(w=>w.rotation.x+=car.speed*dt*2.5);
+}
+// Vol des oiseaux : battements d'ailes synchronisés et petits virages.
+for(const b of birds){
+ b.g.position.x+=b.speed*dt;
+ b.g.position.z+=Math.sin(performance.now()*.0007+b.phase)*dt*.28;
+ if(b.g.position.x>32)b.g.position.x=-32;
+ const flap=Math.sin(performance.now()*.012+b.phase)*.48;
+ b.wings[0].rotation.z=flap;b.wings[1].rotation.z=-flap;
+}
+// Papillons qui butinent en décrivant des boucles au-dessus des fleurs.
+for(const b of butterflies){
+ const t=performance.now()*.001+b.phase;
+ b.g.position.x=b.origin.x+Math.sin(t*.8)*1.35;
+ b.g.position.z=b.origin.z+Math.cos(t)*.8;
+ b.g.position.y=1.25+Math.sin(t*2)*.38;
+ b.g.rotation.y=Math.sin(t*.8)*.6;
+ const flap=Math.sin(t*13)*.75;
+ b.wings[0].rotation.y=flap;b.wings[1].rotation.y=-flap;
+}
+// Les lucioles scintillent la nuit, et la pluie traverse la scène en continu.
+for(const f of fireflies){f.m.material.opacity=.35+.65*(.5+.5*Math.sin(performance.now()*.003+f.phase));f.m.scale.setScalar(.7+.5*(.5+.5*Math.sin(performance.now()*.004+f.phase)))}
+if(rain.visible){
+ const a=rainGeo.attributes.position;
+ for(let i=0;i<a.count;i++){
+  let y=a.getY(i)-dt*17;
+  if(y<0){y=18+Math.random()*3;a.setX(i,-28+Math.random()*56);a.setZ(i,-35+Math.random()*70)}
+  a.setY(i,y);
+ }
+ a.needsUpdate=true;
+}
+const forward=new THREE.Vector3(Math.sin(yaw),0,Math.cos(yaw));const target=player.position.clone().add(new THREE.Vector3(0,2.5,0));const desired=player.position.clone().add(forward.clone().multiplyScalar(-cameraDistance)).add(new THREE.Vector3(0,4.2,0));camera.position.lerp(desired,.08);camera.lookAt(target);
+if(document.querySelector('#mapPanel').style.display==='block')drawMap();renderer.render(scene,camera)}
+animate();
+addEventListener('resize',()=>{camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix();renderer.setSize(innerWidth,innerHeight);renderer.setPixelRatio(Math.min(devicePixelRatio,1.7))});
+updateMission();
+</script>
+</body></html>

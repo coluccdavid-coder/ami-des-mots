@@ -1,0 +1,18 @@
+AMI DES MOTS — VERSION 5.23
+Commandes corrigées et quartier 3D enrichi
+
+Commandes :
+- Haut : avancer à l'écran.
+- Bas : reculer à l'écran.
+- Droite : aller à droite à l'écran.
+- Gauche : aller à gauche à l'écran.
+- La direction droite/gauche est calculée dans l'axe réel de la caméra, même après rotation.
+- Les touches fléchées et ZQSD/WASD utilisent le même repère.
+
+Améliorations visuelles :
+- Toits à deux pans, façades détaillées, fenêtres encadrées, volets, portes et auvents.
+- Place pavée, bordures, passage piéton et mobilier urbain.
+- Arbres plus détaillés et légèrement animés.
+- Ombres améliorées et caméra plus cinématographique.
+
+Le jeu reste un univers 3D original d'Ami des Mots, avec sa propre identité graphique.

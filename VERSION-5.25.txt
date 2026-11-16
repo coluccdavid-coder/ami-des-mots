@@ -1,0 +1,14 @@
+AMI DES MOTS — VERSION 5.25
+Le quartier prend vie
+
+Nouveautés :
+- Circulation douce : trois petites voitures animées parcourent la rue.
+- Oiseaux en vol avec battements d'ailes.
+- Papillons qui butinent au-dessus des massifs, avec ailes animées.
+- Lucioles scintillantes dans l'ambiance nocturne.
+- Soleil, lune et ciel étoilé selon l'ambiance choisie.
+- Nouvelle ambiance Averse : pluie animée, ciel couvert et éclairage adapté.
+- Les quatre habitants continuent leurs promenades articulées et leurs interactions pédagogiques.
+- Les commandes et la progression de la version précédente sont conservées.
+
+Le jeu conserve son identité visuelle originale ; il ne reproduit pas les assets ou personnages d'une autre franchise.

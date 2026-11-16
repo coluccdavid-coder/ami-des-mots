@@ -1,0 +1,16 @@
+AMI DES MOTS — VERSION 5.22
+Le quartier vivant — aventure 3D enrichie
+
+Nouveautés :
+- Quatrième personnage interactif : Milo, au café.
+- Quatre missions liées avec progression sauvegardée.
+- Dix plumes cachées et sauvegarde des objets collectés.
+- Mini-carte du quartier.
+- Ambiances jour, crépuscule et nuit avec éclairage des lampadaires.
+- Nuages animés, jardinières et détails supplémentaires.
+- Course, saut, zoom et rotation de caméra tactile.
+- Carnet avec bouton de remise à zéro pour faciliter les tests.
+
+Pour tester : décompresser, publier le contenu sur GitHub Pages comme précédemment,
+puis ouvrir le jeu et choisir « Explorer le monde 3D ».
+Le monde 3D utilise Three.js depuis jsDelivr et demande une connexion Internet.
