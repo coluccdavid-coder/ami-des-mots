@@ -351,3 +351,20 @@ L'atelier est une première version pédagogique. Les phrases et leur adaptation
 - Le minutage de l'animation suit l'horloge réelle du fichier audio, y compris lorsque la lecture est ralentie.
 - La langue de l'articulation utilise maintenant la langue en cours d'apprentissage du jeu, et non seulement la langue d'interface.
 - La synthèse vocale du navigateur conserve son propre événement de démarrage pour synchroniser l'animation.
+
+
+## v5.6 — lisibilité du retour après erreur
+
+- La bulle de correction est remontée sur mobile et sur ordinateur.
+- Le bouton « J'ai compris — continuer » est placé dans une zone séparée en bas de l'écran, et ne recouvre plus le texte de la blague ou la bonne réponse.
+- La bulle dispose d'une hauteur maximale et peut défiler si le message est particulièrement long.
+- Taille de texte et hauteur adaptées aux petits écrans.
+
+
+## v5.7 — choix de la langue des blagues
+
+- Ajout d'un réglage indépendant pour choisir la langue des blagues d'Ami : français ou anglais.
+- Le choix est mémorisé par profil, indépendamment de la langue d'interface et de la langue apprise.
+- Les quatre niveaux d'humour disposent de répliques en français et en anglais, y compris le niveau « Tout doux ».
+- La phrase annonçant la bonne réponse est également traduite dans la langue des blagues pour éviter les commentaires mélangés.
+- La lecture vocale du commentaire d'erreur utilise la langue sélectionnée pour les blagues.

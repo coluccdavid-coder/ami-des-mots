@@ -686,3 +686,55 @@ html[data-facile] .lire-consigne{ width:46px; height:46px; font-size:1.2rem; bac
 @media(min-width:760px){.choix-humour{grid-template-columns:repeat(4,minmax(0,1fr))}}
 @media(max-width:560px){.continuer-erreur:not([hidden]){bottom:calc(118px + env(safe-area-inset-bottom));font-size:1rem}}
 @media(prefers-reduced-motion:reduce){.continuer-erreur:not([hidden]){animation:none}}
+
+
+/* ── v5.6 : le retour d'erreur ne masque plus sa propre explication ──
+   La bulle est remontée et limitée en hauteur ; le bouton de reprise
+   occupe une zone distincte en bas de l'écran, sans recouvrir le texte. */
+.bulle.ko{
+  bottom:calc(92px + env(safe-area-inset-bottom))!important;
+  max-height:min(44svh, 390px);
+  overflow-y:auto;
+  overscroll-behavior:contain;
+  scrollbar-width:thin;
+  padding:16px 18px;
+  font-size:clamp(1rem, 4.2vw, 1.3rem);
+  line-height:1.35;
+}
+.continuer-erreur:not([hidden]){
+  position:fixed;
+  z-index:8;
+  left:50%;
+  bottom:calc(12px + env(safe-area-inset-bottom))!important;
+  transform:translateX(-50%);
+  width:min(92vw, 520px);
+  min-height:54px;
+  padding:12px 18px;
+  white-space:normal;
+}
+@media(min-width:760px){
+  .bulle.ko{
+    bottom:calc(92px + env(safe-area-inset-bottom))!important;
+    max-height:min(38svh, 300px);
+  }
+  .continuer-erreur:not([hidden]){
+    bottom:calc(18px + env(safe-area-inset-bottom))!important;
+  }
+}
+@media(max-width:560px){
+  .bulle.ko{
+    left:10px;right:10px;width:auto;
+    bottom:calc(88px + env(safe-area-inset-bottom))!important;
+    max-height:42svh;
+    font-size:clamp(.98rem, 4.1vw, 1.18rem);
+  }
+  .continuer-erreur:not([hidden]){
+    bottom:calc(10px + env(safe-area-inset-bottom))!important;
+    min-height:52px;
+  }
+}
+
+/* v5.7 — sélecteur indépendant de langue des blagues */
+.langue-blagues-titre{margin-top:20px!important}
+.choix-langue-blagues{grid-template-columns:repeat(2,minmax(0,1fr))}
+.choix-langue-blagues .moyen{font-weight:1000}

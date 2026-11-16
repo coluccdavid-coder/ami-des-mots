@@ -201,8 +201,8 @@
   // Les consignes (dans la langue du joueur) sont lues par la voix du téléphone.
   function lireConsigne(texte){ if(texte && !voixNavigateur(base.ui, texte)) silence(); }
   function silence(){ const n = $('#note-voix'); if(n){ n.textContent = '🔇 ' + t('sans_voix'); setTimeout(() => { if(n.isConnected) n.textContent = ''; }, 2500); } }
-  window.speak = function(texte){
-    const lang = base.cible;
+  window.speak = function(texte, langueForce){
+    const lang = langueForce || base.cible;
     try{ if(lecteur){ lecteur.pause(); lecteur = null; } if(window.speechSynthesis) speechSynthesis.cancel(); }catch(e){}
     const a = new Audio(urlVoix(lang, texte));
     lecteur = a;
@@ -559,13 +559,13 @@
   let derniereBlague = -1;
   const BLAGUES_AMI = {
     fr:[
-      [],
+      ["Oups ! Mon bec a glissé. On essaie encore ?","Même les hiboux ont parfois la tête dans les plumes !","Pas grave, les mots aiment se faire désirer."],
       ["Ouille, mon bec vient de faire un nœud marin ! On retente ?","Même ma boussole intérieure indique « euh… par là ? »","Ce mot joue à cache-cache. Il a pris une sacrée avance !","Mon cerveau a éternué. Pardon pour la confusion !"],
       ["Ce mot a mis des lunettes noires et se croit incognito. Raté, je l'ai reconnu !","Mon dictionnaire vient de demander une pause syndicale. On lui laisse dix secondes ?","Aïe ! J'ai entendu le neurone de service tomber de sa chaise.","Ce mot est plus glissant qu'une savonnette sur une patinoire !"],
       ["ALERTE AU NID : mon cerveau vient de faire un triple salto… sans autorisation !","Ce mot m'a mis K.-O. Je demande la VAR au dictionnaire !","Catastrophe à plumes : j'ai confondu mes neurones avec des nouilles. Ça arrive aux meilleurs hiboux !","Le dictionnaire vient de porter plainte pour excès de confusion. Je plaide… le goûter !"]
     ],
     en:[
-      [],
+      ["Oops! My beak slipped. Shall we try again?","Even owls get their feathers in a twist sometimes!","No worries, words like to play hard to get."],
       ["Whoops, I just tied my beak in a sailor's knot! Try again?","My inner compass is pointing at… erm… somewhere over there!","This word is playing hide-and-seek. It got quite a head start!","My brain just sneezed. Sorry for the mix-up!"],
       ["That word put on dark glasses and thinks it's undercover. Nice try!","My dictionary just asked for a union break. Ten seconds?","Oops! I heard the neuron on duty fall off its chair.","This word is slipperier than a banana on an ice rink!"],
       ["NEST ALERT: my brain just did a triple somersault without permission!","That word knocked me out. I demand a replay from the dictionary!","Feather emergency: I mixed up my neurons with noodles. Happens to the best owls!","The dictionary is filing a complaint for excessive confusion. I plead… snack time!"]
@@ -575,13 +575,20 @@
     const n = Number(J().humour);
     return Number.isInteger(n) && n >= 0 && n <= 3 ? n : 0;
   }
+  function langueBlagues(){
+    const l = J().langueBlagues;
+    return l === 'en' ? 'en' : l === 'fr' ? 'fr' : (base.ui === 'en' ? 'en' : 'fr');
+  }
   function blague(){
     const niveau = niveauHumour();
-    const langue = BLAGUES_AMI[base.ui] ? base.ui : 'fr';
-    const l = niveau === 0 ? t('blagues') : BLAGUES_AMI[langue][niveau];
-    if(!Array.isArray(l) || !l.length) return t('rate');
+    const langue = langueBlagues();
+    const l = BLAGUES_AMI[langue][niveau];
+    if(!Array.isArray(l) || !l.length) return langue === 'en' ? 'Oops! My owl brain got its feathers in a twist!' : 'Oups ! Mon cerveau de hibou a emmêlé ses plumes !';
     let k; do{ k = Math.floor(Math.random() * l.length); }while(l.length > 1 && k === derniereBlague);
     derniereBlague = k; return l[k];
+  }
+  function correctionDansLangue(mot){
+    return langueBlagues() === 'en' ? 'The correct answer was: ' + mot : "C'était : " + mot;
   }
   function amiDit(txt, humeur){
     const b = $('#bulle'); if(b){ b.textContent = txt; b.className = 'bulle ' + (humeur === 'fete' ? 'ok' : humeur === 'surpris' ? 'ko' : ''); }
@@ -842,12 +849,12 @@
       const bonneReponse = partie.courant === 'panier'
         ? t('th_' + MOTS[partie.bonne].theme)
         : nomMot(partie.bonne) + (tr ? ' (' + tr + ')' : '');
-      const message = blague() + ' ' + t('c_etait', bonneReponse);
+      const message = blague() + ' ' + correctionDansLangue(bonneReponse);
       amiDit(message, 'surpris');
       const suite = $('#continuer-erreur');
       if(suite){ suite.hidden = false; suite.focus({preventScroll:true}); }
       // Une seule lecture vocale : la blague ET la bonne réponse, dans cet ordre.
-      if(window.speak) window.speak(message);
+      if(window.speak) window.speak(message, langueBlagues());
     }
   }
   // Étincelles qui jaillissent d'une bonne réponse.
@@ -1281,7 +1288,11 @@
       '<div class="reglage"><span>🔔 ' + esc(t('son')) + '</span><button class="moyen' + (base.son ? ' plein' : '') + '" data-a="son" aria-pressed="' + base.son + '">' + esc(base.son ? t('oui') : t('non')) + '</button></div>' +
       '<section class="reglage-humour"><h3>😂 ' + (base.ui === 'en' ? 'Ami’s joke level' : 'Le niveau des blagues d’Ami') + '</h3><p class="petit">' + (base.ui === 'en' ? 'Ami only teases himself, the words or the situation — never the player.' : 'Ami se moque de lui-même, des mots ou de la situation — jamais du joueur.') + '</p><div class="choix-humour">' +
       ['Tout doux','Taquin','Piquant','Corsé 🪶'].map((nom, i) => '<button class="moyen' + (niveauHumour() === i ? ' plein' : '') + '" data-a="humour" data-v="' + i + '" aria-pressed="' + (niveauHumour() === i) + '">' + (base.ui === 'en' ? ['Gentle','Playful','Spicy','Extra cheeky 🪶'][i] : nom) + '</button>').join('') +
-      '</div><p class="petit">' + (base.ui === 'en' ? 'Even the spiciest level stays kind.' : 'Même le niveau le plus corsé reste bienveillant.') + '</p></section>' +
+      '</div><p class="petit">' + (base.ui === 'en' ? 'Even the spiciest level stays kind.' : 'Même le niveau le plus corsé reste bienveillant.') + '</p>' +
+      '<h3 class="langue-blagues-titre">🗣️ ' + (base.ui === 'en' ? 'Language of the jokes' : 'Langue des blagues') + '</h3><p class="petit">' + (base.ui === 'en' ? 'Choose the language Ami uses for jokes and spoken feedback.' : 'Choisis la langue utilisée par Ami pour ses blagues et ses commentaires vocaux.') + '</p><div class="choix-humour choix-langue-blagues">' +
+      '<button class="moyen' + (langueBlagues() === 'fr' ? ' plein' : '') + '" data-a="langue-blagues" data-v="fr" aria-pressed="' + (langueBlagues() === 'fr') + '">🇫🇷 Français</button>' +
+      '<button class="moyen' + (langueBlagues() === 'en' ? ' plein' : '') + '" data-a="langue-blagues" data-v="en" aria-pressed="' + (langueBlagues() === 'en') + '">🇬🇧 English</button>' +
+      '</div></section>' +
       (CONFIG.MODE_PAYANT ? '<h3>✨ ' + esc(t('plus')) + '</h3>' + (plus()
         ? '<p>' + esc(t('abo_actif', droits ? new Date(droits.fin).toLocaleDateString(base.ui) : '')) + '</p>' + (CONFIG.LIEN_GESTION ? '<p><a class="moyen" href="' + esc(CONFIG.LIEN_GESTION) + '" target="_blank" rel="noopener">' + esc(t('gerer_abo')) + '</a></p>' : '')
         : '<p><button class="moyen plein" data-a="plus" data-v="reglages">' + esc(t('decouvrir_plus')) + '</button></p>') +
@@ -1422,6 +1433,7 @@
       case 'facile': J().facile = !J().facile; garder(); return reglages();
       case 'consigne': return lireConsigne(($('#consigne') || {}).textContent);
       case 'humour': J().humour = Math.max(0, Math.min(3, Number(v) || 0)); garder(); return reglages();
+      case 'langue-blagues': J().langueBlagues = v === 'en' ? 'en' : 'fr'; garder(); return reglages();
       case 'continuer-erreur':
         if(!partie || !partie.attenteErreur) return;
         partie.attenteErreur = false;

@@ -53,3 +53,16 @@ Ne pas utiliser de vrais paiements pendant les essais. Pour tester l'abonnement,
 - Refaire le test avec « Lentement » : les mouvements doivent rester alignés sur la voix ralentie.
 - Tester plusieurs langues, notamment une langue cible différente de la langue de l'interface.
 - Tester sur ordinateur et téléphone ; le navigateur peut utiliser une voix audio différente selon la langue et la disponibilité du fichier.
+
+
+## Nouveauté v5.6 à tester
+- Sur téléphone, provoquer une erreur : vérifier que la blague et la bonne réponse sont entièrement lisibles au-dessus du bouton de continuation.
+- Tester un message long : la bulle doit pouvoir défiler sans cacher le bouton.
+- Refaire le test en mode paysage et sur ordinateur.
+
+
+## Nouveauté v5.7 à tester — langue des blagues
+- Ouvrir Réglages > Langue des blagues et choisir Français, puis provoquer une erreur : la blague, la correction et la voix doivent être en français.
+- Choisir English puis refaire une erreur : blague, correction et voix doivent être en anglais.
+- Changer la langue apprise et la langue de l'interface : le choix de langue des blagues doit rester indépendant.
+- Vérifier que le réglage est conservé après rechargement et par profil.
