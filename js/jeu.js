@@ -284,7 +284,7 @@
     const dessus = porte.filter(k => acc[k] && k !== 'echarpe' && k !== 'noeud').map(k => acc[k]).join('');
     const cou = porte.filter(k => k === 'echarpe' || k === 'noeud').map(k => acc[k]).join('');
     const bouge = sobre() || opts.immobile ? '' : ' ami-bouge';
-    return '<svg class="companion-svg ami' + bouge + (humeur === 'fete' ? ' ami-fete' : '') + '" viewBox="0 -6 100 126" aria-hidden="true" focusable="false">' +
+    const svg = '<svg class="companion-svg ami' + bouge + (humeur === 'fete' ? ' ami-fete' : '') + '" viewBox="0 -6 100 126" aria-hidden="true" focusable="false">' +
       '<defs><radialGradient id="' + id + '" cx="40%" cy="30%" r="80%"><stop offset="0%" stop-color="' + c2 + '"/><stop offset="55%" stop-color="' + c1 + '"/><stop offset="100%" stop-color="' + c3 + '"/></radialGradient></defs>' +
       '<path d="M42 97 l-5 8 M42 97 l0 9 M42 97 l5 8 M58 97 l-5 8 M58 97 l0 9 M58 97 l5 8" fill="none" stroke="#E8973A" stroke-width="2.6" stroke-linecap="round"/>' +
       ailes +
@@ -300,8 +300,10 @@
       '<path class="companion-beak" fill="#E8973A" d="M 50 50 L 45 55 Q 50 63 55 55 Z"/>' +
       dessus +
       '</svg>';
+    if(opts.immobile || porte.length) return svg;
+    const humeurClasse = humeur === 'fete' ? ' ami-3d-fete' : humeur === 'surpris' ? ' ami-3d-surpris' : humeur === 'triste' ? ' ami-3d-triste' : '';
+    return '<span class="ami-3d-wrap' + humeurClasse + '" aria-hidden="true"><img class="ami-3d" src="img/ami-3d.webp" alt="" decoding="async"></span>';
   }
-
   // ── Écrans ────────────────────────────────────────────────────────
   // Couleur de chaque thème (cartes, barre de progression, accents).
   const COUL_THEME = { animaux:'#FF8A3D', manger:'#FF5D6C', maison:'#4D7CFE', habits:'#F06BB1', nature:'#25B26A', ville:'#7A5CFA', musique:'#B04CF0', atelier:'#0FAFBF' };
@@ -587,166 +589,46 @@
   const BLAGUES_AMI = {
     fr:[
       {
-        eclair:[
-          "J’ai voulu aller plus vite que la lumière. Résultat : je suis arrivé avant la bonne réponse.",
-          "Mon dictionnaire m’a dit de tourner la page. J’ai tourné l’écran… on n’avance pas.",
-          "Je voulais faire mouche. J’ai surtout fait « bzz » à côté.",
-          "J’ai le compas dans l’œil… mais il indique le mauvais nord."
-        ],
-        devinette:[
-          "Pourquoi le livre de maths est-il toujours fatigué ? Parce qu’il a trop de problèmes !",
-          "Quel est le comble pour un électricien ? De ne pas être au courant !",
-          "Pourquoi les poissons détestent l’ordinateur ? À cause du net !",
-          "Quel animal est toujours en retard ? Le morse… il prend son temps pour envoyer ses messages !"
-        ],
-        chute:[
-          "Un dictionnaire entre dans un café. Le serveur demande : « Un mot, comme d’habitude ? » Le dictionnaire répond : « Non, aujourd’hui je prends une expression ! »",
-          "Ami demande à son réveil : « Tu peux me donner l’heure ? » Le réveil répond : « Je peux, mais après tu vas encore me sonner les cloches ! »",
-          "Un escargot entre dans une bibliothèque. La bibliothécaire demande : « Vous cherchez un livre rapide ? » Il répond : « Non, j’ai tout mon temps. »",
-          "Ami ouvre son cahier de révision. Une page blanche lui dit : « Alors, on commence ? » Ami répond : « Tu m’as déjà tout appris ! »"
-        ]
+        eclair:["Mon bec a cliqué avant mon cerveau !","Oups… mes lunettes sont en mode avion.","J’ai visé juste. Pas la bonne image, mais juste !","Mon cerveau charge… à 2 %."]
+        ,devinette:["Pourquoi Ami aime les quiz ? Pour se prendre des plumes !","Quel est le sport préféré du hibou ? Le vol… plané !","Pourquoi le hibou révise ? Pour ne pas sécher !","Quel mot fait peur à Ami ? « Surprise »… surtout au contrôle !"]
+        ,chute:["Ami : « J’étais sûr ! » Le dictionnaire : « C’est bien le problème. »","Ami cherche ses neurones. Ils sont partis en pause.","Le hibou dit « facile ! » Le quiz répond « ah oui ? »","Ami a demandé un indice. Son cerveau lui a dit : « Bonne chance. »"]
       },
       {
-        eclair:[
-          "J’ai cliqué avec assurance. C’est fou comme on peut se tromper avec élégance.",
-          "Mon cerveau a pris une pause café. Visiblement, il n’a pas repris son service.",
-          "Je pensais avoir un éclair de génie. C’était juste l’ampoule du couloir.",
-          "J’ai suivi mon instinct. Il m’a conduit directement dans le décor."
-        ],
-        devinette:[
-          "Pourquoi les livres ont-ils toujours froid ? Parce qu’ils ont une couverture !",
-          "Qu’est-ce qui est jaune et qui attend ? Jonathan !",
-          "Pourquoi les plongeurs plongent-ils toujours en arrière ? Parce que sinon ils tombent dans le bateau !",
-          "Quel est le comble pour un jardinier ? Raconter des salades !"
-        ],
-        chute:[
-          "Ami demande à son crayon : « Tu as une idée ? » Le crayon répond : « Oui, mais je n’arrive pas à la mettre au point. »",
-          "Un ordinateur va chez le médecin. « Docteur, j’ai des fenêtres partout ! » Le médecin répond : « Vous avez essayé de fermer les yeux ? »",
-          "Un zéro rencontre un huit. « Jolie ceinture ! » lui dit-il. Le huit répond : « Merci, je voulais être bien entouré. »",
-          "Ami dit au dictionnaire : « Tu as réponse à tout ! » Le dictionnaire répond : « Oui, mais toi, tu ne poses jamais la bonne question. »"
-        ]
+        eclair:["J’ai cliqué avec panache… et zéro précision.","Mon cerveau a pris la mauvaise sortie.","J’ai confondu réfléchir et cliquer. Classique.","Même mon écho répond mieux que moi."]
+        ,devinette:["Pourquoi Ami aime les dictionnaires ? Ils ne lui coupent jamais la parole !","Quel est le comble du hibou ? Faire chou blanc !","Pourquoi Ami garde ses plumes ? Pour ne pas perdre la face !","Qu’est-ce qui vole et se trompe ? Moi. Enfin… Ami !"]
+        ,chute:["Ami : « J’ai une stratégie ! » Le quiz : « Essaie déjà une réponse. »","Le cerveau d’Ami est en réunion. Personne n’a répondu.","Ami voulait briller. Il a juste clignoté.","Le dictionnaire a soupiré. Même les pages en ont marre."]
       },
       {
-        eclair:[
-          "J’ai tellement réfléchi que la bonne réponse a eu le temps de prendre sa retraite.",
-          "Mon cerveau a fait un sans-faute… dans la mauvaise direction.",
-          "J’ai voulu jouer au génie. Pour l’instant, je joue surtout au « mais où est-ce que j’ai cliqué ? »",
-          "Je viens de battre un record : choisir très vite une réponse très fausse."
-        ],
-        devinette:[
-          "Pourquoi les fantômes sont-ils de mauvais menteurs ? Parce qu’on voit à travers eux !",
-          "Qu’est-ce qu’un chat tombé dans un pot de peinture le jour de Noël ? Un chat peint de Noël !",
-          "Quel est le comble pour un facteur ? Perdre la lettre !",
-          "Pourquoi les livres de cuisine sont-ils si drôles ? Parce qu’ils racontent des histoires à tomber dans les pommes !"
-        ],
-        chute:[
-          "Un prof demande à Ami : « Si tu as trois pommes et que je t’en prends deux, qu’est-ce qu’il te reste ? » Ami répond : « Une bonne raison de cacher mon goûter ! »",
-          "Ami entre dans une boulangerie : « Vous avez du pain d’hier ? » Le boulanger répond oui. « Parfait, je repasse demain, il sera encore meilleur ! »",
-          "Une ampoule dit à une autre : « Tu as l’air éteinte. » L’autre répond : « Normal, je traverse une période sombre. »",
-          "Ami demande à la pendule : « Pourquoi tu tournes en rond ? » Elle répond : « Parce que j’ai toujours eu les aiguilles qui me démangent ! »"
-        ]
+        eclair:["Magnifique erreur. On encadre ?","J’ai le talent… de viser à côté.","Mon cerveau vient de poser un RTT.","Je réfléchis très fort. Ça ne se voit pas encore."]
+        ,devinette:["Pourquoi Ami adore les devinettes ? Il peut se tromper en plusieurs étapes !","Quel est le comble pour un hibou ? Avoir la tête dans les nuages !","Pourquoi le quiz rit ? Il connaît déjà la réponse !","Qui a deux yeux et rate la cible ? Ami, apparemment."]
+        ,chute:["Ami : « C’était presque ça ! » Le quiz : « Dans quel univers ? »","Le cerveau d’Ami a dit oui. La logique a démissionné.","Ami a choisi au feeling. Le feeling était en congé.","Le hibou a fait son choix. La sagesse n’était pas invitée."]
       },
       {
-        eclair:[
-          "J’ai pris une décision tellement brillante que même la bonne réponse a préféré rester dans l’ombre.",
-          "Mon cerveau vient de déposer un recours : il affirme qu’il n’était pas présent au moment du clic.",
-          "J’ai confondu vitesse et précipitation. Le dictionnaire vient de me donner la définition.",
-          "Je suis un hibou rare : je peux regarder une image et penser à tout sauf au bon mot."
-        ],
-        devinette:[
-          "Quel est le comble pour un serrurier ? Se faire mettre à la porte !",
-          "Pourquoi les plongeurs se laissent-ils tomber en arrière ? Parce que devant, il y a le bateau !",
-          "Qu’est-ce qui court sans jamais bouger ? Un robinet… quand il fuit !",
-          "Pourquoi les calendriers sont-ils populaires ? Parce qu’ils ont beaucoup de dates !"
-        ],
-        chute:[
-          "Ami annonce : « J’ai enfin trouvé la méthode pour ne plus faire d’erreur ! » Le dictionnaire demande : « Laquelle ? » Ami répond : « Je laisse les autres répondre à ma place. »",
-          "Un dictionnaire demande à un roman : « Alors, tu racontes quoi ? » Le roman répond : « Une longue histoire. » Le dictionnaire soupire : « Moi, je n’ai que des mots. »",
-          "Ami demande à son miroir : « Qui est le plus malin du nid ? » Le miroir répond : « Je ne veux pas me mêler de vos histoires de famille. »",
-          "Un escargot se fait arrêter pour excès de vitesse. Il proteste : « Mais je n’ai même pas dépassé ma coquille ! »"
-        ]
+        eclair:["Même une taupe aurait mieux vu !","J’ai visé la réponse. J’ai touché le décor.","Mon cerveau est officiellement en mode déco.","Je mérite une plume… de consolation."]
+        ,devinette:["Quel est le comble d’Ami ? Se faire poser un lapin par sa mémoire !","Pourquoi Ami ne joue pas à cache-cache ? Il oublie de chercher !","Quelle est la spécialité d’Ami ? Le faux départ !","Qui a raté la réponse avec panache ? Votre hibou préféré."]
+        ,chute:["Ami : « Je maîtrise ! » Le quiz : « On a des doutes. »","Le dictionnaire réclame des vacances loin d’Ami.","Ami a consulté son instinct. Il a porté plainte.","Le cerveau a quitté le nid. Sans laisser d’adresse."]
       }
     ],
     en:[
       {
-        eclair:[
-          "I tried to beat the speed of light. I arrived before the right answer.",
-          "My dictionary told me to turn the page. I turned the screen. Not much progress!",
-          "I wanted to make a hit. All I made was a little buzz in the wrong place.",
-          "I have a good eye… it just points north in the wrong direction."
-        ],
-        devinette:[
-          "Why was the maths book so tired? It had too many problems!",
-          "What is an electrician’s worst nightmare? Not being kept in the loop!",
-          "Why do fish dislike the internet? Too many nets!",
-          "Which animal sends the slowest messages? The snail. It takes its time!"
-        ],
-        chute:[
-          "A dictionary walks into a café. The waiter asks, “The usual word?” The dictionary says, “Not today. I’ll have an expression!”",
-          "Ami asks his alarm clock, “What time is it?” The clock says, “I’ll tell you, but please stop ringing my bells!”",
-          "A snail enters a library. The librarian asks, “Looking for a quick read?” The snail says, “No rush. I’ve got all day.”",
-          "Ami opens his revision notebook. A blank page asks, “Shall we start?” Ami says, “You’ve already taught me everything!”"
-        ]
+        eclair:["My beak clicked before my brain!","Oops… my glasses are in airplane mode.","I aimed right. Just at the wrong picture!","Brain loading… 2%."]
+        ,devinette:["Why do owls love quizzes? More chances to wing it!","What’s an owl’s favourite sport? Fly-ing!","Why did the owl revise? To stay sharp!","What scares Ami? A surprise test!"]
+        ,chute:["Ami: “I was sure!” Dictionary: “That’s the problem.”","Ami looked for his brain. It’s on a break.","The owl said “easy!” The quiz said “really?”","Ami asked for a hint. His brain said “good luck.”"]
       },
       {
-        eclair:[
-          "I clicked with confidence. It's amazing how elegantly you can be wrong.",
-          "My brain took a coffee break. Apparently, it forgot to come back.",
-          "I thought I had a brilliant idea. It was just the hallway light.",
-          "I followed my instincts. They led me straight into a wall."
-        ],
-        devinette:[
-          "Why are books always cold? They have a cover!",
-          "What is yellow and waiting? A banana at the bus stop!",
-          "Why do divers fall backwards into the water? Because forwards, they’d fall into the boat!",
-          "What is a gardener’s favourite kind of story? One with lots of plot twists!"
-        ],
-        chute:[
-          "Ami asks his pencil, “Got any ideas?” The pencil says, “Yes, but I can’t quite make my point.”",
-          "A computer visits the doctor. “Doctor, I have windows everywhere!” The doctor says, “Have you tried closing your eyes?”",
-          "A zero meets an eight. “Nice belt!” says the zero. The eight replies, “Thanks, I like to keep things together.”",
-          "Ami tells the dictionary, “You have an answer for everything!” The dictionary replies, “Yes, but you never ask the right question.”"
-        ]
+        eclair:["I clicked with style… and no accuracy.","My brain took the wrong turn.","I confused thinking with clicking. Classic.","Even my echo gets it right."]
+        ,devinette:["Why does Ami love dictionaries? They never interrupt!","What’s an owl’s worst nightmare? A blank look!","Why keep your feathers? To save face!","What flies and gets it wrong? Me. Well, Ami!"]
+        ,chute:["Ami: “I have a strategy!” Quiz: “Try an answer first.”","Ami’s brain is in a meeting. No one replied.","Ami wanted to shine. He just blinked.","The dictionary sighed. Even its pages are tired."]
       },
       {
-        eclair:[
-          "I thought so hard the right answer had time to retire.",
-          "My brain made a perfect move… in the wrong direction.",
-          "I tried to be a genius. So far, I'm mostly wondering where I clicked.",
-          "I just broke a record: choosing a very wrong answer very quickly."
-        ],
-        devinette:[
-          "Why are ghosts terrible liars? You can see right through them!",
-          "What do you call a cat covered in paint at Christmas? A merry-paint cat!",
-          "What is a postman's worst fear? Losing the mail!",
-          "Why are cookbooks so funny? Their stories are full of food for thought!"
-        ],
-        chute:[
-          "A teacher asks Ami, “If you have three apples and I take two, what have you got left?” Ami says, “A very good reason to hide my snacks!”",
-          "Ami visits a bakery. “Do you have yesterday’s bread?” “Yes,” says the baker. “Great! I’ll come back tomorrow. It’ll be even older!”",
-          "One light bulb says to another, “You look switched off.” The other replies, “I'm just going through a dark phase.”",
-          "Ami asks the clock, “Why do you go round in circles?” It replies, “Because I’ve always had hands that point!”"
-        ]
+        eclair:["Brilliant mistake. Shall we frame it?","I have a talent for missing the point.","My brain just booked a day off.","Thinking hard. Results pending."]
+        ,devinette:["Why does Ami love riddles? He can get them wrong in stages!","What’s an owl’s worst habit? Head in the clouds!","Why is the quiz laughing? It knows the answer!","Who has two eyes and misses? Ami, apparently."]
+        ,chute:["Ami: “That was close!” Quiz: “In which universe?”","Ami’s brain said yes. Logic resigned.","Ami trusted his gut. His gut was on holiday.","The owl made a choice. Wisdom wasn't invited."]
       },
       {
-        eclair:[
-          "I made such a brilliant choice that even the right answer decided to stay in the shadows.",
-          "My brain has filed an appeal. It claims it wasn't present when I clicked.",
-          "I confused speed with rushing. The dictionary has just given me the definition.",
-          "I'm a rare owl: I can look straight at a picture and think of every word except the right one."
-        ],
-        devinette:[
-          "What is a locksmith’s worst nightmare? Being locked out!",
-          "Why do divers fall backwards? Because the boat is in front of them!",
-          "What runs but never moves? A leaking tap!",
-          "Why are calendars so popular? They have so many dates!"
-        ],
-        chute:[
-          "Ami announces, “I've found a way to never make mistakes again!” The dictionary asks, “How?” Ami replies, “I'll let someone else answer.”",
-          "A dictionary asks a novel, “What are you about?” The novel says, “A long story.” The dictionary sighs, “I only have words.”",
-          "Ami asks his mirror, “Who's the cleverest in the nest?” The mirror replies, “I don't want to get involved in family matters.”",
-          "A snail gets stopped for speeding. “But I haven't even passed my shell!” it protests."
-        ]
+        eclair:["A mole could’ve seen that coming!","I aimed for the answer. Hit the scenery.","My brain is officially decorative.","I deserve a consolation feather."]
+        ,devinette:["What’s Ami’s biggest problem? His memory plays hide-and-seek!","Why is Ami bad at hide-and-seek? He forgets to look!","What’s Ami’s special skill? A false start!","Who got it wrong with style? Your favourite owl."]
+        ,chute:["Ami: “I’ve got this!” Quiz: “We have doubts.”","The dictionary wants a holiday far away from Ami.","Ami asked his instincts. They filed a complaint.","The brain left the nest. No forwarding address."]
       }
     ]
   };
@@ -771,8 +653,8 @@
     do{ k = Math.floor(Math.random() * liste.length); }while(liste.length > 1 && k === derniereBlague);
     derniereBlague = k;
     const prefixe = langue === 'en'
-      ? (type === 'devinette' ? 'Riddle time! ' : type === 'chute' ? 'A tiny story! ' : '')
-      : (type === 'devinette' ? 'Petite devinette ! ' : type === 'chute' ? 'Une mini-histoire ! ' : '');
+      ? (type === 'devinette' ? 'Quick riddle! ' : type === 'chute' ? '' : '')
+      : (type === 'devinette' ? 'Devinette ! ' : type === 'chute' ? '' : '');
     return prefixe + liste[k];
   }
   function correctionDansLangue(mot){

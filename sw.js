@@ -1,7 +1,7 @@
 // GÉNÉRÉ par outils/construire-sw.js — ne pas éditer.
 // Le jeu entier est gardé pour jouer hors connexion. Les voix (autre site)
 // ne sont pas gardées ici : sans réseau, c'est la voix du téléphone.
-const CACHE = 'amidesmots-8906802217';
+const CACHE = 'amidesmots-28f9d94ca9';
 const FICHIERS = [
  "./",
  "index.html",
@@ -15,6 +15,7 @@ const FICHIERS = [
  "img/icone.svg",
  "img/icone-192.png",
  "img/icone-512.png",
+ "img/ami-3d.webp",
  "fonts/andika-cyrillic-400-normal.woff2",
  "fonts/andika-cyrillic-700-normal.woff2",
  "fonts/andika-latin-400-normal.woff2",

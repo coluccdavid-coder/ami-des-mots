@@ -103,3 +103,20 @@ Ne pas utiliser de vrais paiements pendant les essais. Pour tester l'abonnement,
 - Tester les quatre niveaux d'humour en français et en anglais.
 - Vérifier que les devinettes incluent bien leur chute/réponse dans le même commentaire.
 - Vérifier que le commentaire reste lisible sur téléphone et que le bouton « J'ai compris — continuer » reste accessible.
+
+
+## Nouveauté v5.13 à tester — univers visuel 3D
+- Accueil : vérifier la nouvelle mascotte 3D, son flottement et le rendu sur perchoir.
+- Jeu : vérifier la taille de la mascotte dans l'en-tête, les réactions aux bonnes/mauvaises réponses et la lisibilité des questions.
+- Thèmes et choix : vérifier le relief des cartes et boutons, les ombres et les états sélectionnés.
+- Vestiaire : vérifier que les aperçus de costumes restent disponibles et que les tenues ne cassent pas l'écran.
+- Téléphone : tester portrait/paysage et les performances sur appareil d'entrée de gamme.
+- Accessibilité : activer la réduction des animations au niveau du système et vérifier que les animations sont neutralisées.
+- Hors connexion : lancer le jeu après une première visite pour vérifier le chargement local de `img/ami-3d.webp`.
+
+
+## Nouveauté v5.14 — humour court
+- Déclencher plusieurs erreurs : chaque vanne doit tenir en une courte phrase ou une devinette express.
+- Vérifier que la correction « C'était : ... » reste claire après la vanne.
+- Tester les quatre niveaux d'humour en français et en anglais.
+- Vérifier l'affichage mobile et l'écoute vocale des messages courts.

@@ -411,3 +411,22 @@ L'atelier est une première version pédagogique. Les phrases et leur adaptation
 - Quatre niveaux d'humour sont conservés, avec 12 propositions par niveau et par langue (4 par format), soit 48 répliques par langue.
 - L'humour s'inspire de mécanismes classiques (calembour, double sens, question-réponse, chute absurde) sans reprendre les blagues du PDF fourni.
 - Les plaisanteries visent Ami et ses maladresses, jamais le joueur.
+
+
+## v5.13 — première évolution visuelle 3D
+
+- Ajout d'une nouvelle mascotte Ami en rendu 3D, intégrée localement dans `img/ami-3d.webp`.
+- La mascotte reçoit des animations CSS selon son humeur : flottement, célébration, surprise et réaction douce.
+- Conservation de la mascotte SVG dans les aperçus de costumes afin de ne pas casser le vestiaire existant.
+- Refonte visuelle transversale : profondeur, perspective, matières en relief, ombres, lueurs, particules d'ambiance et cartes plus volumétriques.
+- Écrans PC élargis et adaptations mobiles conservées ; prise en charge de `prefers-reduced-motion`.
+- Les effets sont réalisés en CSS 3D et avec une image 3D intégrée, sans moteur WebGL externe. Ce jalon donne une direction artistique 3D légère ; il ne constitue pas encore un monde 3D interactif rendu par Three.js/WebGL.
+
+
+## v5.14 — vannes courtes et plus percutantes
+
+- Réécriture des répliques d'erreur en français et en anglais.
+- Suppression des mini-histoires longues qui détournaient l'attention de la correction.
+- Trois formats conservés mais raccourcis : punchline, devinette express et mini-dialogue.
+- Répliques volontairement brèves, centrées sur les maladresses d'Ami et les jeux de mots.
+- La bonne réponse reste annoncée séparément après la vanne.
