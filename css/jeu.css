@@ -738,3 +738,157 @@ html[data-facile] .lire-consigne{ width:46px; height:46px; font-size:1.2rem; bac
 .langue-blagues-titre{margin-top:20px!important}
 .choix-langue-blagues{grid-template-columns:repeat(2,minmax(0,1fr))}
 .choix-langue-blagues .moyen{font-weight:1000}
+
+
+/* =====================================================================
+   v5.8 — direction artistique « Le grand livre des mots »
+   Plus de profondeur, de lisibilité et de personnalité, sans modifier
+   les écrans fonctionnels ni réduire l'espace sur mobile.
+   ===================================================================== */
+:root{
+  --bg0:#090821;
+  --bg1:#171044;
+  --bg2:#292078;
+  --lune:#FFD66E;
+  --menthe:#35E0B5;
+  --corail:#FF718C;
+  --cyan:#76DFFF;
+  --texte:#FFFDFE;
+  --doux:#C9C2EE;
+  --encre:#17113D;
+  --bord:rgba(221,214,255,.22);
+  --verre:linear-gradient(145deg,rgba(255,255,255,.16),rgba(255,255,255,.055));
+  --verre-plein:rgba(35,27,91,.88);
+  --rayon:26px;
+}
+body{
+  background:
+    radial-gradient(ellipse at 12% 7%,rgba(99,80,222,.24),transparent 32%),
+    radial-gradient(ellipse at 92% 28%,rgba(36,209,177,.12),transparent 27%),
+    linear-gradient(155deg,#171044 0%,#0C0929 58%,#120C36 100%);
+  letter-spacing:.005em;
+}
+body::before{
+  background:
+    radial-gradient(2px 2px at 12% 18%,rgba(255,255,255,.8),transparent 70%),
+    radial-gradient(2px 2px at 78% 12%,rgba(255,255,255,.65),transparent 70%),
+    radial-gradient(2px 2px at 62% 72%,rgba(255,255,255,.55),transparent 70%),
+    radial-gradient(3px 3px at 88% 65%,rgba(255,214,110,.7),transparent 70%),
+    radial-gradient(35% 30% at 15% 10%,rgba(123,92,255,.27),transparent 70%),
+    radial-gradient(30% 28% at 88% 24%,rgba(34,216,168,.15),transparent 70%),
+    linear-gradient(180deg,#171044,#090821 78%);
+  animation:aurore 34s ease-in-out infinite alternate;
+}
+main{max-width:900px;padding:12px clamp(14px,2.4vw,28px) 64px}
+.barre{max-width:1180px;padding:14px clamp(16px,3vw,32px)}
+h1,h2,h3{ text-wrap:balance; }
+h2{letter-spacing:-.025em;line-height:1.12}
+.aide{line-height:1.5;font-size:clamp(1rem,2.2vw,1.16rem)}
+.petit{line-height:1.5}
+.verre,.jeu-ligne,.ligne-carnet,.joueur-carte,.accs .acc,.reglage-facile,
+.plus .avantages li,.moyen,.raccourcis button,.choix-mot,.rel,.tuile,
+.compteur,.bouton-rond,.entete-theme,.progres,.lire-consigne{
+  border-color:rgba(222,216,255,.2);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.3),0 12px 28px rgba(3,2,24,.28);
+  -webkit-backdrop-filter:blur(16px) saturate(145%);
+  backdrop-filter:blur(16px) saturate(145%);
+}
+.bouton-rond{width:54px;height:54px;border-color:rgba(255,255,255,.25);transition:transform .18s,background .18s,box-shadow .18s}
+.bouton-rond:hover{transform:translateY(-2px);box-shadow:0 12px 26px rgba(4,2,25,.4),0 0 0 3px rgba(255,255,255,.06)}
+.gros{
+  border-radius:23px;padding:18px clamp(22px,3vw,42px);
+  background:linear-gradient(180deg,#53F2CB 0%,#25D7AC 100%);
+  box-shadow:0 6px 0 #087C68,0 13px 28px rgba(34,216,168,.2),inset 0 1px 0 rgba(255,255,255,.75);
+  transition:transform .16s cubic-bezier(.2,.8,.2,1),filter .16s,box-shadow .16s;
+}
+.gros:hover{filter:brightness(1.055);transform:translateY(-2px)}
+.moyen{border-radius:17px;transition:transform .16s,filter .16s,box-shadow .16s}
+.moyen:hover{filter:brightness(1.09);transform:translateY(-1px)}
+.moyen.plein{
+  background:linear-gradient(180deg,#4CEBC4,#23CDA5);
+  box-shadow:0 4px 0 #087C68,0 9px 22px rgba(34,216,168,.18),inset 0 1px 0 rgba(255,255,255,.7);
+}
+.entete-theme{
+  border-radius:28px;padding:clamp(17px,2.5vw,26px);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.35),0 18px 38px rgba(4,2,28,.25);
+}
+.progres{height:17px;border-radius:999px;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.18);padding:2px}
+.progres > *{border-radius:999px}
+.choix-images,.choix-mots,.choix-vf{gap:clamp(10px,1.8vw,18px);margin-top:clamp(16px,2.4vw,24px)}
+.choix-img{
+  border-radius:26px;padding:clamp(8px,1.4vw,13px);
+  border:2px solid rgba(255,255,255,.88);
+  box-shadow:0 5px 0 #A89BDA,0 12px 24px rgba(3,2,24,.28);
+  transition:transform .18s cubic-bezier(.2,.8,.2,1),box-shadow .18s,border-color .18s;
+  overflow:hidden;
+}
+.choix-img:hover{transform:translateY(-4px) scale(1.015);box-shadow:0 8px 0 #A89BDA,0 18px 30px rgba(3,2,24,.35)}
+.choix-img img{transition:transform .22s}
+.choix-img:hover img{transform:scale(1.045)}
+.choix-img.faux{border:3px solid var(--corail)!important;box-shadow:0 0 0 3px rgba(255,113,140,.15),0 5px 0 #9E3654,0 12px 26px rgba(255,60,100,.16)!important}
+.choix-img.juste{border:3px solid var(--menthe)!important;box-shadow:0 0 0 4px rgba(53,224,181,.18),0 6px 0 #087C68,0 0 28px rgba(53,224,181,.28)!important}
+.choix-mot{
+  border:1px solid rgba(255,255,255,.2);border-radius:21px;
+  background:linear-gradient(150deg,rgba(255,255,255,.17),rgba(255,255,255,.075));
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.24),0 6px 0 rgba(4,2,25,.28),0 12px 24px rgba(3,2,24,.2);
+  padding:clamp(16px,2.4vw,23px) 12px;
+  transition:transform .16s,background .16s,box-shadow .16s;
+}
+.choix-mot:hover{transform:translateY(-3px);background:linear-gradient(150deg,rgba(255,255,255,.23),rgba(255,255,255,.1))}
+.choix-mot.faux{background:linear-gradient(145deg,rgba(255,113,140,.32),rgba(150,30,60,.22))!important;border:2px solid #FF829B!important}
+.choix-mot.juste{background:linear-gradient(145deg,#53F2CB,#25D7AC)!important}
+.cadre-image,.partie .pic-grande,.partie .pic-moyenne{
+  border-radius:30px;
+  box-shadow:0 0 0 3px rgba(255,255,255,.14),0 16px 34px rgba(3,2,24,.34),0 0 42px color-mix(in srgb,var(--th) 25%,transparent);
+}
+.bulle{
+  border-radius:28px!important;
+  padding:clamp(17px,3vw,25px)!important;
+  font-size:clamp(1.05rem,2.5vw,1.4rem)!important;
+  line-height:1.42!important;
+  box-shadow:0 16px 38px rgba(0,0,0,.34),inset 0 1px 0 rgba(255,255,255,.24)!important;
+}
+.bulle.ko{
+  background:linear-gradient(145deg,rgba(150,35,76,.97),rgba(92,18,57,.97))!important;
+  border:1px solid rgba(255,173,190,.6)!important;
+}
+.bulle.ok{
+  background:linear-gradient(145deg,rgba(14,137,107,.97),rgba(7,83,76,.97))!important;
+  border:1px solid rgba(138,255,222,.55)!important;
+}
+.accueil .gros,.accueil .moyen{filter:drop-shadow(0 5px 10px rgba(0,0,0,.12))}
+.theme{transition:transform .2s,filter .2s}
+.theme:hover{filter:brightness(1.08) saturate(1.08)}
+.lieu-village{background:linear-gradient(150deg,rgba(255,255,255,.19),rgba(255,255,255,.06));border-radius:27px;box-shadow:inset 0 1px 0 rgba(255,255,255,.22),0 7px 0 rgba(3,2,24,.24),0 16px 28px rgba(3,2,24,.18)}
+.lieu-village:hover{transform:translateY(-4px);filter:brightness(1.08)}
+.reglage-humour{background:linear-gradient(145deg,rgba(255,255,255,.12),rgba(255,255,255,.045));border-radius:24px;box-shadow:inset 0 1px 0 rgba(255,255,255,.16),0 12px 28px rgba(3,2,24,.16)}
+.choix-humour .moyen.plein{outline:2px solid var(--lune);outline-offset:2px}
+.continuer-erreur:not([hidden]){
+  border-radius:22px!important;
+  box-shadow:0 5px 0 #B77B20,0 13px 28px rgba(0,0,0,.32),inset 0 1px 0 rgba(255,255,255,.8)!important;
+  transition:transform .15s,filter .15s;
+}
+.continuer-erreur:not([hidden]):active{transform:translate(-50%,3px);filter:brightness(.97)}
+@media(min-width:900px){
+  main{max-width:1060px}
+  .partie{max-width:1480px;padding-left:clamp(28px,4vw,70px);padding-right:clamp(28px,4vw,70px)}
+  .choix-images,.choix-mots{max-width:1080px;margin-left:auto;margin-right:auto}
+  .choix-img{max-height:280px}
+  .accueil{gap:20px 24px}
+}
+@media(max-width:560px){
+  body{font-size:17px}
+  main{padding-left:14px;padding-right:14px}
+  .barre{padding:10px 14px}
+  .choix-images,.choix-mots,.choix-vf{gap:11px}
+  .choix-img{border-radius:22px;padding:7px}
+  .choix-mot{font-size:1.08rem;padding:15px 8px}
+  .bulle{left:12px!important;right:12px!important}
+}
+@media(hover:none){
+  .choix-img:hover,.choix-mot:hover,.lieu-village:hover,.moyen:hover{transform:none;filter:none}
+}
+@media(prefers-reduced-motion:reduce){
+  body::before{animation:none!important}
+  .choix-img,.choix-img img,.choix-mot,.lieu-village,.moyen,.gros{transition:none!important}
+}

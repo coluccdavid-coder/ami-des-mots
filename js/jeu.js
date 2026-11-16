@@ -45,7 +45,9 @@
   }, window.CONFIG_JEU || {});
 
   const UI = Object.keys(window.TEXTES);
-  const APPRENDRE = Object.keys(window.LANGUES_APPRENDRE);
+  // Langues visibles pendant la phase de lancement des voix dédiées.
+  // Les autres langues et leurs contenus restent intégralement dans donnees.js.
+  const APPRENDRE = ['fr', 'en'];
   const DEFI = 8, MAX_JOUEURS = 6;
   const ACCESSOIRES = [['echarpe', 15], ['lunettes', 40], ['noeud', 80], ['chapeau', 140], ['couronne', 250]];
   const COULEURS = [['#B7845A', '#DBAA78', '#8C5E37'], ['#6E8FB8', '#A6C1E0', '#4A6A93'], ['#C9787A', '#EBB0B1', '#9E5153'], ['#7FA36B', '#B5D3A2', '#587C46'], ['#A08AC0', '#CDBDE3', '#76619A'], ['#7D7D7D', '#B9B9B9', '#555555']];
@@ -77,7 +79,12 @@
     const nav = (navigator.language || 'fr').slice(0, 2).toLowerCase();
     base.ui = UI.includes(nav) ? nav : 'fr';
   }
-  if(!APPRENDRE.includes(base.cible)) base.cible = base.ui === 'fr' ? 'kab' : 'fr';
+  if(!APPRENDRE.includes(base.cible)){
+    // Conserver le choix précédent pour une réactivation ultérieure,
+    // sans l'afficher ni le supprimer des données de l'application.
+    if(base.cible) base.cibleMasquee = base.cible;
+    base.cible = base.ui === 'fr' ? 'en' : 'fr';
+  }
   if(base.son === undefined) base.son = true;
 
   // ── Abonnement ────────────────────────────────────────────────────
@@ -187,15 +194,28 @@
     const loc = LOCALES[lang];
     if(!loc || !window.speechSynthesis) return false;
     const toutes = speechSynthesis.getVoices();
-    const voix = toutes.filter(v => v.lang && v.lang.replace('_', '-').toLowerCase().startsWith(loc.slice(0, 2).toLowerCase()));
-    if(!voix.length && toutes.length) return false;
+    const code = loc.slice(0, 2).toLowerCase();
+    const voix = toutes.filter(v => v.lang && v.lang.replace('_', '-').toLowerCase().startsWith(code));
     const u = new SpeechSynthesisUtterance(texte);
     u.lang = loc; u.rate = .9;
-    const v = voix.find(x => /natural|neural|premium|enhanced|google/i.test(x.name)) || voix[0];
+    // Privilégier une voix de la bonne langue ; si Android n'a pas encore
+    // chargé sa liste, garder la voix système plutôt que de ne rien dire.
+    const v = voix.find(x => /natural|neural|premium|enhanced|google/i.test(x.name)) || voix[0] || toutes.find(x => x.default) || toutes[0];
     if(v) u.voice = v;
-    // Chrome ignore parfois un speak() lancé juste après cancel() : petit délai.
-    speechSynthesis.cancel();
-    setTimeout(() => { try{ speechSynthesis.resume(); speechSynthesis.speak(u); }catch(e){} }, 80);
+    let lance = false;
+    const parler = () => {
+      if(lance) return;
+      lance = true;
+      try{ speechSynthesis.cancel(); speechSynthesis.resume(); speechSynthesis.speak(u); }catch(e){}
+    };
+    // Sur certains téléphones, getVoices() est vide au tout premier appel.
+    if(!toutes.length && speechSynthesis.addEventListener){
+      const charge = () => { speechSynthesis.removeEventListener('voiceschanged', charge); parler(); };
+      speechSynthesis.addEventListener('voiceschanged', charge, { once:true });
+      setTimeout(parler, 700);
+    }else{
+      setTimeout(parler, 80);
+    }
     return true;
   }
   // Les consignes (dans la langue du joueur) sont lues par la voix du téléphone.
@@ -207,11 +227,18 @@
     const a = new Audio(urlVoix(lang, texte));
     lecteur = a;
     let fini = false;
-    const repli = () => { if(fini) return; fini = true; if(lecteur === a) lecteur = null; if(!voixNavigateur(lang, texte)) silence(); };
-    const garde = setTimeout(() => { if(a.readyState < 2){ try{ a.pause(); }catch(e){} repli(); } }, 2500);
+    const repli = () => {
+      if(fini) return;
+      fini = true; clearTimeout(garde);
+      if(lecteur === a) lecteur = null;
+      // Ne pas rester muet si le MP3 distant est absent, lent ou refusé.
+      if(!voixNavigateur(lang, texte)) silence();
+    };
+    const garde = setTimeout(() => { if(a.readyState < 2){ try{ a.pause(); }catch(e){} repli(); } }, 2200);
     a.addEventListener('playing', () => { fini = true; clearTimeout(garde); }, { once:true });
-    a.addEventListener('error', () => { clearTimeout(garde); repli(); }, { once:true });
-    const p = a.play(); if(p && p.catch) p.catch(() => { clearTimeout(garde); repli(); });
+    a.addEventListener('error', () => repli(), { once:true });
+    const p = a.play();
+    if(p && p.catch) p.catch(() => repli());
   };
   function precharger(emojis){
     if(navigator.connection && navigator.connection.saveData) return;
@@ -559,16 +586,168 @@
   let derniereBlague = -1;
   const BLAGUES_AMI = {
     fr:[
-      ["Oups ! Mon bec a glissé. On essaie encore ?","Même les hiboux ont parfois la tête dans les plumes !","Pas grave, les mots aiment se faire désirer."],
-      ["Ouille, mon bec vient de faire un nœud marin ! On retente ?","Même ma boussole intérieure indique « euh… par là ? »","Ce mot joue à cache-cache. Il a pris une sacrée avance !","Mon cerveau a éternué. Pardon pour la confusion !"],
-      ["Ce mot a mis des lunettes noires et se croit incognito. Raté, je l'ai reconnu !","Mon dictionnaire vient de demander une pause syndicale. On lui laisse dix secondes ?","Aïe ! J'ai entendu le neurone de service tomber de sa chaise.","Ce mot est plus glissant qu'une savonnette sur une patinoire !"],
-      ["ALERTE AU NID : mon cerveau vient de faire un triple salto… sans autorisation !","Ce mot m'a mis K.-O. Je demande la VAR au dictionnaire !","Catastrophe à plumes : j'ai confondu mes neurones avec des nouilles. Ça arrive aux meilleurs hiboux !","Le dictionnaire vient de porter plainte pour excès de confusion. Je plaide… le goûter !"]
+      {
+        eclair:[
+          "J’ai voulu aller plus vite que la lumière. Résultat : je suis arrivé avant la bonne réponse.",
+          "Mon dictionnaire m’a dit de tourner la page. J’ai tourné l’écran… on n’avance pas.",
+          "Je voulais faire mouche. J’ai surtout fait « bzz » à côté.",
+          "J’ai le compas dans l’œil… mais il indique le mauvais nord."
+        ],
+        devinette:[
+          "Pourquoi le livre de maths est-il toujours fatigué ? Parce qu’il a trop de problèmes !",
+          "Quel est le comble pour un électricien ? De ne pas être au courant !",
+          "Pourquoi les poissons détestent l’ordinateur ? À cause du net !",
+          "Quel animal est toujours en retard ? Le morse… il prend son temps pour envoyer ses messages !"
+        ],
+        chute:[
+          "Un dictionnaire entre dans un café. Le serveur demande : « Un mot, comme d’habitude ? » Le dictionnaire répond : « Non, aujourd’hui je prends une expression ! »",
+          "Ami demande à son réveil : « Tu peux me donner l’heure ? » Le réveil répond : « Je peux, mais après tu vas encore me sonner les cloches ! »",
+          "Un escargot entre dans une bibliothèque. La bibliothécaire demande : « Vous cherchez un livre rapide ? » Il répond : « Non, j’ai tout mon temps. »",
+          "Ami ouvre son cahier de révision. Une page blanche lui dit : « Alors, on commence ? » Ami répond : « Tu m’as déjà tout appris ! »"
+        ]
+      },
+      {
+        eclair:[
+          "J’ai cliqué avec assurance. C’est fou comme on peut se tromper avec élégance.",
+          "Mon cerveau a pris une pause café. Visiblement, il n’a pas repris son service.",
+          "Je pensais avoir un éclair de génie. C’était juste l’ampoule du couloir.",
+          "J’ai suivi mon instinct. Il m’a conduit directement dans le décor."
+        ],
+        devinette:[
+          "Pourquoi les livres ont-ils toujours froid ? Parce qu’ils ont une couverture !",
+          "Qu’est-ce qui est jaune et qui attend ? Jonathan !",
+          "Pourquoi les plongeurs plongent-ils toujours en arrière ? Parce que sinon ils tombent dans le bateau !",
+          "Quel est le comble pour un jardinier ? Raconter des salades !"
+        ],
+        chute:[
+          "Ami demande à son crayon : « Tu as une idée ? » Le crayon répond : « Oui, mais je n’arrive pas à la mettre au point. »",
+          "Un ordinateur va chez le médecin. « Docteur, j’ai des fenêtres partout ! » Le médecin répond : « Vous avez essayé de fermer les yeux ? »",
+          "Un zéro rencontre un huit. « Jolie ceinture ! » lui dit-il. Le huit répond : « Merci, je voulais être bien entouré. »",
+          "Ami dit au dictionnaire : « Tu as réponse à tout ! » Le dictionnaire répond : « Oui, mais toi, tu ne poses jamais la bonne question. »"
+        ]
+      },
+      {
+        eclair:[
+          "J’ai tellement réfléchi que la bonne réponse a eu le temps de prendre sa retraite.",
+          "Mon cerveau a fait un sans-faute… dans la mauvaise direction.",
+          "J’ai voulu jouer au génie. Pour l’instant, je joue surtout au « mais où est-ce que j’ai cliqué ? »",
+          "Je viens de battre un record : choisir très vite une réponse très fausse."
+        ],
+        devinette:[
+          "Pourquoi les fantômes sont-ils de mauvais menteurs ? Parce qu’on voit à travers eux !",
+          "Qu’est-ce qu’un chat tombé dans un pot de peinture le jour de Noël ? Un chat peint de Noël !",
+          "Quel est le comble pour un facteur ? Perdre la lettre !",
+          "Pourquoi les livres de cuisine sont-ils si drôles ? Parce qu’ils racontent des histoires à tomber dans les pommes !"
+        ],
+        chute:[
+          "Un prof demande à Ami : « Si tu as trois pommes et que je t’en prends deux, qu’est-ce qu’il te reste ? » Ami répond : « Une bonne raison de cacher mon goûter ! »",
+          "Ami entre dans une boulangerie : « Vous avez du pain d’hier ? » Le boulanger répond oui. « Parfait, je repasse demain, il sera encore meilleur ! »",
+          "Une ampoule dit à une autre : « Tu as l’air éteinte. » L’autre répond : « Normal, je traverse une période sombre. »",
+          "Ami demande à la pendule : « Pourquoi tu tournes en rond ? » Elle répond : « Parce que j’ai toujours eu les aiguilles qui me démangent ! »"
+        ]
+      },
+      {
+        eclair:[
+          "J’ai pris une décision tellement brillante que même la bonne réponse a préféré rester dans l’ombre.",
+          "Mon cerveau vient de déposer un recours : il affirme qu’il n’était pas présent au moment du clic.",
+          "J’ai confondu vitesse et précipitation. Le dictionnaire vient de me donner la définition.",
+          "Je suis un hibou rare : je peux regarder une image et penser à tout sauf au bon mot."
+        ],
+        devinette:[
+          "Quel est le comble pour un serrurier ? Se faire mettre à la porte !",
+          "Pourquoi les plongeurs se laissent-ils tomber en arrière ? Parce que devant, il y a le bateau !",
+          "Qu’est-ce qui court sans jamais bouger ? Un robinet… quand il fuit !",
+          "Pourquoi les calendriers sont-ils populaires ? Parce qu’ils ont beaucoup de dates !"
+        ],
+        chute:[
+          "Ami annonce : « J’ai enfin trouvé la méthode pour ne plus faire d’erreur ! » Le dictionnaire demande : « Laquelle ? » Ami répond : « Je laisse les autres répondre à ma place. »",
+          "Un dictionnaire demande à un roman : « Alors, tu racontes quoi ? » Le roman répond : « Une longue histoire. » Le dictionnaire soupire : « Moi, je n’ai que des mots. »",
+          "Ami demande à son miroir : « Qui est le plus malin du nid ? » Le miroir répond : « Je ne veux pas me mêler de vos histoires de famille. »",
+          "Un escargot se fait arrêter pour excès de vitesse. Il proteste : « Mais je n’ai même pas dépassé ma coquille ! »"
+        ]
+      }
     ],
     en:[
-      ["Oops! My beak slipped. Shall we try again?","Even owls get their feathers in a twist sometimes!","No worries, words like to play hard to get."],
-      ["Whoops, I just tied my beak in a sailor's knot! Try again?","My inner compass is pointing at… erm… somewhere over there!","This word is playing hide-and-seek. It got quite a head start!","My brain just sneezed. Sorry for the mix-up!"],
-      ["That word put on dark glasses and thinks it's undercover. Nice try!","My dictionary just asked for a union break. Ten seconds?","Oops! I heard the neuron on duty fall off its chair.","This word is slipperier than a banana on an ice rink!"],
-      ["NEST ALERT: my brain just did a triple somersault without permission!","That word knocked me out. I demand a replay from the dictionary!","Feather emergency: I mixed up my neurons with noodles. Happens to the best owls!","The dictionary is filing a complaint for excessive confusion. I plead… snack time!"]
+      {
+        eclair:[
+          "I tried to beat the speed of light. I arrived before the right answer.",
+          "My dictionary told me to turn the page. I turned the screen. Not much progress!",
+          "I wanted to make a hit. All I made was a little buzz in the wrong place.",
+          "I have a good eye… it just points north in the wrong direction."
+        ],
+        devinette:[
+          "Why was the maths book so tired? It had too many problems!",
+          "What is an electrician’s worst nightmare? Not being kept in the loop!",
+          "Why do fish dislike the internet? Too many nets!",
+          "Which animal sends the slowest messages? The snail. It takes its time!"
+        ],
+        chute:[
+          "A dictionary walks into a café. The waiter asks, “The usual word?” The dictionary says, “Not today. I’ll have an expression!”",
+          "Ami asks his alarm clock, “What time is it?” The clock says, “I’ll tell you, but please stop ringing my bells!”",
+          "A snail enters a library. The librarian asks, “Looking for a quick read?” The snail says, “No rush. I’ve got all day.”",
+          "Ami opens his revision notebook. A blank page asks, “Shall we start?” Ami says, “You’ve already taught me everything!”"
+        ]
+      },
+      {
+        eclair:[
+          "I clicked with confidence. It's amazing how elegantly you can be wrong.",
+          "My brain took a coffee break. Apparently, it forgot to come back.",
+          "I thought I had a brilliant idea. It was just the hallway light.",
+          "I followed my instincts. They led me straight into a wall."
+        ],
+        devinette:[
+          "Why are books always cold? They have a cover!",
+          "What is yellow and waiting? A banana at the bus stop!",
+          "Why do divers fall backwards into the water? Because forwards, they’d fall into the boat!",
+          "What is a gardener’s favourite kind of story? One with lots of plot twists!"
+        ],
+        chute:[
+          "Ami asks his pencil, “Got any ideas?” The pencil says, “Yes, but I can’t quite make my point.”",
+          "A computer visits the doctor. “Doctor, I have windows everywhere!” The doctor says, “Have you tried closing your eyes?”",
+          "A zero meets an eight. “Nice belt!” says the zero. The eight replies, “Thanks, I like to keep things together.”",
+          "Ami tells the dictionary, “You have an answer for everything!” The dictionary replies, “Yes, but you never ask the right question.”"
+        ]
+      },
+      {
+        eclair:[
+          "I thought so hard the right answer had time to retire.",
+          "My brain made a perfect move… in the wrong direction.",
+          "I tried to be a genius. So far, I'm mostly wondering where I clicked.",
+          "I just broke a record: choosing a very wrong answer very quickly."
+        ],
+        devinette:[
+          "Why are ghosts terrible liars? You can see right through them!",
+          "What do you call a cat covered in paint at Christmas? A merry-paint cat!",
+          "What is a postman's worst fear? Losing the mail!",
+          "Why are cookbooks so funny? Their stories are full of food for thought!"
+        ],
+        chute:[
+          "A teacher asks Ami, “If you have three apples and I take two, what have you got left?” Ami says, “A very good reason to hide my snacks!”",
+          "Ami visits a bakery. “Do you have yesterday’s bread?” “Yes,” says the baker. “Great! I’ll come back tomorrow. It’ll be even older!”",
+          "One light bulb says to another, “You look switched off.” The other replies, “I'm just going through a dark phase.”",
+          "Ami asks the clock, “Why do you go round in circles?” It replies, “Because I’ve always had hands that point!”"
+        ]
+      },
+      {
+        eclair:[
+          "I made such a brilliant choice that even the right answer decided to stay in the shadows.",
+          "My brain has filed an appeal. It claims it wasn't present when I clicked.",
+          "I confused speed with rushing. The dictionary has just given me the definition.",
+          "I'm a rare owl: I can look straight at a picture and think of every word except the right one."
+        ],
+        devinette:[
+          "What is a locksmith’s worst nightmare? Being locked out!",
+          "Why do divers fall backwards? Because the boat is in front of them!",
+          "What runs but never moves? A leaking tap!",
+          "Why are calendars so popular? They have so many dates!"
+        ],
+        chute:[
+          "Ami announces, “I've found a way to never make mistakes again!” The dictionary asks, “How?” Ami replies, “I'll let someone else answer.”",
+          "A dictionary asks a novel, “What are you about?” The novel says, “A long story.” The dictionary sighs, “I only have words.”",
+          "Ami asks his mirror, “Who's the cleverest in the nest?” The mirror replies, “I don't want to get involved in family matters.”",
+          "A snail gets stopped for speeding. “But I haven't even passed my shell!” it protests."
+        ]
+      }
     ]
   };
   function niveauHumour(){
@@ -582,10 +761,19 @@
   function blague(){
     const niveau = niveauHumour();
     const langue = langueBlagues();
-    const l = BLAGUES_AMI[langue][niveau];
-    if(!Array.isArray(l) || !l.length) return langue === 'en' ? 'Oops! My owl brain got its feathers in a twist!' : 'Oups ! Mon cerveau de hibou a emmêlé ses plumes !';
-    let k; do{ k = Math.floor(Math.random() * l.length); }while(l.length > 1 && k === derniereBlague);
-    derniereBlague = k; return l[k];
+    const formats = BLAGUES_AMI[langue][niveau];
+    if(!formats) return langue === 'en' ? 'Oops! My owl brain got its feathers in a twist!' : 'Oups ! Mon cerveau de hibou a emmêlé ses plumes !';
+    const types = ['eclair','devinette','chute'];
+    const type = types[Math.floor(Math.random() * types.length)];
+    const liste = formats[type];
+    if(!Array.isArray(liste) || !liste.length) return langue === 'en' ? 'Oops! Let’s try that again!' : 'Oups ! On réessaie ?';
+    let k;
+    do{ k = Math.floor(Math.random() * liste.length); }while(liste.length > 1 && k === derniereBlague);
+    derniereBlague = k;
+    const prefixe = langue === 'en'
+      ? (type === 'devinette' ? 'Riddle time! ' : type === 'chute' ? 'A tiny story! ' : '')
+      : (type === 'devinette' ? 'Petite devinette ! ' : type === 'chute' ? 'Une mini-histoire ! ' : '');
+    return prefixe + liste[k];
   }
   function correctionDansLangue(mot){
     return langueBlagues() === 'en' ? 'The correct answer was: ' + mot : "C'était : " + mot;
@@ -731,6 +919,9 @@
     const duree = Math.round(({ f:8, n:11, e:15 }[partie.niv] || 11) * (facile() ? 1.8 : 1));
     cadre(titreDe(m), t('a_' + m), '<div class="centre"><span class="cadre-image">' + image(e, 'pic-grande' + (m === 'ombre' ? ' ombre' : m === 'devinette' ? ' flou' : '')).replace('<img ', '<img style="--duree:' + duree + 's" ') + '</span></div>' + boutonsMots(ch));
     precharger([e]);
+    // L'instruction est lue dans la langue de l'interface, sans prononcer
+    // le mot recherché : le joueur doit toujours le deviner.
+    if(partie.i === 0) setTimeout(() => lireConsigne(t('a_' + m)), 220);
   };
   // Ombre : image détourée → silhouette pleine ; image sur fond blanc → filtre à seuil.
   Q.ombre = () => {
@@ -1368,6 +1559,10 @@
         base.joueurs = d.joueurs.map(propre); base.actif = 0;
         if(UI.includes(d.ui)) base.ui = d.ui;
         if(APPRENDRE.includes(d.cible)) base.cible = d.cible;
+        else if(d.cible){
+          base.cibleMasquee = d.cible;
+          base.cible = base.ui === 'fr' ? 'en' : 'fr';
+        }
         // Le code d'abonnement revient ; le certificat sera redemandé au serveur.
         if(d.abo && /^AMI-[A-Z0-9]{4}-[A-Z0-9]{4}-[A-Z0-9]{4}$/.test(d.abo.code)){ base.abo = { code:d.abo.code, jeton:'', verifie:'' }; droits = null; }
         garder(); annonce('💾 ' + t('restaure_ok')); accueil.choisi = false; accueil(); rafraichir(true);

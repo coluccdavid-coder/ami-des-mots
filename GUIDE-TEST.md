@@ -66,3 +66,40 @@ Ne pas utiliser de vrais paiements pendant les essais. Pour tester l'abonnement,
 - Choisir English puis refaire une erreur : blague, correction et voix doivent être en anglais.
 - Changer la langue apprise et la langue de l'interface : le choix de langue des blagues doit rester indépendant.
 - Vérifier que le réglage est conservé après rechargement et par profil.
+
+
+## Nouveautés v5.8 à tester
+- Comparer l'accueil, les thèmes, les questions et les réglages sur ordinateur et téléphone.
+- Vérifier la lisibilité des images, des cartes, des boutons et des retours de bonne/mauvaise réponse.
+- Essayer les quatre niveaux d'humour en français puis en anglais : les nouvelles répliques doivent varier et rester dans la langue sélectionnée.
+- Vérifier le mode paysage, le mode lecture facile et l'option de réduction des animations du système.
+- Refaire un parcours complet : accueil > thème/village > partie > correction > fin > révisions.
+
+
+## Nouveauté v5.9 à tester — voix du premier exercice
+- Démarrer une partie sur téléphone : la consigne du premier exercice doit être lue.
+- Dans « Écoutez puis touchez la bonne image », vérifier que le mot est prononcé automatiquement et que le bouton « Écouter » le relit à la demande.
+- Dans « Quel est le nom de cette image ? », vérifier que seule la consigne est lue, sans révéler le mot attendu.
+- Tester en français et en anglais, puis après un rechargement de la page.
+- Si la voix système n'est pas disponible pour la langue, vérifier qu'un message d'absence de voix apparaît au lieu d'un silence trompeur.
+
+
+## Nouveauté v5.10 à tester — langues provisoirement masquées
+- Sur l'accueil, le menu « J'apprends » ne doit proposer que Français et English.
+- Vérifier les exercices et l'atelier de phrases en français et en anglais.
+- Restaurer une ancienne sauvegarde dont la langue cible est espagnol, kabyle ou autre : l'application doit sélectionner temporairement Français/English sans effacer les données linguistiques.
+- Vérifier que les mots et traductions des autres langues sont toujours présents dans `js/donnees.js`.
+
+
+## Nouveauté v5.11 à tester — qualité des blagues
+- Essayer les quatre niveaux d'humour en français puis en anglais.
+- Vérifier que les répliques sont compréhensibles, naturelles et cohérentes avec une erreur de réponse.
+- Vérifier qu'aucune vanne ne se moque du joueur.
+- Refaire plusieurs erreurs de suite pour vérifier que les répliques varient.
+
+
+## Nouveauté v5.12 à tester — trois formats de blagues
+- Provoquer plusieurs erreurs au même niveau : les retours doivent alterner entre vanne éclair, devinette et mini-histoire.
+- Tester les quatre niveaux d'humour en français et en anglais.
+- Vérifier que les devinettes incluent bien leur chute/réponse dans le même commentaire.
+- Vérifier que le commentaire reste lisible sur téléphone et que le bouton « J'ai compris — continuer » reste accessible.

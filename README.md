@@ -368,3 +368,46 @@ L'atelier est une première version pédagogique. Les phrases et leur adaptation
 - Les quatre niveaux d'humour disposent de répliques en français et en anglais, y compris le niveau « Tout doux ».
 - La phrase annonçant la bonne réponse est également traduite dans la langue des blagues pour éviter les commentaires mélangés.
 - La lecture vocale du commentaire d'erreur utilise la langue sélectionnée pour les blagues.
+
+
+## v5.8 — direction artistique et humour enrichi
+
+- Refonte CSS de l'ambiance visuelle : profondeur, contraste, cartes, boutons, panneaux, progression et animations plus cohérentes.
+- Ajustements responsive pour donner plus d'espace aux écrans PC tout en conservant des cibles tactiles généreuses sur téléphone.
+- États visuels de bonne et mauvaise réponse plus lisibles.
+- Bibliothèque de blagues étoffée en français et en anglais pour les quatre niveaux d'humour ; les répliques restent dirigées vers Ami, les mots ou la situation, jamais vers le joueur.
+- Les fonctions, profils, langues, réglages et mécanismes d'abonnement existants sont conservés.
+
+
+## v5.9 — fiabilisation de la lecture vocale
+
+- Le moteur vocal du navigateur ne reste plus silencieux lorsque la liste des voix Android/iOS n'est pas encore chargée au premier appel.
+- La sélection privilégie une voix correspondant à la langue demandée, puis utilise la voix système disponible en dernier recours.
+- Le repli vocal est déclenché si le MP3 distant est absent, trop lent ou refusé par le navigateur.
+- Les exercices de reconnaissance d'image lisent leur consigne au premier tour, sans prononcer le mot à deviner.
+
+
+## v5.10 — lancement limité au français et à l'anglais
+
+- Le sélecteur de langue d'apprentissage ne propose provisoirement que Français et English.
+- Les autres langues ne sont pas supprimées : leurs libellés, traductions, mots et données restent présents dans l'application.
+- Si un profil ou une sauvegarde utilisait une autre langue, le code de cette langue est conservé dans `cibleMasquee` et le profil bascule temporairement vers le français ou l'anglais.
+- Cette limitation d'affichage est réversible : les langues masquées pourront être réactivées ultérieurement sans réimporter leurs contenus.
+
+
+## v5.11 — réécriture des blagues d'Ami
+
+- Réécriture complète des 64 répliques d'erreur (4 niveaux × 8 blagues × 2 langues).
+- Les vannes reposent désormais sur des situations compréhensibles : précipitation, confusion, excès de confiance, dictionnaire, révision et petites maladresses d'Ami.
+- Suppression des images absurdes ou des références sans rapport avec la situation.
+- Les blagues restent auto-dérisoires : elles visent Ami et ses choix, jamais la personne qui apprend.
+- Les quatre niveaux d'humour, le choix français/anglais et la sélection mémorisée par profil sont conservés.
+
+
+## v5.12 — humour d'Ami en trois formats
+
+- Réécriture du répertoire de répliques en français et en anglais.
+- Trois formats sont désormais tirés au sort après une erreur : vanne éclair, petite devinette avec sa chute, et mini-histoire drôle.
+- Quatre niveaux d'humour sont conservés, avec 12 propositions par niveau et par langue (4 par format), soit 48 répliques par langue.
+- L'humour s'inspire de mécanismes classiques (calembour, double sens, question-réponse, chute absurde) sans reprendre les blagues du PDF fourni.
+- Les plaisanteries visent Ami et ses maladresses, jamais le joueur.
