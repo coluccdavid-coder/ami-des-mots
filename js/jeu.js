@@ -551,13 +551,35 @@
     const th = partie.mode === 'theme' ? theme : MOTS[motI()] && MOTS[motI()].theme;
     poser(barre(retourPartie()) + '<main class="partie" style="--th:' + couleurDe(th) + '">' +
       '<div class="tete"><div class="ami-petit" id="ami-partie">' + ami('content') + '</div><span class="combo' + ((partie.combo || 0) >= 2 ? ' vu' : '') + '" id="combo" aria-hidden="true">' + ((partie.combo || 0) >= 2 ? '🔥 ×' + partie.combo : '') + '</span><div><h2>' + esc(titre) + '</h2><p class="aide"><span id="consigne">' + esc(aide) + '</span> <button class="lire-consigne" data-a="consigne" aria-label="' + esc(t('lire_consigne')) + '">🔊</button></p></div></div>' +
-      chrono + prog + '<div class="scene">' + corps + '</div>' + '<p class="bulle" id="bulle" role="status" aria-live="polite"></p><p class="note" id="note-voix" aria-live="polite"></p></main>');
+      chrono + prog + '<div class="scene">' + corps + '</div>' + '<p class="bulle" id="bulle" role="status" aria-live="polite"></p><button class="moyen continuer-erreur" id="continuer-erreur" data-a="continuer-erreur" hidden>✓ ' + (base.ui === 'en' ? 'I understand — next' : 'J’ai compris — continuer') + '</button><p class="note" id="note-voix" aria-live="polite"></p></main>');
     if(facile() && partie.i === 0 && !partie.consigneLue){ partie.consigneLue = true; setTimeout(() => lireConsigne(aide), 250); }
   }
-  // Une blague d'Ami quand on se trompe : jamais sur la personne, toujours sur Ami ou le mot.
+  // Humour réglable : les plaisanteries visent Ami, le mot ou la situation,
+  // jamais le joueur. Le niveau est mémorisé par profil.
   let derniereBlague = -1;
+  const BLAGUES_AMI = {
+    fr:[
+      [],
+      ["Ouille, mon bec vient de faire un nœud marin ! On retente ?","Même ma boussole intérieure indique « euh… par là ? »","Ce mot joue à cache-cache. Il a pris une sacrée avance !","Mon cerveau a éternué. Pardon pour la confusion !"],
+      ["Ce mot a mis des lunettes noires et se croit incognito. Raté, je l'ai reconnu !","Mon dictionnaire vient de demander une pause syndicale. On lui laisse dix secondes ?","Aïe ! J'ai entendu le neurone de service tomber de sa chaise.","Ce mot est plus glissant qu'une savonnette sur une patinoire !"],
+      ["ALERTE AU NID : mon cerveau vient de faire un triple salto… sans autorisation !","Ce mot m'a mis K.-O. Je demande la VAR au dictionnaire !","Catastrophe à plumes : j'ai confondu mes neurones avec des nouilles. Ça arrive aux meilleurs hiboux !","Le dictionnaire vient de porter plainte pour excès de confusion. Je plaide… le goûter !"]
+    ],
+    en:[
+      [],
+      ["Whoops, I just tied my beak in a sailor's knot! Try again?","My inner compass is pointing at… erm… somewhere over there!","This word is playing hide-and-seek. It got quite a head start!","My brain just sneezed. Sorry for the mix-up!"],
+      ["That word put on dark glasses and thinks it's undercover. Nice try!","My dictionary just asked for a union break. Ten seconds?","Oops! I heard the neuron on duty fall off its chair.","This word is slipperier than a banana on an ice rink!"],
+      ["NEST ALERT: my brain just did a triple somersault without permission!","That word knocked me out. I demand a replay from the dictionary!","Feather emergency: I mixed up my neurons with noodles. Happens to the best owls!","The dictionary is filing a complaint for excessive confusion. I plead… snack time!"]
+    ]
+  };
+  function niveauHumour(){
+    const n = Number(J().humour);
+    return Number.isInteger(n) && n >= 0 && n <= 3 ? n : 0;
+  }
   function blague(){
-    const l = t('blagues'); if(!Array.isArray(l) || !l.length) return t('rate');
+    const niveau = niveauHumour();
+    const langue = BLAGUES_AMI[base.ui] ? base.ui : 'fr';
+    const l = niveau === 0 ? t('blagues') : BLAGUES_AMI[langue][niveau];
+    if(!Array.isArray(l) || !l.length) return t('rate');
     let k; do{ k = Math.floor(Math.random() * l.length); }while(l.length > 1 && k === derniereBlague);
     derniereBlague = k; return l[k];
   }
@@ -810,13 +832,22 @@
       setTimeout(() => { partie.verrou = false; partie.i++; question(); }, partie.chronoFin ? 900 : 1500);
     }else{
       partie.erreurs++; bruit('faux');
+      partie.verrou = true;
+      partie.attenteErreur = true;
       btn.classList.add('faux');
-      if(reessai){ btn.disabled = true; amiDit(blague(), 'surpris'); if(partie.courant === 'ecoute' || partie.courant === 'ecoute_mot') setTimeout(() => dire(partie.bonne), 500); }
-      else {
-        const tr = traduction(partie.bonne);
-        partie.verrou = true; amiDit(blague() + ' ' + t('c_etait', partie.courant === 'panier' ? t('th_' + MOTS[partie.bonne].theme) : nomMot(partie.bonne) + (tr ? ' (' + tr + ')' : '')), 'surpris'); dire(partie.bonne);
-        setTimeout(() => { partie.verrou = false; partie.i++; question(); }, 2200);
-      }
+      btn.disabled = true;
+      // Bloquer les autres choix jusqu'à ce que le joueur ait lu/écouté le retour.
+      document.querySelectorAll('.scene button').forEach(x => { x.disabled = true; });
+      const tr = traduction(partie.bonne);
+      const bonneReponse = partie.courant === 'panier'
+        ? t('th_' + MOTS[partie.bonne].theme)
+        : nomMot(partie.bonne) + (tr ? ' (' + tr + ')' : '');
+      const message = blague() + ' ' + t('c_etait', bonneReponse);
+      amiDit(message, 'surpris');
+      const suite = $('#continuer-erreur');
+      if(suite){ suite.hidden = false; suite.focus({preventScroll:true}); }
+      // Une seule lecture vocale : la blague ET la bonne réponse, dans cet ordre.
+      if(window.speak) window.speak(message);
     }
   }
   // Étincelles qui jaillissent d'une bonne réponse.
@@ -1248,6 +1279,9 @@
     poser(barre('accueil') + '<main class="texte"><h2>⚙️ ' + esc(t('reglages')) + '</h2>' +
       '<div class="reglage reglage-facile"><span><strong>📖 ' + esc(t('facile')) + '</strong><span class="petit">' + esc(t('facile_aide')) + '</span></span><button class="moyen' + (facile() ? ' plein' : '') + '" data-a="facile" aria-pressed="' + facile() + '">' + esc(facile() ? t('oui') : t('non')) + '</button></div>' +
       '<div class="reglage"><span>🔔 ' + esc(t('son')) + '</span><button class="moyen' + (base.son ? ' plein' : '') + '" data-a="son" aria-pressed="' + base.son + '">' + esc(base.son ? t('oui') : t('non')) + '</button></div>' +
+      '<section class="reglage-humour"><h3>😂 ' + (base.ui === 'en' ? 'Ami’s joke level' : 'Le niveau des blagues d’Ami') + '</h3><p class="petit">' + (base.ui === 'en' ? 'Ami only teases himself, the words or the situation — never the player.' : 'Ami se moque de lui-même, des mots ou de la situation — jamais du joueur.') + '</p><div class="choix-humour">' +
+      ['Tout doux','Taquin','Piquant','Corsé 🪶'].map((nom, i) => '<button class="moyen' + (niveauHumour() === i ? ' plein' : '') + '" data-a="humour" data-v="' + i + '" aria-pressed="' + (niveauHumour() === i) + '">' + (base.ui === 'en' ? ['Gentle','Playful','Spicy','Extra cheeky 🪶'][i] : nom) + '</button>').join('') +
+      '</div><p class="petit">' + (base.ui === 'en' ? 'Even the spiciest level stays kind.' : 'Même le niveau le plus corsé reste bienveillant.') + '</p></section>' +
       (CONFIG.MODE_PAYANT ? '<h3>✨ ' + esc(t('plus')) + '</h3>' + (plus()
         ? '<p>' + esc(t('abo_actif', droits ? new Date(droits.fin).toLocaleDateString(base.ui) : '')) + '</p>' + (CONFIG.LIEN_GESTION ? '<p><a class="moyen" href="' + esc(CONFIG.LIEN_GESTION) + '" target="_blank" rel="noopener">' + esc(t('gerer_abo')) + '</a></p>' : '')
         : '<p><button class="moyen plein" data-a="plus" data-v="reglages">' + esc(t('decouvrir_plus')) + '</button></p>') +
@@ -1387,6 +1421,14 @@
         base.joueurs.splice(Number(v), 1); base.actif = 0; garder(); return reglages();
       case 'facile': J().facile = !J().facile; garder(); return reglages();
       case 'consigne': return lireConsigne(($('#consigne') || {}).textContent);
+      case 'humour': J().humour = Math.max(0, Math.min(3, Number(v) || 0)); garder(); return reglages();
+      case 'continuer-erreur':
+        if(!partie || !partie.attenteErreur) return;
+        partie.attenteErreur = false;
+        partie.verrou = false;
+        const boutonSuite = $('#continuer-erreur'); if(boutonSuite) boutonSuite.hidden = true;
+        if(partie.finir || (partie.chronoFin && Date.now() >= partie.chronoFin)) return fin();
+        partie.i++; return question();
       case 'sauvegarder': return sauvegarder();
       case 'restaurer': return $('#fichier-sauvegarde').click();
       case 'son': base.son = !base.son; garder(); bruit('juste'); return reglages();

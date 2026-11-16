@@ -37,3 +37,19 @@ Ne pas utiliser de vrais paiements pendant les essais. Pour tester l'abonnement,
 - Les références locales d'assets repérées dans le service worker existent.
 - `npm test` n'a pas pu être exécuté ici car `jsdom` n'était pas installé dans l'environnement de préparation ; lancer `npm install` avant les tests.
 - Les essais réels dans plusieurs navigateurs et appareils restent à effectuer.
+
+
+## Nouveautés v5.4 à tester
+- Faire exprès une mauvaise réponse : vérifier que l'écran reste bloqué, que la réponse erronée est rouge et que le message reste visible.
+- Vérifier que la voix lit la blague puis la bonne réponse.
+- Utiliser « J'ai compris — continuer » pour passer à la question suivante.
+- Dans Réglages, essayer les quatre niveaux d'humour et vérifier que le choix est mémorisé pour le profil.
+- Refaire le test avec le mode chronomètre : le passage à la suite doit respecter la fin du temps.
+
+
+## Nouveautés v5.5 à tester — synchronisation bouche/voix
+- Ouvrir « Voir la bouche » et écouter un mot : les lèvres doivent commencer à bouger au début réel de la voix.
+- Vérifier la fin : la bouche doit revenir au repos à la fin de la lecture.
+- Refaire le test avec « Lentement » : les mouvements doivent rester alignés sur la voix ralentie.
+- Tester plusieurs langues, notamment une langue cible différente de la langue de l'interface.
+- Tester sur ordinateur et téléphone ; le navigateur peut utiliser une voix audio différente selon la langue et la disponibilité du fichier.

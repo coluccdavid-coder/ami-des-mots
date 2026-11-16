@@ -334,3 +334,20 @@ L'atelier est une première version pédagogique. Les phrases et leur adaptation
 - Ami accueille le joueur avec des répliques contextuelles en français et en anglais ; les libellés du village sont localisés pour les 16 langues.
 - Les visites du jour sont mémorisées localement par joueur pour visualiser les lieux déjà explorés.
 - Correction du dernier écran de l'atelier des phrases afin d'éviter l'accès à une phrase inexistante après la dernière réussite.
+
+
+## v5.4 — erreurs accompagnées et humour réglable
+
+- Une mauvaise réponse ne fait plus avancer automatiquement la question : l'écran reste en pause jusqu'au bouton « J'ai compris — continuer ».
+- Le choix erroné reste marqué en rouge et Ami affiche une plaisanterie ainsi que la bonne réponse.
+- La voix lit maintenant le message complet (blague puis correction) en une seule lecture ; si la voix audio dédiée est indisponible, le navigateur tente sa voix de synthèse habituelle.
+- Quatre niveaux d'humour sont réglables dans Paramètres : Tout doux, Taquin, Piquant et Corsé. Les plaisanteries visent Ami, le mot ou la situation, jamais le joueur.
+- Le niveau choisi est conservé par profil de joueur.
+
+
+## v5.5 — synchronisation de l'articulation
+
+- L'animation de la bouche démarre sur l'événement réel de lecture audio (`playing`), au lieu d'un délai fixe.
+- Le minutage de l'animation suit l'horloge réelle du fichier audio, y compris lorsque la lecture est ralentie.
+- La langue de l'articulation utilise maintenant la langue en cours d'apprentissage du jeu, et non seulement la langue d'interface.
+- La synthèse vocale du navigateur conserve son propre événement de démarrage pour synchroniser l'animation.

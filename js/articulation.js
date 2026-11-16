@@ -1,6 +1,7 @@
 // Ami des mots — recopié de ReParole (js/articulation.js, v6.452) : le bec d'Ami
 // suit la voix. Ne pas modifier ici : recopier depuis ReParole si besoin.
 // =====================================================================
+//  v6.454 — synchronisation stricte avec le démarrage audio
 //  v6.452 — ARTICULATION : AMI ARTICULE, ET LA BOUCHE VUE DE PROFIL
 //  ---------------------------------------------------------------------
 //  Chargé à la demande (par js/suivi.js, après le tableau de bord) : rien
@@ -333,7 +334,7 @@
   // On écoute les deux voix de speak() (js/app.js) sans y toucher : la
   // synthèse du navigateur et les fichiers audio/. L'original est
   // TOUJOURS appelé ; une erreur ici ne coupe jamais la voix.
-  const langue = () => (window.Prefs && Prefs.data && Prefs.data.lang) || 'fr';
+  const langue = () => (window.AmiDesMots && AmiDesMots.base && AmiDesMots.base.cible) || (window.Prefs && Prefs.data && Prefs.data.lang) || document.documentElement.lang || 'fr';
   function brancher(){
     if(brancher.fait) return; brancher.fait = true;
     const parler = window.speak;
@@ -364,16 +365,28 @@
         try{
           const src = this.currentSrc || this.src || '';
           // Le texte ne vaut que pour la parole qui vient d'être demandée.
-          if(/\/audio\//.test(src) && etat.texte && Date.now() - etat.texteA < 6000 && !this.__articule){
+          // Le texte est posé par window.speak juste avant audio.play().
+          // Ne pas filtrer sur le chemin : certains navigateurs exposent
+          // currentSrc vide au premier play(), et l'animation partait alors
+          // avec le délai de secours, après la voix.
+          if(etat.texte && Date.now() - etat.texteA < 6000 && !this.__articule){
             this.__articule = true;
-            const el = this, seq = sequence(etat.texte, langue());
+            const el = this, texte = etat.texte, seq = sequence(texte, langue());
             etat.texte = '';
             if(etat.lent){ try{ el.preservesPitch = true; el.playbackRate = .65; }catch(e){} }
             if(seq){
-              el.addEventListener('playing', () => demarrer(seq, {
-                duree:isFinite(el.duration) && el.duration > 0 ? el.duration * 1000 : 0,
-                horloge:() => el.currentTime * 1000 }));
-              ['ended', 'pause', 'error'].forEach(ev => el.addEventListener(ev, arreter));
+              let lance = false;
+              const lancer = () => {
+                if(lance || el.paused || el.ended) return;
+                lance = true;
+                const duree = isFinite(el.duration) && el.duration > 0 ? el.duration * 1000 : 0;
+                demarrer(seq, { duree, horloge:() => el.currentTime * 1000 });
+              };
+              el.addEventListener('playing', lancer, { once:true });
+              el.addEventListener('loadedmetadata', () => {
+                if(!el.paused && !etat.seq) lancer();
+              }, { once:true });
+              ['ended', 'pause', 'error', 'emptied'].forEach(ev => el.addEventListener(ev, arreter));
             }
           }
         }catch(e){}
@@ -501,8 +514,15 @@ body.dark-mode .art-peau{fill:#5d4a3d;stroke:#c9a184}body.dark-mode .art-dent{fi
     if(!ouvert) return;
     etat.lent = !!lent;
     if(typeof window.speak === 'function') window.speak(ouvert.mot);
-    // Sans voix pour cette langue : le schéma se déroule quand même.
-    setTimeout(() => { if(ouvert && !etat.seq) demarrer(sequence(ouvert.mot, langue()), { echelle:lent ? 2.2 : 1.3 }); }, 900);
+    // La synchronisation démarre sur l'événement réel « playing » (ou
+    // « start » de SpeechSynthesis), jamais sur un délai arbitraire.
+    // Dernier recours silencieux si aucun moteur vocal ne démarre.
+    const cible = ouvert;
+    setTimeout(() => {
+      if(ouvert === cible && !etat.seq){
+        demarrer(sequence(cible.mot, langue()), { echelle:lent ? 2.2 : 1.3 });
+      }
+    }, 2800);
   }
   function montrer(mot, declencheur){
     const seq = sequence(mot, langue());

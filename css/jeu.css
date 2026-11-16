@@ -666,3 +666,23 @@ html[data-facile] .lire-consigne{ width:46px; height:46px; font-size:1.2rem; bac
 @media(min-width:700px){.village-carte{grid-template-columns:repeat(3,minmax(0,1fr));gap:18px}.lieu-village{min-height:190px}}
 @media(min-width:1100px){.village-carte{grid-template-columns:repeat(4,minmax(0,1fr))}.lieu-village{min-height:210px}}
 @media(max-width:360px){.village-carte{gap:9px}.lieu-village{padding:14px 8px}.lieu-titre{font-size:.94rem}}
+
+
+/* ── v5.4 : retour d'erreur lisible, voix et bouton de reprise ── */
+.continuer-erreur[hidden]{display:none!important}
+.continuer-erreur:not([hidden]){
+  position:fixed;z-index:7;left:50%;bottom:calc(112px + env(safe-area-inset-bottom));
+  transform:translateX(-50%);width:min(92vw,390px);min-height:54px;
+  color:#241400;background:linear-gradient(180deg,#FFE69A,#FFD15C);
+  border:2px solid rgba(255,255,255,.75);box-shadow:0 5px 0 #B77B20,0 12px 28px rgba(0,0,0,.35);
+  font-weight:1000;animation:erreur-arrive .25s ease-out
+}
+@keyframes erreur-arrive{from{opacity:0;translate:0 10px}to{opacity:1;translate:0 0}}
+.reglage-humour{margin:22px 0;padding:18px;border:1px solid var(--bord);border-radius:22px;background:rgba(255,255,255,.055)}
+.reglage-humour h3{margin:0 0 8px}
+.choix-humour{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px;margin:12px 0}
+.choix-humour .moyen{min-width:0;white-space:normal}
+.choix-humour .moyen.plein{outline:2px solid var(--lune);outline-offset:2px}
+@media(min-width:760px){.choix-humour{grid-template-columns:repeat(4,minmax(0,1fr))}}
+@media(max-width:560px){.continuer-erreur:not([hidden]){bottom:calc(118px + env(safe-area-inset-bottom));font-size:1rem}}
+@media(prefers-reduced-motion:reduce){.continuer-erreur:not([hidden]){animation:none}}
