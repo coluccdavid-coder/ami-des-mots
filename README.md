@@ -91,6 +91,28 @@ du tout (vide aujourd'hui).
 - En vrai ou faux, le mot affiché est aussi prononcé ; après chaque réponse,
   la traduction s'affiche.
 
+## S'amuser et parler (v5)
+
+- **Blagues d'Ami** quand on se trompe : 12 par langue, toujours sur Ami ou
+  sur le mot, **jamais sur la personne** (testé : aucun mot qui juge).
+- **Prononciation** : 🐢 écouter lentement (voix ralentie sans changer la
+  hauteur) ; 👄 voir la bouche (le schéma de profil de ReParole, animé avec
+  la voix) ; 🎤 **« À toi ! »** : on écoute Ami, on s'enregistre 3 secondes,
+  on entend sa voix puis celle d'Ami pour comparer. L'enregistrement reste
+  dans la mémoire du navigateur et disparaît à la fermeture : rien n'est
+  envoyé ni gardé. Sans micro : « Je l'ai dit ! ». 1 plume la première fois
+  pour chaque mot.
+- **Mot du jour** et **astuce du jour** sur l'accueil ; page **Astuces** :
+  8 conseils pour réussir à parler une autre langue (un peu chaque jour,
+  parler à voix haute, répéter comme un écho, oser se tromper, étiquettes,
+  en famille, chansons, réviser au bon moment).
+
+## PC : plein écran (v5)
+
+Au-delà de 1100 px : accueil en deux moitiés (le ciel d'Ami à gauche sur
+toute la hauteur, le tableau de bord à droite), grandes cartes de thèmes,
+parties sur toute la page avec une image grande à gauche.
+
 ## Ordinateur et tablette (v4.4)
 
 Au-delà de 900 px de large : question à gauche, réponses à droite (tout tient
@@ -264,3 +286,51 @@ reste ouvert 3 jours après la date connue.
 - Mentions légales : l'éditeur (David Colucci) et l'hébergeur sont dans
   Réglages → À propos ; ajouter le SIRET et le lien vers les CGV (voir
   « Avant d'encaisser »).
+
+## v5.1 — durcissement avant lancement
+
+- Webhook Stripe : vérification de cohérence client/session, traitement des retries,
+  journal des événements et contrôle atomique d'un abonnement actif par code.
+- Un second abonnement actif associé au même code est annulé pour éviter les
+  renouvellements en double. **L'annulation ne rembourse pas le paiement initial** :
+  contrôler la facture dans Stripe et effectuer le remboursement si nécessaire.
+- CORS : configurer `AMI_ORIGINES` avec les origines exactes, séparées par des virgules.
+- La vérification GET reste publique pour permettre au jeu de fonctionner sans compte :
+  configurer une limitation de débit côté passerelle/API ou WAF avant une forte exposition.
+  `AMI_ORIGINE` reste accepté pour compatibilité. Le joker `*` est conservé par défaut
+  pour les installations anciennes ; le remplacer en production.
+- Confidentialité : l'écran « À propos » précise que les demandes audio révèlent
+  l'adresse IP, la langue et le mot demandé (URL kabyle lisible, identifiants hachés
+  pour les autres langues).
+
+### Déploiement v5.1
+
+1. Exécuter `serveur/ami-abonnements.sql` dans Supabase (le script est réexécutable).
+2. Définir `AMI_ORIGINES` avec le ou les domaines exacts du jeu.
+3. Vérifier les secrets Stripe, Supabase et `AMI_CLE_PRIVEE`.
+4. Redéployer `ami-abonnement` avec `--no-verify-jwt`.
+5. Tester en mode Stripe test : paiement, second achat avec le même code,
+   renouvellement, paiement échoué/régularisé et résiliation.
+6. En cas de doublon annulé, vérifier la facture et rembourser manuellement si elle a
+   été encaissée. L'annulation seule ne rembourse pas le paiement initial.
+
+Cette version ne remplace pas un test en environnement Stripe/Supabase réel.
+
+
+## v5.2 — expérience plus immersive
+
+- Accueil desktop élargi et mieux réparti ; affichage mobile conservé en colonne.
+- Relief et animation légère du hibou en CSS, avec prise en compte de `prefers-reduced-motion`.
+- Nouvel atelier de construction de phrases (12 phrases courtes en français et en anglais), avec tuiles à remettre en ordre, indice, encouragements et récompenses.
+- Pour les autres langues, l'atelier explique clairement que les phrases relues ne sont pas encore disponibles ; les jeux de vocabulaire restent accessibles dans les 16 langues. Les phrases ne sont pas générées automatiquement afin d'éviter des traductions grammaticalement incorrectes.
+
+L'atelier est une première version pédagogique. Les phrases et leur adaptation linguistique doivent être relues par des locuteurs natifs avant extension à d'autres langues.
+
+
+## v5.3 — Le village d'Ami
+
+- Ajout d'un village interactif qui relie huit lieux aux thèmes existants (animaux, manger, maison, nature, ville, musique, habits, atelier).
+- Les lieux affichent les thèmes disponibles dans la langue choisie, respectent les droits Gratuit/Plus et ouvrent les jeux existants sans créer de doublons de contenu.
+- Ami accueille le joueur avec des répliques contextuelles en français et en anglais ; les libellés du village sont localisés pour les 16 langues.
+- Les visites du jour sont mémorisées localement par joueur pour visualiser les lieux déjà explorés.
+- Correction du dernier écran de l'atelier des phrases afin d'éviter l'accès à une phrase inexistante après la dernière réussite.

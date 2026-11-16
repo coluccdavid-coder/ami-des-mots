@@ -53,7 +53,7 @@ await test('interface : chaque langue a EXACTEMENT les textes du français (jama
       const v = T[l][k], f = T.fr[k];
       const s = typeof v === 'function' ? v(7) : Array.isArray(v) ? v.join('|') : v;
       const sf = typeof f === 'function' ? f(7) : Array.isArray(f) ? f.join('|') : f;
-      const pareil = new Set(['en.th_nature', 'en.niv_n', 'en.niv_e', 'es.niv_n', 'pt.niv_n', 'it.niv_f', l + '.plus', l + '.plus_badge']);   // vrais homonymes et nom de marque
+      const pareil = new Set(['en.th_nature', 'en.niv_n', 'en.niv_e', 'es.niv_n', 'pt.niv_n', 'it.niv_f', 'en.ou_normal', 'es.ou_normal', 'pt.ou_normal', 'tr.ou_normal', 'de.ou_normal', l + '.plus', l + '.plus_badge']);   // vrais homonymes et nom de marque
       assert.ok(s && (s !== sf || pareil.has(l + '.' + k)), l + ' ' + k);
       if(typeof v === 'function') assert.ok(s.includes('7'), l + ' ' + k + ' perd le nombre');
     }
@@ -328,6 +328,51 @@ await test('leçon : 5 mots d\'un thème, présentés puis demandés 2 fois chac
   const vus = new Set();
   for(let k = 0; k < 5; k++){ const b = d.querySelector('[data-a="compris"]'); if(!b) break; vus.add(b.dataset.v); b.click(); const r = d.querySelector('[data-a="repondre"][data-v="' + b.dataset.v + '"]') || d.querySelector('[data-a="vf"]'); assert.ok(r); A.noter(b.dataset.v, true); A.base.joueurs[0]; }
   const th = new Set([...vus].map(e => w.MOTS[e].theme)); assert.strictEqual(th.size, 1, 'un seul thème');
+});
+
+console.log('S\'amuser et parler');
+await test('une erreur fait rire Ami, sans jamais juger : 12 blagues par langue, jamais deux fois de suite', () => {
+  const w = page(); const A = w.AmiDesMots, d = w.document;
+  for(const l in w.TEXTES){ const b = w.TEXTES[l].blagues; assert.strictEqual(b.length, 12, l); }
+  for(const b of w.TEXTES.fr.blagues) assert.ok(!/\b(nul|mauvais|bête|idiot|tu es|honte)\b/i.test(b), b);
+  A.choisirJeu('animaux'); A.commencer('ecoute:n');
+  const bonne = d.querySelector('.partie [data-a="ecouter"]').dataset.v;
+  [...d.querySelectorAll('[data-a="repondre"]')].find(b => b.dataset.v !== bonne).click();
+  const txt = d.getElementById('bulle').textContent;
+  assert.ok(w.TEXTES.fr.blagues.includes(txt), txt);
+  let prec = null; for(let k = 0; k < 30; k++){ const b = A.blague(); assert.notStrictEqual(b, prec); prec = b; }
+});
+await test('mot du jour et astuce du jour sur l\'accueil ; page des conseils', () => {
+  const w = page(); const d = w.document, A = w.AmiDesMots;
+  A.accueil();
+  assert.ok(d.querySelector('.mot-jour [data-a="lent"]'), 'écoute lente');
+  assert.ok(d.querySelector('.mot-jour [data-a="a-toi"]'), 'à toi');
+  assert.ok(d.querySelector('.astuce-jour strong').textContent.length > 3);
+  clic(w, '[data-a="astuces"]');
+  assert.strictEqual(d.querySelectorAll('.liste-astuces li').length, 8);
+});
+await test('« À toi ! » sans micro : on peut le dire à voix haute, 1 plume la première fois seulement', () => {
+  const w = page(); const A = w.AmiDesMots, d = w.document;
+  const e = A.motsDu('animaux', 'kab')[0];
+  A.aToi(e);
+  assert.ok(d.getElementById('fenetre'));
+  clic(w, '[data-a="enregistrer"]');
+  return attendre(20).then(() => {
+    assert.match(d.getElementById('a-toi-etat').textContent, /voix haute/);
+    const p0 = A.J().plumes;
+    clic(w, '[data-a="je-l-ai-dit"]'); clic(w, '[data-a="je-l-ai-dit"]');
+    assert.strictEqual(A.J().plumes, p0 + 1);
+    clic(w, '[data-a="fermer-fenetre"]');
+    assert.strictEqual(d.getElementById('fenetre'), null);
+  });
+});
+await test('écoute lente et bouche disponibles sur la carte « Nouveau mot ! »', () => {
+  const w = page('fr-FR', { MODE_PAYANT:false, PRESENTER_NOUVEAUX:true }); const A = w.AmiDesMots, d = w.document;
+  A.base.cible = 'en'; A.choisirJeu('animaux'); A.commencer('quel_mot:n');
+  assert.ok(d.querySelector('.nouveau-mot [data-a="lent"]'));
+  assert.ok(d.querySelector('.nouveau-mot [data-a="bouche"]'));
+  clic(w, '.nouveau-mot [data-a="lent"]');
+  assert.strictEqual(w.Articulation._etat.lent, true, 'la prochaine voix est ralentie');
 });
 
 console.log('Gratuit et Ami des mots Plus');

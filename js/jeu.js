@@ -280,6 +280,7 @@
   const COUL_THEME = { animaux:'#FF8A3D', manger:'#FF5D6C', maison:'#4D7CFE', habits:'#F06BB1', nature:'#25B26A', ville:'#7A5CFA', musique:'#B04CF0', atelier:'#0FAFBF' };
   const couleurDe = th => COUL_THEME[th] || '#7A5CFA';
   function poser(html, ecran){
+    if(typeof fermerFenetre === 'function') fermerFenetre();
     const r = $('#app');
     r.innerHTML = html;
     r.dataset.ecran = ecran || '';
@@ -324,16 +325,20 @@
       '<main class="accueil">' +
         '<button class="gros defi' + (defiFait ? ' fait' : '') + '" data-a="defi">' + (defiFait ? '✓ ' : '⚡ ') + esc(t('defi')) + '</button>' +
         '<button class="gros apprendre" data-a="lecon">📚 ' + esc(t('apprendre')) + '</button>' +
+        '<button class="gros phrases-accueil" data-a="phrases">💬 ' + (base.ui === 'en' ? 'Build your first sentences' : 'Atelier des phrases') + ' <span>✨</span></button>' +
+        '<button class="gros village-accueil" data-a="village">🗺️ ' + {"fr": "Explorer le village", "en": "Explore the word village", "es": "Explorar el pueblo", "it": "Esplora il villaggio", "pt": "Explorar a aldeia", "de": "Das Wörterdorf erkunden", "ar": "استكشف قرية الكلمات", "tr": "Kelime köyünü keşfet", "pl": "Odkryj wioskę słów", "ja": "ことばの村を探検", "uk": "Дослідити селище слів", "ko": "단어 마을 탐험하기", "dz": "اكتشف قرية الكلمات", "ma": "اكتشف قرية الكلمات", "tn": "اكتشف قرية الكلمات", "kab": "Snirem tamdint n wawalen"}[base.ui] + '</button>' +
         '<div class="actions serrees">' +
           '<button class="moyen" data-a="themes">▶ ' + esc(t('jouer')) + '</button>' +
           '<button class="moyen" data-a="revoir">🔁 ' + esc(t('revoir')) + (rev ? ' <span class="pastille">' + rev + '</span>' : '') + '</button>' +
         '</div>' +
         '<p class="objectif"><span>' + esc(fait ? t('objectif_fait') : t('objectif')) + '</span>' + (s ? '<span class="serie">🔥 ' + esc(t('serie', s)) + '</span>' : '') + '</p>' +
+        motDuJour() + astuceDuJour() +
         (CONFIG.MODE_PAYANT && !plus() ? '<button class="bandeau-plus" data-a="plus">✨ <strong>' + esc(t('plus')) + '</strong> · ' + esc(t('plus_court')) + '</button>' : '') +
         '<nav class="raccourcis">' +
           '<button data-a="carnet"><span aria-hidden="true">📒</span>' + esc(t('carnet')) + '</button>' +
           '<button data-a="trophees"><span aria-hidden="true">🏆</span>' + esc(t('trophees')) + '</button>' +
           '<button data-a="vestiaire"><span aria-hidden="true">👗</span>' + esc(t('vestiaire')) + '</button>' +
+          '<button data-a="astuces"><span aria-hidden="true">💡</span>' + esc(t('astuces')) + '</button>' +
           '<button data-a="reglages"><span aria-hidden="true">⚙️</span>' + esc(t('reglages')) + '</button>' +
         '</nav>' +
       '</main>', 'accueil');
@@ -352,6 +357,92 @@
         '<g fill="#160F47"><path d="M34 98 l9 -30 l9 30z"/><path d="M48 100 l7 -22 l7 22z"/><path d="M344 96 l10 -34 l10 34z"/><path d="M360 98 l7 -22 l7 22z"/></g>' +
       '</svg></div>';
   }
+  // Le mot du jour : le même toute la journée, pris dans les mots ouverts.
+  function motDuJour(){
+    const l = distincts(motsOuverts(base.cible), base.cible).sort(); if(!l.length) return '';
+    const n = [...(jour() + base.cible)].reduce((a, c) => (a * 31 + c.charCodeAt(0)) >>> 0, 3);
+    const e = l[n % l.length], tr = traduction(e);
+    return '<section class="carte-jour mot-jour"><h2>☀️ ' + esc(t('mot_du_jour')) + '</h2><div class="mot-jour-in">' + image(e, 'pic-jour') +
+      '<div><p class="mot-jour-mot" dir="' + dirCible() + '">' + esc(nomMot(e)) + '</p>' + (tr ? '<p class="mot-jour-trad" dir="auto">= ' + esc(tr) + '</p>' : '') +
+      '<div class="mot-jour-actions"><button class="moyen" data-a="ecouter" data-v="' + e + '">🔊</button><button class="moyen" data-a="lent" data-v="' + e + '" aria-label="' + esc(t('lentement')) + '">🐢</button>' +
+      (window.Articulation ? '<button class="moyen" data-a="bouche" data-v="' + e + '" aria-label="' + esc(t('bouche')) + '">👄</button>' : '') +
+      '<button class="moyen" data-a="a-toi" data-v="' + e + '" aria-label="' + esc(t('a_toi')) + '">🎤</button></div></div></div></section>';
+  }
+  function astuceDuJour(){
+    const l = t('conseils'); if(!Array.isArray(l) || !l.length) return '';
+    const [titre, texte] = l[Math.floor(Date.now() / 864e5) % l.length];
+    return '<section class="carte-jour astuce-jour"><h2>💡 ' + esc(t('astuce_ami')) + '</h2><p><strong>' + esc(titre) + '</strong> ' + esc(texte) + '</p>' +
+      '<button class="lien" data-a="astuces">' + esc(t('toutes_astuces')) + '</button></section>';
+  }
+  // Comment réussir à parler une autre langue : les conseils d'Ami.
+  function astuces(){
+    const l = t('conseils') || [];
+    poser(barre('accueil') + '<main class="astuces"><div class="ami-moyen">' + ami('content') + '</div><h2>💡 ' + esc(t('astuces_titre')) + '</h2><p class="aide">' + esc(t('astuces_intro')) + '</p>' +
+      '<ol class="liste-astuces">' + l.map(([titre, texte], k) => '<li><span class="num" aria-hidden="true">' + ['🗓️', '🗣️', '🔁', '🙌', '🏷️', '👨‍👩‍👧', '🎵', '🧠'][k % 8] + '</span><div><strong>' + esc(titre) + '</strong><p>' + esc(texte) + '</p></div></li>').join('') + '</ol>' +
+      '<div class="actions"><button class="moyen plein" data-a="lecon">📚 ' + esc(t('apprendre')) + '</button></div></main>', 'astuces');
+  }
+  // « À toi ! » : on écoute Ami, on s'enregistre, on compare. Tout reste sur l'appareil.
+  let micro = null;
+  function fenetre(html){
+    fermerFenetre();
+    const f = document.createElement('div'); f.className = 'fenetre-fond'; f.id = 'fenetre';
+    f.innerHTML = '<div class="fenetre" role="dialog" aria-modal="true">' + html + '<button class="fermer-fenetre" data-a="fermer-fenetre" aria-label="' + esc(t('retour')) + '">✕</button></div>';
+    document.body.appendChild(f);
+    const b = f.querySelector('button'); if(b) b.focus();
+  }
+  function fermerFenetre(){
+    const f = $('#fenetre'); if(f) f.remove();
+    if(micro){ try{ micro.rec && micro.rec.state === 'recording' && micro.rec.stop(); micro.flux && micro.flux.getTracks().forEach(p => p.stop()); if(micro.url) URL.revokeObjectURL(micro.url); }catch(e){} micro = null; }
+  }
+  function aToi(e){
+    const tr = traduction(e);
+    fenetre('<div class="a-toi">' + image(e, 'pic-moyenne') + '<p class="mot-source" dir="' + dirCible() + '">' + esc(nomMot(e)) + '</p>' + (tr ? '<p class="trad-nouveau" dir="auto">= ' + esc(tr) + '</p>' : '') +
+      '<p class="aide" id="a-toi-etat">' + esc(t('a_toi_aide')) + '</p>' +
+      '<div class="actions">' + ecouteBtn(e) + '<button class="gros micro" id="btn-micro" data-a="enregistrer" data-v="' + e + '">🎤 ' + esc(t('parler')) + '</button></div>' +
+      '<div class="actions" id="a-toi-apres" hidden><button class="moyen" data-a="me-reecouter">👂 ' + esc(t('me_reecouter')) + '</button><button class="moyen" data-a="ecouter" data-v="' + e + '">🦉 ' + esc(t('ecouter_ami')) + '</button></div>' +
+      '<p class="petit">🔒 ' + esc(t('a_toi_prive')) + '</p></div>');
+    dire(e);
+  }
+  async function enregistrer(e){
+    const etat = $('#a-toi-etat'), btn = $('#btn-micro');
+    const bravo = () => {
+      const k = cleMot(e), j = J(); j.parle = j.parle || [];
+      if(!j.parle.includes(k)){ j.parle = j.parle.concat(k).slice(-2000); j.plumes += 1; garder(); }
+      if(etat) etat.textContent = t('a_toi_bravo');
+      eclat(btn); bruit('juste');
+    };
+    if(!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia || !window.MediaRecorder){
+      if(etat) etat.textContent = t('sans_micro');
+      if(btn){ btn.textContent = '✓ ' + t('je_l_ai_dit'); btn.dataset.a = 'je-l-ai-dit'; }
+      return;
+    }
+    try{
+      const flux = await navigator.mediaDevices.getUserMedia({ audio:true });
+      const morceaux = [], rec = new MediaRecorder(flux);
+      micro = { flux, rec };
+      rec.ondataavailable = ev => { if(ev.data && ev.data.size) morceaux.push(ev.data); };
+      rec.onstop = () => {
+        flux.getTracks().forEach(p => p.stop());
+        if(!micro) return;
+        micro.url = URL.createObjectURL(new Blob(morceaux, { type:rec.mimeType || 'audio/webm' }));
+        btn.classList.remove('enregistre'); btn.textContent = '🎤 ' + t('reessayer');
+        const ap = $('#a-toi-apres'); if(ap) ap.hidden = false;
+        // Ma voix, puis celle d'Ami, pour comparer.
+        const a = new Audio(micro.url); a.onended = () => setTimeout(() => dire(e), 300); a.play().catch(() => {});
+        bravo();
+      };
+      rec.start(); btn.classList.add('enregistre'); btn.textContent = '⏺ ' + t('j_ecoute');
+      if(etat) etat.textContent = t('dis_le_mot');
+      setTimeout(() => { if(rec.state === 'recording') rec.stop(); }, 3000);
+    }catch(err){
+      if(etat) etat.textContent = t('sans_micro');
+      if(btn){ btn.textContent = '✓ ' + t('je_l_ai_dit'); btn.dataset.a = 'je-l-ai-dit'; }
+    }
+  }
+  // Le module « bouche » de ReParole parle la langue du jeu.
+  window.I18N = { t:k => t(k) };
+  window.I18N_STRINGS = new Proxy({}, { get:() => TEXTES[base.ui] });
+  window.Companion = { svg:() => ami('content', { immobile:true }) };
   function prefs(){ window.Prefs = { data:{ lang:base.cible } }; }
 
   // ── Joueurs ───────────────────────────────────────────────────────
@@ -463,6 +554,13 @@
       chrono + prog + '<div class="scene">' + corps + '</div>' + '<p class="bulle" id="bulle" role="status" aria-live="polite"></p><p class="note" id="note-voix" aria-live="polite"></p></main>');
     if(facile() && partie.i === 0 && !partie.consigneLue){ partie.consigneLue = true; setTimeout(() => lireConsigne(aide), 250); }
   }
+  // Une blague d'Ami quand on se trompe : jamais sur la personne, toujours sur Ami ou le mot.
+  let derniereBlague = -1;
+  function blague(){
+    const l = t('blagues'); if(!Array.isArray(l) || !l.length) return t('rate');
+    let k; do{ k = Math.floor(Math.random() * l.length); }while(l.length > 1 && k === derniereBlague);
+    derniereBlague = k; return l[k];
+  }
   function amiDit(txt, humeur){
     const b = $('#bulle'); if(b){ b.textContent = txt; b.className = 'bulle ' + (humeur === 'fete' ? 'ok' : humeur === 'surpris' ? 'ko' : ''); }
     const a = $('#ami-partie'); if(a) a.innerHTML = ami(humeur || 'content');
@@ -550,7 +648,14 @@
   const titreDe = j => partie.mode === 'defi' ? t('defi') : partie.mode === 'revoir' ? t('revoir') : partie.mode === 'lecon' ? t('apprendre') : partie.meca === 'chrono' || partie.meca === 'grand_quiz' ? t('j_' + partie.meca) : nomJeu(partie.jeu);
   const boutonsImages = ch => '<div class="choix-images' + (ch.length > 4 ? ' six' : '') + '">' + ch.map(x => '<button class="choix-img" data-a="repondre" data-v="' + x + '" aria-label="' + esc(nomMot(x)) + '">' + image(x) + '</button>').join('') + '</div>';
   const boutonsMots = (ch, aff, dir) => '<div class="choix-mots' + (ch.length > 4 ? ' six' : '') + '">' + ch.map(x => '<button class="choix-mot" data-a="repondre" data-v="' + x + '" dir="' + (dir || dirCible()) + '">' + esc(aff ? aff(x) : nomMot(x)) + '</button>').join('') + '</div>';
-  const ecouteBtn = (e, gros) => '<button class="' + (gros ? 'gros' : 'moyen') + '" data-a="ecouter" data-v="' + e + '">🔊 ' + esc(t('ecouter')) + '</button>';
+  const ecouteBtn = (e, gros) => '<span class="ecoutes"><button class="' + (gros ? 'gros' : 'moyen') + '" data-a="ecouter" data-v="' + e + '">🔊 ' + esc(t('ecouter')) + '</button>' +
+    '<button class="lent" data-a="lent" data-v="' + e + '" aria-label="' + esc(t('lentement')) + '" title="' + esc(t('lentement')) + '">🐢</button></span>';
+  // Écouter lentement : la voix enregistrée ralentie (sans changer la hauteur), ou la voix du téléphone au ralenti.
+  function direLent(e){
+    const et = window.Articulation && Articulation._etat;
+    if(et){ et.lent = true; setTimeout(() => { et.lent = false; }, 4000); }
+    dire(e);
+  }
 
   // « Nouveau mot ! » : la carte de découverte, puis la question sur ce mot.
   function presenter(e){
@@ -559,7 +664,8 @@
     cadre(t('nouveau_mot'), t('a_nouveau_mot'),
       '<div class="centre nouveau-mot">' + image(e, 'pic-grande') +
       '<p class="mot-source" dir="' + dirCible() + '">' + esc(nomMot(e)) + '</p>' + (tr ? '<p class="trad-nouveau" dir="auto">= ' + esc(tr) + '</p>' : '') +
-      ecouteBtn(e) + '</div>' +
+      ecouteBtn(e) + '<div class="prononcer">' + (window.Articulation ? '<button class="moyen" data-a="bouche" data-v="' + e + '">👄 ' + esc(t('bouche')) + '</button>' : '') +
+      '<button class="moyen" data-a="a-toi" data-v="' + e + '">🎤 ' + esc(t('a_toi')) + '</button></div></div>' +
       '<div class="actions"><button class="moyen plein" data-a="compris" data-v="' + e + '">' + esc(t('compris')) + ' ›</button>' +
       '<button class="moyen" data-a="deja-connu" data-v="' + e + '">' + esc(t('deja_connu')) + '</button></div>');
     precharger([e]); setTimeout(() => dire(e), delaiMot());
@@ -705,10 +811,10 @@
     }else{
       partie.erreurs++; bruit('faux');
       btn.classList.add('faux');
-      if(reessai){ btn.disabled = true; amiDit(t('rate'), 'surpris'); if(partie.courant === 'ecoute' || partie.courant === 'ecoute_mot') setTimeout(() => dire(partie.bonne), 500); }
+      if(reessai){ btn.disabled = true; amiDit(blague(), 'surpris'); if(partie.courant === 'ecoute' || partie.courant === 'ecoute_mot') setTimeout(() => dire(partie.bonne), 500); }
       else {
         const tr = traduction(partie.bonne);
-        partie.verrou = true; amiDit(t('c_etait', partie.courant === 'panier' ? t('th_' + MOTS[partie.bonne].theme) : nomMot(partie.bonne) + (tr ? ' (' + tr + ')' : '')), 'surpris'); dire(partie.bonne);
+        partie.verrou = true; amiDit(blague() + ' ' + t('c_etait', partie.courant === 'panier' ? t('th_' + MOTS[partie.bonne].theme) : nomMot(partie.bonne) + (tr ? ' (' + tr + ')' : '')), 'surpris'); dire(partie.bonne);
         setTimeout(() => { partie.verrou = false; partie.i++; question(); }, 2200);
       }
     }
@@ -795,7 +901,7 @@
       noter(btn.dataset.v, true); garder(); bruit('juste'); dire(btn.dataset.v); R.faits++; eclat(btn); vibrer(true);
       if(R.faits === R.k){ amiDit(melanger(t('bravo'))[0], 'fete'); setTimeout(() => { partie.i++; question(); }, 1100); }
     }else{
-      partie.erreurs++; bruit('faux'); amiDit(t('rate'), 'surpris');
+      partie.erreurs++; bruit('faux'); amiDit(blague(), 'surpris');
       [a, btn].forEach(x => { x.classList.add('faux'); setTimeout(() => x.classList.remove('faux'), 600); });
     }
   }
@@ -832,7 +938,7 @@
       setTimeout(() => { partie.i++; question(); }, 1500);
     }else{
       partie.erreurs++; L.faute = true; $('#reponse').classList.add('faux'); bruit('faux');
-      amiDit(t('rate'), 'surpris');
+      amiDit(blague(), 'surpris');
       setTimeout(effacer, 900);
     }
   }
@@ -887,6 +993,67 @@
     if(g && !sobre()){ const n = gain, t0 = performance.now(); const pas = now => { const k = Math.min(1, (now - t0) / 900), v = Math.round(n * (1 - Math.pow(1 - k, 3))); g.textContent = t('fin_plumes', v); if(k < 1) requestAnimationFrame(pas); }; g.textContent = t('fin_plumes', 0); setTimeout(() => requestAnimationFrame(pas), 450); }
   }
 
+
+  // ── Le village d'Ami : carte d'aventure reliée aux thèmes existants ──
+  const VILLAGE_TEXT = {
+    fr:{title:"Le village des mots",intro:"Ami a besoin de toi ! Choisis un lieu et pars à la découverte des mots.",mission:"Ta mission",hint:"Chaque lieu cache des mots à découvrir. Termine une partie pour faire progresser ton carnet.",back:"Retour au nid"},
+    en:{title:"The Word Village",intro:"Ami needs your help! Pick a place and discover new words.",mission:"Your mission",hint:"Every place is full of words. Finish a game to grow your word notebook.",back:"Back to the nest"},
+    es:{title:"El pueblo de las palabras",intro:"¡Ami necesita tu ayuda! Elige un lugar y descubre palabras.",mission:"Tu misión",hint:"Cada lugar esconde palabras. Termina una partida para llenar tu cuaderno.",back:"Volver al nido"},
+    it:{title:"Il villaggio delle parole",intro:"Ami ha bisogno di te! Scegli un luogo e scopri nuove parole.",mission:"La tua missione",hint:"Ogni luogo nasconde parole. Completa una partita per arricchire il quaderno.",back:"Torna al nido"},
+    pt:{title:"A aldeia das palavras",intro:"O Ami precisa de ti! Escolhe um lugar e descobre palavras.",mission:"A tua missão",hint:"Cada lugar esconde palavras. Termina uma partida para encher o caderno.",back:"Voltar ao ninho"},
+    de:{title:"Das Wörterdorf",intro:"Ami braucht dich! Wähle einen Ort und entdecke neue Wörter.",mission:"Deine Mission",hint:"An jedem Ort warten Wörter. Beende ein Spiel und fülle dein Wörterbuch.",back:"Zurück zum Nest"},
+    ar:{title:"قرية الكلمات",intro:"آمي يحتاج إليك! اختر مكاناً واكتشف كلمات جديدة.",mission:"مهمتك",hint:"في كل مكان كلمات جديدة. أكمل لعبة لتضيفها إلى دفتر كلماتك.",back:"العودة إلى العش"},
+    tr:{title:"Kelime Köyü",intro:"Ami'nin yardımına ihtiyacı var! Bir yer seç ve yeni kelimeler keşfet.",mission:"Görevin",hint:"Her yerde keşfedilecek kelimeler var. Defterini geliştirmek için bir oyunu bitir.",back:"Yuvaya dön"},
+    pl:{title:"Wioska słów",intro:"Ami potrzebuje pomocy! Wybierz miejsce i odkrywaj słowa.",mission:"Twoja misja",hint:"W każdym miejscu czekają słowa. Ukończ grę, aby uzupełnić notes.",back:"Wróć do gniazda"},
+    ja:{title:"ことばの村",intro:"アミが助けを待っているよ！場所を選んで新しい言葉を見つけよう。",mission:"ミッション",hint:"それぞれの場所に言葉が隠れているよ。ゲームを終えてノートを育てよう。",back:"巣に戻る"},
+    uk:{title:"Селище слів",intro:"Амі потрібна твоя допомога! Обери місце й відкривай слова.",mission:"Твоє завдання",hint:"У кожному місці є нові слова. Заверши гру, щоб поповнити записник.",back:"До гнізда"},
+    ko:{title:"단어 마을",intro:"아미에게 도움이 필요해요! 장소를 골라 새 단어를 찾아봐요.",mission:"미션",hint:"각 장소에는 단어가 숨어 있어요. 게임을 마치고 단어장을 채워요.",back:"둥지로 돌아가기"},
+    dz:{title:"قرية الكلمات",intro:"آمي يحتاج مساعدتك! اختار مكان واكتشف كلمات جديدة.",mission:"مهمتك",hint:"كل بلاصة فيها كلمات. كمّل لعبة باش تعمّر كراسك.",back:"ارجع للعش"},
+    ma:{title:"قرية الكلمات",intro:"آمي محتاج مساعدتك! اختار بلاصة واكتشف كلمات جديدة.",mission:"المهمة ديالك",hint:"كل بلاصة فيها كلمات. كمل لعبة باش تعمر الدفتر ديالك.",back:"رجع للعش"},
+    tn:{title:"قرية الكلمات",intro:"آمي يستحق مساعدتك! اختار بلاصة واكتشف كلمات جديدة.",mission:"مهمتك",hint:"كل بلاصة فيها كلمات. كمّل لعبة باش تعمّر كراسك.",back:"ارجع للعش"},
+    kab:{title:"Tamdint n wawalen",intro:"Ami yesra tallelt-ik! Fren adeg sakin snirem awalen imaynuten.",mission:"Tameẓla-k",hint:"Yal adeg yesɛa awalen. Fak urar akken ad ternuḍ deg tferkit-ik.",back:"Uɣal ɣer usennun"}
+  };
+  const LIEUX_VILLAGE = [
+    {theme:'animaux',icon:'🌳',fr:'La forêt des animaux',en:'Animal Forest'},
+    {theme:'manger',icon:'🍓',fr:'Le marché gourmand',en:'The Food Market'},
+    {theme:'maison',icon:'🏡',fr:'La maison bavarde',en:'The Talking House'},
+    {theme:'nature',icon:'🌻',fr:'Le jardin merveilleux',en:'The Wonder Garden'},
+    {theme:'ville',icon:'🚲',fr:'La place du village',en:'Village Square'},
+    {theme:'musique',icon:'🎵',fr:'La scène enchantée',en:'The Magic Stage'},
+    {theme:'habits',icon:'🧢',fr:'La boutique des costumes',en:'The Costume Shop'},
+    {theme:'atelier',icon:'🔭',fr:'Le laboratoire curieux',en:'The Curious Lab'}
+  ];
+  function village(){
+    const tx=VILLAGE_TEXT[base.ui] || VILLAGE_TEXT.fr;
+    const cartes=LIEUX_VILLAGE.map(l=>{
+      const n=distincts(motsDu(l.theme,base.cible),base.cible).length;
+      if(n<4) return '';
+      const libre=ouvert(l.theme), visite=(J().villageVisites||[]).includes(jour()+':'+l.theme);
+      const titre=l[base.ui]||l.fr;
+      return '<button class="lieu-village'+(libre?'':' verrou')+(visite?' visite':'')+'" data-a="'+(libre?'village-lieu':'plus')+'" data-v="'+l.theme+'">' +
+        '<span class="lieu-icone" aria-hidden="true">'+l.icon+'</span><span class="lieu-titre">'+esc(titre)+'</span>' +
+        '<span class="lieu-theme">'+esc(t('th_'+l.theme))+'</span>' +
+        '<span class="lieu-bas">'+(libre?(visite?'✓ '+(base.ui==='en'?'Visited today':'Visité aujourd’hui'):(base.ui==='en'?'Explore this place':'Explorer ce lieu')):'✨ '+esc(t('plus_badge')) )+'</span></button>';
+    }).join('');
+    const dialogues={
+      fr:["Psst… j’ai entendu des mots rigolos dans la forêt !","Le marché sent bon… et les mots aussi !","Dans cette maison, chaque objet a une histoire.","Tu es prêt ? Le village compte sur toi !"],
+      en:["Psst… I heard funny words in the forest!","The market smells lovely… and so do the words!","Every object in this house has a story.","Ready? The whole village is counting on you!"]
+    };
+    const ds=dialogues[base.ui]||dialogues.fr, d=ds[Math.floor(Math.random()*ds.length)];
+    poser(barre('accueil')+'<main class="village-page"><div class="village-ciel"><div class="village-ami ami-3d">'+ami('content')+'</div><div class="village-parole">💬 '+esc(d)+'</div><p class="sur-titre-phrases">🗺️ '+esc(tx.mission)+'</p><h2>'+esc(tx.title)+'</h2><p class="village-intro">'+esc(tx.intro)+'</p></div>' +
+      '<div class="village-carte">'+cartes+'</div><p class="village-aide">✨ '+esc(tx.hint)+'</p><div class="actions"><button class="moyen" data-a="accueil">← '+esc(tx.back)+'</button></div></main>','village');
+  }
+  function entrerVillageLieu(th){
+    if(!LIEUX_VILLAGE.some(x=>x.theme===th)) return village();
+    if(!ouvert(th)) return ecranPlus('village');
+    J().villageVisites=J().villageVisites||[];
+    const k=jour()+':'+th;
+    if(!J().villageVisites.includes(k)) J().villageVisites.push(k);
+    J().villageVisites=J().villageVisites.slice(-80);
+    garder();
+    choisirJeu(th);
+  }
+
   // ── Défi du jour et révision ──────────────────────────────────────
   function defi(){
     // Le même défi toute la journée (tirage fixé par la date et la langue).
@@ -897,6 +1064,129 @@
     while(choisis.length < Math.min(DEFI, pool.length)){ const e = pool[Math.floor(alea() * pool.length)]; if(!choisis.includes(e)) choisis.push(e); }
     commencer('defi:n', 'defi', choisis);
   }
+
+  // ── Atelier des phrases : phrases courtes relues, FR/EN uniquement ──
+  // Les autres langues restent disponibles pour les jeux de mots ; les phrases
+  // ne sont proposées que lorsqu'un jeu de phrases relu est fourni.
+  const PHRASES = {
+    fr: [
+      "Le chat dort sur le tapis.",
+      "Le petit chien joue dans le jardin.",
+      "La maman prépare un bon repas.",
+      "Le garçon regarde un grand livre.",
+      "La fille boit de l’eau fraîche.",
+      "Le lapin mange une carotte orange.",
+      "Le soleil brille dans le ciel.",
+      "Le papillon vole près des fleurs.",
+      "Le bébé rit avec son papa.",
+      "Le poisson nage dans l’eau.",
+      "Nous allons jouer dans la maison.",
+      "J’aime apprendre de nouveaux mots."
+    ],
+    en: [
+      "The cat sleeps on the rug.",
+      "The little dog plays in the garden.",
+      "Mum is making a tasty meal.",
+      "The boy is reading a big book.",
+      "The girl drinks fresh water.",
+      "The rabbit eats an orange carrot.",
+      "The sun is shining in the sky.",
+      "The butterfly flies near the flowers.",
+      "The baby laughs with Dad.",
+      "The fish swims in the water.",
+      "We are going to play inside.",
+      "I love learning new words."
+    ]
+  };
+  let atelierPhrase = null;
+  function afficherPhrase(){
+    const p = atelierPhrase;
+    if(!p) return accueil();
+    const fini = p.index >= p.liste.length;
+    if(fini){
+      poser(barre('accueil') + '<main class="atelier-phrases fin-phrases">' +
+        '<div class="ami-moyen ami-3d">' + ami('fete') + '</div>' +
+        '<p class="sur-titre-phrases">✨ ' + (base.ui === 'en' ? 'MISSION COMPLETE' : 'MISSION TERMINÉE') + '</p>' +
+        '<h2>' + (base.ui === 'en' ? 'Sentence superstar!' : 'Champion des phrases !') + '</h2>' +
+        '<p>' + (base.ui === 'en' ? 'You built 12 sentences. Ami is proud of you!' : 'Tu as construit 12 phrases. Ami est très fier de toi !') + '</p>' +
+        '<p class="gain-phrases">⭐ +' + p.gain + ' plumes</p>' +
+        '<button class="moyen plein" data-a="accueil">' + (base.ui === 'en' ? 'Back to the nest' : 'Retour au nid') + '</button></main>');
+      return;
+    }
+    const phrase = p.liste[p.index];
+    const tokens = phrase.split(' ');
+    const choisis = p.choisis;
+    const ordre = tokens.map((_,i)=>i).filter(i=>!choisis.includes(i));
+    const titre = base.ui === 'en' ? 'Sentence workshop' : 'Atelier des phrases';
+    const aide = base.ui === 'en' ? 'Tap the words in the right order.' : 'Touche les mots dans le bon ordre.';
+    const langue = base.cible === 'en' ? 'English' : 'Français';
+    poser(barre('accueil') + '<main class="atelier-phrases">' +
+      '<div class="atelier-entete"><div class="ami-phrase ami-3d" id="ami-phrase">' + ami('content') + '</div>' +
+      '<div><p class="sur-titre-phrases">🧩 ' + titre + '</p><h2>' + (base.ui === 'en' ? 'Put the sentence together!' : 'Construis la phrase !') + '</h2>' +
+      '<p class="aide-phrases">' + aide + '</p><span class="langue-phrase">' + langue + '</span></div></div>' +
+      '<div class="progress-phrases" aria-label="' + (p.index+1) + ' / ' + p.liste.length + '"><span style="width:' + ((p.index/p.liste.length)*100) + '%"></span></div>' +
+      '<p class="compteur-phrases">' + (base.ui === 'en' ? 'Sentence' : 'Phrase') + ' ' + (p.index+1) + ' / ' + p.liste.length + '</p>' +
+      '<div class="phrase-construite" aria-live="polite" dir="auto">' + (choisis.length ? choisis.map(i=>'<span class="mot-place">'+esc(tokens[i])+'</span>').join(' ') : '<span class="placeholder-phrase">'+(base.ui==='en'?'Your sentence will appear here…':'Ta phrase apparaîtra ici…')+'</span>') + '</div>' +
+      '<div class="tuiles-phrases" dir="auto">' + melanger(ordre).map(i=>'<button class="tuile-phrase" data-a="phrase-token" data-v="'+i+'">'+esc(tokens[i])+'</button>').join('') + '</div>' +
+      '<p class="retour-phrase" id="retour-phrase" role="status" aria-live="polite">'+(base.ui==='en'?'Ami says: Let’s make a sentence!':'Ami dit : Allez, on fabrique une phrase !')+'</p>' +
+      '<div class="actions actions-phrases">' +
+      '<button class="moyen" data-a="phrase-reset">↶ '+(base.ui==='en'?'Start again':'Recommencer')+'</button>' +
+      '<button class="moyen" data-a="phrase-hint">💡 '+(base.ui==='en'?'Hint':'Indice')+'</button>' +
+      '<button class="moyen plein" data-a="phrase-check">✓ '+(base.ui==='en'?'Check':'Vérifier')+'</button></div>' +
+      '<p class="note-phrases">'+(base.ui==='en'?'No rush. Learning is an adventure!':'Pas de chrono : apprendre, c’est une aventure !')+'</p></main>');
+  }
+  function atelierPhrases(){
+    if(!PHRASES[base.cible]){
+      const en = base.ui === 'en';
+      poser(barre('accueil') + '<main class="centre atelier-phrases">' +
+        '<div class="ami-moyen ami-3d">'+ami('content')+'</div><h2>💬 '+(en?'Sentence workshop':'Atelier des phrases')+'</h2>' +
+        '<p>'+(en?'Carefully reviewed sentence activities are currently available in French and English. Word games remain available in all 16 languages.':'Les phrases relues sont disponibles pour le moment en français et en anglais. Les jeux de mots restent disponibles dans les 16 langues.')+'</p>' +
+        '<button class="moyen plein" data-a="accueil">'+(en?'Back':'Retour')+'</button></main>');
+      return;
+    }
+    atelierPhrase={liste:melanger(PHRASES[base.cible].slice()),index:0,choisis:[],gain:0};
+    afficherPhrase();
+  }
+  function choisirMotPhrase(i){
+    if(!atelierPhrase) return;
+    const p=atelierPhrase, tokens=p.liste[p.index].split(' ');
+    if(p.choisis.includes(i) || i<0 || i>=tokens.length) return;
+    p.choisis.push(i);
+    afficherPhrase();
+  }
+  function verifierPhrase(){
+    if(!atelierPhrase) return;
+    const p=atelierPhrase, tokens=p.liste[p.index].split(' ');
+    const zone=$('#retour-phrase');
+    if(p.choisis.length!==tokens.length || p.choisis.some((v,i)=>v!==i)){
+      if(zone) zone.textContent=blague();
+      const amiEl=$('#ami-phrase'); if(amiEl){amiEl.classList.remove('ami-raté'); void amiEl.offsetWidth; amiEl.classList.add('ami-raté');}
+      bruit('faux');
+      return;
+    }
+    p.gain+=3; J().plumes+=3; garder(); bruit('juste');
+    const zone2=$('#retour-phrase');
+    if(zone2) zone2.textContent=base.ui==='en'?'Brilliant! Ami is doing a happy dance!':'Bravo ! Ami fait sa danse de la victoire !';
+    const amiEl=$('#ami-phrase'); if(amiEl){amiEl.innerHTML=ami('fete');amiEl.classList.add('ami-3d');}
+    const boutons=document.querySelectorAll('.tuile-phrase'); boutons.forEach(b=>b.disabled=true);
+    const check=$('[data-a="phrase-check"]'); if(check) check.disabled=true;
+    const hint=$('[data-a="phrase-hint"]'); if(hint) hint.disabled=true;
+    const reset=$('[data-a="phrase-reset"]'); if(reset) reset.disabled=true;
+    const next=document.createElement('button'); next.className='moyen plein'; next.dataset.a='phrase-next';
+    next.textContent=base.ui==='en'?'Next sentence →':'Phrase suivante →';
+    $('.actions-phrases')?.appendChild(next);
+    eclat($('.phrase-construite'));
+  }
+  function indicePhrase(){
+    if(!atelierPhrase) return;
+    const p=atelierPhrase, tokens=p.liste[p.index].split(' ');
+    const prochain=p.choisis.length;
+    if(prochain<tokens.length){
+      const zone=$('#retour-phrase');
+      if(zone) zone.textContent=(base.ui==='en'?'Ami’s hint: the next word is “':'Indice d’Ami : le prochain mot est « ')+tokens[prochain]+(base.ui==='en'?'”':' »');
+    }
+  }
+
   // Leçon : 5 mots nouveaux d'un même thème, présentés puis joués 10 fois.
   function lecon(){
     const libres = THEMES.filter(ouvert);
@@ -1054,10 +1344,26 @@
       case 'jeu': return commencer(v);
       case 'defi': return defi();
       case 'lecon': return lecon();
+      case 'phrases': return atelierPhrases();
+      case 'village': return village();
+      case 'village-lieu': return entrerVillageLieu(v);
+      case 'phrase-token': return choisirMotPhrase(Number(v));
+      case 'phrase-check': return verifierPhrase();
+      case 'phrase-hint': return indicePhrase();
+      case 'phrase-reset': if(atelierPhrase) atelierPhrase.choisis=[]; return afficherPhrase();
+      case 'phrase-next': if(atelierPhrase){ atelierPhrase.index++; atelierPhrase.choisis=[]; } return afficherPhrase();
       case 'compris': if(!fiche(v)){ J().mots[cleMot(v)] = { b:0, d:jour() }; garder(); } return question();
       case 'deja-connu': J().mots[cleMot(v)] = { b:1, d:jour(1) }; garder(); return question();
       case 'revoir': return revoir();
       case 'ecouter': return dire(v);
+      case 'lent': return direLent(v);
+      case 'bouche': fermerFenetre(); return window.Articulation && Articulation.montrer(aDire(v), b);
+      case 'a-toi': return aToi(v);
+      case 'enregistrer': return b.classList.contains('enregistre') ? (micro && micro.rec && micro.rec.state === 'recording' && micro.rec.stop()) : enregistrer(v);
+      case 'je-l-ai-dit': { const k = cleMot(v), j = J(); j.parle = j.parle || []; if(!j.parle.includes(k)){ j.parle = j.parle.concat(k); j.plumes += 1; garder(); } const et = $('#a-toi-etat'); if(et) et.textContent = t('a_toi_bravo'); eclat(b); bruit('juste'); return; }
+      case 'me-reecouter': if(micro && micro.url) new Audio(micro.url).play().catch(() => {}); return;
+      case 'fermer-fenetre': return fermerFenetre();
+      case 'astuces': return astuces();
       case 'suivant': partie.i++; return question();
       case 'repondre': return repondre(b);
       case 'vf': return vf(b);
@@ -1090,6 +1396,8 @@
         Object.assign(J(), { plumes:0, etoiles:{}, jours:[], porte:[], mots:{}, trophees:[], defis:[] }); garder(); return accueil();
     }
   });
+  document.addEventListener('keydown', ev => { if(ev.key === 'Escape' && $('#fenetre')) fermerFenetre(); });
+  document.addEventListener('click', ev => { if(ev.target.id === 'fenetre') fermerFenetre(); });
   document.addEventListener('click', ev => {
     const c = ev.target.closest('#carte'); if(!c) return;
     c.classList.toggle('retournee');
@@ -1119,7 +1427,7 @@
   if(retourPaiement) [5000, 15000, 40000].forEach(ms => setTimeout(() => { if(!plus()) rafraichir(true); }, ms));
   if(window.Articulation) try{ Articulation.init(); }catch(e){}
   if('serviceWorker' in navigator && location.protocol === 'https:') navigator.serviceWorker.register('sw.js').catch(() => {});
-  window.AmiDesMots = { base, J, affiche, fnv1a, urlVoix, accueil, themes, choisirJeu, commencer, lettresPossibles, distincts, motsDu, aDire, CATALOGUE, MECAS, disponible, nomJeu, aRevoir, noter, jour, defi, revoir, lecon, carnet, reglages, CONFIG, facile, nbMots, restaurer, verifierJeton, plus, ecranPlus, formatCode, rafraichir,
+  window.AmiDesMots = { base, J, affiche, fnv1a, urlVoix, accueil, themes, choisirJeu, commencer, lettresPossibles, distincts, motsDu, aDire, CATALOGUE, MECAS, disponible, nomJeu, aRevoir, noter, jour, defi, revoir, lecon, astuces, aToi, blague, carnet, reglages, CONFIG, facile, nbMots, restaurer, verifierJeton, plus, ecranPlus, formatCode, rafraichir,
     get etat(){ return J(); } };
   garder();
   accueil();

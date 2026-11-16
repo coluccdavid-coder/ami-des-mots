@@ -483,3 +483,186 @@ html[data-facile] .lire-consigne{ width:46px; height:46px; font-size:1.2rem; bac
   .scene > .nouveau-mot{ grid-column:1 / -1!important; grid-row:auto!important; position:static!important; }
   .scene > .nouveau-mot ~ .actions{ grid-column:1 / -1!important; max-width:620px; margin:20px auto 0; }
 }
+
+/* =====================================================================
+   v5 — prononciation, mot du jour, astuces, fenêtre « À toi ! »
+   ===================================================================== */
+.ecoutes{ display:inline-flex; gap:10px; align-items:center; flex-wrap:wrap; justify-content:center; }
+.lent{ width:52px; height:52px; border-radius:50%; font-size:1.5rem; border:1px solid var(--bord); background:var(--verre); box-shadow:var(--reflet); color:#fff; transition:transform .1s; }
+.lent:active{ transform:scale(.9); }
+.gros + .lent{ width:62px; height:62px; font-size:1.8rem; }
+.prononcer{ display:flex; gap:10px; justify-content:center; flex-wrap:wrap; margin-top:12px; }
+.carte-jour{ text-align:start; margin:18px auto 0; max-width:440px; border-radius:24px; padding:16px 18px; border:1px solid var(--bord); background:var(--verre); box-shadow:var(--reflet), 0 14px 30px rgba(5,2,30,.3); -webkit-backdrop-filter:blur(14px); backdrop-filter:blur(14px); }
+.carte-jour h2{ font-size:1rem; margin:0 0 10px; color:var(--lune); }
+.mot-jour-in{ display:flex; gap:14px; align-items:center; }
+.pic-jour{ width:96px; height:96px; object-fit:contain; background:#fff; border-radius:22px; padding:6px; flex:none; box-shadow:0 0 30px rgba(255,201,60,.25); }
+.mot-jour-mot{ font-size:1.8rem; font-weight:1000; margin:0; line-height:1.1; }
+.mot-jour-trad{ margin:2px 0 8px; color:var(--doux); font-weight:700; }
+.mot-jour-actions{ display:flex; gap:6px; flex-wrap:wrap; }
+.mot-jour-actions .moyen{ padding:8px 12px; font-size:1.1rem; }
+.astuce-jour p{ margin:0 0 6px; color:var(--texte); }
+.astuce-jour strong{ color:#fff; }
+.astuces{ max-width:860px; text-align:center; }
+.liste-astuces{ list-style:none; padding:0; margin:20px 0; display:grid; gap:12px; text-align:start; }
+.liste-astuces li{ display:flex; gap:14px; align-items:flex-start; border-radius:20px; padding:14px 16px; border:1px solid var(--bord); background:var(--verre); box-shadow:var(--reflet); }
+.liste-astuces .num{ font-size:1.8rem; line-height:1; flex:none; width:52px; height:52px; border-radius:16px; display:flex; align-items:center; justify-content:center; background:rgba(255,201,60,.14); }
+.liste-astuces strong{ font-size:1.1rem; }
+.liste-astuces p{ margin:4px 0 0; color:var(--doux); }
+/* Fenêtre « À toi ! » */
+.fenetre-fond{ position:fixed; inset:0; z-index:30; background:rgba(8,4,30,.7); -webkit-backdrop-filter:blur(6px); backdrop-filter:blur(6px); display:flex; align-items:center; justify-content:center; padding:16px; animation:entree .2s ease-out; }
+.fenetre{ position:relative; width:min(560px, 100%); max-height:94vh; overflow:auto; border-radius:30px; padding:26px 20px 20px; text-align:center;
+  background:linear-gradient(180deg, #2A1F8A, #1C1460); border:1px solid var(--bord); box-shadow:var(--reflet), 0 30px 80px rgba(0,0,0,.5); }
+.fermer-fenetre{ position:absolute; top:12px; inset-inline-end:12px; width:44px; height:44px; border-radius:50%; border:1px solid var(--bord); background:var(--verre); color:#fff; font-size:1.1rem; }
+.a-toi .pic-moyenne{ background:#fff; border-radius:26px; padding:10px; }
+.micro.enregistre{ background:linear-gradient(180deg, #FF7A93, var(--corail)); color:#fff; box-shadow:var(--relief) var(--corail-f), 0 0 0 0 rgba(255,93,122,.6); animation:pulse 1s ease-out infinite; }
+@keyframes pulse{ to{ box-shadow:var(--relief) var(--corail-f), 0 0 0 22px rgba(255,93,122,0); } }
+/* Le module « bouche » de ReParole, habillé pour la nuit */
+.art-fond{ background:rgba(8,4,30,.7)!important; -webkit-backdrop-filter:blur(6px); backdrop-filter:blur(6px); z-index:40!important; }
+.art-boite{ background:linear-gradient(180deg, #2A1F8A, #1C1460)!important; color:#fff!important; border:1px solid var(--bord); border-radius:30px!important; }
+.art-boite .art-schema{ background:#fff; border-radius:20px; margin:0 auto; }
+.art-boite .btn-primary,.art-boite .btn-ghost{ border:0; border-radius:16px; padding:12px 18px; font-weight:900; margin:4px; }
+.art-boite .btn-primary{ background:linear-gradient(180deg, #3BF0C0, var(--menthe)); color:#06372B; }
+.art-boite .btn-ghost{ background:var(--verre); color:#fff; border:1px solid var(--bord); }
+.art-note{ color:var(--doux); font-size:.85rem; }
+
+/* =====================================================================
+   PC : le jeu prend toute la page
+   ===================================================================== */
+@media (min-width:1100px){
+  .barre, main, .partie{ max-width:1440px; }
+  /* Accueil en deux moitiés : le ciel d'Ami à gauche, le tableau de bord à droite */
+  #app[data-ecran=accueil]{ display:grid; grid-template-columns:minmax(0, 1.05fr) minmax(0, 1fr); min-height:100vh; }
+  #app[data-ecran=accueil] .ciel{ min-height:100vh; border-radius:0 64px 64px 0; padding-bottom:0; display:flex; flex-direction:column; position:sticky; top:0; height:100vh; }
+  #app[data-ecran=accueil] .ciel .barre{ width:100%; max-width:none; }
+  #app[data-ecran=accueil] .ciel-in{ margin:auto; padding-bottom:110px; }
+  #app[data-ecran=accueil] .perchoir{ transform:scale(1.45); margin:60px auto 50px; }
+  #app[data-ecran=accueil] .ciel h1{ font-size:clamp(4rem, 6vw, 6rem); }
+  #app[data-ecran=accueil] .collines{ height:180px; }
+  #app[data-ecran=accueil] .accueil{ max-width:none; width:100%; margin:0; padding:56px clamp(32px, 4vw, 72px); display:grid; grid-template-columns:1fr 1fr; gap:16px 18px; align-content:center; }
+  #app[data-ecran=accueil] .accueil > *{ grid-column:1 / -1; max-width:none; margin:0; }
+  #app[data-ecran=accueil] .gros.defi{ font-size:1.8rem; padding:28px; }
+  #app[data-ecran=accueil] .gros.apprendre{ font-size:1.5rem; padding:22px; }
+  #app[data-ecran=accueil] .actions.serrees .moyen{ font-size:1.25rem; padding:18px; max-width:none; }
+  #app[data-ecran=accueil] .objectif{ justify-content:flex-start; }
+  #app[data-ecran=accueil] .carte-jour{ grid-column:auto; margin:0; }
+  #app[data-ecran=accueil] .raccourcis{ grid-template-columns:repeat(5, 1fr); }
+  .raccourcis{ grid-template-columns:repeat(5, 1fr); max-width:760px; }
+  /* Thèmes : grandes cartes */
+  .grille{ grid-template-columns:repeat(4, 1fr); gap:28px; }
+  .theme{ min-height:230px; padding-top:86px; }
+  .theme .disque{ width:120px; height:120px; margin-left:-60px; top:-38px; }
+  .pic-theme{ width:94px; height:94px; }
+  .theme .nom{ font-size:1.35rem; }
+  /* Une partie : tout l'écran, image grande à gauche */
+  .partie{ min-height:calc(100vh - 90px); display:flex; flex-direction:column; }
+  .scene{ flex:1; align-content:center; }
+  .scene:has(> .centre:first-child + *){ grid-template-columns:minmax(0, 1.15fr) minmax(0, 1fr); gap:0 72px; }
+  .partie .pic-grande{ width:min(560px, 100%); height:min(46vh, 460px); }
+  .partie .pic-moyenne{ width:min(460px, 100%); height:min(36vh, 340px); }
+  .choix-img{ max-height:min(26vh, 280px); }
+  .choix-mot{ font-size:1.7rem; padding:30px 12px; }
+  .mot-source, .mot-vf{ font-size:3.6rem; }
+  .memoire{ max-width:min(1000px, 120vh); }
+  .carte{ width:min(460px, 52vh); }
+  .tuiles.grandes .tuile{ min-width:86px; height:86px; font-size:2.6rem; }
+  .tete h2{ font-size:1.5rem; }
+  .ami-petit{ width:84px; flex-basis:84px; }
+  .liste-jeux{ grid-template-columns:repeat(3, 1fr); }
+  .astuces .liste-astuces{ grid-template-columns:1fr 1fr; }
+}
+[hidden]{ display:none!important; }
+.actions .ecoutes{ flex-wrap:nowrap; }
+.art-legende, .art-legende span{ color:#D9D1FF!important; }
+
+
+/* ── v5.2 : espace PC, relief doux et atelier des phrases ───────── */
+.phrases-accueil{
+  display:block;width:100%;max-width:620px;margin:12px auto 0;
+  background:linear-gradient(145deg,#8B78FF,#5B47C9);color:#fff;
+  box-shadow:0 5px 0 #382A91,0 14px 32px rgba(91,71,201,.32),inset 0 1px 0 rgba(255,255,255,.4);
+}
+.phrases-accueil span{display:inline-block;animation:etoile-phrase 2.2s ease-in-out infinite}
+@keyframes etoile-phrase{50%{transform:translateY(-5px) rotate(15deg) scale(1.15)}}
+.ami-3d{perspective:700px;transform-style:preserve-3d}
+.ami-3d .ami{filter:drop-shadow(0 12px 12px rgba(5,2,30,.38));animation:hibou-3d 4s ease-in-out infinite;transform-origin:50% 85%}
+@keyframes hibou-3d{0%,100%{transform:rotateY(-7deg) rotateX(2deg) translateY(0)}50%{transform:rotateY(8deg) rotateX(-2deg) translateY(-7px)}}
+.ami-raté{animation:hibou-rate .45s ease-in-out 2}
+@keyframes hibou-rate{0%,100%{transform:rotate(0)}25%{transform:rotate(-9deg) translateX(-4px)}75%{transform:rotate(9deg) translateX(4px)}}
+.atelier-phrases{max-width:920px;margin:0 auto;padding:28px clamp(16px,3vw,42px) 64px}
+.atelier-entete{display:flex;align-items:center;justify-content:center;gap:24px;text-align:left;margin:0 auto 18px;max-width:760px}
+.ami-phrase{width:132px;flex:0 0 132px}
+.sur-titre-phrases{color:var(--lune);font-weight:1000;letter-spacing:.06em;text-transform:uppercase;font-size:.82rem;margin:0 0 4px}
+.atelier-phrases h2{font-size:clamp(1.7rem,4vw,2.5rem);margin:0;line-height:1.1}
+.aide-phrases{color:var(--doux);margin:8px 0}
+.langue-phrase{display:inline-block;border:1px solid var(--bord);border-radius:999px;padding:4px 12px;color:#fff;background:rgba(255,255,255,.09);font-weight:800;font-size:.85rem}
+.progress-phrases{height:10px;background:rgba(255,255,255,.12);border-radius:99px;overflow:hidden;margin:22px 0 6px}
+.progress-phrases span{display:block;height:100%;border-radius:inherit;background:linear-gradient(90deg,var(--menthe),#A4F5DB);transition:width .35s}
+.compteur-phrases{color:var(--doux);font-weight:800;text-align:center;margin:8px 0 14px}
+.phrase-construite{min-height:100px;display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:9px;padding:18px;border:2px dashed rgba(255,255,255,.28);border-radius:24px;background:rgba(255,255,255,.07);font-size:clamp(1.25rem,3vw,1.9rem);font-weight:900;text-align:center}
+.mot-place{display:inline-block;padding:7px 12px;border-radius:14px;background:linear-gradient(180deg,#FFF1B9,#FFD96A);color:#382600;box-shadow:0 4px 0 #B98518;animation:mot-pop .18s ease-out}
+@keyframes mot-pop{from{transform:translateY(8px) scale(.85);opacity:0}to{transform:translateY(0) scale(1);opacity:1}}
+.placeholder-phrase{color:var(--doux);font-size:1rem;font-weight:700}
+.tuiles-phrases{display:flex;flex-wrap:wrap;justify-content:center;gap:10px;margin:24px auto;max-width:780px}
+.tuile-phrase{border:1px solid rgba(255,255,255,.25);border-radius:16px;padding:13px 17px;background:linear-gradient(180deg,rgba(255,255,255,.19),rgba(255,255,255,.09));color:#fff;font:900 1.08rem "Nunito",sans-serif;box-shadow:0 4px 0 rgba(0,0,0,.24),inset 0 1px 0 rgba(255,255,255,.25);cursor:pointer;transition:transform .15s,background .15s}
+.tuile-phrase:active{transform:translateY(3px);box-shadow:0 1px 0 rgba(0,0,0,.2)}
+.tuile-phrase:disabled{opacity:.35;cursor:default}
+.retour-phrase{min-height:32px;text-align:center;font-weight:900;color:#FFE58B;margin:12px 0}
+.actions-phrases{display:flex;justify-content:center;flex-wrap:wrap;gap:10px}
+.actions-phrases .moyen{flex:1 1 150px;max-width:240px}
+.note-phrases{text-align:center;color:var(--doux);font-size:.9rem}
+.fin-phrases{text-align:center;padding-top:50px}
+.fin-phrases .ami-moyen{width:180px;margin:0 auto 18px}
+.gain-phrases{font-size:1.7rem;color:var(--lune);font-weight:1000}
+@media(min-width:900px){
+  .ciel-in{max-width:900px}
+  .accueil{max-width:1120px}
+  .carte-jour,.astuce-jour{max-width:none}
+}
+@media(min-width:1100px){
+  #app[data-ecran=accueil] .accueil{grid-template-columns:minmax(0,1.15fr) minmax(0,.85fr);gap:18px 24px;padding:clamp(38px,5vh,72px) clamp(30px,3.2vw,64px)}
+  #app[data-ecran=accueil] .accueil > .gros.defi,
+  #app[data-ecran=accueil] .accueil > .gros.apprendre,
+  #app[data-ecran=accueil] .accueil > .phrases-accueil,
+  #app[data-ecran=accueil] .accueil > .actions,
+  #app[data-ecran=accueil] .accueil > .objectif,
+  #app[data-ecran=accueil] .accueil > .bandeau-plus,
+  #app[data-ecran=accueil] .accueil > .raccourcis{grid-column:1 / -1}
+  #app[data-ecran=accueil] .accueil > .carte-jour{grid-column:1}
+  #app[data-ecran=accueil] .accueil > .astuce-jour{grid-column:2}
+  #app[data-ecran=accueil] .accueil > .gros.defi,
+  #app[data-ecran=accueil] .accueil > .gros.apprendre,
+  #app[data-ecran=accueil] .accueil > .phrases-accueil{max-width:none}
+}
+@media(max-width:560px){
+  .atelier-entete{gap:12px}
+  .ami-phrase{width:88px;flex-basis:88px}
+  .atelier-phrases{padding-top:18px}
+  .tuile-phrase{padding:11px 13px;font-size:1rem}
+}
+@media(prefers-reduced-motion:reduce){
+  .ami-3d .ami,.ami-raté,.phrases-accueil span,.mot-place{animation:none!important}
+}
+
+/* ── v5.3 : le village d'Ami ───────────────────────────────────── */
+.village-accueil{display:block;width:100%;max-width:620px;margin:12px auto 0;background:linear-gradient(145deg,#54DDBB,#159B83);color:#06372B;box-shadow:0 5px 0 #08735F,0 14px 30px rgba(34,216,168,.22),inset 0 1px 0 rgba(255,255,255,.55)}
+.village-page{max-width:1160px;margin:0 auto;padding:16px clamp(16px,3vw,38px) 60px}
+.village-ciel{position:relative;overflow:hidden;text-align:center;border-radius:30px;padding:26px 22px 32px;background:radial-gradient(ellipse at 50% 0%,rgba(255,201,60,.18),transparent 58%),linear-gradient(145deg,rgba(91,71,201,.38),rgba(16,10,51,.3));border:1px solid var(--bord);box-shadow:var(--reflet),0 18px 38px rgba(5,2,30,.22)}
+.village-ami{width:118px;margin:0 auto 4px;filter:drop-shadow(0 12px 15px rgba(0,0,0,.3))}
+.village-parole{display:inline-block;max-width:650px;margin:8px auto 20px;padding:12px 18px;border-radius:18px;background:#FFF3C4;color:#392900;font-weight:900;box-shadow:0 4px 0 #C99A35;position:relative}
+.village-parole:after{content:"";position:absolute;top:-8px;left:50%;width:16px;height:16px;background:#FFF3C4;transform:translateX(-50%) rotate(45deg)}
+.village-ciel h2{font-size:clamp(2rem,4vw,3rem);margin:2px 0 8px}
+.village-intro{color:var(--doux);font-weight:700;margin:0 auto;max-width:650px}
+.village-carte{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin:22px 0}
+.lieu-village{min-width:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;text-align:center;padding:18px 12px;border:1px solid var(--bord);border-radius:24px;background:linear-gradient(155deg,rgba(255,255,255,.16),rgba(255,255,255,.055));color:var(--texte);box-shadow:0 5px 0 rgba(0,0,0,.2),inset 0 1px 0 rgba(255,255,255,.18);cursor:pointer;transition:transform .18s,filter .18s}
+.lieu-village:active{transform:translateY(4px)}
+.lieu-village.visite{border-color:rgba(34,216,168,.65);background:linear-gradient(155deg,rgba(34,216,168,.2),rgba(255,255,255,.06))}
+.lieu-icone{font-size:clamp(2.5rem,5vw,4rem);filter:drop-shadow(0 7px 6px rgba(0,0,0,.28));transition:transform .3s}
+.lieu-village:hover .lieu-icone{transform:translateY(-5px) rotate(-5deg) scale(1.08)}
+.lieu-titre{font-size:1.06rem;font-weight:1000}
+.lieu-theme{font-size:.88rem;color:var(--doux);font-weight:800}
+.lieu-bas{font-size:.8rem;font-weight:900;color:var(--lune);margin-top:3px}
+.lieu-village.verrou{opacity:.65}
+.village-aide{text-align:center;color:var(--doux);font-weight:800}
+@media(min-width:700px){.village-carte{grid-template-columns:repeat(3,minmax(0,1fr));gap:18px}.lieu-village{min-height:190px}}
+@media(min-width:1100px){.village-carte{grid-template-columns:repeat(4,minmax(0,1fr))}.lieu-village{min-height:210px}}
+@media(max-width:360px){.village-carte{gap:9px}.lieu-village{padding:14px 8px}.lieu-titre{font-size:.94rem}}
