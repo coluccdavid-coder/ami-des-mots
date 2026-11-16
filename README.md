@@ -473,3 +473,9 @@ Note technique : cette édition est une refonte 2.5D CSS/WebP. Elle ne prétend 
 
 ## Lancer la version de test
 Décompressez l'archive puis double-cliquez sur `LANCER-TEST.bat` sous Windows. Pour macOS/Linux, lancez `sh lancer-test.sh`. Voir `LIRE-POUR-TESTER.md`.
+
+
+## v5.19 — correction du hibou sur l'accueil
+- La lune est replacée derrière Ami avec une pile d'affichage explicite.
+- Ami est recentré et agrandi sur le perchoir, avec une animation douce de flottement.
+- Le perchoir est ajusté sur mobile et ordinateur.

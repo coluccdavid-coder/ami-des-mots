@@ -1301,3 +1301,73 @@ body::after{
   .partie .choix-img,.ami-3d-wrap,.ami-3d-surpris,.ami-3d-fete,.ami-petit::after{animation:none!important}
   .partie .bulle.ok,.partie .bulle.ko{animation:none!important}
 }
+
+
+/* v5.19 — Ami reprend sa place sur le perchoir : la lune passe derrière lui. */
+.perchoir{
+  position:relative;
+  isolation:isolate;
+  width:230px;
+  height:190px;
+  margin:-4px auto 0;
+}
+.perchoir .lune{
+  z-index:0 !important;
+  width:148px;
+  height:148px;
+  left:50%;
+  top:12px;
+  margin-left:-74px;
+}
+.perchoir .branche{
+  z-index:2 !important;
+  top:148px;
+}
+.perchoir .ami-grand{
+  z-index:4 !important;
+  width:142px;
+  left:50%;
+  top:12px;
+  margin:0;
+  transform:translateX(-50%);
+  display:flex;
+  align-items:flex-start;
+  justify-content:center;
+}
+.perchoir .ami-grand .ami-3d-wrap{
+  display:block;
+  width:100%;
+  max-width:142px !important;
+  margin:0 auto;
+  position:relative;
+  z-index:4;
+  animation:ami-accueil-bond 3.2s ease-in-out infinite;
+  transform-origin:50% 90%;
+}
+.perchoir .ami-grand .ami-3d{
+  display:block;
+  width:100%;
+  height:auto;
+  object-fit:contain;
+  filter:drop-shadow(0 9px 10px rgba(12,7,35,.35));
+}
+@keyframes ami-accueil-bond{
+  0%,100%{transform:translateY(0) rotate(-1deg)}
+  48%{transform:translateY(-8px) rotate(1deg)}
+  72%{transform:translateY(-3px) rotate(-1deg)}
+}
+.perchoir .ami-grand:focus-visible{
+  outline:3px solid #ffe27a;
+  outline-offset:8px;
+  border-radius:28px;
+}
+@media(max-width:600px){
+  .perchoir{width:210px;height:176px}
+  .perchoir .lune{width:132px;height:132px;margin-left:-66px;top:12px}
+  .perchoir .branche{top:135px}
+  .perchoir .ami-grand{width:128px;top:8px}
+  .perchoir .ami-grand .ami-3d-wrap{max-width:128px!important}
+}
+@media(prefers-reduced-motion:reduce){
+  .perchoir .ami-grand .ami-3d-wrap{animation:none!important}
+}

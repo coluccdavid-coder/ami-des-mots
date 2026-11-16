@@ -152,3 +152,10 @@ Ne pas utiliser de vrais paiements pendant les essais. Pour tester l'abonnement,
 - Bonne réponse : la carte doit rebondir et Ami doit faire sa petite danse.
 - Mauvaise réponse : le choix doit trembler et Ami réagir ; la bulle BD doit rester lisible.
 - Activer la préférence système « réduire les animations » : les animations décoratives doivent se couper.
+
+
+## v5.19 — test accueil
+- Sur l'accueil, vérifier que le hibou est entièrement visible au premier plan devant la lune.
+- Vérifier que ses pieds reposent visuellement sur la branche.
+- Vérifier le centrage et la taille sur écran PC et téléphone.
+- Vérifier que l'animation de flottement reste douce et ne gêne pas le clic vers le vestiaire.

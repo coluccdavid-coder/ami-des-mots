@@ -1,7 +1,7 @@
 // GÉNÉRÉ par outils/construire-sw.js — ne pas éditer.
 // Le jeu entier est gardé pour jouer hors connexion. Les voix (autre site)
 // ne sont pas gardées ici : sans réseau, c'est la voix du téléphone.
-const CACHE = 'amidesmots-f65d8bb3c4';
+const CACHE = 'amidesmots-474f9c538d';
 const FICHIERS = [
  "./",
  "index.html",
