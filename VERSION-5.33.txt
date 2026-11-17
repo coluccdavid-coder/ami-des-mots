@@ -1,0 +1,27 @@
+AMI DES MOTS — VERSION 5.33
+Mots City devient un vrai monde ouvert (original, familial)
+
+Monde 3D (monde-3d.html)
+- Corrigé : Ami, le personnage du joueur, avait des pattes collées au corps et glissait.
+  Ses pattes sont maintenant articulées à la hanche, se balancent en opposition (±34°)
+  au rythme de la vitesse, et reviennent droites à l'arrêt.
+
+Mots City (mots-city.html)
+- Héros à pied, articulé (hanches, genoux, épaules, coudes) : marche, course (Maj ou 🏃),
+  saut (Espace ou ⤒), pose assise en véhicule. Animation procédurale (pas de squelette importé).
+- Monter / descendre (E ou 🚪) : 2 scooters et 3 cabriolets à emprunter. Pas de vol de voiture,
+  pas de violence : la circulation et les passants ne sont jamais attaqués.
+- Ville côtière au coucher du soleil : immeubles pastel art déco, néons, palmiers, plage,
+  promenade, ponton avec grande roue, voilier, océan animé.
+- Cycle jour/nuit (une journée = 6 min) : ciel, soleil, fenêtres et néons qui s'allument,
+  lampadaires, phares la nuit. Heure affichée sous le plan.
+- Radios dans les véhicules (R) : musique composée par le jeu en direct (synthwave, pop),
+  et une radio parlée d'expressions anglaises. Aucun fichier, aucune musique protégée.
+- 20 plumes dorées cachées : chacune apprend un mot anglais (image + voix + sens).
+- Écran titre, 4 tenues au choix (sauvegardées), caméra que l'on peut tourner en glissant.
+- Missions : livraison (à pied ou en véhicule), taxi (il faut un véhicule ; le passager monte
+  à bord), chasse aux lettres. Les vannes citent toujours l'erreur commise.
+- Performances : palmiers, lampadaires et halos instanciés ; pas d'ombres sur téléphone.
+
+Tests : 64 réussis (npm test) + 40 vérifications dans Chrome (outils/tests-navigateur/test-city.js)
++ jambes du monde 3D + démarrage hors connexion.

@@ -116,3 +116,15 @@ Le sélecteur affiche uniquement français et anglais. Les traductions coréenne
 10. Monde 3D : parle à Paco ou Mina → « 🎯 Défi anglais ».
 11. Coupe le réseau après une première visite : Mots City et le monde 3D démarrent.
 À vérifier sur un VRAI téléphone : fluidité de Mots City (le test automatique n'a pas de carte graphique).
+
+
+## v5.33 — Mots City monde ouvert
+1. Monde 3D : marche avec Ami → ses pattes bougent, elles s'arrêtent droites à l'arrêt.
+2. Mots City : écran titre, choisis une tenue, ▶ Jouer.
+3. Marche, cours (Maj / 🏃), saute (Espace / ⤒) : jambes, genoux et bras bougent.
+4. Approche un scooter ou une voiture : « Monter (E) ». Conduis, puis R pour la radio.
+5. Mission Taxi : le passager attend un véhicule, puis monte à bord.
+6. Trouve une ✨ plume dorée : un mot anglais s'affiche et se prononce.
+7. Attends la nuit (ou joue 3 min) : néons, fenêtres, lampadaires, phares.
+8. Plage : ponton, grande roue qui tourne, mer animée.
+À vérifier sur un VRAI téléphone : fluidité (le test automatique n'a pas de carte graphique).
