@@ -236,6 +236,12 @@
   }
   // Les consignes (dans la langue du joueur) sont lues par la voix du téléphone.
   function lireConsigne(texte){ if(texte && !voixNavigateur(base.ui, texte)) silence(); }
+  // Une phrase (vanne + correction) n'a pas d'enregistrement : on ne la demande
+  // pas au serveur des voix, on la lit avec la voix du téléphone, sans chevauchement.
+  function direPhrase(texte, langue){
+    try{ if(lecteur){ lecteur.pause(); lecteur = null; } }catch(e){}
+    if(texte && !voixNavigateur(langue, texte)) silence();
+  }
   function silence(){ const n = $('#note-voix'); if(n){ n.textContent = '🔇 ' + t('sans_voix'); setTimeout(() => { if(n.isConnected) n.textContent = ''; }, 2500); } }
   window.speak = function(texte, langueForce){
     const lang = langueForce || base.cible;
@@ -373,6 +379,7 @@
         '<button class="gros phrases-accueil" data-a="phrases">💬 ' + (base.ui === 'en' ? 'Build your first sentences' : 'Atelier des phrases') + ' <span>✨</span></button>' +
         '<button class="gros village-accueil" data-a="village">🗺️ ' + {"fr": "Explorer le village", "en": "Explore the word village", "es": "Explorar el pueblo", "it": "Esplora il villaggio", "pt": "Explorar a aldeia", "de": "Das Wörterdorf erkunden", "ar": "استكشف قرية الكلمات", "tr": "Kelime köyünü keşfet", "pl": "Odkryj wioskę słów", "ja": "ことばの村を探検", "uk": "Дослідити селище слів", "ko": "단어 마을 탐험하기", "dz": "اكتشف قرية الكلمات", "ma": "اكتشف قرية الكلمات", "tn": "اكتشف قرية الكلمات", "kab": "Snirem tamdint n wawalen"}[base.ui] + '</button>' +
         '<a class="gros monde-3d-accueil" href="monde-3d.html">🌍 Explorer le monde 3D <span>🚀</span></a>' +
+        '<a class="gros monde-3d-accueil mots-city-accueil" href="mots-city.html">🛵 Mots City — l’anglais en rigolant <span>😂</span></a>' +
         '<div class="actions serrees">' +
           '<button class="moyen" data-a="themes">▶ ' + esc(t('jouer')) + '</button>' +
           '<button class="moyen" data-a="revoir">🔁 ' + esc(t('revoir')) + (rev ? ' <span class="pastille">' + rev + '</span>' : '') + '</button>' +
@@ -455,6 +462,8 @@
       const k = cleMot(e), j = J(); j.parle = j.parle || [];
       if(!j.parle.includes(k)){ j.parle = j.parle.concat(k).slice(-2000); j.plumes += 1; garder(); }
       if(etat) etat.textContent = t('a_toi_bravo');
+      const V = window.VANNES && window.VANNES[langueBlagues()];
+      if(etat && V && V.micro){ const l = V.micro[niveauHumour()] || V.micro[0]; etat.textContent = remplir(tirerVanne(l), { j:nomVanne(e, langueBlagues()) }); }
       eclat(btn); bruit('juste');
     };
     if(!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia || !window.MediaRecorder){
@@ -597,12 +606,12 @@
     const th = partie.mode === 'theme' ? theme : MOTS[motI()] && MOTS[motI()].theme;
     poser(barre(retourPartie()) + '<main class="partie" style="--th:' + couleurDe(th) + '">' +
       '<div class="tete"><div class="ami-petit" id="ami-partie">' + ami('content') + '</div><span class="combo' + ((partie.combo || 0) >= 2 ? ' vu' : '') + '" id="combo" aria-hidden="true">' + ((partie.combo || 0) >= 2 ? '🔥 ×' + partie.combo : '') + '</span><div><h2>' + esc(titre) + '</h2><p class="aide"><span id="consigne">' + esc(aide) + '</span> <button class="lire-consigne" data-a="consigne" aria-label="' + esc(t('lire_consigne')) + '">🔊</button></p></div></div>' +
-      chrono + prog + '<div class="scene">' + corps + '</div>' + '<p class="bulle" id="bulle" role="status" aria-live="polite"></p><button class="moyen continuer-erreur" id="continuer-erreur" data-a="continuer-erreur" hidden>✓ ' + (base.ui === 'en' ? 'I understand — next' : 'J’ai compris — continuer') + '</button><p class="note" id="note-voix" aria-live="polite"></p></main>');
+      chrono + prog + '<div class="scene">' + corps + '</div>' + '<p class="bulle" id="bulle" role="status" aria-live="polite"></p><button class="moyen continuer-erreur" id="continuer-erreur" data-a="continuer-erreur" hidden>✓ ' + (base.ui === 'en' ? 'I understand — next' : 'J’ai compris — continuer') + '</button><button class="petit-bouton garder-vanne" id="garder-vanne" data-a="garder-vanne" hidden>😂</button><p class="note" id="note-voix" aria-live="polite"></p></main>');
     if(facile() && partie.i === 0 && !partie.consigneLue){ partie.consigneLue = true; setTimeout(() => lireConsigne(aide), 250); }
   }
   // Humour réglable : les plaisanteries visent Ami, le mot ou la situation,
   // jamais le joueur. Le niveau est mémorisé par profil.
-  let derniereBlague = -1;
+  let derniereBlague = '';
   const BLAGUES_AMI = {
     fr:[
       {
@@ -650,328 +659,99 @@
     ]
   };
   function niveauHumour(){
+    if(facile()) return 0;   // Lecture facile : toujours « Tout doux ».
     const n = Number(J().humour);
     return Number.isInteger(n) && n >= 0 && n <= 3 ? n : 0;
   }
   function langueBlagues(){
     const l = J().langueBlagues;
-    return l === 'en' ? 'en' : l === 'fr' ? 'fr' : (base.ui === 'en' ? 'en' : 'fr');
+    if(l === 'en' || l === 'fr') return l;
+    return window.TEXTES[base.ui] ? base.ui : 'fr';
   }
-  function blague(mauvaise, bonne){
-    const langue = langueBlagues();
-    const niveau = niveauHumour();
-    if(!mauvaise || !bonne || mauvaise === bonne){
-      return langue === 'en'
-        ? "Ami, the labels are scrambled. Your dictionary has requested a transfer!"
-        : "Ami, tu as mélangé les étiquettes ! Le dictionnaire demande sa mutation !";
+  // Vannes (js/vannes.js) : choisies selon L'ERREUR RÉELLEMENT COMMISE.
+  // ctx.type : 'mot' (images, traduction…), 'ecoute', 'vf_oui', 'vf_non',
+  // 'intrus', 'panier', 'lettre', 'ordre', 'relier'. Les mots sont donnés
+  // dans la langue des blagues (pour qu'on comprenne la vanne) ; les jeux de
+  // lettres gardent l'orthographe de la langue apprise.
+  const remplir = (modele, v) => modele.replace(/\{(\w+)\}/g, (_, k) => v[k] == null ? '' : String(v[k]));
+  function tirerVanne(liste){
+    if(!liste || !liste.length) return '';
+    let choix = liste[Math.floor(Math.random() * liste.length)];
+    if(liste.length > 1 && choix === derniereBlague){
+      const autres = liste.filter(x => x !== derniereBlague);
+      choix = autres[Math.floor(Math.random() * autres.length)];
     }
-    const nomVanne = e => {
-      const valeur = MOTS[e] && (MOTS[e][langue] || MOTS[e][base.cible] || MOTS[e][base.ui]);
-      return valeur ? affiche(langue, valeur).toLowerCase() : String(e).replace(/_/g,' ');
-    };
-    const faux = nomVanne(mauvaise), juste = nomVanne(bonne);
-    const theme = String((MOTS[bonne] && MOTS[bonne].theme) || (MOTS[mauvaise] && MOTS[mauvaise].theme) || '').toLowerCase();
-    const catalogues = {
-      fr: {
-        animaux: [
-          [`Tu as pris « ${faux} » pour « ${juste} » ? C’est mignon, ton safari imaginaire !`,
-           `« ${faux} » à la place de « ${juste} »… Le zoo vient de mettre ton badge visiteur en quarantaine.`,
-           `Ami, tu confonds « ${faux} » et « ${juste} » ? Même la chèvre du zoo a mieux identifié ses voisins.`,
-           `Un « ${faux} » pour un « ${juste} » ? Le vétérinaire veut te retirer le droit de nommer les animaux !`],
-          [`Tu as confondu « ${faux} » et « ${juste} » ! Le zoo vient de déplacer les panneaux… loin de toi.`,
-           `Ami, « ${faux} » n’est pas « ${juste} ». Même un perroquet aurait répété la bonne réponse !`,
-           `Tu viens d’inventer une nouvelle espèce : le faux-juste. Félicitations, Darwin pleure.`,
-           `Le gardien t’a vu étiqueter « ${juste} » comme « ${faux} ». Il a appelé la sécurité… animale.`],
-          [`« ${faux} » ou « ${juste} », tu joues à Pokémon sans regarder les cartes ?`,
-           `Ami, tu viens de faire un safari les yeux fermés. Les animaux demandent un autre guide.`,
-           `Tu as confondu « ${faux} » avec « ${juste} » ! Même la mouche sur l’écran a trouvé la bonne réponse.`,
-           `Le zoo t’interdit les visites guidées. Tu viens d’appeler un canard « ${juste} » !`],
-          [`Ami, tu confonds « ${faux} » avec « ${juste} » ? Tes yeux sont partis migrer sans prévenir !`,
-           `Le zoo vient de porter plainte : tu traumatises les panneaux indicateurs.`,
-           `« ${faux} » pour « ${juste} »… Même une taupe avec des lunettes ferait mieux. Et elle les a perdues !`,
-           `Alerte : Ami a encore renommé les animaux. Le dictionnaire demande une cage… pour le hibou !`]
-        ],
-        manger: [
-          [`Tu as choisi « ${faux} » au lieu de « ${juste} » ? Ça fait une recette… très courageuse !`,
-           `Ami, le chef a vu ton choix. Il vient de fermer la cuisine pour travaux.`,
-           `« ${faux} » à la place de « ${juste} » ? Bon appétit… je crois ?`,
-           `Tu cuisines comme tu réponds : avec beaucoup d’audace et peu de preuves !`],
-          [`Tu as mélangé « ${faux} » et « ${juste} » ! Même le micro-ondes a refusé de réchauffer ça.`,
-           `Le chef goûte ton idée et demande immédiatement un verre d’eau. Puis un avocat.`,
-           `Ami, ce n’est pas un menu, c’est une expérience scientifique qui a mal tourné.`,
-           `« ${faux} » au lieu de « ${juste} » ? La recette vient de déposer sa démission.`],
-          [`Tu viens d’inventer le plat « ${faux} façon ${juste} ». Personne ne l’a commandé, même pas toi.`,
-           `Ami, tes papilles ont du goût. Dommage que tes yeux aient choisi le menu.`,
-           `Le chef a goûté ta réponse. Il a demandé à être transféré dans un autre restaurant.`,
-           `Cette confusion mérite une étoile… au guide des catastrophes culinaires.`],
-          [`Ami, tu confonds « ${faux} » et « ${juste} » ? Même un grille-pain aurait mieux suivi la recette !`,
-           `Le restaurant vient de t’interdire l’accès aux menus. Tu fais peur aux ingrédients.`,
-           `Ton choix est tellement indigeste que la vaisselle vient de se casser toute seule.`,
-           `La cuisine est en flammes. Pas à cause du four : à cause de ton association d’idées !`]
-        ],
-        maison: [
-          [`Tu as pris « ${faux} » pour « ${juste} » ? La maison a besoin d’un plan… et toi d’une boussole !`,
-           `Ami, le meuble vient de te regarder bizarrement. Il a compris avant toi.`,
-           `« ${faux} » au lieu de « ${juste} » ? Bienvenue dans la maison à l’envers !`,
-           `Le décorateur adore ton audace. Il a juste demandé à ne plus jamais travailler avec toi.`],
-          [`Tu as confondu « ${faux} » et « ${juste} ». IKEA vient de retirer la notice de ton compte.`,
-           `Ami, même les meubles en kit trouvent que tu pars dans tous les sens.`,
-           `Le canapé a demandé à changer de pièce. Il ne se sent plus en sécurité.`,
-           `Tu viens de redécorer la maison avec une réponse complètement à côté du mur.`],
-          [`« ${faux} » pour « ${juste} » ? Ton sens de l’orientation est monté au grenier et s’y est perdu.`,
-           `Ami, ne touche plus à la déco. Les coussins viennent de créer un syndicat.`,
-           `Le plan de la maison a démissionné. Il refuse de participer à tes travaux.`,
-           `Tu as confondu les objets ? Le marteau vient de se cacher dans la boîte à outils.`],
-          [`Ami, avec cette réponse, même une porte ne sait plus dans quelle pièce elle donne !`,
-           `Le décorateur a vu ton choix. Il a rendu les clés et changé de métier.`,
-           `Tu confonds « ${faux} » et « ${juste} » ? La maison vient de mettre une annonce : « cherche nouveau propriétaire ».`,
-           `Urgence déco : Ami a encore déplacé les meubles avec ses yeux. Ils demandent un déménagement.`]
-        ],
-        habits: [
-          [`Tu as confondu « ${faux} » et « ${juste} » ? Le miroir ne sait plus comment te regarder !`,
-           `Ami, ce choix ne va avec rien. Même les chaussettes refusent l’association.`,
-           `« ${faux} » à la place de « ${juste} » ? La mode vient de faire une pause syndicale.`,
-           `Le placard est formel : il n’a jamais vu une tenue pareille.`],
-          [`Ami, tu habilles les mots au hasard ? Même ton cintre a plus de style !`,
-           `Tu as mélangé « ${faux} » et « ${juste} » : le défilé vient d’être annulé.`,
-           `Le miroir t’a vu répondre. Il s’est retourné contre le mur.`,
-           `Cette association est tellement improbable que le pantalon a appelé son avocat.`],
-          [`« ${faux} » pour « ${juste} » ? La fashion police vient de faire demi-tour… par prudence.`,
-           `Ami, ton dressing demande un droit de retrait. Il ne veut plus être associé à tes choix.`,
-           `Le styliste a vu ta réponse et s’est cousu les yeux. C’est dire.`,
-           `Tu viens de lancer une nouvelle tendance : le « je clique et on verra ». Personne ne suit.`],
-          [`Ami, même un cintre aveugle aurait mieux assorti ces deux mots !`,
-           `Le miroir a demandé à être remplacé. Il ne veut plus témoigner.`,
-           `Ton sens de la mode est peut-être discutable, mais là, ton sens des mots est en grève !`,
-           `La garde-robe vient de déménager. Elle ne supportait plus tes essayages linguistiques.`]
-        ],
-        nature: [
-          [`Tu as confondu « ${faux} » et « ${juste} » ? La forêt vient de perdre le nord !`,
-           `Ami, même l’arbre le plus lent a compris avant toi.`,
-           `La nature est magnifique. Ton choix, lui, est un accident de randonnée.`,
-           `Le petit écureuil avait la bonne réponse. Il te propose des cours.`],
-          [`Tu as pris « ${faux} » pour « ${juste} » ? Les champignons refusent de pousser dans cette logique.`,
-           `Ami, tu viens de te perdre dans une forêt de mots. Même le GPS a raccroché.`,
-           `La forêt t’a entendu répondre. Les oiseaux ont arrêté de chanter.`,
-           `Le guide nature vient de remplacer ta boussole par un panneau « bonne chance ».`],
-          [`Même la feuille qui tombe au ralenti a repéré ton erreur avant toi !`,
-           `Ami, tu as besoin d’une randonnée… jusqu’au bon mot. Prévois une tente.`,
-           `La nature est pleine de merveilles. Ta réponse n’en fait pas partie.`,
-           `Le GPS annonce : « Faites demi-tour dès que possible », depuis trois questions.`],
-          [`Ami, tu confonds « ${faux} » avec « ${juste} » ? La forêt demande qu’on la laisse hors de tes expériences.`,
-           `Même les cailloux ont mieux suivi la leçon. Et eux, ils ne bougent pas !`,
-           `Le garde forestier t’a retiré ta carte. Tu es capable de te perdre dans un pot de fleurs.`,
-           `La planète est en danger. Pas à cause du climat : à cause de ton sens de l’orientation !`]
-        ],
-        ville: [
-          [`Tu as confondu « ${faux} » et « ${juste} » ? Le GPS vient de recalculer… puis d’abandonner.`,
-           `Ami, tu viens de prendre la mauvaise rue des mots. Le panneau te fait coucou de loin !`,
-           `Même le feu rouge a vu ton erreur. Il est passé au vert par compassion.`,
-           `Le bus de la bonne réponse est passé. Tu étais à l’arrêt d’à côté.`],
-          [`Tu as choisi « ${faux} » au lieu de « ${juste} » : ton GPS te propose maintenant une autre ville.`,
-           `Ami, tu t’es trompé de quartier… et de planète, à ce niveau.`,
-           `Le GPS a dit « recalcul en cours ». Il calcule toujours. Depuis hier.`,
-           `La mairie vient de créer une rue à ton nom : l’impasse de la bonne réponse.`],
-          [`Tu as raté la bonne réponse avec une précision de satellite… mais dans le mauvais sens.`,
-           `Ami, même le GPS de ma grand-mère aurait trouvé. Et il demande encore où est la maison.`,
-           `Tu es parti vers « ${faux} » alors que « ${juste} » était juste devant. Beau détour touristique !`,
-           `La ville vient de déplacer ses panneaux pour ne plus être mêlée à tes choix.`],
-          [`Ami, ton GPS intérieur est réglé sur « n’importe où sauf la bonne réponse ».`,
-           `Tu viens de te perdre sur une ligne droite. La mairie organise une cérémonie.`,
-           `Même les pigeons de la place ont trouvé le bon mot. Et ils mangent les tickets de bus !`,
-           `La ville te remercie : grâce à toi, l’impasse vient de devenir une destination touristique.`]
-        ],
-        musique: [
-          [`Tu as confondu « ${faux} » et « ${juste} » ? Ce n’est pas la bonne note, chef !`,
-           `Ami, ton choix sonne faux. Même la casserole a plus d’oreille.`,
-           `Le chef d’orchestre vient de poser sa baguette. Il a besoin d’un instant.`,
-           `Tu as joué la mauvaise partition. Le public applaudit par politesse.`],
-          [`Cette réponse est tellement fausse que le métronome a perdu le rythme.`,
-           `Ami, tu joues à côté de la note… et de la portée !`,
-           `Le piano vient de se mettre en silencieux pour ne pas entendre ça.`,
-           `Tu as confondu les mots : même le triangle a trouvé ça dissonant.`],
-          [`Le concert est annulé. Ton choix a fait fuir les notes de musique.`,
-           `Ami, même un disque rayé aurait donné une réponse plus cohérente.`,
-           `Tu viens d’inventer un nouveau genre : le jazz de la mauvaise réponse.`,
-           `La fanfare joue faux exprès pour être à ton niveau. Elle regrette déjà.`],
-          [`Ami, tes oreilles sont en vacances et tes neurones font un karaoké sans paroles !`,
-           `Même la sourdine a demandé à ne plus être associée à cette réponse.`,
-           `Le chef d’orchestre a rangé sa baguette. Il préfère élever des chèvres.`,
-           `Tu as tellement massacré la partition que les notes ont demandé l’asile musical.`]
-        ],
-        atelier: [
-          [`Tu as confondu « ${faux} » et « ${juste} » ? Range les outils, on va éviter l’accident !`,
-           `Ami, le tournevis a compris la question. Lui, au moins, a le bon embout.`,
-           `L’atelier est fermé pour inventaire… et pour protéger les outils de tes idées.`,
-           `Tu bricoles les réponses comme un meuble sans notice !`],
-          [`Ami, tu viens de monter la mauvaise réponse à l’envers. Même la visserie soupire.`,
-           `Le marteau a demandé à changer d’atelier. Il ne veut pas participer.`,
-           `Tu as choisi « ${faux} » au lieu de « ${juste} » : le bricolage vient de déposer le bilan.`,
-           `La perceuse a tourné dans le vide. Elle dit qu’elle te comprend.`],
-          [`Ton raisonnement tient avec du ruban adhésif… et encore, il se décolle !`,
-           `Ami, tu as bricolé une réponse. Le résultat n’est homologué nulle part.`,
-           `Le niveau à bulle vient de se retourner. Il ne veut pas cautionner ça.`,
-           `Même la notice IKEA vient de te dire : « Débrouille-toi, champion ».`,
-          ],
-          [`Ami, tu confonds « ${faux} » avec « ${juste} » ? Pose les outils, tu es dangereux pour la logique !`,
-           `L’atelier a déclenché l’alarme. Ce n’est pas un exercice, c’est un chantier !`,
-           `Le marteau a demandé une mutation. Il préfère taper des clous que corriger tes réponses.`,
-           `Ton cerveau a monté la réponse sans lire la notice. Résultat : il reste trois vis et aucune logique !`]
-        ]
-      },
-      en: {
-        animaux: [
-          [`You picked "${faux}" for "${juste}"? That's one confused safari!`,
-           `You mixed up "${faux}" and "${juste}". The zoo has quarantined your visitor badge.`,
-           `Even the goat at the zoo knows who its neighbours are, Ami!`,
-           `A "${faux}" instead of a "${juste}"? The vet wants to revoke your animal-label licence!`],
-          [`You mixed up "${faux}" and "${juste}"! The zoo moved every sign away from you.`,
-           `Ami, a "${faux}" is not a "${juste}". Even a parrot could repeat the right answer!`,
-           `You just discovered a new species: the wrong-just. Darwin is crying.`,
-           `The zookeeper saw your labels and called animal control!`],
-          [`"${faux}" or "${juste}"? Are you playing Pokémon without looking at the cards?`,
-           `Ami, that safari was clearly done with your eyes closed. The animals want a new guide.`,
-           `Even the fly on the screen spotted the right answer before you!`,
-           `The zoo has banned you from guided tours. You just called a duck a "${juste}"!`],
-          [`Ami, your eyes have migrated without telling you. Wrong season, wrong animal!`,
-           `The zoo is filing a complaint. You are traumatising the signposts.`,
-           `Even a mole wearing lost glasses would do better than that!`,
-           `Breaking news: Ami renamed the animals again. The dictionary wants the owl in a cage!`]
-        ],
-        manger: [
-          [`You picked "${faux}" instead of "${juste}"? That's a brave recipe!`,
-           `The chef saw your answer and closed the kitchen for repairs.`,
-           `"${faux}" instead of "${juste}"? Bon appétit… I guess?`,
-           `You cook like you answer: bold choices, zero evidence!`],
-          [`You mixed up "${faux}" and "${juste}". Even the microwave refused to heat that up.`,
-           `The chef tasted your idea and asked for water. Then a lawyer.`,
-           `Ami, that's not a menu. That's a science experiment gone wrong.`,
-           `The recipe just resigned after seeing your answer.`],
-          [`You invented "${faux}" à la "${juste}". Nobody ordered it. Not even you.`,
-           `Your taste buds are great, Ami. Shame your eyes picked the menu.`,
-           `The chef tasted your answer and requested a transfer to another restaurant.`,
-           `That mix-up deserves a star… in the disaster food guide.`],
-          [`Ami, even a toaster would follow the recipe better than that!`,
-           `The restaurant has banned you from reading menus. You scare the ingredients.`,
-           `That answer was so hard to swallow the plates smashed themselves.`,
-           `The kitchen is on fire. Not the oven — your word combination!`]
-        ],
-        maison: [
-          [`You picked "${faux}" for "${juste}"? This house needs a map… and you need a compass!`,
-           `Ami, the furniture is giving you a very strange look. It got it before you did.`,
-           `"${faux}" instead of "${juste}"? Welcome to the upside-down house!`,
-           `The decorator loves your confidence. They just never want to work with you again.`],
-          [`You mixed up "${faux}" and "${juste}". IKEA just removed the instructions from your account.`,
-           `Even flat-pack furniture thinks you're all over the place, Ami.`,
-           `The sofa asked to move rooms. It no longer feels safe.`,
-           `You just redecorated the house with an answer that missed the wall.`],
-          [`"${faux}" for "${juste}"? Your sense of direction went to the attic and got lost.`,
-           `Ami, stop decorating. The cushions have formed a union.`,
-           `The house plan resigned. It refuses to take part in your renovations.`,
-           `You mixed up the objects? The hammer is hiding in the toolbox.`],
-          [`Ami, after that answer even a door doesn't know which room it leads to!`,
-           `The decorator saw your choice, returned the keys and changed careers.`,
-           `You mix up "${faux}" and "${juste}"? The house is advertising for a new owner.`,
-           `Interior design emergency: Ami moved the furniture with his eyes again.`]
-        ],
-        habits: [
-          [`You mixed up "${faux}" and "${juste}"? The mirror doesn't know how to look at you!`,
-           `Ami, that goes with nothing. Even the socks refuse the outfit.`,
-           `"${faux}" instead of "${juste}"? Fashion has called a strike.`,
-           `The wardrobe has never seen an outfit quite like your answer.`],
-          [`Ami, dressing words at random? Even your coat hanger has more style!`,
-           `You mixed up "${faux}" and "${juste}". The fashion show is cancelled.`,
-           `The mirror saw your answer and turned to face the wall.`,
-           `That combination is so wild the trousers called a lawyer.`],
-          [`"${faux}" for "${juste}"? Fashion police turned around for their own safety.`,
-           `Ami, your wardrobe is claiming a right to refuse your choices.`,
-           `The stylist saw your answer and sewed their eyes shut. Seriously.`,
-           `You launched a new trend: "click first, think never". Nobody's following.`],
-          [`Even a blind coat hanger could match those words better, Ami!`,
-           `The mirror asked to be replaced. It refuses to testify.`,
-           `Your fashion sense is debatable; your word sense is officially on strike!`,
-           `The wardrobe moved out. It couldn't take another fitting.`]
-        ],
-        nature: [
-          [`You mixed up "${faux}" and "${juste}"? The forest has lost its way!`,
-           `Ami, even the slowest tree got it before you did.`,
-           `Nature is beautiful. Your answer is a hiking accident.`,
-           `The squirrel knew the answer. It offers you lessons.`],
-          [`You picked "${faux}" for "${juste}"? Even the mushrooms refuse to grow in that logic.`,
-           `Ami, you're lost in a forest of words. Even the GPS hung up.`,
-           `The forest heard your answer. The birds stopped singing.`,
-           `The nature guide replaced your compass with a "good luck" sign.`],
-          [`Even the slow-falling leaf spotted your mistake before you did!`,
-           `Ami, you need a hike… all the way to the right word. Pack a tent.`,
-           `Nature is full of wonders. Your answer isn't one of them.`,
-           `The GPS says "turn around" for the third question in a row.`],
-          [`Ami, stop experimenting with nature. The forest wants no part of this.`,
-           `Even the rocks followed the lesson better. And they don't move!`,
-           `The ranger took your map. You're capable of getting lost in a flowerpot.`,
-           `The planet is in danger. Not from climate change — from your sense of direction!`]
-        ],
-        ville: [
-          [`You mixed up "${faux}" and "${juste}"? The GPS recalculated… then gave up.`,
-           `Ami, wrong street in Word Town. The sign is waving at you from far away!`,
-           `Even the traffic light saw your mistake. It turned green out of pity.`,
-           `The bus to the right answer left. You were at the wrong stop.`],
-          [`You picked "${faux}" instead of "${juste}". Your GPS suggests a different city now.`,
-           `Ami, wrong neighbourhood… and possibly wrong planet.`,
-           `The GPS said "recalculating". It's still calculating. Since yesterday.`,
-           `City Hall named a street after you: Dead-End Avenue.`],
-          [`You missed the right answer with satellite-level precision… in the wrong direction.`,
-           `Even my grandma's GPS would've found it. And it still asks where home is.`,
-           `You headed for "${faux}" while "${juste}" was right there. Lovely sightseeing detour!`,
-           `The city moved all its signs to avoid being involved in your choices.`],
-          [`Ami, your inner GPS is set to "anywhere but the right answer".`,
-           `You got lost on a straight road. The city is holding a ceremony.`,
-           `Even the pigeons in the square found the right word. And they eat bus tickets!`,
-           `Thanks to you, Dead-End Street is now a tourist attraction.`]
-        ],
-        musique: [
-          [`You mixed up "${faux}" and "${juste}"? That's the wrong note, maestro!`,
-           `Ami, that answer sounds wrong. Even a saucepan has better ears.`,
-           `The conductor put down the baton. They need a moment.`,
-           `You played the wrong score. The audience is clapping politely.`],
-          [`That answer was so wrong the metronome lost the beat.`,
-           `Ami, you're off the note… and off the page!`,
-           `The piano switched itself to mute to avoid hearing that.`,
-           `You mixed up the words. Even the triangle found it dissonant.`],
-          [`The concert is cancelled. Your answer scared all the notes away.`,
-           `Ami, even a scratched record would make more sense.`,
-           `You invented a new genre: wrong-answer jazz.`,
-           `The band is playing badly on purpose to match your level. They regret it.`],
-          [`Ami, your ears are on holiday and your brain is doing karaoke without lyrics!`,
-           `Even the mute button wants nothing to do with that answer.`,
-           `The conductor put away the baton. They'd rather raise goats.`,
-           `You butchered the score so badly the notes requested musical asylum.`]
-        ],
-        atelier: [
-          [`You mixed up "${faux}" and "${juste}"? Put the tools down. Safety first!`,
-           `Ami, the screwdriver understood the question. At least it has the right bit.`,
-           `The workshop is closed for inventory… and to protect the tools from your ideas.`,
-           `You build answers like flat-pack furniture without instructions!`],
-          [`Ami, you assembled the wrong answer backwards. Even the screws are sighing.`,
-           `The hammer requested a transfer. It wants no part of this.`,
-           `You picked "${faux}" instead of "${juste}". DIY has filed for bankruptcy.`,
-           `The drill spun in the air. It says it understands you.`],
-          [`Your logic is held together with tape… and the tape is peeling off!`,
-           `Ami, you built an answer. It isn't approved anywhere.`,
-           `The spirit level turned upside down. It refuses to endorse this.`,
-           `Even the IKEA manual just said: "You're on your own, mate".`],
-          [`Ami, put the tools down. You're a danger to logic and basic assembly!`,
-           `The workshop alarm is ringing. This isn't a quiz anymore; it's a construction disaster!`,
-           `The hammer requested a new job. It would rather hit nails than fix your answers.`,
-           `Your brain built the answer without reading the manual. Three screws left, zero logic!`]
-        ]
+    return choix;
+  }
+  const nomVanne = (e, langue) => {
+    const m = MOTS[e]; if(!m) return '';
+    const l = m[langue] ? langue : m[base.cible] ? base.cible : base.ui;
+    return m[l] ? affiche(l, m[l]).toLowerCase() : '';
+  };
+  // « le chat », « la tortue », « l’abeille », « le hibou » (js/genres.js).
+  function avecArticle(e){
+    const g = window.GENRES_FR && window.GENRES_FR[e], m = MOTS[e];
+    if(!g || !m || !m.fr) return null;
+    const mot = m.fr.toLowerCase(), aspire = (window.H_ASPIRE_FR || []).includes(m.fr.toUpperCase());
+    const elide = !aspire && /^[aeiouyhàâéèêëîïôœû]/i.test(mot);
+    return { F:(elide ? 'l’' : g === 'f' ? 'la ' : 'le ') + mot, e:g === 'f' ? 'e' : '', p:g === 'f' ? 'elle' : 'il' };
+  }
+  const majuscule = s => s ? s.charAt(0).toUpperCase() + s.slice(1) : s;
+  // Astuce pour distinguer deux mots qu'on confond (js/confusions.js), si on apprend l'anglais.
+  function astuce(a, b, langue){
+    if(base.cible !== 'en' || !a || !b || !window.CONFUSIONS) return '';
+    const c = window.CONFUSIONS.find(x => x.p.includes(a) && x.p.includes(b) && a !== b);
+    return c ? (c[langue] || c.fr) : '';
+  }
+  const initialeDe = s => { const g = graphemes(s).find(x => /\p{L}/u.test(x)); return g ? g.toLowerCase() : ''; };
+  const riment = (a, b) => a.length >= 4 && b.length >= 4 && !a.includes(b) && !b.includes(a) && a.slice(-2) === b.slice(-2);
+  const nomPanier = (th, langue) => { const T = (window.TEXTES[langue] || {})['th_' + th]; return T || t('th_' + th); };
+  function blague(mauvaise, bonne, ctx){
+    ctx = ctx || {};
+    const langue = langueBlagues(), niveau = niveauHumour();
+    const V = window.VANNES && window.VANNES[langue];
+    const art = langue === 'fr' ? [avecArticle(mauvaise), avecArticle(bonne)] : [null, null];
+    // Langue d'interface sans vannes écrites : les blagues douces traduites de textes.js.
+    if(!V){
+      const l = (window.TEXTES[langue] || window.TEXTES.fr).blagues;
+      const b = tirerVanne(l); derniereBlague = b; return b;
+    }
+    const type = ctx.type || 'mot';
+    const niv = liste => liste && (liste[niveau] || liste[0]);
+    const f = ctx.f != null ? ctx.f : nomVanne(mauvaise, langue);
+    const j = ctx.j != null ? ctx.j : nomVanne(bonne, langue);
+    let pool = null;
+    if(type === 'mot' || type === 'ecoute'){
+      if(!f || !j || f === j) pool = V.secours;
+      else{
+        const rates = partie ? (partie.rates || (partie.rates = {})) : {};
+        const deja = bonne && rates[bonne]; if(bonne) rates[bonne] = (rates[bonne] || 0) + 1;
+        const theme = MOTS[bonne] && MOTS[bonne].theme;
+        const hasard = () => Math.random();
+        if((ctx.serie || 0) >= 3 && hasard() < .7) pool = V.serie;
+        else if(deja && hasard() < .6) pool = V.encore;
+        else if(type === 'ecoute' && hasard() < .5) pool = V.ecoute;
+        else if(V.accordees && art[0] && art[1] && hasard() < .3) pool = V.accordees;
+        else if(initialeDe(f) && initialeDe(f) === initialeDe(j) && hasard() < .4) pool = V.initiale;
+        else if(riment(f, j) && hasard() < .5) pool = V.rime;
+        else if(!V.themes[theme] || hasard() < .25) pool = V.general;
+        else pool = V.themes[theme];
       }
-    };
-    const cle = ({animaux:'animaux',manger:'manger',maison:'maison',habits:'habits',nature:'nature',ville:'ville',musique:'musique',atelier:'atelier'})[theme] || 'animaux';
-    const liste = catalogues[langue][cle][niveau];
-    return liste[Math.floor(Math.random() * liste.length)];
+    }else pool = V[type] || V.secours;
+    const valeurs = Object.assign({ f, j, l:initialeDe(f), n:ctx.serie || '' }, ctx);
+    if(type === 'mot' || type === 'ecoute') valeurs.l = initialeDe(f);
+    if(art[0] && art[1]) Object.assign(valeurs, { F:art[0].F, Fc:majuscule(art[0].F), fe:art[0].e, fp:art[0].p, J:art[1].F, Jc:majuscule(art[1].F), je:art[1].e, jp:art[1].p });
+    if(type === 'panier'){ valeurs.p = nomPanier(ctx.panier, langue); valeurs.b = nomPanier(ctx.bonPanier, langue); valeurs.m = j; }
+    let liste = niv(pool);
+    // Lecture facile : Ami reste doux et préfère les phrases courtes.
+    if(facile()){ const courtes = liste.filter(v => v.length <= 60); if(courtes.length >= 2) liste = courtes; }
+    const choix = tirerVanne(liste);
+    derniereBlague = choix;
+    return remplir(choix, valeurs);
   }
   function correctionDansLangue(mot){
-    return langueBlagues() === 'en' ? 'The correct answer was: ' + mot : "C'était : " + mot;
+    const l = langueBlagues();
+    return l === 'en' ? 'The correct answer was: ' + mot : l === 'fr' ? "C'était : " + mot : t('c_etait', mot);
   }
   function amiDit(txt, humeur){
     const b = $('#bulle'); if(b){ b.textContent = txt; b.className = 'bulle ' + (humeur === 'fete' ? 'ok' : humeur === 'surpris' ? 'ko' : ''); }
@@ -1149,7 +929,7 @@
     const e = motI();
     const autre = choixAvec(e, 2).find(x => x !== e);
     const vrai = !autre || Math.random() < .5;
-    partie.bonne = e; partie.vf = vrai;
+    partie.bonne = e; partie.vf = vrai; partie.vfAutre = vrai ? null : autre;
     cadre(titreDe('vrai_faux'), t('a_vrai_faux'),
       '<div class="centre">' + image(e, 'pic-grande') + '<p class="mot-vf" dir="' + dirCible() + '">' + esc(nomMot(vrai ? e : autre)) + '</p></div>' +
       '<div class="choix-vf"><button class="choix-mot vf-oui" data-a="vf" data-v="1">✓ ' + esc(t('vrai')) + '</button><button class="choix-mot vf-non" data-a="vf" data-v="0">✗ ' + esc(t('faux')) + '</button></div>');
@@ -1196,7 +976,7 @@
     const e = motI(), g = graphemes(nomMot(e));
     const places = g.map((x, i) => i).filter(i => /\S/.test(g[i]) && (g.length < 4 || i > 0));
     const trou = places[Math.floor(Math.random() * places.length)];
-    partie.bonne = e; partie.attendu = g[trou];
+    partie.bonne = e; partie.attendu = g[trou]; partie.trou = trou;
     cadre(titreDe('lettre_manquante'), t('a_lettre_manquante'), '<div class="centre">' + image(e, 'pic-moyenne') + '</div>' +
       '<div class="reponse" dir="' + dirCible() + '">' + g.map((x, i) => '<span class="case' + (i === trou ? ' trou' : ' pleine') + '">' + (i === trou ? '?' : esc(x)) + '</span>').join('') + '</div>' +
       '<div class="tuiles grandes" dir="' + dirCible() + '">' + lettresLeurres(g[trou], nbChoix()).map(x => '<button class="tuile" data-a="lettre-choix" data-v="' + esc(x) + '">' + esc(x) + '</button>').join('') + '</div>');
@@ -1208,8 +988,23 @@
     if(juste){ const t0 = document.querySelector('.case.trou'); if(t0){ t0.textContent = partie.attendu; t0.classList.add('juste'); } }
     juger(btn, juste, true);
   }
+  // Ce que le joueur a vraiment fait, pour que la vanne parle de cette erreur-là.
+  function ctxErreur(btn, serie){
+    const c = partie.courant, v = btn.dataset.v;
+    if(c === 'vrai_faux') return v === '1' ? { type:'vf_oui', m:nomVanne(partie.vfAutre, langueBlagues()), serie } : { type:'vf_non', serie };
+    if(c === 'intrus') return { type:'intrus', serie };
+    if(c === 'panier') return { type:'panier', panier:v, bonPanier:MOTS[partie.bonne].theme, serie };
+    if(c === 'premiere_lettre' || c === 'lettre_manquante'){
+      const g = graphemes(nomMot(partie.bonne)), x = g.slice();
+      x[c === 'premiere_lettre' ? 0 : partie.trou] = v;
+      return { type:'lettre', l:v, b:partie.attendu, x:x.join(''), j:nomMot(partie.bonne), serie };
+    }
+    if(c === 'ecoute' || c === 'ecoute_mot') return { type:'ecoute', serie };
+    return { type:'mot', serie };
+  }
   // Juste / faux, commun à tous les jeux à choix.
   function juger(btn, juste, reessai){
+    const serieAvant = partie.combo || 0;
     if(!partie.deja){ noter(partie.bonne, juste); if(juste) partie.bonnes++; }
     if(juste && !partie.deja) serieUp(); else if(!juste) partie.combo = 0;
     vibrer(juste);
@@ -1233,15 +1028,46 @@
       document.querySelectorAll('.scene button').forEach(x => { x.disabled = true; });
       const tr = traduction(partie.bonne);
       const bonneReponse = partie.courant === 'panier'
-        ? t('th_' + MOTS[partie.bonne].theme)
+        ? nomPanier(MOTS[partie.bonne].theme, langueBlagues())
         : nomMot(partie.bonne) + (tr ? ' (' + tr + ')' : '');
-      const message = blague(btn.dataset.v, partie.bonne) + ' ' + correctionDansLangue(bonneReponse);
+      const ctx = ctxErreur(btn, serieAvant);
+      const motChoisi = ['mot', 'ecoute', 'intrus'].includes(ctx.type) ? btn.dataset.v : null;
+      const vanne = blague(motChoisi, partie.bonne, ctx);
+      const truc = astuce(motChoisi, partie.bonne, langueBlagues());
+      const message = vanne + ' ' + correctionDansLangue(bonneReponse) + (truc ? ' 💡 ' + truc : '');
       amiDit(message, 'surpris');
+      reactionAmi(niveauHumour());
+      partie.derniereVanne = { v:vanne, e:partie.bonne };
+      const fav = $('#garder-vanne'); if(fav){ fav.hidden = false; fav.disabled = false; fav.textContent = '😂 ' + (base.ui === 'en' ? 'Keep it' : 'Je la garde'); }
       const suite = $('#continuer-erreur');
       if(suite){ suite.hidden = false; suite.focus({preventScroll:true}); }
       // Une seule lecture vocale : la blague ET la bonne réponse, dans cet ordre.
-      if(window.speak) window.speak(message, langueBlagues());
+      direPhrase(message, langueBlagues());
     }
+  }
+  // Ami réagit à sa propre vanne : plus le niveau est corsé, plus il en fait.
+  const REACTIONS = ['🙈', '👓', '🪶', '💥'];
+  function reactionAmi(niveau){
+    const w = $('#ami-partie .ami-3d-wrap'); if(!w) return;
+    w.classList.add('ami-rx', 'ami-rx-' + niveau);
+    if(!sobre()){ const i = document.createElement('i'); i.className = 'ami-rx-objet'; i.setAttribute('aria-hidden', 'true'); i.textContent = REACTIONS[niveau] || REACTIONS[0]; w.appendChild(i); }
+  }
+  // Carnet des fous rires : les vannes préférées, avec leur mot (on révise en riant).
+  function garderVanne(){
+    const d = partie && partie.derniereVanne; if(!d || !d.v) return;
+    const j = J(); j.fousRires = Array.isArray(j.fousRires) ? j.fousRires : [];
+    if(!j.fousRires.some(x => x.v === d.v && x.e === d.e)) j.fousRires = [{ v:d.v, e:d.e }].concat(j.fousRires).slice(0, 60);
+    garder();
+    const b = $('#garder-vanne'); if(b){ b.textContent = '✓ ' + (base.ui === 'en' ? 'Saved!' : 'Gardée !'); b.disabled = true; }
+  }
+  function fousRires(){
+    const l = (J().fousRires || []).filter(x => x && typeof x.v === 'string' && MOTS[x.e]);
+    const en = base.ui === 'en';
+    const corps = !l.length ? '<p class="centre">' + (en ? 'No jokes yet. After a mistake, tap “😂 Keep it”!' : 'Pas encore de vanne. Après une erreur, touche « 😂 Je la garde » !') + '</p>' :
+      '<ul class="carnet">' + l.map((x, i) => '<li><button class="ligne-carnet" data-a="ecouter" data-v="' + x.e + '">' + image(x.e, 'pic-mini') +
+        '<span class="txt"><strong>' + esc(nomMot(x.e)) + '</strong><span>' + esc(x.v) + '</span></span></button>' +
+        '<button class="petit-bouton" data-a="oublier-vanne" data-v="' + i + '" aria-label="' + (en ? 'Remove' : 'Retirer') + '">✕</button></li>').join('') + '</ul>';
+    poser(barre('carnet') + '<main><h2>😂 ' + (en ? 'My laughs' : 'Mes fous rires') + '</h2><p class="aide">' + (en ? 'Tap a joke to hear its word again.' : 'Touche une vanne pour réentendre son mot.') + '</p>' + corps + '<p class="note" id="note-voix" aria-live="polite"></p></main>');
   }
   // Étincelles qui jaillissent d'une bonne réponse.
   function eclat(el){
@@ -1325,7 +1151,7 @@
       noter(btn.dataset.v, true); garder(); bruit('juste'); dire(btn.dataset.v); R.faits++; eclat(btn); vibrer(true);
       if(R.faits === R.k){ amiDit(melanger(t('bravo'))[0], 'fete'); setTimeout(() => { partie.i++; question(); }, 1100); }
     }else{
-      partie.erreurs++; bruit('faux'); amiDit(blague(a.dataset.v, btn.dataset.v), 'surpris');
+      partie.erreurs++; bruit('faux'); amiDit(blague(a.dataset.v, btn.dataset.v, { type:'relier' }), 'surpris');
       [a, btn].forEach(x => { x.classList.add('faux'); setTimeout(() => x.classList.remove('faux'), 600); });
     }
   }
@@ -1362,7 +1188,7 @@
       setTimeout(() => { partie.i++; question(); }, 1500);
     }else{
       partie.erreurs++; L.faute = true; $('#reponse').classList.add('faux'); bruit('faux');
-      amiDit(blague(btn.dataset.v, partie.attendu), 'surpris');
+      amiDit(blague(null, L.e, { type:'ordre', x:L.pris.map(i => L.g[i]).join(''), j:nomMot(L.e) }), 'surpris');
       setTimeout(effacer, 900);
     }
   }
@@ -1651,7 +1477,8 @@
           '<span class="points" aria-label="' + b + '/4">' + '●'.repeat(b) + '<span class="vide">' + '●'.repeat(4 - b) + '</span></span><span aria-hidden="true">🔊</span></button></li>';
       }).join('') + '</ul>';
     }).join('');
-    poser(barre('accueil') + '<main><h2>📒 ' + esc(t('carnet')) + '</h2><p class="aide">' + esc(t('carnet_aide')) + ' · ' + esc(t('maitrise', bienConnus())) + '</p>' + corps + '<p class="note" id="note-voix" aria-live="polite"></p></main>');
+    poser(barre('accueil') + '<main><h2>📒 ' + esc(t('carnet')) + '</h2><p class="aide">' + esc(t('carnet_aide')) + ' · ' + esc(t('maitrise', bienConnus())) + '</p>' +
+      '<p class="centre"><button class="moyen" data-a="fous-rires">😂 ' + (base.ui === 'en' ? 'My laughs' : 'Mes fous rires') + ' (' + (J().fousRires || []).length + ')</button></p>' + corps + '<p class="note" id="note-voix" aria-live="polite"></p></main>');
   }
   function ecranTrophees(){
     poser(barre('accueil') + '<main class="centre"><h2>🏆 ' + esc(t('trophees')) + '</h2><div class="grille accs">' + TROPHEES.map(k => {
@@ -1672,7 +1499,8 @@
     poser(barre('accueil') + '<main class="texte"><h2>⚙️ ' + esc(t('reglages')) + '</h2>' +
       '<div class="reglage reglage-facile"><span><strong>📖 ' + esc(t('facile')) + '</strong><span class="petit">' + esc(t('facile_aide')) + '</span></span><button class="moyen' + (facile() ? ' plein' : '') + '" data-a="facile" aria-pressed="' + facile() + '">' + esc(facile() ? t('oui') : t('non')) + '</button></div>' +
       '<div class="reglage"><span>🔔 ' + esc(t('son')) + '</span><button class="moyen' + (base.son ? ' plein' : '') + '" data-a="son" aria-pressed="' + base.son + '">' + esc(base.son ? t('oui') : t('non')) + '</button></div>' +
-      '<section class="reglage-humour"><h3>😂 ' + (base.ui === 'en' ? 'Ami’s joke level' : 'Le niveau des blagues d’Ami') + '</h3><p class="petit">' + (base.ui === 'en' ? 'Ami only teases himself, the words or the situation — never the player.' : 'Ami se moque de lui-même, des mots ou de la situation — jamais du joueur.') + '</p><div class="choix-humour">' +
+      '<section class="reglage-humour"><h3>😂 ' + (base.ui === 'en' ? 'Ami’s joke level' : 'Le niveau des blagues d’Ami') + '</h3><p class="petit">' + (base.ui === 'en' ? 'Ami only teases himself, the words or the situation — never the player.' : 'Ami se moque de lui-même, des mots ou de la situation — jamais du joueur.') + '</p>' +
+        (facile() ? '<p class="petit">📖 ' + (base.ui === 'en' ? 'Easy reading is on: Ami stays “gentle”, with short jokes.' : 'Lecture facile activée : Ami reste « Tout doux », avec des vannes courtes.') + '</p>' : '') + '<div class="choix-humour">' +
       ['Tout doux','Taquin','Piquant','Corsé 🪶'].map((nom, i) => '<button class="moyen' + (niveauHumour() === i ? ' plein' : '') + '" data-a="humour" data-v="' + i + '" aria-pressed="' + (niveauHumour() === i) + '">' + (base.ui === 'en' ? ['Gentle','Playful','Spicy','Extra cheeky 🪶'][i] : nom) + '</button>').join('') +
       '</div><p class="petit">' + (base.ui === 'en' ? 'Even the spiciest level stays kind.' : 'Même le niveau le plus corsé reste bienveillant.') + '</p>' +
       '<h3 class="langue-blagues-titre">🗣️ ' + (base.ui === 'en' ? 'Language of the jokes' : 'Langue des blagues') + '</h3><p class="petit">' + (base.ui === 'en' ? 'Choose the language Ami uses for jokes and spoken feedback.' : 'Choisis la langue utilisée par Ami pour ses blagues et ses commentaires vocaux.') + '</p><div class="choix-humour choix-langue-blagues">' +
@@ -1809,6 +1637,9 @@
       case 'lettre': return lettre(b);
       case 'effacer': return effacer();
       case 'carnet': return carnet();
+      case 'fous-rires': return fousRires();
+      case 'garder-vanne': return garderVanne();
+      case 'oublier-vanne': { const j = J(), i = Number(v); if(Array.isArray(j.fousRires) && Number.isInteger(i)){ j.fousRires.splice(i, 1); garder(); } return fousRires(); }
       case 'trophees': return ecranTrophees();
       case 'vestiaire': return vestiaire();
       case 'reglages': case 'apropos': return reglages();
@@ -1829,6 +1660,7 @@
         partie.attenteErreur = false;
         partie.verrou = false;
         const boutonSuite = $('#continuer-erreur'); if(boutonSuite) boutonSuite.hidden = true;
+        const boutonFav = $('#garder-vanne'); if(boutonFav) boutonFav.hidden = true;
         if(partie.finir || (partie.chronoFin && Date.now() >= partie.chronoFin)) return fin();
         partie.i++; return question();
       case 'sauvegarder': return sauvegarder();
@@ -1871,7 +1703,7 @@
   if(retourPaiement) [5000, 15000, 40000].forEach(ms => setTimeout(() => { if(!plus()) rafraichir(true); }, ms));
   if(window.Articulation) try{ Articulation.init(); }catch(e){}
   if('serviceWorker' in navigator && location.protocol === 'https:') navigator.serviceWorker.register('sw.js').catch(() => {});
-  window.AmiDesMots = { base, J, affiche, fnv1a, urlVoix, accueil, themes, choisirJeu, commencer, lettresPossibles, distincts, motsDu, aDire, CATALOGUE, MECAS, disponible, nomJeu, aRevoir, noter, jour, defi, revoir, lecon, astuces, aToi, blague, carnet, reglages, CONFIG, facile, nbMots, restaurer, verifierJeton, plus, ecranPlus, formatCode, rafraichir,
+  window.AmiDesMots = { base, J, affiche, fnv1a, urlVoix, accueil, themes, choisirJeu, commencer, lettresPossibles, distincts, motsDu, aDire, CATALOGUE, MECAS, disponible, nomJeu, aRevoir, noter, jour, defi, revoir, lecon, astuces, aToi, blague, carnet, avecArticle, astuce, niveauHumour, fousRires, reglages, CONFIG, facile, nbMots, restaurer, verifierJeton, plus, ecranPlus, formatCode, rafraichir,
     get etat(){ return J(); } };
   garder();
   accueil();

@@ -87,3 +87,32 @@ Le monde 3D est encore un premier quartier de démonstration : les bâtiments et
 5. Trouve Paco (chien) et Mina (chat) dans le quartier, approche-toi et appuie sur E ou le bouton à l'écran. Teste les deux mini-missions.
 6. Trouve le tableau « Atelier des mots » près de la place. Réponds au défi, puis relance l'interaction pour le défi bonus.
 7. Recharge la page : les missions bonus terminées doivent rester mémorisées.
+
+
+### Correctif 5.30.1 — langues temporairement masquées
+Le sélecteur affiche uniquement français et anglais. Les traductions coréennes, arabes, kabyles et les autres contenus linguistiques ne sont pas supprimés. Le test automatise désormais ce comportement.
+
+
+## v5.31 — Les vannes d'Ami
+1. Réglages → choisis un niveau d'humour, puis la langue des blagues.
+2. Dans chaque type de jeu, fais exprès une erreur : la vanne doit citer ce que tu as choisi
+   (le mot, l'étiquette du vrai/faux, la lettre ou le mot fabriqué, le panier).
+3. Vérifie qu'Ami ne se moque jamais du joueur et que « C'était : … » donne la bonne réponse.
+4. Rate deux fois le même mot dans une partie : Ami doit le remarquer.
+5. Fais une série de 3 bonnes réponses puis une erreur : Ami parle de la série.
+6. Avec le son : la vanne est lue tout de suite par la voix du téléphone.
+
+
+## v5.32 — Mots City et les nouvelles vannes
+1. Accueil → « 🛵 Mots City ». Lis l'aide, puis 📱 (ou M) : essaie les 3 missions.
+2. Fais exprès une erreur dans chaque mission : la vanne doit citer ton choix et la demande.
+3. Vérifie que ◀ tourne à gauche et ▶ à droite (clavier ET boutons tactiles).
+4. Fonce dans un immeuble : on ne le traverse pas, la caméra non plus.
+5. 📻 Radio et 📯 klaxon : phrase anglaise + sens en français.
+6. ← Retour : ferme d'abord une fenêtre ouverte, puis revient à l'accueil.
+7. Jeu principal, en apprenant l'anglais : confonds cat/dog → une astuce 💡 apparaît.
+8. Après une erreur : « 😂 Je la garde », puis Carnet → Mes fous rires.
+9. Lecture facile activée : Ami reste « Tout doux ».
+10. Monde 3D : parle à Paco ou Mina → « 🎯 Défi anglais ».
+11. Coupe le réseau après une première visite : Mots City et le monde 3D démarrent.
+À vérifier sur un VRAI téléphone : fluidité de Mots City (le test automatique n'a pas de carte graphique).
