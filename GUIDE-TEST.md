@@ -220,3 +220,7 @@ Ne pas utiliser de vrais paiements pendant les essais. Pour tester l'abonnement,
 - [ ] Les deux mini-missions d'animaux répondent correctement.
 - [ ] Le tableau Atelier des mots est visible et interactif.
 - [ ] La progression bonus est conservée après rechargement.
+
+
+### Correctif 5.30.1 — langues temporairement masquées
+Le sélecteur affiche uniquement français et anglais. Les traductions coréennes, arabes, kabyles et les autres contenus linguistiques ne sont pas supprimés. Le test automatise désormais ce comportement.

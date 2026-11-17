@@ -539,3 +539,7 @@ Le jeu principal, ses langues, son système d'apprentissage et ses autres pages 
 - Deux mini-missions bonus de vocabulaire animalier.
 - Atelier des mots avec défis de grammaire et sauvegarde de progression.
 - Les nouveautés de la v5.25 sont conservées.
+
+
+### Correctif 5.30.1 — langues temporairement masquées
+Le sélecteur affiche uniquement français et anglais. Les traductions coréennes, arabes, kabyles et les autres contenus linguistiques ne sont pas supprimés. Le test automatise désormais ce comportement.

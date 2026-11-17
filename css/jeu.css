@@ -1381,3 +1381,37 @@ body::after{
  font-weight:900;position:relative;overflow:hidden;
 }
 .monde-3d-accueil:hover{filter:brightness(1.12);transform:translateY(-3px)}
+
+/* v5.32 — Ami réagit à sa vanne (rien si mouvements réduits) */
+.ami-rx-objet{position:absolute;left:50%;top:6%;font-size:2.2rem;line-height:1;pointer-events:none;translate:-50% 0}
+.ami-rx-0{animation:amirx-hoche .6s ease-in-out 2}
+.ami-rx-0 .ami-rx-objet{animation:amirx-apparait 1.4s ease-out forwards}
+.ami-rx-1{animation:amirx-penche .8s ease-in-out 1}
+.ami-rx-1 .ami-rx-objet{top:30%;animation:amirx-tombe 1.2s cubic-bezier(.5,0,.9,.6) forwards}
+.ami-rx-2{animation:amirx-secoue .45s ease-in-out 3}
+.ami-rx-2 .ami-rx-objet{animation:amirx-plumes 1.3s ease-out forwards}
+.ami-rx-3{animation:amirx-tourne .9s ease-in-out 1}
+.ami-rx-3 .ami-rx-objet{animation:amirx-boum 1s ease-out forwards}
+@keyframes amirx-hoche{50%{transform:rotate(-6deg)}}
+@keyframes amirx-penche{40%{transform:rotate(12deg) translateY(4px)}}
+@keyframes amirx-secoue{25%{transform:translateX(-6px) rotate(-4deg)}75%{transform:translateX(6px) rotate(4deg)}}
+@keyframes amirx-tourne{50%{transform:rotateY(180deg) scale(1.08)}100%{transform:rotateY(360deg)}}
+@keyframes amirx-apparait{0%{opacity:0;translate:-50% 10px}30%{opacity:1;translate:-50% 0}100%{opacity:0}}
+@keyframes amirx-tombe{0%{opacity:1}100%{opacity:0;translate:-50% 90px;rotate:200deg}}
+@keyframes amirx-plumes{0%{opacity:1;scale:.6}100%{opacity:0;scale:1.8;translate:-50% -50px;rotate:-40deg}}
+@keyframes amirx-boum{0%{opacity:0;scale:.3}25%{opacity:1;scale:1.6}100%{opacity:0;scale:2.2}}
+@media(prefers-reduced-motion:reduce){.ami-rx,.ami-rx .ami-rx-objet{animation:none!important}}
+html[data-facile="1"] .ami-rx,html[data-facile="1"] .ami-rx .ami-rx-objet{animation:none!important}
+.garder-vanne[hidden]{display:none!important}
+.garder-vanne:not([hidden]){position:fixed;z-index:8;right:12px;top:calc(84px + env(safe-area-inset-top));
+  padding:8px 14px;border-radius:999px;border:1px solid rgba(255,255,255,.6);background:rgba(20,20,40,.85);color:#fff;font-weight:900;font-size:.9rem;max-width:46vw}
+.mots-city-accueil{background:linear-gradient(135deg,#ff7a59,#ffb347 55%,#ff5fa2)!important;color:#2a0d00!important}
+/* v5.32 — Sur petit écran (≤ 560 px), la bulle est collée aux deux bords : on ne la décale plus de -50%
+   (avant, elle sortait à gauche de l'écran et la vanne était coupée). */
+@media(max-width:560px){
+  .partie .bulle{width:auto!important;min-width:0!important;max-width:none!important}
+  .partie .bulle.ok,.partie .bulle.ko{transform:none!important;animation:bulle-bd-mobile .3s ease-out}
+  .partie .bulle:empty{transform:translateY(140%)!important}
+}
+@keyframes bulle-bd-mobile{from{opacity:0;transform:translateY(14px) scale(.96)}to{opacity:1;transform:none}}
+@media(prefers-reduced-motion:reduce){.partie .bulle.ok,.partie .bulle.ko{animation:none!important}}

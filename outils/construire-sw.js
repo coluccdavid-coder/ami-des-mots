@@ -5,8 +5,8 @@
 'use strict';
 const fs = require('fs'), path = require('path'), crypto = require('crypto');
 const ICI = path.join(__dirname, '..');
-const fichiers = ['./', 'index.html', 'monde-3d.html', 'manifest.webmanifest', 'css/jeu.css', 'js/donnees.js', 'js/voix.js', 'js/textes.js', 'js/articulation.js', 'js/jeu.js',
-  'img/icone.svg', 'img/icone-192.png', 'img/icone-512.png', 'img/ami-3d.webp']
+const fichiers = ['./', 'index.html', 'monde-3d.html', 'manifest.webmanifest', 'css/jeu.css', 'js/donnees.js', 'js/voix.js', 'js/textes.js', 'js/articulation.js', 'js/genres.js', 'js/confusions.js', 'js/vannes.js', 'js/jeu.js',
+  'mots-city.html', 'js/mots-city.js', 'vendor/three.module.js', 'img/icone.svg', 'img/icone-192.png', 'img/icone-512.png', 'img/ami-3d.webp']
   .concat(fs.readdirSync(path.join(ICI, 'fonts')).filter(f => f.endsWith('.woff2')).sort().map(f => 'fonts/' + f))
   .concat(fs.readdirSync(path.join(ICI, 'img/pictos')).sort().map(f => 'img/pictos/' + f));
 const h = crypto.createHash('sha256');

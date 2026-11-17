@@ -83,8 +83,9 @@
  <h2 id="dialogTitle">Bonjour !</h2><p id="dialogText"></p><div class="answers" id="answers"></div>
  <button class="close" id="closeDialog" style="margin-top:9px;width:100%">Fermer</button>
 </div>
+<script src="js/donnees.js"></script>
 <script type="importmap">
-{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js"}}
+{"imports":{"three":"./vendor/three.module.js"}}
 </script>
 <script type="module">
 import * as THREE from 'three';
@@ -290,6 +291,30 @@ function updateMission(){
 function wrong(line){sfx('bad');toast(line)}
 function reward(line){sfx('good');toast(line)}
 function finishStep(){mission=Math.min(4,mission+1);updateMission();closeDialog();reward(mission===4?'Quartier terminé ! Ami réclame une médaille… et une sieste ! 🦉':'Mission réussie ! Une plume pour ton carnet ! 🪶')}
+// --- Défis anglais de Paco et Mina : une vanne qui cite l'erreur, puis la bonne réponse ---
+const PET_JOKES={
+ dog:["Wouf ? Tu as dit « {f} » ? Ma truffe sentait plutôt « {j} ».","Paco a couru chercher « {f} »… il fallait rapporter « {j} » !","« {f} » ? Paco remue la queue quand même. C’était « {j} ».","Paco a enterré « {j} » dans le jardin et déterré « {f} » par erreur."],
+ cat:["Miaou… « {f} » ? Mina fait semblant de ne pas avoir entendu. C’est « {j} ».","Mina a fait tomber « {f} » de la table. Elle voulait « {j} ».","« {f} » ? Mina retourne dormir. Elle rêve de « {j} ».","Mina ronronne « {j} ». Pas « {f} », même pour une croquette."]};
+const petScore=JSON.parse(localStorage.getItem('ami3d_pet_quiz')||'{"dog":0,"cat":0}');
+let lastPetJoke='';
+const lower=s=>String(s||'').toLowerCase();
+function sayEn(text){try{if(!window.speechSynthesis)return;speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(text);u.lang='en-GB';u.rate=.9;speechSynthesis.speak(u)}catch(_){}}
+function petQuiz(kind){
+ const M=window.MOTS||{};const theme=kind==='dog'?'animaux':'manger';
+ const pool=Object.keys(M).filter(k=>M[k].theme===theme&&M[k].en&&M[k].fr);
+ if(pool.length<3){toast('Les mots ne sont pas chargés.');return}
+ const pick=()=>pool[Math.floor(Math.random()*pool.length)];
+ const good=pick();const opts=[good];while(opts.length<3){const o=pick();if(!opts.includes(o)&&lower(M[o].en)!==lower(M[good].en))opts.push(o)}
+ opts.sort(()=>Math.random()-.5);
+ const name=kind==='dog'?'Paco le chien 🐶':'Mina la chatte 🐱';
+ showDialog(name,good+'  Comment dit-on « '+lower(M[good].fr)+' » en anglais ?',opts.map(o=>({label:lower(M[o].en),action:()=>{
+  if(o===good){petScore[kind]++;localStorage.setItem('ami3d_pet_quiz',JSON.stringify(petScore));sayEn(lower(M[good].en));
+   showDialog(name,'Yes ! « '+lower(M[good].en)+' » = '+lower(M[good].fr)+'. Score : '+petScore[kind]+' 🪶',[{label:'🎯 Encore !',action:()=>petQuiz(kind)}]);sfx('good');}
+  else{const l=PET_JOKES[kind].filter(x=>x!==lastPetJoke);const j=l[Math.floor(Math.random()*l.length)];lastPetJoke=j;sfx('bad');
+   showDialog(name,j.replace('{f}',lower(M[o].en)).replace('{j}',lower(M[good].en))+' ('+lower(M[good].fr)+')',[{label:'🔁 Un autre défi',action:()=>petQuiz(kind)}]);sayEn(lower(M[good].en));}
+ }})));
+}
+window.__monde={petQuiz};
 function interact(){
  if(!active||dialogOpen)return;
  if(active===lea){
@@ -311,14 +336,16 @@ function interact(){
  }else if(active===paco){
   if(petQuest.paco)showDialog('Paco le chien 🐶','Wouf ! Tu as déjà trouvé mon mot préféré. Tu veux une gratouille derrière l’oreille ?',[
    {label:'🦴 Oui, bonne idée !',action:()=>{closeDialog();reward('Paco remue la queue si fort qu’il pourrait alimenter le quartier !')}},
-   {label:'🥦 Lui donner un brocoli',action:()=>{closeDialog();wrong('Paco n’est pas une tondeuse à gazon. Il préfère les croquettes !')}}]);
+   {label:'🥦 Lui donner un brocoli',action:()=>{closeDialog();wrong('Paco n’est pas une tondeuse à gazon. Il préfère les croquettes !')}},
+   {label:'🎯 Défi anglais de Paco',action:()=>petQuiz('dog')}]);
   else showDialog('Paco le chien 🐶','Mission bonus : comment dit-on « dog » en français ?',[
    {label:'🐶 Chien',action:()=>{petQuest.paco=true;localStorage.setItem('ami3d_pet_quest',JSON.stringify(petQuest));closeDialog();reward('Bien joué ! Paco remue la queue : mission bonus réussie ! 🪶')}},
    {label:'🐱 Chat',action:()=>{closeDialog();wrong('Tu viens de présenter Mina à Paco. Ils se connaissent déjà… mais ce n’est pas le bon mot !')}}]);
  }else if(active===mina){
   if(petQuest.mina)showDialog('Mina la chatte 🐱','Miaou. Dernière vérification : quel mot anglais correspond à « chat » ?',[
    {label:'🐱 Cat',action:()=>{closeDialog();reward('Exact ! Mina ronronne en anglais et en français.')}},
-   {label:'🐶 Dog',action:()=>{closeDialog();wrong('Mina te regarde. Elle a quatre pattes, pas un abonnement au chenil !')}}]);
+   {label:'🐶 Dog',action:()=>{closeDialog();wrong('Mina te regarde. Elle a quatre pattes, pas un abonnement au chenil !')}},
+   {label:'🎯 Défi anglais de Mina',action:()=>petQuiz('cat')}]);
   else showDialog('Mina la chatte 🐱','Mission bonus : comment dit-on « cat » en français ?',[
    {label:'🐱 Chat',action:()=>{petQuest.mina=true;localStorage.setItem('ami3d_pet_quest',JSON.stringify(petQuest));closeDialog();reward('Miaou-gnifique ! Tu as gagné la confiance de Mina ! 🪶')}},
    {label:'🐴 Cheval',action:()=>{closeDialog();wrong('Mina n’a pas henni. Essaie encore : c’est un chat !')}}]);

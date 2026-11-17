@@ -14,3 +14,11 @@ Nouvelles activités :
 - Progression des missions bonus sauvegardée localement.
 
 Le jeu conserve son univers graphique original et ses exercices existants.
+
+Correctif 5.30.1 : le test des langues vérifie que français/anglais sont seuls affichés, tout en contrôlant que les traductions coréennes, arabes et kabyles restent présentes dans les données.
+
+Correctif 5.30.2 :
+- Tests remis à jour après le masquage des langues : un joueur francophone apprend l'anglais par défaut ; un ancien choix masqué (ex. espagnol) est conservé dans « cibleMasquee ».
+- Test du flux d'erreur aligné sur le comportement actuel : correction affichée, choix bloqués, puis « J'ai compris — continuer ».
+- Blagues : rétablit la règle « jamais deux fois la même vanne de suite » (la variable existait mais n'était plus utilisée).
+- Service worker régénéré (npm run sw). Résultat : 45 tests réussis, 0 échec.

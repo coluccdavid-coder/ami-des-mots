@@ -21,7 +21,7 @@ function page(langue, config, avant){
   w.TextEncoder = TextEncoder; w.TextDecoder = TextDecoder;
   w.__fetch = []; w.fetch = async (u) => { w.__fetch.push(String(u)); return { ok:true, json:async () => (w.__reponse || { actif:false }) }; };
   if(avant) avant(w);
-  for(const f of ['js/donnees.js', 'js/voix.js', 'js/textes.js', 'js/articulation.js', 'js/jeu.js']) w.eval(lire(f));
+  for(const f of ['js/donnees.js', 'js/voix.js', 'js/textes.js', 'js/articulation.js', 'js/genres.js', 'js/confusions.js', 'js/vannes.js', 'js/jeu.js']) w.eval(lire(f));
   return w;
 }
 // Certificats d'abonnement comme les signe le serveur (même format que serveur/functions/ami-abonnement).
@@ -97,29 +97,35 @@ await test('une partie sans faute : 3 étoiles, des plumes, le jour, les mots no
   }
   assert.match(d.querySelector('.fin h2').textContent, /terminée/);
   const J = etat(w).joueurs[0];
-  assert.strictEqual(J.etoiles['kab:manger:quel_mot:n'], 3);
+  assert.strictEqual(w.AmiDesMots.base.cible, 'en', 'interface française → on apprend l\'anglais (langues masquées)');
+  assert.strictEqual(J.etoiles['en:manger:quel_mot:n'], 3);
   assert.strictEqual(J.plumes, 9);
   assert.strictEqual(J.jours.length, 1);
   assert.strictEqual(Object.values(J.mots).filter(f => f.b === 1).length, 6, 'chaque mot monte d\'une boîte');
   assert.ok(J.trophees.includes('premiere'));
   assert.deepStrictEqual(Object.keys(w.localStorage).filter(k => k !== 'amidesmots:v2'), [], 'une seule clé');
 });
-await test('une erreur ne bloque pas : l\'image fausse est grisée, on réessaie, le mot revient à réviser', () => {
+await test('une erreur ne bloque pas : l\'image fausse est grisée, la correction s\'affiche, « J\'ai compris » continue, le mot revient à réviser', () => {
   const w = page(); const d = w.document;
   w.AmiDesMots.choisirJeu('animaux'); w.AmiDesMots.commencer('ecoute');
   const bonne = d.querySelector('[data-a="ecouter"]').dataset.v;
   const faux = [...d.querySelectorAll('[data-a="repondre"]')].find(b => b.dataset.v !== bonne);
   faux.click();
   assert.ok(faux.disabled && faux.classList.contains('faux'));
-  assert.ok(d.querySelector('[data-a="repondre"][data-v="' + bonne + '"]:not([disabled])'));
+  assert.match(d.getElementById('bulle').textContent, /C'était : /, 'la bonne réponse est donnée');
+  const suite = d.getElementById('continuer-erreur');
+  assert.ok(suite && !suite.hidden, 'bouton « J\'ai compris — continuer » visible');
+  const avant = d.querySelector('.progres').getAttribute('aria-valuenow');
+  suite.click();
+  assert.strictEqual(Number(d.querySelector('.progres').getAttribute('aria-valuenow')), Number(avant) + 1, 'on passe à la question suivante');
   assert.ok(w.AmiDesMots.aRevoir().includes(bonne));
 });
 await test('révision espacée : juste → plus tard, faux → aujourd\'hui ; « À revoir » ne propose que les mots dus', () => {
   const w = page(); const A = w.AmiDesMots;
-  const [a, b] = A.motsDu('animaux', 'kab');
+  const [a, b] = A.motsDu('animaux', A.base.cible);
   A.noter(a, true); A.noter(a, true); A.noter(b, false);
   const f = A.J().mots;
-  assert.strictEqual(f['kab:' + a].b, 2); assert.strictEqual(f['kab:' + a].d, A.jour(3));
+  assert.strictEqual(f[A.base.cible + ':' + a].b, 2); assert.strictEqual(f[A.base.cible + ':' + a].d, A.jour(3));
   assert.deepStrictEqual(Array.from(A.aRevoir()), [b]);
   A.revoir();
   assert.match(w.document.querySelector('h2').textContent, /revoir/);
@@ -138,7 +144,7 @@ await test('défi du jour : 8 mots, le même toute la journée, plumes doublées
     if(vf){
       const mot = d.querySelector('.mot-vf').textContent, bonne = d.querySelector('.pic-grande').getAttribute('src').match(/pictos\/(.+)\.webp/)[1];
       const e = Object.keys(w.MOTS).find(k => w.MOTS[k].img === bonne);
-      const vrai = A.affiche('kab', w.MOTS[e].kab) === mot;
+      const vrai = A.affiche(A.base.cible, w.MOTS[e][A.base.cible]) === mot;
       clic(w, '[data-a="vf"][data-v="' + (vrai ? 1 : 0) + '"]');
     }else{
       const ec = d.querySelector('.partie [data-a="ecouter"]');
@@ -155,10 +161,10 @@ await test('vrai ou faux : la bonne réponse est notée juste', () => {
   const w = page(); const A = w.AmiDesMots, d = w.document;
   A.choisirJeu('animaux'); A.commencer('vrai_faux');
   const bonne = Object.keys(w.MOTS).find(k => w.MOTS[k].img === d.querySelector('.pic-grande').getAttribute('src').match(/pictos\/(.+)\.webp/)[1]);
-  const vrai = A.affiche('kab', w.MOTS[bonne].kab) === d.querySelector('.mot-vf').textContent;
+  const vrai = A.affiche(A.base.cible, w.MOTS[bonne][A.base.cible]) === d.querySelector('.mot-vf').textContent;
   clic(w, '[data-a="vf"][data-v="' + (vrai ? 1 : 0) + '"]');
   assert.ok(d.querySelector('.vf-oui.juste, .vf-non.juste'));
-  assert.strictEqual(A.J().mots['kab:' + bonne].b, 1);
+  assert.strictEqual(A.J().mots[A.base.cible + ':' + bonne].b, 1);
 });
 await test('lettres en vrac : remettre les lettres dans l\'ordre réussit ; pas proposé en japonais et coréen', () => {
   const w = page(); const d = w.document, A = w.AmiDesMots;
@@ -199,7 +205,9 @@ await test('plusieurs joueurs : chacun sa progression ; « Qui joue ? » au lanc
 await test('reprise de la v1 : plumes, étoiles et vestiaire deviennent le premier joueur', () => {
   const w = page(undefined, undefined, x => x.localStorage.setItem('amidesmots:v1', JSON.stringify({ ui:'fr', cible:'es', plumes:33, etoiles:{ 'es:animaux:ecoute':2 }, jours:[], porte:['echarpe'] })));
   const E = etat(w);
-  assert.strictEqual(E.cible, 'es'); assert.strictEqual(E.joueurs[0].plumes, 33);
+  // L'espagnol est masqué pour l'instant : on apprend l'anglais, mais le choix « es » est gardé pour plus tard.
+  assert.strictEqual(E.cible, 'en'); assert.strictEqual(E.cibleMasquee, 'es');
+  assert.strictEqual(E.joueurs[0].plumes, 33); assert.strictEqual(E.joueurs[0].etoiles['es:animaux:ecoute'], 2);
   assert.deepStrictEqual(E.joueurs[0].porte, ['echarpe']);
   assert.strictEqual(w.localStorage.getItem('amidesmots:v1'), null);
 });
@@ -331,16 +339,258 @@ await test('leçon : 5 mots d\'un thème, présentés puis demandés 2 fois chac
 });
 
 console.log('S\'amuser et parler');
-await test('une erreur fait rire Ami, sans jamais juger : 12 blagues par langue, jamais deux fois de suite', () => {
+await test('une erreur fait rire Ami, sans gros mots, avec la bonne réponse, jamais deux fois la même vanne de suite', () => {
   const w = page(); const A = w.AmiDesMots, d = w.document;
   for(const l in w.TEXTES){ const b = w.TEXTES[l].blagues; assert.strictEqual(b.length, 12, l); }
   for(const b of w.TEXTES.fr.blagues) assert.ok(!/\b(nul|mauvais|bête|idiot|tu es|honte)\b/i.test(b), b);
   A.choisirJeu('animaux'); A.commencer('ecoute:n');
   const bonne = d.querySelector('.partie [data-a="ecouter"]').dataset.v;
+  const faux = [...d.querySelectorAll('[data-a="repondre"]')].find(b => b.dataset.v !== bonne).dataset.v;
+  d.querySelector('[data-a="repondre"][data-v="' + faux + '"]').click();
+  const txt = d.getElementById('bulle').textContent;
+  assert.ok(txt.includes("C'était : " + A.affiche(A.base.cible, w.MOTS[bonne][A.base.cible])), 'correction : ' + txt);
+  assert.ok(!/\bundefined\b|\bnull\b|\{|\}/.test(txt), 'variable non remplacée : ' + txt);
+  for(let n = 0; n <= 3; n++){
+    A.J().humour = n;
+    for(const th of w.THEMES){
+      const [x, y] = A.motsDu(th, A.base.cible);
+      let prec = null;
+      for(let k = 0; k < 30; k++){ const b = A.blague(x, y); assert.ok(b && !/\bundefined\b|\bnull\b|\{|\}/.test(b), th + ' ' + n + ' : ' + b); assert.notStrictEqual(b, prec, th + ' niveau ' + n + ' répète : ' + b); prec = b; }
+    }
+  }
+});
+await test('vannes : écrites en français et en anglais, 4 niveaux, courtes, sans article devant le mot, variables justes pour chaque jeu', () => {
+  const V = w0.VANNES;
+  const VARS = { general:'fj', themes:'fj', ecoute:'fj', vf_oui:'mj', vf_non:'j', intrus:'fj', panier:'mpb', lettre:'lbxj', ordre:'xj', relier:'fj', encore:'j', serie:'n', initiale:'fjl', rime:'fj', secours:'' };
+  const cles = o => JSON.stringify(Object.keys(o).filter(k => k !== 'accordees').sort());   // accordées : français seulement
+  assert.strictEqual(cles(V.fr), cles(V.en)); assert.strictEqual(cles(V.fr.themes), cles(V.en.themes));
+  assert.deepStrictEqual(Object.keys(V.fr.themes).sort(), [...w0.THEMES].sort(), 'un catalogue par thème');
+  for(const l of ['fr', 'en']) for(const type in VARS){
+    const groupes = type === 'themes' ? Object.values(V[l].themes) : [V[l][type]];
+    for(const g of groupes){
+      assert.strictEqual(g.length, 4, l + ' ' + type + ' : 4 niveaux');
+      for(const niv of g){ assert.ok(niv.length >= 2, l + ' ' + type); for(const v of niv){
+        assert.ok(v.length <= 100, 'trop long : ' + v);
+        for(const [, k] of v.matchAll(/\{(\w)\}/g)) assert.ok(VARS[type].includes(k), l + ' ' + type + ' {' + k + '} inconnu : ' + v);
+        if(l === 'fr') assert.ok(!/\b(un|une|le|la|des|du)\s+«\s*\{[fjm]\}/i.test(v), 'article devant le mot (genre inconnu) : ' + v);
+        const DOIT = { vf_oui:/\{m\}/, panier:/\{p\}/, lettre:/\{x\}|\{l\}/, ordre:/\{x\}/ }[type];
+        if(DOIT) assert.ok(DOIT.test(v), 'la vanne doit citer l’erreur (' + type + ') : ' + v);
+        if('fj'.includes(VARS[type][0]) && VARS[type].includes('f') && type !== 'encore') assert.ok(v.includes('{f}'), 'la vanne doit citer le mot choisi : ' + v);
+        assert.ok(!/\b(nul|nulle|bête|idiot|stupide|honte|stupid|dumb|idiot|loser)\b/i.test(v), 'vexant : ' + v);
+        assert.ok(!/Pok[eé]mon|IKEA|Darwin/i.test(v), 'marque ou nom propre : ' + v);
+      } }
+    }
+  }
+});
+// Provoque une erreur dans un jeu et renvoie la bulle.
+function erreurDans(meca, humour){
+  const w = page(); const d = w.document, A = w.AmiDesMots; A.J().humour = humour || 0;
+  const motImage = () => Object.keys(w.MOTS).find(k => w.MOTS[k].img === d.querySelector('.pic-grande, .pic-moyenne').getAttribute('src').match(/pictos\/(.+)\.webp/)[1]);
+  A.choisirJeu('animaux'); A.commencer(meca);
+  const info = { w, A, d };
+  if(meca === 'vrai_faux'){
+    const e = motImage(), vrai = A.affiche(A.base.cible, w.MOTS[e][A.base.cible]) === d.querySelector('.mot-vf').textContent;
+    info.e = e; info.vrai = vrai; info.montre = d.querySelector('.mot-vf').textContent;
+    d.querySelector('[data-a="vf"][data-v="' + (vrai ? 0 : 1) + '"]').click();
+  }else if(meca === 'premiere_lettre' || meca === 'lettre_manquante'){
+    const e = motImage(); info.e = e;
+    const g = [...d.querySelectorAll('[data-a="lettre-choix"]')];
+    // Une lettre fausse : celle qui n'allume pas la bonne réponse.
+    const attendu = meca === 'premiere_lettre' ? A.affiche(A.base.cible, w.MOTS[e][A.base.cible])[0] : null;
+    const mauvaise = attendu ? g.find(b => b.dataset.v !== attendu) : g[0];
+    info.l = mauvaise.dataset.v; mauvaise.click();
+  }else if(meca === 'intrus'){
+    const b = [...d.querySelectorAll('[data-a="repondre"]')].find(x => w.MOTS[x.dataset.v].theme === 'animaux');
+    info.f = b.dataset.v; b.click();
+  }else if(meca === 'lettres'){
+    [...d.querySelectorAll('.tuile')].sort((a, b) => b.dataset.v - a.dataset.v).forEach(x => x.click());
+  }
+  info.bulle = d.getElementById('bulle').textContent;
+  return info;
+}
+await test('genre des mots : tous les mots ont un genre, articles et élisions justes, h aspiré respecté', () => {
+  const w = w0, A = w.AmiDesMots;
+  for(const e in w.MOTS) assert.ok(['m', 'f'].includes(w.GENRES_FR[e]), 'genre manquant : ' + w.MOTS[e].fr);
+  for(const e in w.GENRES_FR) assert.ok(w.MOTS[e], 'genre pour un mot inconnu : ' + e);
+  assert.strictEqual(A.avecArticle('🐱').F, 'le chat');
+  assert.strictEqual(A.avecArticle('🐢').F, 'la tortue'); assert.strictEqual(A.avecArticle('🐢').e, 'e');
+  assert.strictEqual(A.avecArticle('🐝').F, 'l’abeille');
+  assert.strictEqual(A.avecArticle('🦉').F, 'le hibou'); assert.strictEqual(A.avecArticle('🦔').F, 'le hérisson');
+  assert.strictEqual(A.avecArticle('🥚').F, 'l’œuf'); assert.strictEqual(A.avecArticle('🌳').F, 'l’arbre');
+});
+await test('vannes accordées : pas de « de le » / « à le », et rendu correct en jeu', () => {
+  const w = page(); const A = w.AmiDesMots, V = w.VANNES.fr.accordees;
+  assert.strictEqual(V.length, 4);
+  for(const niv of V) for(const v of niv){
+    assert.ok(!/\b(de|à|en|du)\s+\{[FJ]c?\}/.test(v), 'contraction impossible : ' + v);
+    assert.ok(v.includes('{F') && v.includes('{J'), 'cite les deux mots : ' + v);
+  }
+  A.choisirJeu('animaux'); A.commencer('quel_mot');
+  const vus = new Set(); for(let k = 0; k < 200; k++) vus.add(A.blague('🐢', '🦉'));
+  const acc = [...vus].filter(b => /la tortue|La tortue/.test(b));
+  assert.ok(acc.length, 'des vannes accordées sortent');
+  for(const b of acc){ assert.ok(!/\{|\bde le\b|\bà le\b|\ble tortue\b|\bla hibou\b|\bl’hibou\b/i.test(b), b); }
+  assert.ok(acc.some(b => /déguisée|arrivée|passée|flattée|soupçonnée|assise/.test(b)) || acc.every(b => !/(déguisé|arrivé|passé|flatté|soupçonné|assis)\b/.test(b.split('hibou')[0])), 'accord féminin : ' + acc.join(' | '));
+});
+await test('familles de confusions : astuce affichée quand on confond cat et dog en apprenant l’anglais', () => {
+  const w = page(); const A = w.AmiDesMots;
+  for(const c of w.CONFUSIONS){ for(const e of c.p) assert.ok(w.MOTS[e], 'image inconnue ' + e); assert.ok(c.fr.length <= 90 && c.en.length <= 90, c.fr); }
+  assert.strictEqual(A.base.cible, 'en');
+  assert.match(A.astuce('🐱', '🐶', 'fr'), /miaou/);
+  assert.match(A.astuce('🐶', '🐱', 'en'), /meow/);
+  assert.strictEqual(A.astuce('🐱', '🦀', 'fr'), '');
+});
+await test('Lecture facile : Ami reste « Tout doux », vannes courtes, et le réglage le dit', () => {
+  const w = page(); const A = w.AmiDesMots, d = w.document;
+  A.J().humour = 3; A.base.joueurs[A.base.actif].facile = true;
+  assert.strictEqual(A.niveauHumour(), 0);
+  A.choisirJeu('animaux'); A.commencer('quel_mot');
+  for(let k = 0; k < 40; k++){ const b = A.blague('🐱', '🐶'); assert.ok(b.length <= 90, b); }
+  A.reglages(); assert.match(d.body.textContent, /Lecture facile activée/);
+});
+await test('carnet des fous rires : garder une vanne, la retrouver, la retirer, retour vers le carnet', () => {
+  const w = page(); const A = w.AmiDesMots, d = w.document;
+  A.choisirJeu('animaux'); A.commencer('ecoute:n');
+  const bonne = d.querySelector('.partie [data-a="ecouter"]').dataset.v;
+  [...d.querySelectorAll('[data-a="repondre"]')].find(b => b.dataset.v !== bonne).click();
+  const fav = d.getElementById('garder-vanne'); assert.ok(fav && !fav.hidden, 'bouton garder visible');
+  fav.click(); fav.click();
+  assert.strictEqual(A.J().fousRires.length, 1, 'gardée une seule fois'); assert.strictEqual(A.J().fousRires[0].e, bonne);
+  d.getElementById('continuer-erreur').click(); assert.ok(d.getElementById('garder-vanne').hidden);
+  d.querySelector('[data-a="accueil"], [data-a="quitter"]') ;
+  A.aller ? A.aller('carnet') : null;
+  w.document.body.insertAdjacentHTML('beforeend', '<button id="go" data-a="carnet"></button>'); d.getElementById('go').click();
+  d.querySelector('[data-a="fous-rires"]').click();
+  assert.ok(d.querySelector('.carnet li'), 'vanne listée'); assert.ok(d.body.textContent.includes(A.J().fousRires[0].v));
+  d.querySelector('[data-a="oublier-vanne"]').click(); assert.strictEqual(A.J().fousRires.length, 0);
+  d.querySelector('.barre [data-a="carnet"]').click(); assert.ok(d.querySelector('[data-a="fous-rires"]'), 'retour au carnet');
+});
+await test('réaction d’Ami : la classe suit le niveau d’humour', () => {
+  for(const n of [0, 3]){
+    const w = page(); const A = w.AmiDesMots, d = w.document; A.J().humour = n;
+    A.choisirJeu('animaux'); A.commencer('ecoute:n');
+    const bonne = d.querySelector('.partie [data-a="ecouter"]').dataset.v;
+    [...d.querySelectorAll('[data-a="repondre"]')].find(b => b.dataset.v !== bonne).click();
+    const wrap = d.querySelector('#ami-partie .ami-3d-wrap');
+    if(wrap) assert.ok(wrap.classList.contains('ami-rx-' + n), wrap.className);
+  }
+});
+await test('vannes du micro : 4 niveaux par langue, citent le mot, ne jugent pas la prononciation', () => {
+  for(const l of ['fr', 'en']){ const m = w0.VANNES[l].micro; assert.strictEqual(m.length, 4);
+    for(const niv of m) for(const v of niv){ assert.ok(!/(mal|faux|wrong|bad|parfait|perfect)\b/i.test(v), v); for(const [, k] of v.matchAll(/\{(\w+)\}/g)) assert.strictEqual(k, 'j', v); } }
+});
+await test('Mots City : missions en anglais correct, vannes qui citent l’erreur, lettres, commandes, sauvegarde validée', () => {
+  const w = page(); w.eval(lire('js/mots-city.js')); const C = w.MotsCity;
+  for(const e of C.LIVRABLES.concat(C.LIEUX)) assert.ok(w.MOTS[e] && w.MOTS[e].en, 'mot inconnu ' + e);
+  assert.strictEqual(C.article('🍎'), 'an'); assert.strictEqual(C.article('🍌'), 'a'); assert.strictEqual(C.article('🧀'), 'some'); assert.strictEqual(C.article('🥚'), 'an');
+  for(let k = 0; k < 60; k++){
+    const l = C.livraison(); assert.strictEqual(l.etals.length, 4); assert.ok(l.etals.includes(l.voulu)); assert.strictEqual(new Set(l.etals.map(C.en)).size, 4, 'étals distincts');
+    assert.ok(l.phrase.includes(C.en(l.voulu)) && !/\{|\ba an\b|\ban [bcdfgklmnpstv]/i.test(l.phrase), l.phrase);
+    const faux = l.etals.find(e => e !== l.voulu), r = C.juger(l, faux);
+    assert.ok(!r.juste && r.vanne.includes('« ' + C.en(faux) + ' »') && r.vanne.includes('« ' + C.en(l.voulu) + ' »'), r.vanne);
+    assert.ok(r.correction.startsWith(C.en(l.voulu) + ' = ' + C.fr(l.voulu)), r.correction);
+    assert.ok(!/\b(nul|bête|idiot|stupide|honte)\b/i.test(r.vanne), r.vanne);
+    const t = C.taxi(); assert.ok(t.phrase.toLowerCase().includes('the ' + C.en(t.voulu)), t.phrase);
+    const autre = C.LIEUX.find(e => e !== t.voulu), rt = C.juger(t, autre); assert.ok(rt.vanne.includes(C.en(autre)) && rt.vanne.includes(C.en(t.voulu)), rt.vanne);
+    assert.ok(C.juger(t, t.voulu).juste);
+  }
+  const m = C.lettres(); assert.ok(/^[A-Z]{3,6}$/.test(m.mot)); assert.ok(m.leurres.every(c => !m.mot.includes(c)));
+  const leurre = m.leurres[0], r = C.juger(m, leurre);
+  assert.ok(!r.juste && r.vanne.includes(leurre) && r.correction.includes(m.mot[0]), r.vanne);
+  for(let i = 0; i < m.mot.length; i++){ const ri = C.juger(m, m.mot[i]); assert.ok(ri.juste); if(i === m.mot.length - 1) assert.ok(ri.fini); }
+  // Jamais deux fois la même vanne de suite
+  let prec = ''; for(let k = 0; k < 40; k++){ const v = C.vanne('taxi', { f:'x', j:'y' }); assert.notStrictEqual(v, prec); prec = v; }
+  // Chaque touche suit sa flèche (code physique ou lettre)
+  const d = (code, key) => C.direction({ code, key });
+  assert.strictEqual(d('ArrowUp'), 'haut'); assert.strictEqual(d('ArrowLeft'), 'gauche'); assert.strictEqual(d('ArrowRight'), 'droite'); assert.strictEqual(d('ArrowDown'), 'bas');
+  assert.strictEqual(d('KeyW', 'z'), 'haut'); assert.strictEqual(d('KeyA', 'q'), 'gauche'); assert.strictEqual(d('KeyS', 's'), 'bas'); assert.strictEqual(d('KeyD', 'd'), 'droite');
+  assert.strictEqual(d('', 'z'), 'haut'); assert.strictEqual(d('', 'q'), 'gauche'); assert.strictEqual(d('KeyX', 'x'), null);
+  // Sauvegarde : rien d'étrange ne passe
+  const s = C.propre({ plumes:'9e99', fun:42, reussies:{ taxi:-5, livraison:3.7, pirate:9 }, appris:['🐱', '<img>', 7], plus:true });
+  assert.deepStrictEqual(JSON.parse(JSON.stringify(s)), { plumes:1000000, fun:5, reussies:{ livraison:3, taxi:0, lettres:0 }, appris:['🐱'] });
+  assert.strictEqual(C.propre('n’importe quoi').plumes, 0);
+  for(const l of [C.PASSANTS, C.BOBOS, C.KLAXON, C.RADIO]) for(const [e, f] of l) assert.ok(e && f, e);
+});
+await test('service worker : Mots City, sa logique et three.js local sont mis en cache (hors ligne)', () => {
+  const sw = lire('sw.js');
+  for(const f of ['mots-city.html', 'js/mots-city.js', 'vendor/three.module.js', 'js/genres.js', 'js/confusions.js', 'js/vannes.js']) assert.ok(sw.includes('"' + f + '"'), f);
+  assert.ok(!lire('mots-city.html').includes('cdn.jsdelivr') && !lire('monde-3d.html').includes('cdn.jsdelivr'), 'plus de CDN : three.js est local');
+});
+await test('accueil : un lien vers Mots City', () => {
+  const w = page(); assert.ok(w.document.querySelector('a[href="mots-city.html"]'));
+});
+await test('vannes : vrai ou faux parle du mot affiché, jamais de « 0 » ou « 1 »', () => {
+  for(let k = 0; k < 6; k++){
+    const { w, bulle, e, vrai, montre, A } = erreurDans('vrai_faux', k % 4);
+    assert.ok(!/« ?[01] ?»/.test(bulle), bulle);
+    assert.ok(bulle.includes('« ' + w.MOTS[e].fr.toLowerCase() + ' »') || bulle.includes(w.MOTS[e].fr.toLowerCase()), 'image nommée : ' + bulle);
+    if(!vrai){ const m = Object.keys(w.MOTS).find(x => A.affiche(A.base.cible, w.MOTS[x][A.base.cible]) === montre); assert.ok(bulle.toLowerCase().includes(w.MOTS[m].fr.toLowerCase()), 'mot affiché nommé : ' + bulle); }
+  }
+});
+await test('vannes : première lettre / lettre manquante montrent le mot fabriqué par la lettre choisie', () => {
+  for(const meca of ['premiere_lettre', 'lettre_manquante']) for(let k = 0; k < 6; k++){
+    const { bulle, l, d } = erreurDans(meca, k % 4);
+    if(!d.getElementById('continuer-erreur') || d.getElementById('continuer-erreur').hidden) continue;   // lettre juste par hasard
+    assert.ok(!/« [^»]{1,2} » (pour|à la place de) «/.test(bulle), 'une lettre traitée comme un mot : ' + bulle);
+    assert.ok(bulle.includes(l), 'la lettre ou le mot fabriqué apparaît : ' + bulle);
+  }
+});
+await test('vannes : l’intrus nomme l’image choisie et l’intrus, pas une vanne d’un autre thème', () => {
+  for(let k = 0; k < 6; k++){
+    const { w, bulle, f } = erreurDans('intrus', k % 4);
+    assert.ok(bulle.includes(w.MOTS[f].fr.toLowerCase()), bulle);
+    for(const th of ['manger', 'maison', 'habits', 'ville', 'musique', 'atelier']) for(const niv of w.VANNES.fr.themes[th]) for(const v of niv) assert.ok(!bulle.startsWith(v.split('{')[0]) || v.split('{')[0].length < 6, 'vanne d’un autre thème : ' + bulle);
+  }
+});
+await test('vannes : le panier cite le panier choisi, et la correction est dans la langue des blagues', () => {
+  for(const lb of ['fr', 'en']){
+    const w = page(); const d = w.document, A = w.AmiDesMots; A.J().langueBlagues = lb;
+    A.choisirJeu('animaux'); A.commencer('panier');
+    const e = Object.keys(w.MOTS).find(k => w.MOTS[k].img === d.querySelector('.pic-grande').getAttribute('src').match(/pictos\/(.+)\.webp/)[1]);
+    const mauvais = d.querySelector('[data-a="panier"]:not([data-v="' + w.MOTS[e].theme + '"])');
+    mauvais.click();
+    const txt = d.getElementById('bulle').textContent;
+    assert.ok(txt.includes(w.TEXTES[lb]['th_' + mauvais.dataset.v]), 'panier choisi : ' + txt);
+    assert.ok(txt.endsWith(w.TEXTES[lb]['th_' + w.MOTS[e].theme]), 'bon panier dans la langue des blagues : ' + txt);
+  }
+});
+await test('vannes : lettres en vrac montrent l’ordre essayé', () => {
+  const { bulle } = erreurDans('lettres', 1);
+  assert.ok(/« [^»]+ »/.test(bulle) && !/\bundefined\b|\{/.test(bulle), bulle);
+});
+await test('vannes : une série cassée, un mot raté deux fois, la même initiale sont remarqués', () => {
+  const w = page(); const A = w.AmiDesMots;
+  const vus = new Set();
+  const V = w.VANNES.fr, debut = (l) => l.flat().map(v => v.split('{')[0].slice(0, 12));
+  A.choisirJeu('animaux'); A.commencer('quel_mot');
+  for(let k = 0; k < 40; k++) vus.add(A.blague('🐱', '🐶', { type:'mot', serie:5 }));
+  assert.ok([...vus].some(b => b.includes('5')), 'série de 5 citée');
+  vus.clear(); for(let k = 0; k < 40; k++) vus.add(A.blague('🐱', '🐶'));
+  assert.ok([...vus].some(b => /Encore|encore|coriace|Re-coucou|échappe|rendez-vous|filé|invisible|retour|ennemi|manche|RECHERCHÉ|adore/.test(b)), 'mot raté plusieurs fois');
+  const c = Object.keys(w.MOTS).filter(k => w.MOTS[k].theme === 'animaux' && w.MOTS[k].fr[0] === 'C');
+  vus.clear(); for(let k = 0; k < 60; k++) vus.add(A.blague(c[0], c[1]));
+  assert.ok([...vus].some(b => /« c »/.test(b)), 'même initiale remarquée : ' + c.slice(0, 2));
+  void debut; void V;
+});
+await test('vannes : interface en espagnol → les blagues douces en espagnol, sans aucun français', () => {
+  const w = page('es-ES'); const A = w.AmiDesMots, d = w.document;
+  A.choisirJeu('animaux'); A.commencer('ecoute:n');
+  const bonne = d.querySelector('.partie [data-a="ecouter"]').dataset.v;
   [...d.querySelectorAll('[data-a="repondre"]')].find(b => b.dataset.v !== bonne).click();
   const txt = d.getElementById('bulle').textContent;
-  assert.ok(w.TEXTES.fr.blagues.includes(txt), txt);
-  let prec = null; for(let k = 0; k < 30; k++){ const b = A.blague(); assert.notStrictEqual(b, prec); prec = b; }
+  assert.ok(w.TEXTES.es.blagues.some(b => txt.startsWith(b)), txt);
+  assert.ok(txt.includes('Era: '), txt); assert.ok(!/C'était|The correct/.test(txt), txt);
+});
+await test('vannes : la phrase est lue par la voix du téléphone, sans demander un MP3 au serveur des voix', () => {
+  const w = page(); const A = w.AmiDesMots, d = w.document;
+  const dits = []; w.speechSynthesis = { getVoices:() => [{ lang:'fr-FR', name:'x', default:true }], cancel(){}, resume(){}, speak(u){ dits.push(u.text); } };
+  w.SpeechSynthesisUtterance = function(t){ this.text = t; };
+  A.choisirJeu('animaux'); A.commencer('ecoute:n');
+  const bonne = d.querySelector('.partie [data-a="ecouter"]').dataset.v;
+  w.__audio.length = 0;
+  [...d.querySelectorAll('[data-a="repondre"]')].find(b => b.dataset.v !== bonne).click();
+  assert.ok(!w.__audio.some(u => /reparole\.fr/.test(u)), 'aucun MP3 demandé pour la vanne : ' + w.__audio.join(' '));
+  return new Promise(r => setTimeout(() => { assert.ok(dits.some(x => x.includes("C'était")), 'vanne lue : ' + dits.join(' | ')); r(); }, 200));
 });
 await test('mot du jour et astuce du jour sur l\'accueil ; page des conseils', () => {
   const w = page(); const d = w.document, A = w.AmiDesMots;
@@ -499,9 +749,14 @@ await test('sauvegarde piégée : valeurs absurdes bornées, clés inconnues ign
   A.reglages(); A.restaurer(new w.File(['x'.repeat(2e6 + 10)], 'gros.json')); await attendre(30);
   assert.match(w.document.getElementById('etat-sauvegarde').textContent, /pas une sauvegarde/);
 });
-await test('langues : le choix de langue n\'affiche que le nom de la langue', () => {
+await test('langues : seules les langues activées sont visibles, les autres restent dans les données', () => {
   const w = page(); const d = w.document;
-  assert.strictEqual(d.querySelector('#cible option[value="ko"]').textContent, '한국어');
+  const choix = d.querySelector('#cible');
+  assert.ok(choix, 'le sélecteur de langue doit être présent');
+  assert.deepStrictEqual(Array.from(choix.options).map(o => o.value), ['fr', 'en']);
+  assert.strictEqual(w.MOTS['🐱'].ko, '고양이', 'le coréen reste conservé dans les données');
+  assert.strictEqual(w.MOTS['🐱'].ar, 'قطة', 'larabe reste conservé dans les données');
+  assert.strictEqual(w.MOTS['🐱'].kab, 'AMCIC', 'le kabyle reste conservé dans les données');
 });
 await test('voix : le texte prononcé est celui que ReParole a enregistré (minuscules), pas la majuscule de la banque', () => {
   const w = page(); const A = w.AmiDesMots;

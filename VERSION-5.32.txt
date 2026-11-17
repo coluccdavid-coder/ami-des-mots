@@ -1,0 +1,33 @@
+AMI DES MOTS — VERSION 5.32
+Toutes les idées de vannes + Mots City
+
+1. Genre des mots (js/genres.js, À FAIRE VALIDER) : « la tortue s'est déguisée », « l'abeille », « le hibou ».
+   Nouvelles vannes accordées en français (jamais « de le » / « à le »).
+2. « À toi ! » : une vanne après l'enregistrement. Elle ne juge pas la prononciation (rien n'est analysé).
+3. Ami réagit à sa vanne (🙈 👓 🪶 💥 selon le niveau). Rien si « réduire les animations » ou Lecture facile.
+4. Familles de confusions (js/confusions.js, 36 paires) : « 💡 Cat fait miaou, dog fait wouf. »
+   Seulement quand on apprend l'anglais.
+5. Carnet des fous rires : « 😂 Je la garde » après une erreur ; Carnet → Mes fous rires (réécouter, retirer).
+6. Lecture facile : Ami reste « Tout doux » avec des vannes courtes ; les Réglages l'indiquent.
+7. Autres langues : PAS de traduction automatique des vannes (à écrire et relire par des locuteurs).
+   L'interface espagnole, arabe… garde les blagues douces déjà traduites.
+8. Monde 3D : Paco et Mina ont un « Défi anglais » rejouable, avec des vannes qui citent l'erreur.
+   Le monde 3D charge three.js en local (vendor/) : il marche hors connexion.
+
+NOUVEAU JEU : MOTS CITY (mots-city.html) — l'anglais en rigolant, en ville ouverte
+- Jeu original, familial, sans violence : Ami le hibou en scooter dans une ville 3D.
+- Livraison express : le client commande en anglais, on passe sous le bon étal du marché.
+- Taxi des mots : le passager dit où aller en anglais ; on retrouve le lieu sur le plan.
+- Chasse aux lettres : attraper les lettres du mot anglais dans l'ordre.
+- Radio Plume FM (vraies expressions anglaises + sens), klaxon, passants qui parlent anglais,
+  tremplins, « niveau de rigolade » en étoiles, plan de la ville, flèche GPS.
+- Chaque erreur = une vanne qui cite ce qu'on a choisi ET ce qui était demandé, puis la correction.
+- Commandes : flèches / ZQSD / WASD, boutons tactiles ; gauche = gauche à l'écran (testé).
+- Caméra qui ne traverse pas les immeubles ; collisions ; passants aux jambes animées.
+- Voix anglaises : voix de synthèse de l'appareil (bouton Lentement).
+- Sauvegarde locale validée (plumes, missions, mots appris) ; fonctionne hors connexion.
+
+Corrigé au passage : sur téléphone (≤ 560 px), la bulle de vanne sortait à gauche de l'écran
+(défaut déjà présent en 5.30.1).
+
+Tests : 64 réussis (npm test) + 29 vérifications dans Chrome (outils/tests-navigateur) + hors ligne.
