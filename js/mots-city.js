@@ -101,6 +101,16 @@
     return { juste:false, vanne:vanne(mission.type, { f:en(choix), j:en(mission.voulu) }), correction:en(mission.voulu) + ' = ' + fr(mission.voulu) + ' · ' + en(choix) + ' = ' + fr(choix) };
   }
 
+  // ── Plumes dorées cachées dans la ville : chacune apprend un mot ──
+  const PLUMES_DOREES = ['🐱','🦉','🍎','🌙','⭐','🌊','🏝️','⛵','🚗','🎸','☀️','🌹','🔑','👟','🦀','🍓','🎈','🌳','⚓','🦜'];
+  // Tenues du héros (couleurs : haut, bas, casquette, chaussures).
+  const TENUES = [
+    { nom:'Coucher de soleil', haut:0xff6f91, bas:0x2d3a5a, casquette:0xffc75f, chaussures:0xffffff },
+    { nom:'Lagon', haut:0x2ec4b6, bas:0xf6f1e9, casquette:0x1b4965, chaussures:0xff9f1c },
+    { nom:'Néon', haut:0x8338ec, bas:0x111122, casquette:0x3a86ff, chaussures:0xfb5607 },
+    { nom:'Plage', haut:0xfff3b0, bas:0xe09f3e, casquette:0x9e2a2b, chaussures:0x335c67 }
+  ];
+
   // ── Les petites phrases de la ville (vraies expressions, avec leur sens) ──
   const PASSANTS = [
     ["Watch out!", "Attention !"], ["Slow down, please!", "Ralentis, s’il te plaît !"],
@@ -150,16 +160,18 @@
   // ── Sauvegarde : on valide tout ce qui est relu ──────────────────
   const CLE = 'motscity_v1';
   function propre(o){
-    const s = { plumes:0, fun:0, reussies:{ livraison:0, taxi:0, lettres:0 }, appris:[] };
+    const s = { plumes:0, fun:0, reussies:{ livraison:0, taxi:0, lettres:0 }, appris:[], dorees:[], tenue:0 };
     if(!o || typeof o !== 'object') return s;
     const n = (v, max) => Number.isFinite(+v) ? Math.max(0, Math.min(max, Math.floor(+v))) : 0;
     s.plumes = n(o.plumes, 1e6); s.fun = n(o.fun, 5);
     if(o.reussies && typeof o.reussies === 'object') for(const k in s.reussies) s.reussies[k] = n(o.reussies[k], 1e6);
     if(Array.isArray(o.appris)) s.appris = o.appris.filter(e => typeof e === 'string' && M()[e]).slice(-500);
+    if(Array.isArray(o.dorees)) s.dorees = [...new Set(o.dorees.filter(i => Number.isInteger(i) && i >= 0 && i < PLUMES_DOREES.length))];
+    s.tenue = n(o.tenue, TENUES.length - 1);
     return s;
   }
   function charger(){ try{ return propre(JSON.parse(localStorage.getItem(CLE) || 'null')); }catch(e){ return propre(null); } }
   function garder(s){ try{ localStorage.setItem(CLE, JSON.stringify(propre(s))); }catch(e){} }
 
-  window.MotsCity = { LIVRABLES, LIEUX, article, livraison, taxi, lettres, juger, vanne, VANNES, phrase, PASSANTS, BOBOS, KLAXON, RADIO, direction, propre, charger, garder, en, fr, melange };
+  window.MotsCity = { PLUMES_DOREES, TENUES, LIVRABLES, LIEUX, article, livraison, taxi, lettres, juger, vanne, VANNES, phrase, PASSANTS, BOBOS, KLAXON, RADIO, direction, propre, charger, garder, en, fr, melange };
 })();
