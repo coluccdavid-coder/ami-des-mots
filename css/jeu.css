@@ -911,7 +911,9 @@ body{
     radial-gradient(ellipse at 95% 48%,rgba(35,216,188,.12),transparent 32%),
     radial-gradient(ellipse at 0% 78%,rgba(255,139,95,.10),transparent 34%),
     linear-gradient(155deg,#171044 0%,#0B0828 56%,#100B35 100%);
-  perspective:1400px;
+  /* Pas de « perspective » ici : sur <body>, elle fait de la page entière le repère des
+     éléments position:fixed (fenêtres, bulles), qui s'ouvraient alors décalés après défilement.
+     Les éléments 3D ont chacun leur propre perspective. */
 }
 body::after{
   content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;opacity:.35;

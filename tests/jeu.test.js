@@ -519,6 +519,48 @@ await test('service worker : Mots City, sa logique et three.js local sont mis en
   for(const f of ['mots-city.html', 'js/mots-city.js', 'vendor/three.module.js', 'js/genres.js', 'js/confusions.js', 'js/vannes.js']) assert.ok(sw.includes('"' + f + '"'), f);
   assert.ok(!lire('mots-city.html').includes('cdn.jsdelivr') && !lire('monde-3d.html').includes('cdn.jsdelivr'), 'plus de CDN : three.js est local');
 });
+await test('village 3D : habitants anglophones (Quaternius), défis justes, vannes gentilles', () => {
+  const w = page(); w.eval(lire('js/metiers.js')); const M = w.METIERS;
+  const kit = lire('js/kit3d.js'), habitants = kit.match(/HABITANTS = \[([\s\S]*?)\]/)[1];
+  assert.ok(M.liste.length >= 6);
+  assert.strictEqual(new Set(M.liste.map(m => m.mot.en)).size, M.liste.length, 'un mot par habitant');
+  for(const m of M.liste){
+    assert.ok(m.en && m.fr && m.mot.en && m.mot.fr && m.nom, m.id);
+    assert.ok(habitants.includes("'" + m.corps + "'"), 'corps inconnu ' + m.corps);
+    assert.ok(fs.existsSync(path.join(ICI, 'assets/3d/q/q-' + m.corps.toLowerCase() + '.glb')), m.corps);
+    assert.ok(m.en.toLowerCase().includes(m.mot.en) || m.en.toLowerCase().includes(m.mot.en.slice(0, 4)), 'la phrase prépare le mot : ' + m.id);
+    for(let k = 0; k < 20; k++){
+      const q = M.quiz(m.id); assert.strictEqual(q.choix.length, 3); assert.strictEqual(new Set(q.choix).size, 3); assert.ok(q.choix.includes(m.mot.en)); assert.ok(q.question.includes(m.mot.fr));
+      const faux = q.choix.find(c => c !== m.mot.en), v = M.vanne(m.id, faux);
+      assert.ok(v.texte.includes('« ' + faux + ' »') && v.texte.includes('« ' + m.mot.en + ' »') && !/[{}]/.test(v.texte), v.texte);
+      assert.ok(!/\b(nul|bête|idiot|stupide|honte)\b/i.test(v.texte), v.texte);
+    }
+  }
+  let prec = ''; for(let k = 0; k < 30; k++){ const v = M.vanne('pirate', 'hat', null, prec); assert.notStrictEqual(v.modele, prec); prec = v.modele; }
+  // Les animations de combat ont été retirées (jeu familial)
+  const anims = fs.readFileSync(path.join(ICI, 'assets/3d/q/q-casual_male.glb')).toString('latin1');
+  for(const a of ['Death', 'Punch', 'SwordSlash', 'Shoot_OneHanded', 'RecieveHit']) assert.ok(!anims.includes('"' + a + '"'), a);
+  assert.ok(anims.includes('"Walk"') && anims.includes('"Victory"'));
+  assert.ok(lire('monde-3d.html').includes('js/metiers.js'));
+});
+await test('Mots City : nouvelles tenues Quaternius, avec repli si le modèle manque', () => {
+  const w = page(); w.eval(lire('js/mots-city.js')); const C = w.MotsCity;
+  assert.strictEqual(C.TENUES.length, 8);
+  for(const t of C.TENUES.filter(t => /^q:/.test(t.perso))) assert.ok(fs.existsSync(path.join(ICI, 'assets/3d/q/q-' + t.perso.slice(2).toLowerCase() + '.glb')), t.perso);
+  assert.strictEqual(C.propre({ tenue:6 }).tenue, 6);
+  assert.match(lire('js/kit3d.js'), /KIT\.corps\[nom\] \|\| KIT\.corps\.rogue/);
+});
+await test('service worker : modèles Quaternius, nature et décodeur meshopt en cache (hors ligne)', () => {
+  const sw = lire('sw.js');
+  for(const f of fs.readdirSync(path.join(ICI, 'assets/3d/q'))) assert.ok(sw.includes('"assets/3d/q/' + f + '"'), f);
+  for(const f of ['assets/3d/nature.glb', 'js/metiers.js', 'vendor/jsm/libs/meshopt_decoder.module.js']) assert.ok(sw.includes('"' + f + '"'), f);
+  assert.ok(fs.existsSync(path.join(ICI, 'assets/3d/CREDITS.md')) && /Quaternius/.test(lire('assets/3d/CREDITS.md')));
+});
+await test('CSS : rien sur <html>/<body> ne casse position:fixed (fenêtres décalées après défilement)', () => {
+  const css = lire('css/jeu.css').replace(/\/\*[\s\S]*?\*\//g, '');
+  for(const [, sel, corps] of css.matchAll(/(^|[}\s])((?:html|body)\s*)\{([^}]*)\}/g) ? [...css.matchAll(/(?:^|[}\n])\s*((?:html|body))\s*\{([^}]*)\}/g)] : [])
+    assert.ok(!/(^|;|\s)(perspective|transform|filter|contain|will-change)\s*:/.test(corps), sel + ' { ' + corps.trim().slice(0, 80) + ' }');
+});
 await test('accueil : un lien vers Mots City', () => {
   const w = page(); assert.ok(w.document.querySelector('a[href="mots-city.html"]'));
 });

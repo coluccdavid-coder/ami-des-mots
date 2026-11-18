@@ -6,8 +6,9 @@
 const fs = require('fs'), path = require('path'), crypto = require('crypto');
 const ICI = path.join(__dirname, '..');
 const fichiers = ['./', 'index.html', 'monde-3d.html', 'manifest.webmanifest', 'css/jeu.css', 'js/donnees.js', 'js/voix.js', 'js/textes.js', 'js/articulation.js', 'js/genres.js', 'js/confusions.js', 'js/vannes.js', 'js/jeu.js',
-  'mots-city.html', 'js/mots-city.js', 'vendor/three.module.js', 'img/icone.svg', 'img/icone-192.png', 'img/icone-512.png', 'img/ami-3d.webp']
+  'mots-city.html', 'js/mots-city.js', 'vendor/three.module.js', 'js/kit3d.js', 'vendor/jsm/loaders/GLTFLoader.js', 'vendor/jsm/objects/Sky.js', 'vendor/jsm/postprocessing/EffectComposer.js', 'vendor/jsm/postprocessing/MaskPass.js', 'vendor/jsm/postprocessing/OutputPass.js', 'vendor/jsm/postprocessing/Pass.js', 'vendor/jsm/postprocessing/RenderPass.js', 'vendor/jsm/postprocessing/ShaderPass.js', 'vendor/jsm/postprocessing/UnrealBloomPass.js', 'vendor/jsm/shaders/CopyShader.js', 'vendor/jsm/shaders/LuminosityHighPassShader.js', 'vendor/jsm/shaders/OutputShader.js', 'vendor/jsm/utils/BufferGeometryUtils.js', 'vendor/jsm/utils/SkeletonUtils.js', 'assets/3d/barbarian.glb', 'assets/3d/knight.glb', 'assets/3d/mage.glb', 'assets/3d/rogue.glb', 'assets/3d/ville-kaykit.glb', 'assets/3d/nature.glb', 'js/metiers.js', 'vendor/jsm/libs/meshopt_decoder.module.js', 'img/icone.svg', 'img/icone-192.png', 'img/icone-512.png', 'img/ami-3d.webp']
   .concat(fs.readdirSync(path.join(ICI, 'fonts')).filter(f => f.endsWith('.woff2')).sort().map(f => 'fonts/' + f))
+  .concat(fs.readdirSync(path.join(ICI, 'assets/3d/q')).filter(f => f.endsWith('.glb')).sort().map(f => 'assets/3d/q/' + f))
   .concat(fs.readdirSync(path.join(ICI, 'img/pictos')).sort().map(f => 'img/pictos/' + f));
 const h = crypto.createHash('sha256');
 for(const f of fichiers) if(f !== './') h.update(fs.readFileSync(path.join(ICI, f)));
