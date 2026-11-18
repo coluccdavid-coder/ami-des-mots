@@ -128,3 +128,13 @@ Le sélecteur affiche uniquement français et anglais. Les traductions coréenne
 7. Attends la nuit (ou joue 3 min) : néons, fenêtres, lampadaires, phares.
 8. Plage : ponton, grande roue qui tourne, mer animée.
 À vérifier sur un VRAI téléphone : fluidité (le test automatique n'a pas de carte graphique).
+
+## v5.37 — Les vrais habitants (Quaternius)
+
+1. Ouvre le site : dans le village, regarde la forêt autour du quartier et les fleurs sur les pelouses.
+2. Va voir un habitant avec un anneau **bleu** (ex. Captain Finn, près de l'école) → E :
+   il parle anglais, la traduction s'affiche. « 🎯 Petit défi » : choisis d'abord un mauvais mot (vanne),
+   puis le bon (geste de joie, compteur x/8).
+3. Mots City : choisis la tenue **Vache rigolote** ou **Pirate**, promène-toi : la foule est variée,
+   les palmiers et les parcs fleuris sont nouveaux.
+4. Sur téléphone : vérifie que ça reste fluide (moins de passants différents y sont chargés).

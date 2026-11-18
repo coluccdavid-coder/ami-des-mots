@@ -378,7 +378,7 @@
         '<button class="gros apprendre" data-a="lecon">📚 ' + esc(t('apprendre')) + '</button>' +
         '<button class="gros phrases-accueil" data-a="phrases">💬 ' + (base.ui === 'en' ? 'Build your first sentences' : 'Atelier des phrases') + ' <span>✨</span></button>' +
         '<button class="gros village-accueil" data-a="village">🗺️ ' + {"fr": "Explorer le village", "en": "Explore the word village", "es": "Explorar el pueblo", "it": "Esplora il villaggio", "pt": "Explorar a aldeia", "de": "Das Wörterdorf erkunden", "ar": "استكشف قرية الكلمات", "tr": "Kelime köyünü keşfet", "pl": "Odkryj wioskę słów", "ja": "ことばの村を探検", "uk": "Дослідити селище слів", "ko": "단어 마을 탐험하기", "dz": "اكتشف قرية الكلمات", "ma": "اكتشف قرية الكلمات", "tn": "اكتشف قرية الكلمات", "kab": "Snirem tamdint n wawalen"}[base.ui] + '</button>' +
-        '<a class="gros monde-3d-accueil" href="monde-3d.html">🌍 Explorer le monde 3D <span>🚀</span></a>' +
+        '<button class="gros monde-3d-accueil" data-a="accueil-3d">🌍 ' + (base.ui === 'en' ? 'Play in the 3D village' : base.ui === 'fr' ? 'Jouer dans le village 3D' : '3D') + ' <span>🚀</span></button>' +
         '<a class="gros monde-3d-accueil mots-city-accueil" href="mots-city.html">🛵 Mots City — l’anglais en rigolant <span>😂</span></a>' +
         '<div class="actions serrees">' +
           '<button class="moyen" data-a="themes">▶ ' + esc(t('jouer')) + '</button>' +
@@ -1304,6 +1304,28 @@
     choisirJeu(th);
   }
 
+  // ── Accueil en 3D ─────────────────────────────────────────────────
+  // Préférence : '1' toujours la 3D, '0' version classique, sinon automatique.
+  // Automatique = la 3D, sauf Lecture facile, animations réduites, appareil sans WebGL ou navigateur piloté (tests).
+  function accueil3DAuto(){
+    let pref = null; try{ pref = localStorage.getItem('ami_accueil3d'); }catch(e){}
+    if(pref === '0') return false;
+    if(pref === '1') return true;
+    if(facile() || sobre() || navigator.webdriver) return false;
+    try{ const c = document.createElement('canvas'); return !!(c.getContext('webgl2') || c.getContext('webgl')); }catch(e){ return false; }
+  }
+  function depuis3D(){ try{ return sessionStorage.getItem('ami_depuis3d') === '1'; }catch(e){ return false; } }
+  function retour3D(){
+    try{ if(document.referrer && /monde-3d\.html/.test(document.referrer) && history.length > 1) return history.back(); }catch(e){}
+    location.href = 'monde-3d.html';
+  }
+  function ouvrirDepuis3D(dest){
+    const [quoi, v] = String(dest).split(':');
+    if(quoi === 'lieu' && LIEUX_VILLAGE.some(x => x.theme === v)) return entrerVillageLieu(v);
+    const ecrans = { defi, lecon, phrases:atelierPhrases, revoir, carnet, reglages, village };
+    return (ecrans[quoi] || accueil)();
+  }
+
   // ── Défi du jour et révision ──────────────────────────────────────
   function defi(){
     // Le même défi toute la journée (tirage fixé par la date et la langue).
@@ -1600,15 +1622,16 @@
     const b = ev.target.closest('[data-a]'); if(!b) return;
     const v = b.dataset.v;
     switch(b.dataset.a){
-      case 'accueil': return accueil();
-      case 'themes': return themes();
+      case 'accueil': return depuis3D() ? retour3D() : accueil();
+      case 'accueil-3d': try{ localStorage.setItem('ami_accueil3d', '1'); }catch(e){} location.href = 'monde-3d.html'; return;
+      case 'themes': return depuis3D() ? retour3D() : themes();
       case 'theme': return choisirJeu(v);
       case 'theme-retour': return choisirJeu(theme);
       case 'jeu': return commencer(v);
       case 'defi': return defi();
       case 'lecon': return lecon();
       case 'phrases': return atelierPhrases();
-      case 'village': return village();
+      case 'village': return depuis3D() ? retour3D() : village();
       case 'village-lieu': return entrerVillageLieu(v);
       case 'phrase-token': return choisirMotPhrase(Number(v));
       case 'phrase-check': return verifierPhrase();
@@ -1696,9 +1719,11 @@
   prefs();
   // Retour de la page de paiement (?abonne=1) : on vérifie tout de suite.
   const retourPaiement = /[?&]abonne=1/.test(location.search);
+  // Accueil en 3D : un lien du village 3D (?aller=…) ouvre directement un jeu ; « Accueil » y ramène.
+  const lienAller = new URLSearchParams(location.search).get('aller');
   if(retourPaiement) try{ history.replaceState(null, '', location.pathname); }catch(e){}
   // Au lancement : le certificat gardé est vérifié (hors connexion aussi), puis le serveur est consulté.
-  window.AmiDesMotsPret = verifierJeton(base.abo.jeton, base.abo.code).then(d => { droits = d; if(d && !partie) accueil(); return rafraichir(retourPaiement); });
+  window.AmiDesMotsPret = verifierJeton(base.abo.jeton, base.abo.code).then(d => { droits = d; if(d && !partie && !lienAller && !depuis3D()) accueil(); return rafraichir(retourPaiement); });
   // Le webhook Stripe peut arriver quelques secondes après le retour.
   if(retourPaiement) [5000, 15000, 40000].forEach(ms => setTimeout(() => { if(!plus()) rafraichir(true); }, ms));
   if(window.Articulation) try{ Articulation.init(); }catch(e){}
@@ -1706,5 +1731,11 @@
   window.AmiDesMots = { base, J, affiche, fnv1a, urlVoix, accueil, themes, choisirJeu, commencer, lettresPossibles, distincts, motsDu, aDire, CATALOGUE, MECAS, disponible, nomJeu, aRevoir, noter, jour, defi, revoir, lecon, astuces, aToi, blague, carnet, avecArticle, astuce, niveauHumour, fousRires, reglages, CONFIG, facile, nbMots, restaurer, verifierJeton, plus, ecranPlus, formatCode, rafraichir,
     get etat(){ return J(); } };
   garder();
-  accueil();
+  if(lienAller){
+    try{ history.replaceState(null, '', location.pathname); }catch(e){}
+    if(lienAller === 'classique'){ try{ sessionStorage.removeItem('ami_depuis3d'); localStorage.setItem('ami_accueil3d', '0'); }catch(e){} accueil(); }
+    else{ try{ sessionStorage.setItem('ami_depuis3d', '1'); }catch(e){} ouvrirDepuis3D(lienAller); }
+  }
+  else if(!location.search && accueil3DAuto()) location.replace('monde-3d.html');
+  else accueil();
 })();
