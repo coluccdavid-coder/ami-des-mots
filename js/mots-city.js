@@ -104,11 +104,17 @@
   // ── Plumes dorées cachées dans la ville : chacune apprend un mot ──
   const PLUMES_DOREES = ['🐱','🦉','🍎','🌙','⭐','🌊','🏝️','⛵','🚗','🎸','☀️','🌹','🔑','👟','🦀','🍓','🎈','🌳','⚓','🦜'];
   // Tenues du héros (couleurs : haut, bas, casquette, chaussures).
+  // perso : modèle 3D animé (KayKit, CC0) ; les couleurs servent si les modèles ne chargent pas.
   const TENUES = [
-    { nom:'Coucher de soleil', haut:0xff6f91, bas:0x2d3a5a, casquette:0xffc75f, chaussures:0xffffff },
-    { nom:'Lagon', haut:0x2ec4b6, bas:0xf6f1e9, casquette:0x1b4965, chaussures:0xff9f1c },
-    { nom:'Néon', haut:0x8338ec, bas:0x111122, casquette:0x3a86ff, chaussures:0xfb5607 },
-    { nom:'Plage', haut:0xfff3b0, bas:0xe09f3e, casquette:0x9e2a2b, chaussures:0x335c67 }
+    { nom:'Explorateur', perso:'rogue', haut:0x2ec4b6, bas:0x2d3a5a, casquette:0x1b4965, chaussures:0xff9f1c },
+    { nom:'Magicien', perso:'mage', haut:0x8338ec, bas:0x111122, casquette:0x3a86ff, chaussures:0xfb5607 },
+    { nom:'Chevalier', perso:'knight', haut:0xc0c8d8, bas:0x3a4a6b, casquette:0xffc75f, chaussures:0x555555 },
+    { nom:'Viking', perso:'barbarian', haut:0xe09f3e, bas:0x6b4f3a, casquette:0x9e2a2b, chaussures:0x335c67 },
+    // Personnages Quaternius (CC0) ; si le modèle ne charge pas, le jeu prend l'Explorateur.
+    { nom:'Pirate', perso:'q:Pirate_Male', haut:0xb23a48, bas:0x2b2d42, casquette:0x111111, chaussures:0x5c3d2e },
+    { nom:'Cheffe', perso:'q:Chef_Female', haut:0xffffff, bas:0x2d3a5a, casquette:0xf1f1f1, chaussures:0x333333 },
+    { nom:'Sorcière', perso:'q:Witch', haut:0x5a189a, bas:0x240046, casquette:0x10002b, chaussures:0xff9e00 },
+    { nom:'Vache rigolote', perso:'q:Cow', haut:0xffffff, bas:0x222222, casquette:0xf7a1c4, chaussures:0x222222 }
   ];
 
   // ── Les petites phrases de la ville (vraies expressions, avec leur sens) ──

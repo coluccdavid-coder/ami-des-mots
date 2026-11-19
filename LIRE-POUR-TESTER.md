@@ -128,3 +128,40 @@ Le sélecteur affiche uniquement français et anglais. Les traductions coréenne
 7. Attends la nuit (ou joue 3 min) : néons, fenêtres, lampadaires, phares.
 8. Plage : ponton, grande roue qui tourne, mer animée.
 À vérifier sur un VRAI téléphone : fluidité (le test automatique n'a pas de carte graphique).
+
+## v5.37 — Les vrais habitants (Quaternius)
+
+1. Ouvre le site : dans le village, regarde la forêt autour du quartier et les fleurs sur les pelouses.
+2. Va voir un habitant avec un anneau **bleu** (ex. Captain Finn, près de l'école) → E :
+   il parle anglais, la traduction s'affiche. « 🎯 Petit défi » : choisis d'abord un mauvais mot (vanne),
+   puis le bon (geste de joie, compteur x/8).
+3. Mots City : choisis la tenue **Vache rigolote** ou **Pirate**, promène-toi : la foule est variée,
+   les palmiers et les parcs fleuris sont nouveaux.
+4. Sur téléphone : vérifie que ça reste fluide (moins de passants différents y sont chargés).
+
+## v5.38 — Quêtes et collisions
+
+1. Dans le village, fonce dans une maison, la fontaine, un arbre, un habitant : tu es arrêté.
+   Mets-toi devant une voiture : elle s'arrête, puis repart quand tu t'écartes.
+2. 📖 Quêtes : lis le but de chaque quête.
+3. Va voir Captain Finn (anneau bleu) → Petit défi → réponds « treasure » : il donne un indice en anglais.
+   Va le vérifier (entre le lampadaire et le banc) : la plume est petite, près du sol.
+4. Avec 10 plumes : Ami revole (garde Espace ou ⤒ appuyé).
+5. Bouton « ↻ Recommencer l'aventure » pour tout rejouer depuis le début.
+
+## v5.39 — Vannes en scènes et pièges de l'anglais
+
+1. Version classique, « Je parle : Français », « J'apprends : Anglais » : un bouton orange
+   **🪤 Les pièges de l'anglais** apparaît sur l'accueil.
+2. Fais exprès de te tromper : lis la vanne, écoute la bonne phrase (🔊), lis la règle.
+3. Joue un jeu d'images (ex. Animaux) et trompe-toi plusieurs fois : certaines vannes deviennent
+   des petites scènes (« Tu voulais caresser le chat… ») avec la phrase anglaise 🇬🇧 à la fin.
+4. Relance les pièges le lendemain : ceux que tu as ratés reviennent en premier.
+
+## v5.40 — Le coin anglais
+
+1. Accueil (Français → Anglais) : **🇬🇧 Le coin anglais** → 4 cartes.
+2. **🎤 Battle** : choisis d'abord une réplique fausse (vanne), puis la bonne. 3 manches, score.
+3. **☕ Situations** : « Au café » — écoute le serveur, choisis ta réponse. Essaie « Give me hot ».
+4. **✍️ Dictée** : écris « I can sea the sea » quand Ami dit « I can see the sea » → vanne du maillot de bain.
+5. Village 3D : portail 🇬🇧 au nord ; **Professor Puzzle** (anneau orange) au nord-ouest.

@@ -758,3 +758,44 @@ en:{
   ]
 }
 };
+
+// ── Scènes absurdes (v5.39) : la vanne raconte ce qui arrive avec le MAUVAIS mot,
+// puis montre la bonne phrase anglaise (si on apprend l'anglais). {J}/{F} = mots avec article.
+// « en » : petite phrase anglaise simple et correcte, avec {je} = le bon mot en anglais.
+window.VANNES.fr.scenes = {
+  animaux:[
+    { t:'Tu voulais caresser {J}… et tu caresses {F} ! Surprise au bout des doigts. 🫳', en:'I want to pet the {je}.' },
+    { t:'Au zoo, tu cherches {J}… et le guide te montre {F}. Il lui faut des lunettes ! 👓', en:'Look at the {je}!' },
+    { t:'Tu prends {J} en photo… et sur la photo, c’est {F} qui fait coucou ! 📸', en:'Look at the {je}!' }],
+  manger:[
+    { t:'Tu commandes {J} au restaurant… et le serveur t’apporte {F} sur un plateau ! 🍽️', en:'Can I have the {je}, please?' },
+    { t:'Dans ta boîte à goûter, tu attendais {J}… surprise : c’est {F} ! 🎁', en:'Can I have the {je}, please?' }],
+  maison:[
+    { t:'Tu cherches {J} dans toute la maison… et tu tombes sur {F} ! 🔦', en:'Can you give me the {je}, please?' },
+    { t:'Maman demande {J}… et tu lui apportes {F}. Elle hésite entre rire et soupirer. 😅', en:'Can you give me the {je}, please?' }],
+  habits:[
+    { t:'Tu voulais prendre {J}… et tu sors dans la rue avec {F} ! Défilé de mode très original. 🕺', en:'I need my {je}.' },
+    { t:'Dans ta valise, tu as rangé {F} au lieu {de_J}… Les vacances vont être rigolotes ! 🧳', en:'I need my {je}.' }],
+  nature:[
+    { t:'Tu voulais photographier {J}… et sur la photo, il y a {F} ! 📸', en:'Look at the {je}!' },
+    { t:'Tu fais un dessin {de_J}… la maîtresse voit {F}. Art moderne ! 🎨', en:'Look at the {je}!' }],
+  ville:[
+    { t:'Tu cherches {J} sur la carte… et le GPS t’envoie vers {F} ! 🗺️', en:'Let’s go to the {je}!' },
+    { t:'Tu donnes rendez-vous à ta copine près {de_J}… elle t’attend près {de_F} ! 📍', en:'Let’s meet at the {je}!' }],
+  musique:[
+    { t:'Au spectacle, tu attendais {J}… et c’est {F} qui entre en scène ! Le public applaudit quand même. 👏', en:'Look at the {je}!' },
+    { t:'Pour ton anniversaire, tu voulais {J}… et on t’offre {F}. Tu fais semblant d’être ravi ! 🎂', en:'I want the {je}!' }],
+  atelier:[
+    { t:'Tu demandes {J} pour bricoler… et on te tend {F}. Le bricolage va être sportif ! 🔧', en:'Can you pass me the {je}, please?' },
+    { t:'Le savant réclame {J}… son assistant lui donne {F}. Expérience ratée, fou rire garanti ! 🧪', en:'Can you pass me the {je}, please?' }]
+};
+window.VANNES.en.scenes = {
+  animaux:[ { t:'You wanted to pet the {j}… and you’re petting the {f}! Surprise! 🫳' }, { t:'At the zoo, you look for the {j}… and the guide shows you the {f}. He needs glasses! 👓' } ],
+  manger:[ { t:'You order the {j} at the restaurant… and the waiter brings you the {f}! 🍽️' } ],
+  maison:[ { t:'You search the whole house for the {j}… and you find the {f}! 🔦' } ],
+  habits:[ { t:'You wanted your {j}… and you go out with the {f}! Very creative fashion. 🕺' } ],
+  nature:[ { t:'You take a photo of the {j}… and the photo shows the {f}! 📸' } ],
+  ville:[ { t:'You look for the {j} on the map… and the GPS takes you to the {f}! 🗺️' }, { t:'You meet your friend by the {j}… but she’s waiting by the {f}! 📍' } ],
+  musique:[ { t:'At the show, you were waiting for the {j}… and the {f} walks on stage! 👏' }, { t:'For your birthday, you wanted the {j}… and you get the {f}. Smile and say thank you! 🎂' } ],
+  atelier:[ { t:'You ask for the {j}… and someone hands you the {f}. DIY gets exciting! 🔧' } ]
+};

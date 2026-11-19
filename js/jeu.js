@@ -206,14 +206,14 @@
   }
   const urlVoix = (lang, texte) => CONFIG.AUDIO_BASE + (lang === 'kab' ? 'kab/' + kabSlug(texte) : lang + '/' + fnv1a(texte)) + '.mp3';
   let lecteur = null;
-  function voixNavigateur(lang, texte){
+  function voixNavigateur(lang, texte, vitesse){
     const loc = LOCALES[lang];
     if(!loc || !window.speechSynthesis) return false;
     const toutes = speechSynthesis.getVoices();
     const code = loc.slice(0, 2).toLowerCase();
     const voix = toutes.filter(v => v.lang && v.lang.replace('_', '-').toLowerCase().startsWith(code));
     const u = new SpeechSynthesisUtterance(texte);
-    u.lang = loc; u.rate = .9;
+    u.lang = loc; u.rate = vitesse || .9;
     // Privilégier une voix de la bonne langue ; si Android n'a pas encore
     // chargé sa liste, garder la voix système plutôt que de ne rien dire.
     const v = voix.find(x => /natural|neural|premium|enhanced|google/i.test(x.name)) || voix[0] || toutes.find(x => x.default) || toutes[0];
@@ -238,9 +238,9 @@
   function lireConsigne(texte){ if(texte && !voixNavigateur(base.ui, texte)) silence(); }
   // Une phrase (vanne + correction) n'a pas d'enregistrement : on ne la demande
   // pas au serveur des voix, on la lit avec la voix du téléphone, sans chevauchement.
-  function direPhrase(texte, langue){
+  function direPhrase(texte, langue, vitesse){
     try{ if(lecteur){ lecteur.pause(); lecteur = null; } }catch(e){}
-    if(texte && !voixNavigateur(langue, texte)) silence();
+    if(texte && !voixNavigateur(langue, texte, vitesse)) silence();
   }
   function silence(){ const n = $('#note-voix'); if(n){ n.textContent = '🔇 ' + t('sans_voix'); setTimeout(() => { if(n.isConnected) n.textContent = ''; }, 2500); } }
   window.speak = function(texte, langueForce){
@@ -377,8 +377,9 @@
         '<button class="gros defi' + (defiFait ? ' fait' : '') + '" data-a="defi">' + (defiFait ? '✓ ' : '⚡ ') + esc(t('defi')) + '</button>' +
         '<button class="gros apprendre" data-a="lecon">📚 ' + esc(t('apprendre')) + '</button>' +
         '<button class="gros phrases-accueil" data-a="phrases">💬 ' + (base.ui === 'en' ? 'Build your first sentences' : 'Atelier des phrases') + ' <span>✨</span></button>' +
+        (piegesDispo() ? '<button class="gros pieges-accueil" data-a="' + (A_EN() ? 'anglais' : 'pieges') + '">🇬🇧 Le coin anglais <span>🪤🎤✍️</span></button>' : '') +
         '<button class="gros village-accueil" data-a="village">🗺️ ' + {"fr": "Explorer le village", "en": "Explore the word village", "es": "Explorar el pueblo", "it": "Esplora il villaggio", "pt": "Explorar a aldeia", "de": "Das Wörterdorf erkunden", "ar": "استكشف قرية الكلمات", "tr": "Kelime köyünü keşfet", "pl": "Odkryj wioskę słów", "ja": "ことばの村を探検", "uk": "Дослідити селище слів", "ko": "단어 마을 탐험하기", "dz": "اكتشف قرية الكلمات", "ma": "اكتشف قرية الكلمات", "tn": "اكتشف قرية الكلمات", "kab": "Snirem tamdint n wawalen"}[base.ui] + '</button>' +
-        '<a class="gros monde-3d-accueil" href="monde-3d.html">🌍 Explorer le monde 3D <span>🚀</span></a>' +
+        '<button class="gros monde-3d-accueil" data-a="accueil-3d">🌍 ' + (base.ui === 'en' ? 'Play in the 3D village' : base.ui === 'fr' ? 'Jouer dans le village 3D' : '3D') + ' <span>🚀</span></button>' +
         '<a class="gros monde-3d-accueil mots-city-accueil" href="mots-city.html">🛵 Mots City — l’anglais en rigolant <span>😂</span></a>' +
         '<div class="actions serrees">' +
           '<button class="moyen" data-a="themes">▶ ' + esc(t('jouer')) + '</button>' +
@@ -720,7 +721,7 @@
     const niv = liste => liste && (liste[niveau] || liste[0]);
     const f = ctx.f != null ? ctx.f : nomVanne(mauvaise, langue);
     const j = ctx.j != null ? ctx.j : nomVanne(bonne, langue);
-    let pool = null;
+    let pool = null, scene = null;
     if(type === 'mot' || type === 'ecoute'){
       if(!f || !j || f === j) pool = V.secours;
       else{
@@ -731,6 +732,11 @@
         if((ctx.serie || 0) >= 3 && hasard() < .7) pool = V.serie;
         else if(deja && hasard() < .6) pool = V.encore;
         else if(type === 'ecoute' && hasard() < .5) pool = V.ecoute;
+        // Scène absurde : ce qui arrive avec le mauvais mot (+ la bonne phrase anglaise).
+        else if(V.scenes && V.scenes[theme] && V.scenes[theme].some(x => x.t !== derniereBlague) && !facile() && (langue !== 'fr' || (art[0] && art[1])) && hasard() < .4){
+          const toutes = V.scenes[theme], l = toutes.filter(x => x.t !== derniereBlague);
+          scene = (l.length ? l : toutes)[Math.floor(Math.random() * (l.length || toutes.length))];
+        }
         else if(V.accordees && art[0] && art[1] && hasard() < .3) pool = V.accordees;
         else if(initialeDe(f) && initialeDe(f) === initialeDe(j) && hasard() < .4) pool = V.initiale;
         else if(riment(f, j) && hasard() < .5) pool = V.rime;
@@ -741,6 +747,15 @@
     const valeurs = Object.assign({ f, j, l:initialeDe(f), n:ctx.serie || '' }, ctx);
     if(type === 'mot' || type === 'ecoute') valeurs.l = initialeDe(f);
     if(art[0] && art[1]) Object.assign(valeurs, { F:art[0].F, Fc:majuscule(art[0].F), fe:art[0].e, fp:art[0].p, J:art[1].F, Jc:majuscule(art[1].F), je:art[1].e, jp:art[1].p });
+    if(scene){
+      const de = x => x.F.replace(/^le /, 'du ').replace(/^la /, 'de la ').replace(/^l’/, 'de l’');
+      if(art[1]) valeurs.de_J = de(art[1]); if(art[0]) valeurs.de_F = de(art[0]);
+      derniereBlague = scene.t;
+      let txt = remplir(scene.t, valeurs);
+      const je = nomVanne(bonne, 'en');
+      if(scene.en && base.cible === 'en' && je) txt += ' 🇬🇧 « ' + majuscule(remplir(scene.en, { je })) + ' »';
+      return txt;
+    }
     if(type === 'panier'){ valeurs.p = nomPanier(ctx.panier, langue); valeurs.b = nomPanier(ctx.bonPanier, langue); valeurs.m = j; }
     let liste = niv(pool);
     // Lecture facile : Ami reste doux et préfère les phrases courtes.
@@ -1304,6 +1319,28 @@
     choisirJeu(th);
   }
 
+  // ── Accueil en 3D ─────────────────────────────────────────────────
+  // Préférence : '1' toujours la 3D, '0' version classique, sinon automatique.
+  // Automatique = la 3D, sauf Lecture facile, animations réduites, appareil sans WebGL ou navigateur piloté (tests).
+  function accueil3DAuto(){
+    let pref = null; try{ pref = localStorage.getItem('ami_accueil3d'); }catch(e){}
+    if(pref === '0') return false;
+    if(pref === '1') return true;
+    if(facile() || sobre() || navigator.webdriver) return false;
+    try{ const c = document.createElement('canvas'); return !!(c.getContext('webgl2') || c.getContext('webgl')); }catch(e){ return false; }
+  }
+  function depuis3D(){ try{ return sessionStorage.getItem('ami_depuis3d') === '1'; }catch(e){ return false; } }
+  function retour3D(){
+    try{ if(document.referrer && /monde-3d\.html/.test(document.referrer) && history.length > 1) return history.back(); }catch(e){}
+    location.href = 'monde-3d.html';
+  }
+  function ouvrirDepuis3D(dest){
+    const [quoi, v] = String(dest).split(':');
+    if(quoi === 'lieu' && LIEUX_VILLAGE.some(x => x.theme === v)) return entrerVillageLieu(v);
+    const ecrans = { defi, lecon, phrases:atelierPhrases, pieges, anglais:coinAnglais, battle:battleGo, situations, dictee:dicteeGo, revoir, carnet, reglages, village };
+    return (ecrans[quoi] || accueil)();
+  }
+
   // ── Défi du jour et révision ──────────────────────────────────────
   function defi(){
     // Le même défi toute la journée (tirage fixé par la date et la langue).
@@ -1435,6 +1472,246 @@
       const zone=$('#retour-phrase');
       if(zone) zone.textContent=(base.ui==='en'?'Ami’s hint: the next word is “':'Indice d’Ami : le prochain mot est « ')+tokens[prochain]+(base.ui==='en'?'”':' »');
     }
+  }
+
+  // ── Les pièges de l'anglais (js/pieges.js) : erreurs typiques des francophones ──
+  // Une vanne par erreur (ce qu'un anglophone comprendrait), la règle, la bonne phrase dite à voix haute.
+  // Révision espacée : chaque piège a sa boîte (0 à 4) ; les pièges ratés reviennent vite.
+  let piege = null;
+  const piegesDispo = () => !!window.PIEGES && base.cible === 'en' && base.ui === 'fr';
+  function etatPieges(){ const j = J(); j.pieges = window.PIEGES.propre(j.pieges); return j.pieges; }
+  function pieges(){
+    piege = null;
+    if(!piegesDispo()){
+      poser(barre('accueil') + '<main class="centre"><div class="ami-moyen">' + ami('content') + '</div><h2>🪤 Les pièges de l’anglais</h2>' +
+        '<p>Ce coin est fait pour les francophones qui apprennent l’anglais : choisis « Je parle : Français » et « J’apprends : Anglais ».</p>' +
+        '<p><button class="moyen plein" data-a="accueil">Retour</button></p></main>');
+      return;
+    }
+    const P = window.PIEGES, e = etatPieges(), m = P.maitrises(e), auj = P.jourNum(), dus = P.liste.filter(p => e[p.id] && e[p.id].d <= auj).length;
+    const cats = Object.keys(P.CATS).map(c => { const l = P.liste.filter(p => p.cat === c), ok = l.filter(p => e[p.id] && e[p.id].b >= 3).length;
+      return '<li><span>' + esc(P.CATS[c]) + '</span><span class="points" aria-label="' + ok + '/' + l.length + '">' + ok + '/' + l.length + '</span></li>'; }).join('');
+    poser(barre(A_EN() ? 'anglais' : 'accueil') + '<main class="pieges-accueil-ecran">' +
+      '<div class="ami-moyen">' + ami('content') + '</div><h2>🪤 Les pièges de l’anglais</h2>' +
+      '<p class="pieges-intro">« I have 10 years », « I am agree », « a car red »… Les francophones tombent tous dedans ! Ici, chaque piège a sa vanne : tu ris, et tu ne retombes plus dedans.</p>' +
+      '<p class="pieges-score">🏅 Pièges déjoués : <strong>' + m + '/' + P.liste.length + '</strong>' + (dus ? ' · 🔁 ' + dus + ' à revoir' : '') + '</p>' +
+      '<ul class="pieges-cats">' + cats + '</ul>' +
+      '<button class="gros" data-a="pieges-go">▶ C’est parti (6 pièges)</button></main>');
+  }
+  function piegesGo(){
+    if(!piegesDispo()) return pieges();
+    piege = { liste:window.PIEGES.seance(etatPieges(), 6), i:0, bonnes:0, gain:0, repondu:false };
+    afficherPiege();
+  }
+  function afficherPiege(){
+    const pg = piege; if(!pg) return pieges();
+    if(pg.i >= pg.liste.length){
+      const P = window.PIEGES, m = P.maitrises(etatPieges());
+      poser(barre('accueil') + '<main class="centre pieges-fin"><div class="ami-moyen">' + ami('fete') + '</div>' +
+        '<h2>' + (pg.bonnes === pg.liste.length ? 'Aucun piège ne t’a eu ! 🏆' : 'Pièges repérés !') + '</h2>' +
+        '<p>' + pg.bonnes + '/' + pg.liste.length + ' du premier coup · 🏅 ' + m + '/' + P.liste.length + ' pièges déjoués en tout</p>' +
+        (pg.gain ? '<p class="gain-phrases">⭐ +' + pg.gain + ' plumes</p>' : '') +
+        '<p>Les pièges ratés reviendront bientôt : c’est comme ça qu’on les retient.</p>' +
+        '<div class="actions serrees"><button class="moyen plein" data-a="pieges-go">🔁 Encore</button><button class="moyen" data-a="pieges">🪤 Tous les pièges</button><button class="moyen" data-a="' + (A_EN() ? 'anglais' : 'accueil') + '">' + (A_EN() ? '🇬🇧 Coin anglais' : '🏠 Accueil') + '</button></div></main>');
+      return;
+    }
+    const p = pg.liste[pg.i]; pg.repondu = false; pg.options = window.PIEGES.options(p);
+    poser(barre('pieges') + '<main class="piege-ecran">' +
+      '<p class="piege-cat">' + esc(window.PIEGES.CATS[p.cat]) + ' · ' + (pg.i + 1) + '/' + pg.liste.length + '</p>' +
+      '<div class="piege-haut"><div class="ami-moyen" id="ami-piege">' + ami('content') + '</div>' +
+      '<div><p class="piege-consigne">Comment dit-on en anglais ?</p><p class="piege-fr">🇫🇷 ' + esc(p.fr) + '</p></div></div>' +
+      '<div class="piege-options">' + pg.options.map((o, i) => '<button class="moyen piege-opt" data-a="piege-rep" data-v="' + i + '" lang="en">' + esc(o) + '</button>').join('') + '</div>' +
+      '<div class="piege-retour" id="piege-retour" role="status" aria-live="polite"></div></main>');
+  }
+  function repondrePiege(i){
+    const pg = piege; if(!pg || pg.repondu) return;
+    const p = pg.liste[pg.i], choix = pg.options[i]; if(choix == null) return;
+    pg.repondu = true;
+    const juste = choix === p.bon, e = etatPieges();
+    window.PIEGES.noter(e, p.id, juste);
+    if(juste){ pg.bonnes++; pg.gain += 2; J().plumes += 2; }
+    garder();
+    document.querySelectorAll('.piege-opt').forEach((b, k) => { b.disabled = true; if(pg.options[k] === p.bon) b.classList.add('ok'); else if(k === i) b.classList.add('ko'); });
+    const faux = !juste && p.faux.find(f => f.en === choix);
+    const a = $('#ami-piege'); if(a) a.innerHTML = ami(juste ? 'fete' : 'surpris');
+    const r = $('#piege-retour');
+    if(r) r.innerHTML = (juste ? '<p class="piege-bravo">Yes! 🎉 Tu as évité le piège.</p>' : '<p class="piege-vanne">😂 ' + esc(faux ? faux.vanne : 'Presque !') + '</p>') +
+      '<p class="piege-bon" lang="en">✅ ' + esc(p.bon) + ' <button class="bouton-rond" data-a="piege-ecouter" aria-label="Écouter la bonne phrase">🔊</button></p>' +
+      '<p class="piege-regle">💡 ' + esc(p.regle) + '</p>' +
+      '<button class="moyen plein" data-a="piege-suivant">' + (pg.i + 1 < pg.liste.length ? 'Piège suivant →' : 'Voir mon score') + '</button>';
+    bruit(juste ? 'juste' : 'faux');
+    direPhrase(p.bon, 'en');
+    const n = $('[data-a="piege-suivant"]'); if(n) n.focus({ preventScroll:true });
+  }
+
+  // ── LE COIN ANGLAIS (js/anglais.js) : battle de vannes, situations de la vie, dictée rigolote + les pièges ──
+  // Réservé aux francophones qui apprennent l'anglais. Progression dans J().anglais (validée à la restauration).
+  const A_EN = () => window.ANGLAIS;
+  function etatAnglais(){
+    const j = J(), o = j.anglais && typeof j.anglais === 'object' ? j.anglais : {}, ids = A_EN() ? A_EN().SITUATIONS.map(x => x.id) : [];
+    const n = (x, max) => Math.min(max, Math.max(0, Math.floor(Number(x)) || 0));
+    j.anglais = { situations:Array.isArray(o.situations) ? [...new Set(o.situations.filter(x => ids.includes(x)))] : [], victoires:n(o.victoires, 1e5), battles:n(o.battles, 1e5), dictees:n(o.dictees, 1e5) };
+    return j.anglais;
+  }
+  const traduire = fr => fr ? '<details class="trad"><summary>🇫🇷 Traduire</summary><p>' + esc(fr) + '</p></details>' : '';
+  function coinAnglais(){
+    piege = battle = situation = dictee = null;
+    if(!piegesDispo() || !A_EN()) return pieges();
+    const e = etatAnglais(), P = window.PIEGES, m = P.maitrises(etatPieges());
+    const carte = (a, icone, titre, texte, info) => '<button class="carte-anglais" data-a="' + a + '"><span class="ic">' + icone + '</span><strong>' + titre + '</strong><small>' + texte + '</small><em>' + info + '</em></button>';
+    poser(barre('accueil') + '<main class="coin-anglais"><div class="ami-moyen">' + ami('content') + '</div>' +
+      '<h2>🇬🇧 Le coin anglais</h2><p class="pieges-intro">Pour parler anglais pour de vrai… en rigolant.</p><div class="cartes-anglais">' +
+      carte('pieges', '🪤', 'Les pièges', 'Les erreurs que font tous les francophones', '🏅 ' + m + '/' + P.liste.length) +
+      carte('situations', '☕', 'Situations de la vie', 'Café, école, magasin… choisis ta réplique', '✅ ' + e.situations.length + '/' + A_EN().SITUATIONS.length) +
+      carte('dictee', '✍️', 'Dictée rigolote', 'Ami parle, tu écris (attention aux mots jumeaux !)', '✍️ ' + e.dictees + ' phrase' + (e.dictees > 1 ? 's' : '') + ' parfaite' + (e.dictees > 1 ? 's' : '')) +
+      carte('battle', '🎤', 'Battle de vannes', 'Ami se vante en anglais : cloue-lui le bec !', '🏆 ' + e.victoires + ' victoire' + (e.victoires > 1 ? 's' : '')) +
+      '</div></main>');
+  }
+
+  // Battle : 3 manches. Ami se vante ; on choisit la réplique juste et drôle. Point seulement du premier coup.
+  let battle = null;
+  function battleGo(){
+    if(!piegesDispo() || !A_EN()) return pieges();
+    battle = { manches:A_EN().melanger(A_EN().BATTLE).slice(0, 3), i:0, toi:0, ami:0, essai:0, fini:false };
+    afficherBattle();
+  }
+  function afficherBattle(){
+    const b = battle; if(!b) return coinAnglais();
+    if(b.i >= b.manches.length){
+      const e = etatAnglais(); e.battles++; const gagne = b.toi > b.ami; if(gagne) e.victoires++; garder();
+      poser(barre('anglais') + '<main class="centre battle-fin"><div class="ami-moyen">' + ami(gagne ? 'surpris' : 'fete') + '</div>' +
+        '<h2>' + (b.toi === 3 ? 'Victoire écrasante ! 🏆' : gagne ? 'Tu gagnes la battle ! 🎤' : 'Ami gagne… de justesse ! 🦉') + '</h2>' +
+        '<p class="battle-score">Toi ' + b.toi + ' – ' + b.ami + ' Ami</p>' +
+        '<p lang="en">🦉 « ' + (gagne ? 'OK, you win… Rematch tomorrow?' : 'I win! But your English is getting better!') + ' »</p>' +
+        '<p>' + (gagne ? 'D’accord, tu as gagné… Revanche demain ?' : 'J’ai gagné ! Mais ton anglais progresse !') + '</p>' +
+        '<div class="actions serrees"><button class="moyen plein" data-a="battle">🔁 Revanche</button><button class="moyen" data-a="anglais">🇬🇧 Coin anglais</button></div></main>');
+      return;
+    }
+    const m = b.manches[b.i]; b.essai = 0; b.fini = false;
+    b.options = A_EN().melanger([m.bon.en].concat(m.faux.map(f => f.en)));
+    poser(barre('anglais') + '<main class="battle-ecran"><p class="piege-cat">🎤 Manche ' + (b.i + 1) + '/3 · Toi ' + b.toi + ' – ' + b.ami + ' Ami</p>' +
+      '<div class="piege-haut"><div class="ami-moyen" id="ami-battle">' + ami('content') + '</div>' +
+      '<div class="bulle-ami"><p class="piege-fr" lang="en">« ' + esc(m.ami) + ' » <button class="bouton-rond" data-a="battle-ecouter" aria-label="Réécouter Ami">🔊</button></p>' + traduire(m.fr) + '</div></div>' +
+      '<p class="piege-consigne">Ta réplique (juste ET drôle) :</p>' +
+      '<div class="piege-options">' + b.options.map((o, i) => '<button class="moyen piege-opt" data-a="battle-rep" data-v="' + i + '" lang="en">' + esc(o) + '</button>').join('') + '</div>' +
+      '<div class="piege-retour" id="battle-retour" role="status" aria-live="polite"></div></main>');
+    direPhrase(m.ami, 'en');
+  }
+  function repondreBattle(i){
+    const b = battle; if(!b || b.fini) return;
+    const m = b.manches[b.i], choix = b.options[i], bouton = document.querySelectorAll('.piege-opt')[i]; if(choix == null || !bouton || bouton.disabled) return;
+    const r = $('#battle-retour'), a = $('#ami-battle');
+    if(choix === m.bon.en){
+      b.fini = true; if(b.essai === 0){ b.toi++; J().plumes += 2; } else b.ami++;
+      garder(); bouton.classList.add('ok'); document.querySelectorAll('.piege-opt').forEach(x => { x.disabled = true; });
+      const aie = A_EN().AIE[Math.floor(Math.random() * A_EN().AIE.length)];
+      if(a) a.innerHTML = ami('surpris');
+      if(r) r.innerHTML = '<p class="piege-bravo">🎤 ' + (b.essai === 0 ? 'Bien envoyé ! Point pour toi.' : 'Trouvé ! Mais le point va à Ami cette fois.') + '</p>' +
+        '<p class="piege-bon" lang="en">« ' + esc(m.bon.en) + ' »</p><p class="petit">🇫🇷 ' + esc(m.bon.fr) + '</p>' +
+        '<p lang="en">🦉 « ' + esc(aie.en) + ' » <small>(' + esc(aie.fr) + ')</small></p>' +
+        '<button class="moyen plein" data-a="battle-suivant">' + (b.i + 1 < b.manches.length ? 'Manche suivante →' : 'Résultat') + '</button>';
+      bruit('juste'); direPhrase(m.bon.en, 'en');
+    } else {
+      b.essai++; bouton.disabled = true; bouton.classList.add('ko');
+      const f = m.faux.find(x => x.en === choix);
+      if(a) a.innerHTML = ami('fete');
+      if(r) r.innerHTML = '<p class="piege-vanne">😂 ' + esc(f ? f.vanne : 'Presque !') + '</p><p class="petit">Essaie une autre réplique !</p>';
+      bruit('faux');
+    }
+  }
+
+  // Situations : petits dialogues de la vie. On écoute, on choisit sa réplique ; erreur = vanne + on réessaie.
+  let situation = null;
+  function situations(){
+    situation = null;
+    if(!piegesDispo() || !A_EN()) return pieges();
+    const e = etatAnglais();
+    poser(barre('anglais') + '<main class="coin-anglais"><h2>☕ Situations de la vie</h2><p class="pieges-intro">Écoute, puis choisis ce que tu réponds. Comme en vrai !</p><div class="cartes-anglais">' +
+      A_EN().SITUATIONS.map(x => '<button class="carte-anglais" data-a="situation-go" data-v="' + x.id + '"><span class="ic">' + x.icone + '</span><strong>' + esc(x.titre) + '</strong><em>' + (e.situations.includes(x.id) ? '✅ réussie' : '▶ à jouer') + '</em></button>').join('') +
+      '</div></main>');
+  }
+  function situationGo(id){
+    const x = A_EN() && A_EN().SITUATIONS.find(s => s.id === id); if(!x) return situations();
+    situation = { x, i:0, essai:0, fini:false, premiers:0 }; afficherSituation();
+  }
+  function afficherSituation(){
+    const sn = situation; if(!sn) return situations();
+    const x = sn.x;
+    if(sn.i >= x.etapes.length){
+      const e = etatAnglais(); if(!e.situations.includes(x.id)) e.situations.push(x.id); J().plumes += sn.premiers; garder();
+      poser(barre('situations') + '<main class="centre"><div class="ami-moyen">' + ami('fete') + '</div><h2>' + x.icone + ' ' + esc(x.titre) + ' : réussi !</h2>' +
+        '<p>' + sn.premiers + '/' + x.etapes.length + ' du premier coup' + (sn.premiers ? ' · ⭐ +' + sn.premiers + ' plumes' : '') + '</p>' +
+        '<p>Tu sais maintenant te débrouiller dans cette situation en anglais. 🎉</p>' +
+        '<div class="actions serrees"><button class="moyen plein" data-a="situations">☕ Autres situations</button><button class="moyen" data-a="anglais">🇬🇧 Coin anglais</button></div></main>');
+      return;
+    }
+    const et = x.etapes[sn.i]; sn.essai = 0; sn.fini = false;
+    sn.options = A_EN().melanger([et.bon].concat(et.faux.map(f => f.en)));
+    const comprendre = et.mode === 'comprendre';
+    poser(barre('situations') + '<main class="battle-ecran"><p class="piege-cat">' + x.icone + ' ' + esc(x.titre) + ' · ' + (sn.i + 1) + '/' + x.etapes.length + '</p>' +
+      (sn.i === 0 && x.intro ? '<p class="situation-intro">📍 ' + esc(x.intro) + '</p>' : '') +
+      (et.dit ? '<div class="bulle-ami"><p class="piege-fr"><span class="qui">' + esc(x.qui) + ' :</span> <span lang="en">« ' + esc(et.dit) + ' »</span> <button class="bouton-rond" data-a="situation-ecouter" aria-label="Réécouter">🔊</button></p>' + (comprendre ? '' : traduire(et.fr)) + '</div>' : '') +
+      '<p class="piege-consigne">' + (comprendre ? esc(et.question) : 'Tu réponds :') + '</p>' +
+      '<div class="piege-options">' + sn.options.map((o, i) => '<button class="moyen piege-opt" data-a="situation-rep" data-v="' + i + '"' + (comprendre ? '' : ' lang="en"') + '>' + esc(o) + '</button>').join('') + '</div>' +
+      '<div class="piege-retour" id="situation-retour" role="status" aria-live="polite"></div></main>');
+    if(et.dit) direPhrase(et.dit, 'en');
+  }
+  function repondreSituation(i){
+    const sn = situation; if(!sn || sn.fini) return;
+    const et = sn.x.etapes[sn.i], choix = sn.options[i], bouton = document.querySelectorAll('.piege-opt')[i]; if(choix == null || !bouton || bouton.disabled) return;
+    const r = $('#situation-retour');
+    if(choix === et.bon){
+      sn.fini = true; if(sn.essai === 0) sn.premiers++;
+      bouton.classList.add('ok'); document.querySelectorAll('.piege-opt').forEach(x => { x.disabled = true; });
+      if(r) r.innerHTML = '<p class="piege-bravo">✅ ' + (et.mode === 'comprendre' ? 'Bien compris !' : 'Parfait, c’est ce qu’on dit !') + '</p>' + (et.fr && et.mode === 'comprendre' ? '<p class="petit">🇬🇧 « ' + esc(et.dit) + ' » = ' + esc(et.fr) + '</p>' : '') +
+        '<button class="moyen plein" data-a="situation-suivant">' + (sn.i + 1 < sn.x.etapes.length ? 'Suite →' : 'Fin de la scène') + '</button>';
+      bruit('juste'); if(et.mode !== 'comprendre') direPhrase(et.bon, 'en');
+    } else {
+      sn.essai++; bouton.disabled = true; bouton.classList.add('ko');
+      const f = et.faux.find(x => x.en === choix);
+      if(r) r.innerHTML = '<p class="piege-vanne">😂 ' + esc(f ? f.vanne : 'Presque !') + '</p><p class="petit">Essaie encore !</p>';
+      bruit('faux');
+    }
+  }
+
+  // Dictée : 5 phrases. Écouter (normal ou lentement), écrire, vérifier. Correction tolérante et vanne sur les homophones.
+  let dictee = null;
+  function dicteeGo(){
+    if(!piegesDispo() || !A_EN()) return pieges();
+    dictee = { liste:A_EN().melanger(A_EN().DICTEE).slice(0, 5), i:0, parfaites:0, fait:false }; afficherDictee();
+  }
+  function afficherDictee(){
+    const d = dictee; if(!d) return coinAnglais();
+    if(d.i >= d.liste.length){
+      poser(barre('anglais') + '<main class="centre"><div class="ami-moyen">' + ami('fete') + '</div><h2>✍️ Dictée terminée !</h2>' +
+        '<p>' + d.parfaites + '/' + d.liste.length + ' phrases parfaites' + (d.parfaites ? ' · ⭐ +' + 2 * d.parfaites + ' plumes' : '') + '</p>' +
+        '<div class="actions serrees"><button class="moyen plein" data-a="dictee">🔁 Une autre dictée</button><button class="moyen" data-a="anglais">🇬🇧 Coin anglais</button></div></main>');
+      return;
+    }
+    d.fait = false;
+    poser(barre('anglais') + '<main class="battle-ecran dictee-ecran"><p class="piege-cat">✍️ Dictée · ' + (d.i + 1) + '/' + d.liste.length + '</p>' +
+      '<div class="piege-haut"><div class="ami-moyen">' + ami('content') + '</div><p class="piege-consigne">Écoute Ami, puis écris la phrase en anglais.</p></div>' +
+      '<div class="actions serrees"><button class="moyen plein" data-a="dictee-ecouter">🔊 Écouter</button><button class="moyen" data-a="dictee-lent">🐢 Lentement</button></div>' +
+      '<label class="dictee-label" for="dictee-texte">Ta phrase :</label>' +
+      '<textarea id="dictee-texte" lang="en" rows="2" autocapitalize="off" autocomplete="off" autocorrect="off" spellcheck="false" maxlength="160"></textarea>' +
+      '<button class="moyen plein" data-a="dictee-verifier">✔ Vérifier</button>' +
+      '<div class="piege-retour" id="dictee-retour" role="status" aria-live="polite"></div></main>');
+    const z = $('#dictee-texte'); if(z) z.addEventListener('keydown', ev => { if(ev.key === 'Enter' && !ev.shiftKey){ ev.preventDefault(); verifierDictee(); } });
+    direPhrase(d.liste[d.i].en, 'en');
+  }
+  function verifierDictee(){
+    const d = dictee; if(!d || d.fait) return;
+    const z = $('#dictee-texte'), texte = z ? z.value : '';
+    if(!texte.trim()){ if(z) z.focus(); return; }
+    d.fait = true; const ph = d.liste[d.i], c = A_EN().corriger(ph.en, texte);
+    if(c.juste){ d.parfaites++; J().plumes += 2; etatAnglais().dictees++; garder(); }
+    const rendu = c.mots.map((m, k) => '<span class="' + (c.ok[k] ? 'mot-ok' : 'mot-ko') + '">' + esc(m) + '</span>').join(' ');
+    const r = $('#dictee-retour');
+    if(r) r.innerHTML = (c.juste ? '<p class="piege-bravo">✨ Parfait ! Pas une faute.</p>' : '<p class="piege-vanne">😂 ' + esc(c.erreurs.length ? A_EN().vanneDictee(c.erreurs.find(x => x.ecrit) || c.erreurs[0], c.score) : '« ' + c.enTrop[0] + ' » est en trop : Ami ne l’a pas dit ! 🤫') + '</p>' + '<p class="dictee-corrige" lang="en">' + rendu + '</p>') +
+      '<p class="piege-bon" lang="en">✅ ' + esc(ph.en) + '</p><p class="petit">🇫🇷 ' + esc(ph.fr) + '</p>' +
+      '<button class="moyen plein" data-a="dictee-suivant">' + (d.i + 1 < d.liste.length ? 'Phrase suivante →' : 'Résultat') + '</button>';
+    if(z) z.readOnly = true; const vb = $('[data-a="dictee-verifier"]'); if(vb) vb.hidden = true;
+    bruit(c.juste ? 'juste' : 'faux');
   }
 
   // Leçon : 5 mots nouveaux d'un même thème, présentés puis joués 10 fois.
@@ -1578,6 +1855,8 @@
           jours:dates(j.jours), defis:dates(j.defis),
           porte:Array.isArray(j.porte) ? j.porte.filter(k => ACCESSOIRES.some(a => a[0] === k)) : [],
           mots:filtrerObjet(j.mots, CLE_MOT, v => v && [0, 1, 2, 3, 4].includes(v.b) && DATE.test(v.d), 5000),
+          pieges:window.PIEGES ? window.PIEGES.propre(j.pieges) : {},
+          anglais:{ situations:Array.isArray(j.anglais && j.anglais.situations) ? j.anglais.situations.filter(x => window.ANGLAIS && ANGLAIS.SITUATIONS.some(s => s.id === x)).slice(0, 50) : [], victoires:Math.min(1e5, Math.max(0, Math.floor(Number(j.anglais && j.anglais.victoires)) || 0)), battles:Math.min(1e5, Math.max(0, Math.floor(Number(j.anglais && j.anglais.battles)) || 0)), dictees:Math.min(1e5, Math.max(0, Math.floor(Number(j.anglais && j.anglais.dictees)) || 0)) },
           trophees:Array.isArray(j.trophees) ? j.trophees.filter(k => TROPHEES.includes(k)) : [], facile:!!j.facile });
         base.joueurs = d.joueurs.map(propre); base.actif = 0;
         if(UI.includes(d.ui)) base.ui = d.ui;
@@ -1600,15 +1879,36 @@
     const b = ev.target.closest('[data-a]'); if(!b) return;
     const v = b.dataset.v;
     switch(b.dataset.a){
-      case 'accueil': return accueil();
-      case 'themes': return themes();
+      case 'accueil': return depuis3D() ? retour3D() : accueil();
+      case 'accueil-3d': try{ localStorage.setItem('ami_accueil3d', '1'); }catch(e){} location.href = 'monde-3d.html'; return;
+      case 'themes': return depuis3D() ? retour3D() : themes();
       case 'theme': return choisirJeu(v);
       case 'theme-retour': return choisirJeu(theme);
       case 'jeu': return commencer(v);
       case 'defi': return defi();
       case 'lecon': return lecon();
       case 'phrases': return atelierPhrases();
-      case 'village': return village();
+      case 'pieges': return pieges();
+      case 'anglais': return coinAnglais();
+      case 'battle': return battleGo();
+      case 'battle-rep': return repondreBattle(Number(v));
+      case 'battle-suivant': if(battle){ battle.i++; } return afficherBattle();
+      case 'battle-ecouter': if(battle && battle.manches[battle.i]) direPhrase(battle.manches[battle.i].ami, 'en'); return;
+      case 'situations': return situations();
+      case 'situation-go': return situationGo(v);
+      case 'situation-rep': return repondreSituation(Number(v));
+      case 'situation-suivant': if(situation){ situation.i++; } return afficherSituation();
+      case 'situation-ecouter': if(situation){ const et = situation.x.etapes[situation.i]; if(et && et.dit) direPhrase(et.dit, 'en'); } return;
+      case 'dictee': return dicteeGo();
+      case 'dictee-ecouter': if(dictee && dictee.liste[dictee.i]) direPhrase(dictee.liste[dictee.i].en, 'en'); return;
+      case 'dictee-lent': if(dictee && dictee.liste[dictee.i]) direPhrase(dictee.liste[dictee.i].en, 'en', .6); return;
+      case 'dictee-verifier': return verifierDictee();
+      case 'dictee-suivant': if(dictee){ dictee.i++; } return afficherDictee();
+      case 'pieges-go': return piegesGo();
+      case 'piege-rep': return repondrePiege(Number(v));
+      case 'piege-suivant': if(piege){ piege.i++; } return afficherPiege();
+      case 'piege-ecouter': if(piege && piege.liste[piege.i]) direPhrase(piege.liste[piege.i].bon, 'en'); return;
+      case 'village': return depuis3D() ? retour3D() : village();
       case 'village-lieu': return entrerVillageLieu(v);
       case 'phrase-token': return choisirMotPhrase(Number(v));
       case 'phrase-check': return verifierPhrase();
@@ -1669,7 +1969,7 @@
       case 'porter': { const j = J(); j.porte = j.porte.includes(v) ? j.porte.filter(x => x !== v) : j.porte.concat(v); garder(); return vestiaire(); }
       case 'effacer-tout':
         if(!b.dataset.ok){ b.dataset.ok = 1; b.textContent = t('confirmer'); return; }
-        Object.assign(J(), { plumes:0, etoiles:{}, jours:[], porte:[], mots:{}, trophees:[], defis:[] }); garder(); return accueil();
+        Object.assign(J(), { plumes:0, etoiles:{}, jours:[], porte:[], mots:{}, trophees:[], defis:[], pieges:{}, anglais:{} }); garder(); return accueil();
     }
   });
   document.addEventListener('keydown', ev => { if(ev.key === 'Escape' && $('#fenetre')) fermerFenetre(); });
@@ -1696,9 +1996,11 @@
   prefs();
   // Retour de la page de paiement (?abonne=1) : on vérifie tout de suite.
   const retourPaiement = /[?&]abonne=1/.test(location.search);
+  // Accueil en 3D : un lien du village 3D (?aller=…) ouvre directement un jeu ; « Accueil » y ramène.
+  const lienAller = new URLSearchParams(location.search).get('aller');
   if(retourPaiement) try{ history.replaceState(null, '', location.pathname); }catch(e){}
   // Au lancement : le certificat gardé est vérifié (hors connexion aussi), puis le serveur est consulté.
-  window.AmiDesMotsPret = verifierJeton(base.abo.jeton, base.abo.code).then(d => { droits = d; if(d && !partie) accueil(); return rafraichir(retourPaiement); });
+  window.AmiDesMotsPret = verifierJeton(base.abo.jeton, base.abo.code).then(d => { droits = d; if(d && !partie && !lienAller && !depuis3D()) accueil(); return rafraichir(retourPaiement); });
   // Le webhook Stripe peut arriver quelques secondes après le retour.
   if(retourPaiement) [5000, 15000, 40000].forEach(ms => setTimeout(() => { if(!plus()) rafraichir(true); }, ms));
   if(window.Articulation) try{ Articulation.init(); }catch(e){}
@@ -1706,5 +2008,11 @@
   window.AmiDesMots = { base, J, affiche, fnv1a, urlVoix, accueil, themes, choisirJeu, commencer, lettresPossibles, distincts, motsDu, aDire, CATALOGUE, MECAS, disponible, nomJeu, aRevoir, noter, jour, defi, revoir, lecon, astuces, aToi, blague, carnet, avecArticle, astuce, niveauHumour, fousRires, reglages, CONFIG, facile, nbMots, restaurer, verifierJeton, plus, ecranPlus, formatCode, rafraichir,
     get etat(){ return J(); } };
   garder();
-  accueil();
+  if(lienAller){
+    try{ history.replaceState(null, '', location.pathname); }catch(e){}
+    if(lienAller === 'classique'){ try{ sessionStorage.removeItem('ami_depuis3d'); localStorage.setItem('ami_accueil3d', '0'); }catch(e){} accueil(); }
+    else{ try{ sessionStorage.setItem('ami_depuis3d', '1'); }catch(e){} ouvrirDepuis3D(lienAller); }
+  }
+  else if(!location.search && accueil3DAuto()) location.replace('monde-3d.html');
+  else accueil();
 })();

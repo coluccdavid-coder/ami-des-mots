@@ -911,7 +911,9 @@ body{
     radial-gradient(ellipse at 95% 48%,rgba(35,216,188,.12),transparent 32%),
     radial-gradient(ellipse at 0% 78%,rgba(255,139,95,.10),transparent 34%),
     linear-gradient(155deg,#171044 0%,#0B0828 56%,#100B35 100%);
-  perspective:1400px;
+  /* Pas de « perspective » ici : sur <body>, elle fait de la page entière le repère des
+     éléments position:fixed (fenêtres, bulles), qui s'ouvraient alors décalés après défilement.
+     Les éléments 3D ont chacun leur propre perspective. */
 }
 body::after{
   content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;opacity:.35;
@@ -1415,3 +1417,51 @@ html[data-facile="1"] .ami-rx,html[data-facile="1"] .ami-rx .ami-rx-objet{animat
 }
 @keyframes bulle-bd-mobile{from{opacity:0;transform:translateY(14px) scale(.96)}to{opacity:1;transform:none}}
 @media(prefers-reduced-motion:reduce){.partie .bulle.ok,.partie .bulle.ko{animation:none!important}}
+
+/* ── Les pièges de l'anglais (v5.39) ── */
+.pieges-accueil{background:linear-gradient(135deg,#ff8a5b,#ffb347)!important;color:#2b1600!important}
+.pieges-accueil-ecran,.piege-ecran{max-width:640px;margin:0 auto;padding:16px}
+.pieges-accueil-ecran{text-align:center}
+.pieges-intro{font-size:1.05rem;line-height:1.5}
+.pieges-score{font-size:1.1rem}
+.pieges-cats{list-style:none;padding:0;margin:12px auto 18px;max-width:420px;text-align:left}
+.pieges-cats li{display:flex;justify-content:space-between;gap:12px;padding:8px 12px;border-radius:12px;background:rgba(255,255,255,.08);margin:6px 0}
+.piege-cat{opacity:.8;font-weight:700;margin:0 0 6px}
+.piege-haut{display:flex;align-items:center;gap:14px}
+.piege-haut .ami-moyen{flex:0 0 auto;width:90px}
+.piege-consigne{margin:0;opacity:.85}
+.piege-fr{font-size:1.45rem;font-weight:800;margin:4px 0 0;line-height:1.3}
+.piege-options{display:grid;gap:10px;margin:16px 0}
+.piege-opt{font-size:1.15rem!important;text-align:left;justify-content:flex-start}
+.piege-opt.ok{background:#1f9d6b!important;color:#fff!important;outline:3px solid #7ef0c0}
+.piege-opt.ko{background:#c2410c!important;color:#fff!important;text-decoration:line-through}
+.piege-retour p{margin:8px 0;line-height:1.45}
+.piege-vanne{font-size:1.15rem;font-weight:700}
+.piege-bravo{font-size:1.2rem;font-weight:800}
+.piege-bon{font-size:1.2rem;font-weight:800;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.piege-regle{background:rgba(255,215,64,.14);border-left:4px solid #ffd740;padding:8px 12px;border-radius:8px}
+@media(max-width:560px){.piege-fr{font-size:1.2rem}.piege-haut .ami-moyen{width:64px}}
+
+/* ── Le coin anglais (v5.40) ── */
+.coin-anglais{max-width:720px;margin:0 auto;padding:16px;text-align:center}
+.cartes-anglais{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-top:14px}
+.carte-anglais{display:flex;flex-direction:column;align-items:center;gap:6px;padding:16px 12px;border-radius:20px;border:2px solid rgba(255,255,255,.14);background:rgba(255,255,255,.07);color:inherit;font:inherit;cursor:pointer;min-height:150px}
+.carte-anglais:hover,.carte-anglais:focus-visible{background:rgba(255,255,255,.14);border-color:#ffd740}
+.carte-anglais .ic{font-size:2.2rem}
+.carte-anglais strong{font-size:1.1rem}
+.carte-anglais small{opacity:.85;line-height:1.35}
+.carte-anglais em{font-style:normal;font-weight:700;color:#7ef0c0}
+.battle-ecran{max-width:640px;margin:0 auto;padding:16px}
+.bulle-ami{background:rgba(255,255,255,.08);border-radius:18px;padding:10px 14px}
+.bulle-ami .piege-fr{font-size:1.25rem}
+.bulle-ami .qui{opacity:.8;font-weight:600}
+.trad summary{cursor:pointer;opacity:.85;margin-top:4px}
+.trad p{margin:6px 0 0;opacity:.9}
+.battle-score{font-size:2rem;font-weight:900}
+.situation-intro{background:rgba(126,240,192,.12);border-radius:12px;padding:8px 12px}
+.petit{opacity:.85;font-size:.95rem}
+.dictee-label{display:block;margin:14px 0 4px;font-weight:700}
+#dictee-texte{width:100%;box-sizing:border-box;font:inherit;font-size:1.2rem;padding:12px;border-radius:14px;border:2px solid rgba(255,255,255,.25);background:rgba(0,0,0,.25);color:inherit;margin-bottom:10px}
+.dictee-corrige{font-size:1.2rem;line-height:1.8}
+.mot-ok{color:#7ef0c0}
+.mot-ko{color:#ffb4a2;text-decoration:underline wavy;font-weight:800}

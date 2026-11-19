@@ -1,0 +1,22 @@
+AMI DES MOTS — VERSION 5.34
+Graphismes : vrais modèles 3D animés, ciel réaliste, lueurs ; fenêtres décalées corrigées
+
+Corrigé : fenêtres « en décalé »
+- Une règle CSS (perspective sur <body>) faisait de toute la page le repère des fenêtres fixes :
+  après défilement, la fenêtre « Comment la bouche fait ce mot » (et les bulles) s'ouvraient
+  décalées, coupées en haut. Défaut présent depuis la v5.30. Test ajouté pour qu'il ne revienne pas.
+
+Mots City — graphismes
+- Personnages : vrais modèles 3D avec squelette et animations (repos, marche, course, saut,
+  assis en véhicule, joie, ramasser, esquive) — KayKit Adventurers, CC0. 4 personnages au choix.
+  Armes et animations de combat retirées des fichiers.
+- Ville : immeubles détaillés KayKit (façades, auvents, châteaux d'eau), lampadaires, bancs,
+  buissons, bouches d'incendie ; voitures KayKit (taxi, berline, break) avec roues qui tournent.
+  Tours art déco conservées pour la ligne d'horizon.
+- Ciel physique (soleil, dégradé réaliste), reflets du ciel sur les surfaces, étoiles la nuit,
+  lueur des néons et lampadaires (bloom), mer avec vaguelettes scintillantes, sols texturés.
+- Téléphone → « Graphismes » : Haute qualité (ordinateur) ou Rapide (téléphone modeste).
+- Performances : tout le décor fixe fusionné en 1 à 2 objets ; 9 passants sur téléphone.
+- Si les modèles ne se chargent pas, le jeu garde son décor dessiné par le code.
+
+Tests : npm test + 40 vérifications dans Chrome (outils/tests-navigateur/test-city.js).
