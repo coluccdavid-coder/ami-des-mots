@@ -21,7 +21,7 @@ function page(langue, config, avant){
   w.TextEncoder = TextEncoder; w.TextDecoder = TextDecoder;
   w.__fetch = []; w.fetch = async (u) => { w.__fetch.push(String(u)); return { ok:true, json:async () => (w.__reponse || { actif:false }) }; };
   if(avant) avant(w);
-  for(const f of ['js/donnees.js', 'js/voix.js', 'js/textes.js', 'js/articulation.js', 'js/genres.js', 'js/confusions.js', 'js/vannes.js', 'js/jeu.js']) w.eval(lire(f));
+  for(const f of ['js/donnees.js', 'js/voix.js', 'js/textes.js', 'js/articulation.js', 'js/genres.js', 'js/confusions.js', 'js/vannes.js', 'js/pieges.js', 'js/anglais.js', 'js/jeu.js']) w.eval(lire(f));
   return w;
 }
 // Certificats d'abonnement comme les signe le serveur (même format que serveur/functions/ami-abonnement).
@@ -432,6 +432,137 @@ await test('vannes accordées : pas de « de le » / « à le », et rendu corre
   for(const b of acc){ assert.ok(!/\{|\bde le\b|\bà le\b|\ble tortue\b|\bla hibou\b|\bl’hibou\b/i.test(b), b); }
   assert.ok(acc.some(b => /déguisée|arrivée|passée|flattée|soupçonnée|assise/.test(b)) || acc.every(b => !/(déguisé|arrivé|passé|flatté|soupçonné|assis)\b/.test(b.split('hibou')[0])), 'accord féminin : ' + acc.join(' | '));
 });
+await test('scènes absurdes : les deux vrais mots, articles justes, et la bonne phrase anglaise', () => {
+  const w = page(); const A = w.AmiDesMots, S = w.VANNES.fr.scenes, SE = w.VANNES.en.scenes;
+  for(const th of w.THEMES){
+    assert.ok(S[th] && S[th].length >= 2 && SE[th] && SE[th].length >= 1, 'scènes pour ' + th);
+    for(const x of S[th]){ assert.ok(x.t.includes('{J}') || x.t.includes('{de_J}'), x.t); assert.ok(x.t.includes('{F}') || x.t.includes('{de_F}'), x.t);
+      assert.ok(!/\b(de|à|au|du)\s+\{[FJ]\}/.test(x.t), 'contraction : ' + x.t); assert.ok(/\{je\}/.test(x.en) && /^[A-Z][^{}]*\{je\}[^{}]*[.!?]$/.test(x.en), x.en); }
+    for(const x of SE[th]) assert.ok(x.t.includes('{j}') && x.t.includes('{f}'), x.t);
+  }
+  A.J().humour = 1; A.choisirJeu('animaux'); A.commencer('quel_mot');
+  const vus = new Set(); for(let k = 0; k < 400; k++) vus.add(A.blague('🐢', '🐱'));
+  const sc = [...vus].filter(b => b.includes('🇬🇧'));
+  assert.ok(sc.length >= 2, 'des scènes sortent');
+  for(const b of sc){ assert.ok(/la tortue/i.test(b) && /le chat/i.test(b), b); assert.ok(!/\{|\bde le\b|\bà le\b/.test(b), b); assert.match(b, /🇬🇧 « [A-Z][^»]*\bcat\b[^»]*[.!?] »$/, b); }
+  // Pas de phrase anglaise quand on apprend une autre langue
+  A.base.cible = 'es'; const v2 = new Set(); for(let k = 0; k < 300; k++) v2.add(A.blague('🐢', '🐱')); assert.ok(![...v2].some(b => b.includes('🇬🇧')));
+});
+await test('pièges de l’anglais : contenu juste, une vanne par erreur, pas de doublon', () => {
+  const w = page(); const P = w.PIEGES;
+  assert.ok(P.liste.length >= 25);
+  assert.strictEqual(new Set(P.liste.map(p => p.id)).size, P.liste.length);
+  for(const p of P.liste){
+    assert.ok(P.CATS[p.cat] && [1, 2].includes(p.niv), p.id);
+    assert.ok(p.fr && p.bon && p.regle && p.faux.length >= 1, p.id);
+    for(const f of p.faux){ assert.ok(f.en && f.en !== p.bon && f.vanne.length > 20, p.id); assert.ok(!/\b(nul|bête|idiot|stupide|honte de toi)\b/i.test(f.vanne), f.vanne); }
+    const o = P.options(p); assert.strictEqual(new Set(o).size, o.length); assert.ok(o.includes(p.bon));
+  }
+});
+await test('pièges de l’anglais : révision espacée (les ratés reviennent, les réussis s’espacent)', () => {
+  const w = page(); const P = w.PIEGES, t0 = Date.UTC(2026, 10, 19), j0 = P.jourNum(t0);
+  const e = P.propre({ age:{ b:9, d:1 }, chaud:{ b:2, d:j0 }, zzz:{ b:1, d:1 }, faim:'x' });
+  assert.deepStrictEqual(JSON.parse(JSON.stringify(e)), { chaud:{ b:2, d:j0 } });
+  assert.strictEqual(P.noter(e, 'chaud', true, t0).b, 3); assert.strictEqual(e.chaud.d, j0 + 7);
+  assert.strictEqual(P.noter(e, 'chaud', false, t0).b, 0); assert.strictEqual(e.chaud.d, j0);
+  const s = P.seance(e, 6, t0); assert.strictEqual(s.length, 6); assert.strictEqual(s[0].id, 'chaud', 'le piège raté revient en premier');
+  assert.strictEqual(new Set(s.map(p => p.id)).size, 6);
+  assert.ok(s.slice(1).every(p => p.niv === 1), 'on commence par les pièges débutants');
+  for(const p of P.liste) P.noter(e, p.id, true, t0), P.noter(e, p.id, true, t0), P.noter(e, p.id, true, t0);
+  assert.strictEqual(P.maitrises(e), P.liste.length);
+});
+await test('pièges de l’anglais : écran, vanne de l’erreur, règle, plumes, sauvegarde', () => {
+  const w = page(); const d = w.document, A = w.AmiDesMots;
+  A.base.ui = 'fr'; A.base.cible = 'en'; A.accueil();
+  clic(w, '[data-a="anglais"]'); clic(w, '[data-a="pieges"]'); assert.match(d.querySelector('main').textContent, /Pièges déjoués : 0\/\d+/);
+  clic(w, '[data-a="pieges-go"]');
+  const fr = d.querySelector('.piege-fr').textContent, p = w.PIEGES.liste.find(x => fr.includes(x.fr));
+  assert.ok(p, fr); const opts = [...d.querySelectorAll('.piege-opt')];
+  const faux = opts.find(b => b.textContent !== p.bon); const plumes = A.J().plumes;
+  faux.click();
+  const r = d.querySelector('#piege-retour').textContent, vanne = p.faux.find(f => f.en === faux.textContent).vanne;
+  assert.ok(r.includes(vanne) && r.includes(p.bon) && r.includes(p.regle), r);
+  assert.ok(faux.classList.contains('ko') && opts.find(b => b.textContent === p.bon).classList.contains('ok'));
+  assert.strictEqual(A.J().plumes, plumes, 'pas de plumes pour une erreur');
+  assert.strictEqual(A.J().pieges[p.id].b, 0);
+  opts[0].click(); assert.ok(d.querySelector('#piege-retour').textContent.includes(vanne), 'une seule réponse par piège');
+  clic(w, '[data-a="piege-suivant"]');
+  const fr2 = d.querySelector('.piege-fr').textContent, p2 = w.PIEGES.liste.find(x => fr2.includes(x.fr));
+  [...d.querySelectorAll('.piege-opt')].find(b => b.textContent === p2.bon).click();
+  assert.match(d.querySelector('#piege-retour').textContent, /Yes!/); assert.strictEqual(A.J().plumes, plumes + 2);
+  for(let k = 0; k < 4; k++){ clic(w, '[data-a="piege-suivant"]'); d.querySelector('.piege-opt').click(); }
+  clic(w, '[data-a="piege-suivant"]'); assert.ok(d.querySelector('.pieges-fin'), 'écran de fin');
+  // Ailleurs qu'en français → anglais, le bouton n'est pas proposé
+  A.base.cible = 'es'; A.accueil(); assert.ok(!d.querySelector('[data-a="pieges"]') && !d.querySelector('[data-a="anglais"]'));
+  assert.ok(lire('index.html').includes('js/pieges.js') && lire('sw.js').includes('"js/pieges.js"'));
+});
+await test('coin anglais : contenu juste (battle, situations, dictée), vannes gentilles', () => {
+  const w = page(); const E = w.ANGLAIS, interdit = /\b(nul|nulle|bête|idiot|stupide|moche|honte)\b/i;
+  assert.ok(E.BATTLE.length >= 8 && E.SITUATIONS.length >= 5 && E.DICTEE.length >= 12);
+  for(const m of E.BATTLE){ assert.ok(m.ami && m.fr && m.bon.en && m.bon.fr && m.faux.length === 2, m.ami);
+    for(const f of m.faux){ assert.ok(f.en !== m.bon.en && f.vanne.length > 20 && !interdit.test(f.vanne), f.vanne); } }
+  for(const x of E.SITUATIONS){ assert.ok(x.id && x.titre && x.icone && x.qui && x.etapes.length >= 3, x.id);
+    for(const et of x.etapes){ assert.ok(et.bon && et.faux.length >= 2, x.id); assert.ok(et.dit || x.intro, 'il faut savoir quoi dire : ' + x.id);
+      if(et.dit) assert.ok(et.fr, 'traduction : ' + et.dit); if(et.mode === 'comprendre') assert.ok(et.question && et.dit);
+      for(const f of et.faux) assert.ok(f.en !== et.bon && f.vanne.length > 15 && !interdit.test(f.vanne), f.vanne); } }
+  assert.strictEqual(new Set(E.SITUATIONS.map(x => x.id)).size, E.SITUATIONS.length);
+  for(const p of E.DICTEE){ assert.ok(p.en && p.fr && /^[A-Z].*[.!?]$/.test(p.en), p.en); assert.ok(E.corriger(p.en, p.en).juste, p.en); }
+  for(const g of E.HOMO) for(const m of g) assert.ok(E.SENS[m], 'sens de ' + m);
+});
+await test('dictée : correction tolérante, mots fautifs repérés, vannes sur les mots jumeaux', () => {
+  const w = page(); const E = w.ANGLAIS;
+  assert.ok(E.corriger('I can see the sea.', 'i can SEE the sea').juste, 'majuscules et ponctuation ignorées');
+  assert.ok(E.corriger('Where is my red pen?', "where's my red pen").juste, 'contractions acceptées');
+  assert.ok(E.corriger('I’m happy.', "I'm happy").juste, 'apostrophes droites ou courbes');
+  const c = E.corriger('I can see the sea.', 'I can sea the sea');
+  assert.ok(!c.juste); assert.deepStrictEqual(JSON.parse(JSON.stringify(c.ok)), [true, true, false, true, true]);
+  assert.match(E.vanneDictee(c.erreurs[0]), /maillot de bain/);
+  const h = E.corriger('I have two cats, too.', 'I have to cats too');
+  assert.match(E.vanneDictee(h.erreurs[0]), /« to » veut dire « à \/ vers »… mais ici, c’était « two » \(deux\)/);
+  const o = E.corriger('The dog is under the table.', 'The dog is the table'); assert.match(E.vanneDictee(o.erreurs[0]), /« under » a disparu/);
+  const f = E.corriger('The flower is in the garden.', 'The flowr is in the garden'); assert.match(E.vanneDictee(f.erreurs[0]), /« flowr » \? Presque ! On écrit « flower »/);
+  assert.strictEqual(E.corriger('I know the answer.', '').score, 0);
+  const autre = E.corriger('Come here! Can you hear the bird?', 'I can sea the see');
+  assert.ok(autre.erreurs.every(e => e.ecrit !== 'i'), 'pas de faux rapprochement « i » / « come »');
+  assert.match(E.vanneDictee(autre.erreurs[0], autre.score), /une autre phrase/);
+  const trop = E.corriger('I know the answer.', 'I know the the answer'); assert.ok(!trop.juste && !trop.erreurs.length && trop.enTrop[0] === 'the');
+});
+await test('coin anglais : battle, situation et dictée jouables de bout en bout', () => {
+  const w = page(); const d = w.document, A = w.AmiDesMots, E = w.ANGLAIS; A.base.ui = 'fr'; A.base.cible = 'en'; A.accueil();
+  clic(w, '[data-a="anglais"]'); assert.strictEqual(d.querySelectorAll('.carte-anglais').length, 4);
+  // Battle : une mauvaise réplique (vanne, pas de point) puis la bonne
+  clic(w, '[data-a="battle"]'); const plumes = A.J().plumes;
+  for(let k = 0; k < 3; k++){
+    const txt = d.querySelector('.bulle-ami .piege-fr').textContent, m = E.BATTLE.find(x => txt.includes(x.ami)); assert.ok(m, txt);
+    const opts = [...d.querySelectorAll('.piege-opt')];
+    if(k === 0){ const f = opts.find(b => b.textContent !== m.bon.en); f.click(); assert.ok(d.querySelector('#battle-retour').textContent.includes(m.faux.find(x => x.en === f.textContent).vanne)); assert.ok(f.disabled); }
+    opts.find(b => b.textContent === m.bon.en).click(); assert.match(d.querySelector('#battle-retour').textContent, /Bien envoyé|Trouvé/);
+    clic(w, '[data-a="battle-suivant"]');
+  }
+  assert.match(d.querySelector('.battle-score').textContent, /Toi 2 – 1 Ami/); assert.strictEqual(A.J().plumes, plumes + 4);
+  assert.strictEqual(A.J().anglais.victoires, 1);
+  // Situation au café
+  clic(w, '[data-a="anglais"]'); clic(w, '[data-a="situations"]'); clic(w, '[data-a="situation-go"][data-v="cafe"]');
+  const cafe = E.SITUATIONS.find(x => x.id === 'cafe');
+  for(const et of cafe.etapes){ assert.ok(d.querySelector('main').textContent.includes(et.dit));
+    [...d.querySelectorAll('.piege-opt')].find(b => b.textContent === et.bon).click(); clic(w, '[data-a="situation-suivant"]'); }
+  assert.match(d.querySelector('main').textContent, /réussi/); assert.deepStrictEqual(JSON.parse(JSON.stringify(A.J().anglais.situations)), ['cafe']);
+  // Dictée : une phrase parfaite, une avec faute
+  clic(w, '[data-a="anglais"]'); clic(w, '[data-a="dictee"]');
+  const p1 = () => E.DICTEE.find(x => x.en);
+  for(let k = 0; k < 5; k++){
+    const z = d.querySelector('#dictee-texte'); assert.ok(z);
+    clic(w, '[data-a="dictee-verifier"]'); assert.strictEqual(d.querySelector('#dictee-retour').textContent, '', 'rien écrit : on attend');
+    z.value = k === 0 ? 'zzz' : '__PHRASE__'; if(k > 0){ const lus = [...E.DICTEE]; z.value = lus.find(x => true).en; }
+    clic(w, '[data-a="dictee-verifier"]'); assert.ok(d.querySelector('#dictee-retour .piege-bon'));
+    clic(w, '[data-a="dictee-suivant"]');
+  }
+  assert.match(d.querySelector('main').textContent, /Dictée terminée/);
+  // Sauvegarde : l'état anglais est filtré
+  A.J().anglais = { situations:['cafe', 'pirate', 'cafe'], victoires:-3, dictees:'x' }; clic(w, '[data-a="anglais"]');
+  assert.deepStrictEqual(JSON.parse(JSON.stringify(A.J().anglais)), { situations:['cafe'], victoires:0, battles:0, dictees:0 });
+  assert.ok(lire('index.html').includes('js/anglais.js') && lire('sw.js').includes('"js/anglais.js"'));
+});
 await test('familles de confusions : astuce affichée quand on confond cat et dog en apprenant l’anglais', () => {
   const w = page(); const A = w.AmiDesMots;
   for(const c of w.CONFUSIONS){ for(const e of c.p) assert.ok(w.MOTS[e], 'image inconnue ' + e); assert.ok(c.fr.length <= 90 && c.en.length <= 90, c.fr); }
@@ -518,6 +649,71 @@ await test('service worker : Mots City, sa logique et three.js local sont mis en
   const sw = lire('sw.js');
   for(const f of ['mots-city.html', 'js/mots-city.js', 'vendor/three.module.js', 'js/genres.js', 'js/confusions.js', 'js/vannes.js']) assert.ok(sw.includes('"' + f + '"'), f);
   assert.ok(!lire('mots-city.html').includes('cdn.jsdelivr') && !lire('monde-3d.html').includes('cdn.jsdelivr'), 'plus de CDN : three.js est local');
+});
+await test('village 3D : habitants anglophones (Quaternius), défis justes, vannes gentilles', () => {
+  const w = page(); w.eval(lire('js/metiers.js')); const M = w.METIERS;
+  const kit = lire('js/kit3d.js'), habitants = kit.match(/HABITANTS = \[([\s\S]*?)\]/)[1];
+  assert.ok(M.liste.length >= 6);
+  assert.strictEqual(new Set(M.liste.map(m => m.mot.en)).size, M.liste.length, 'un mot par habitant');
+  for(const m of M.liste){
+    assert.ok(m.en && m.fr && m.mot.en && m.mot.fr && m.nom, m.id);
+    assert.ok(habitants.includes("'" + m.corps + "'"), 'corps inconnu ' + m.corps);
+    assert.ok(fs.existsSync(path.join(ICI, 'assets/3d/q/q-' + m.corps.toLowerCase() + '.glb')), m.corps);
+    assert.ok(m.en.toLowerCase().includes(m.mot.en) || m.en.toLowerCase().includes(m.mot.en.slice(0, 4)), 'la phrase prépare le mot : ' + m.id);
+    for(let k = 0; k < 20; k++){
+      const q = M.quiz(m.id); assert.strictEqual(q.choix.length, 3); assert.strictEqual(new Set(q.choix).size, 3); assert.ok(q.choix.includes(m.mot.en)); assert.ok(q.question.includes(m.mot.fr));
+      const faux = q.choix.find(c => c !== m.mot.en), v = M.vanne(m.id, faux);
+      assert.ok(v.texte.includes('« ' + faux + ' »') && v.texte.includes('« ' + m.mot.en + ' »') && !/[{}]/.test(v.texte), v.texte);
+      assert.ok(!/\b(nul|bête|idiot|stupide|honte)\b/i.test(v.texte), v.texte);
+    }
+  }
+  let prec = ''; for(let k = 0; k < 30; k++){ const v = M.vanne('pirate', 'hat', null, prec); assert.notStrictEqual(v.modele, prec); prec = v.modele; }
+  // Les animations de combat ont été retirées (jeu familial)
+  const anims = fs.readFileSync(path.join(ICI, 'assets/3d/q/q-casual_male.glb')).toString('latin1');
+  for(const a of ['Death', 'Punch', 'SwordSlash', 'Shoot_OneHanded', 'RecieveHit']) assert.ok(!anims.includes('"' + a + '"'), a);
+  assert.ok(anims.includes('"Walk"') && anims.includes('"Victory"'));
+  assert.ok(lire('monde-3d.html').includes('js/metiers.js'));
+});
+await test('Mots City : nouvelles tenues Quaternius, avec repli si le modèle manque', () => {
+  const w = page(); w.eval(lire('js/mots-city.js')); const C = w.MotsCity;
+  assert.strictEqual(C.TENUES.length, 8);
+  for(const t of C.TENUES.filter(t => /^q:/.test(t.perso))) assert.ok(fs.existsSync(path.join(ICI, 'assets/3d/q/q-' + t.perso.slice(2).toLowerCase() + '.glb')), t.perso);
+  assert.strictEqual(C.propre({ tenue:6 }).tenue, 6);
+  assert.match(lire('js/kit3d.js'), /KIT\.corps\[nom\] \|\| KIT\.corps\.rogue/);
+});
+await test('service worker : modèles Quaternius, nature et décodeur meshopt en cache (hors ligne)', () => {
+  const sw = lire('sw.js');
+  for(const f of fs.readdirSync(path.join(ICI, 'assets/3d/q'))) assert.ok(sw.includes('"assets/3d/q/' + f + '"'), f);
+  for(const f of ['assets/3d/nature.glb', 'js/metiers.js', 'js/quetes.js', 'vendor/jsm/libs/meshopt_decoder.module.js']) assert.ok(sw.includes('"' + f + '"'), f);
+  assert.ok(fs.existsSync(path.join(ICI, 'assets/3d/CREDITS.md')) && /Quaternius/.test(lire('assets/3d/CREDITS.md')));
+});
+await test('quête des plumes : 10 indices en anglais, un par habitant/animal, état fiable', () => {
+  const w = page(); w.eval(lire('js/metiers.js')); w.eval(lire('js/quetes.js')); const Q = w.QUETES, M = w.METIERS;
+  assert.strictEqual(Q.PLUMES.length, 10);
+  const donneurs = Q.PLUMES.map(p => p.donneur).sort();
+  assert.deepStrictEqual(JSON.parse(JSON.stringify(donneurs)), JSON.parse(JSON.stringify(M.liste.map(m => m.id).concat(['paco', 'mina']).sort())));
+  for(const p of Q.PLUMES){
+    assert.ok(p.en && p.fr && p.mot.en && p.mot.fr, p.id);
+    assert.ok(p.en.toLowerCase().includes(p.mot.en), 'l’indice contient le mot clé : ' + p.id);
+    assert.ok(p.x >= -28 && p.x <= 28 && p.z >= -30 && p.z <= 38, 'dans la zone de jeu : ' + p.id);
+    assert.ok(p.y < 1, 'près du sol (cachée) : ' + p.id);
+  }
+  const e = Q.propre({ indices:['p1', 'p1', 'zzz', 3], trouvees:['p9', '<img>'] });
+  assert.deepStrictEqual(JSON.parse(JSON.stringify(e)), { indices:['p1'], trouvees:['p9'] });
+  assert.strictEqual(Q.reveler(e, 'teacher'), null, 'indice déjà donné');
+  assert.strictEqual(Q.reveler(e, 'pirate').id, 'p6'); assert.strictEqual(Q.reveler(e, 'pirate'), null);
+  assert.strictEqual(Q.reveler(e, 'inconnu'), null);
+  assert.ok(Q.trouver(e, 'p2') && !Q.trouver(e, 'p2') && e.indices.includes('p2'));
+  assert.ok(!Q.toutes(e)); for(const p of Q.PLUMES) Q.trouver(e, p.id); assert.ok(Q.toutes(e));
+  assert.ok(/voler/.test(Q.BUT) && /plané/.test(Q.RECOMPENSE), 'le but et la récompense sont dits');
+  const html = lire('monde-3d.html');
+  assert.ok(html.includes('js/quetes.js') && !html.includes('featherSpots'), 'les anciennes plumes visibles sont remplacées');
+  assert.ok(!/fillStyle='#ffe27a';for/.test(html), 'les plumes ne sont plus sur la carte');
+});
+await test('CSS : rien sur <html>/<body> ne casse position:fixed (fenêtres décalées après défilement)', () => {
+  const css = lire('css/jeu.css').replace(/\/\*[\s\S]*?\*\//g, '');
+  for(const [, sel, corps] of css.matchAll(/(^|[}\s])((?:html|body)\s*)\{([^}]*)\}/g) ? [...css.matchAll(/(?:^|[}\n])\s*((?:html|body))\s*\{([^}]*)\}/g)] : [])
+    assert.ok(!/(^|;|\s)(perspective|transform|filter|contain|will-change)\s*:/.test(corps), sel + ' { ' + corps.trim().slice(0, 80) + ' }');
 });
 await test('accueil : un lien vers Mots City', () => {
   const w = page(); assert.ok(w.document.querySelector('a[href="mots-city.html"]'));

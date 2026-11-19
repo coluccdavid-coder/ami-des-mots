@@ -14,7 +14,7 @@ const attendre = ms => new Promise(r => setTimeout(r, ms));
   await p.waitForFunction(() => window.__city, { timeout:60000 }); await attendre(1500);
   await p.screenshot({ path:OUT + '1-titre.png' });
   verif('écran titre au départ', await p.$eval('#panneau', e => e.classList.contains('vu')));
-  verif('4 tenues proposées', (await p.$$('.tenues button')).length === 4);
+  verif('8 tenues proposées', (await p.$$('.tenues button')).length === 8);
   await p.click('.tenues button[data-tenue="2"]'); await attendre(300);
   verif('choisir une tenue la garde', await p.evaluate(() => __city.save.tenue === 2));
   await p.click('#panneau .fermer'); await attendre(800);
@@ -24,21 +24,20 @@ const attendre = ms => new Promise(r => setTimeout(r, ms));
   verif('on commence à pied', await p.evaluate(() => !__city.conduite));
   await aller(-17, 62, Math.PI);
   await p.evaluate(() => __city.entree.haut = true);
-  const jambes = [];
-  for(let k = 0; k < 6; k++){ await attendre(700); jambes.push(await p.evaluate(() => { const u = __city.heros.userData; return { c:u.cuisses.map(x => x.rotation.x), t:u.tibias.map(x => x.rotation.x), b:u.bras.map(x => x.rotation.x) }; })); }
+  const os = () => p.evaluate(() => { const r = {}; __city.heros.traverse(o => { if(o.isBone && /leg|knee|thigh|shin|foot|arm/i.test(o.name)) r[o.name] = o.quaternion.toArray(); }); const k = __city.heros.userData.kit; return { r, anim:k && k.courant ? k.courant.getClip().name : null }; });
+  const vus = []; for(let k = 0; k < 5; k++){ await attendre(700); vus.push(await os()); }
   await p.evaluate(() => __city.entree.haut = false);
   const z1 = await p.evaluate(() => __city.etat.z);
   verif('▲ fait marcher vers l’avant', z1 < 61, 'z=' + z1);
-  const ampC = Math.max(...jambes.map(j => Math.abs(j.c[0]))), ampT = Math.max(...jambes.map(j => j.t[0])), ampB = Math.max(...jambes.map(j => Math.abs(j.b[0])));
-  verif('héros : les cuisses bougent en marchant', ampC > .3, 'amplitude ' + ampC.toFixed(2));
-  verif('héros : les genoux plient', ampT > .25, 'flexion ' + ampT.toFixed(2));
-  verif('héros : les bras balancent', ampB > .2, 'amplitude ' + ampB.toFixed(2));
-  verif('héros : jambes en opposition', jambes.some(j => Math.sign(j.c[0]) !== Math.sign(j.c[1]) && Math.abs(j.c[0]) > .1));
-  await attendre(1500);
-  const repos = await p.evaluate(() => __city.heros.userData.cuisses.map(x => Math.abs(x.rotation.x)));
-  verif('héros : jambes droites à l’arrêt', repos.every(x => x < .05), repos.join(' '));
-  const pas = await p.evaluate(() => __city.passants.slice(0, 6).map(q => Math.abs(q.p.userData.cuisses[0].rotation.x) + Math.abs(q.p.userData.cuisses[1].rotation.x)));
-  verif('passants : les jambes bougent', Math.max(...pas) > .2, pas.map(x => x.toFixed(2)).join(' '));
+  verif('héros : vrai personnage animé (squelette)', !!vus[0].anim, 'pas de modèle animé');
+  verif('héros : animation de marche pendant qu’il avance', vus.slice(1).every(v => /Walk|Running|Run/.test(v.anim)), vus.map(v => v.anim).join(','));
+  const noms = Object.keys(vus[0].r).filter(n => /leg|thigh|shin/i.test(n));
+  const bouge = noms.filter(n => vus.some((v, i) => i && v.r[n].some((q, j) => Math.abs(q - vus[0].r[n][j]) > .05)));
+  verif('héros : les os des jambes bougent', noms.length > 0 && bouge.length >= 2, 'os jambes ' + noms.join(',') + ' / bougent ' + bouge.join(','));
+  await attendre(2500); const repos = (await os()).anim;
+  verif('héros : animation de repos à l’arrêt', /Idle/.test(repos), repos);
+  const anims = await p.evaluate(() => __city.passants.map(q => q.p.userData.kit && q.p.userData.kit.courant ? q.p.userData.kit.courant.getClip().name : '?'));
+  verif('passants : ils marchent (animation de marche)', anims.filter(a => /Walk/.test(a)).length >= anims.length / 2, anims.join(','));
   await p.screenshot({ path:OUT + '2-a-pied.png' });
   // Gauche = gauche, à pied puis en véhicule
   async function sens(touche, attendu, nom){
@@ -150,6 +149,7 @@ const attendre = ms => new Promise(r => setTimeout(r, ms));
     await r.click('#retour'); await r.waitForFunction(() => !window.__city, { timeout:60000 }).catch(() => {});
     verif('← Retour ramène à l’accueil', /index\.html|\/$/.test(r.url()), r.url()); }
   else verif('lien Mots City sur l’accueil', false);
+  verif('toutes les plumes dorées sont accessibles (hors des murs)', await p.evaluate(() => __city.dorees().every(d => !__city.murs.some(m => d.x > m.x1 && d.x < m.x2 && d.z > m.z1 && d.z < m.z2))));
   verif('aucune erreur de console', erreurs.length === 0, erreurs.join(' | '));
   console.log('RÉUSSIS (' + ok.length + ') :\n  ' + ok.join('\n  ')); console.log('ÉCHECS :\n  ' + (ko.join('\n  ') || '(aucun)'));
   await b.close(); process.exit(ko.length ? 1 : 0);

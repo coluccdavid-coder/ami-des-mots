@@ -113,11 +113,18 @@ button{font:inherit;color:inherit;cursor:pointer}
 <script type="importmap">{"imports":{"three":"./vendor/three.module.js"}}</script>
 <script type="module">
 import * as THREE from 'three';
+import { chargerKit, chargerHabitants, HABITANTS, perso, animerKit, geste, fusionner, objet, ambiance, texBruit, texVagues, texFacadeVerre } from './js/kit3d.js';
 const C = window.MotsCity, MOTS = window.MOTS;
 const $ = s => document.querySelector(s);
 const sobre = matchMedia('(prefers-reduced-motion: reduce)').matches;
 const tactile = matchMedia('(pointer: coarse)').matches;
 const save = C.charger();
+// Modèles 3D KayKit (CC0). Sans eux, le jeu garde son décor dessiné par le code.
+const KIT = await chargerKit((n, t) => { const s = document.querySelector('#chargement small'); if(s) s.textContent = 'Chargement des modèles 3D… ' + n + '/' + t; });
+// Passants et tenues Quaternius (CC0) : une foule variée (chefs, médecins, ouvriers, mamies…). Sur téléphone, moins de modèles.
+const FOULE = HABITANTS.filter(n => !/Knight|Viking/.test(n)).filter((n, i) => !tactile || i % 2 === 0);
+const HAB = KIT ? await chargerHabitants(KIT, FOULE.concat(C.TENUES.map(t => t.perso).filter(p => /^q:/.test(p)).map(p => p.slice(2)))) : [];
+const FOULE_OK = HAB.filter(n => FOULE.includes(n));
 
 // ═══ Rendu ═══════════════════════════════════════════════════════
 const renderer = new THREE.WebGLRenderer({ antialias:!tactile, powerPreference:'high-performance' });
@@ -133,6 +140,9 @@ const texCiel = new THREE.CanvasTexture(ciel); texCiel.colorSpace = THREE.SRGBCo
 scene.fog = new THREE.Fog(0xffc9a0, 80, 230);
 const camera = new THREE.PerspectiveCamera(60, innerWidth / innerHeight, .1, 500);
 const hemi = new THREE.HemisphereLight(0xcfe3ff, 0x7a5a40, 1.6); scene.add(hemi);
+// Graphismes : « haute » sur ordinateur (lueur des néons, reflets du ciel), « rapide » sur téléphone. Modifiable dans le téléphone.
+let qualiteHaute = localStorage.getItem('motscity_qualite') ? localStorage.getItem('motscity_qualite') === 'haute' : !tactile;
+const amb = ambiance(renderer, scene, camera, { haute:qualiteHaute });
 const soleil = new THREE.DirectionalLight(0xffe2bf, 2.6);
 soleil.castShadow = true; soleil.shadow.mapSize.set(2048, 2048);
 Object.assign(soleil.shadow.camera, { left:-60, right:60, top:60, bottom:-60, near:10, far:260 });
@@ -170,8 +180,8 @@ const PAS = 34, N = 5, LIMITE = 92;
 const centre = i => (i - 2) * PAS;
 const murs = [], solides = [];
 // Le sol s'arrête à la plage : sinon l'herbe ressortait dans le creux des vagues.
-const sol = new THREE.Mesh(new THREE.PlaneGeometry(700, 350 + LIMITE + 20), mat(0x7cc46a, 1)); sol.position.z = (-350 + LIMITE + 20) / 2; sol.rotation.x = -Math.PI / 2; sol.receiveShadow = !tactile; scene.add(sol);
-const route = mat(0x3f4458, .95), ligne = mat(0xffe08a, .6), trottoir = mat(0xe6dccb, .9);
+const sol = new THREE.Mesh(new THREE.PlaneGeometry(700, 350 + LIMITE + 20), new THREE.MeshStandardMaterial({ map:texBruit(0x79c26a, .22, 128, 90), roughness:1 })); sol.position.z = (-350 + LIMITE + 20) / 2; sol.rotation.x = -Math.PI / 2; sol.receiveShadow = !tactile; scene.add(sol);
+const route = new THREE.MeshStandardMaterial({ map:texBruit(0x7d8396, .16, 128, 30), roughness:.88 }), ligne = mat(0xffe08a, .6), trottoir = new THREE.MeshStandardMaterial({ map:texBruit(0xe6dccb, .12, 64, 4), roughness:.9 });
 const tirets = [];
 for(let k = 0; k <= N; k++){
   const p = centre(k) - PAS / 2;
@@ -187,9 +197,9 @@ function instances(geo, m, liste, ombre){
 instances(geoBox, ligne, tirets.map(([x, z, w, d]) => ({ x, y:.05, z, sx:w, sy:.02, sz:d })));
 
 // Plage, promenade, ponton, mer.
-boite(scene, 0, .03, LIMITE + 16, 300, .06, 26, mat(0xf3dc9b, 1), false);
+boite(scene, 0, .03, LIMITE + 16, 300, .06, 26, new THREE.MeshStandardMaterial({ map:texBruit(0xf3dc9b, .14, 128, 40), roughness:1 }), false);
 boite(scene, 0, .1, LIMITE + 5.5, 200, .2, 4, mat(0xc79a6b, .9), false);   // promenade en bois
-const mer = new THREE.Mesh(new THREE.PlaneGeometry(500, 160, tactile ? 30 : 80, tactile ? 10 : 24), new THREE.MeshStandardMaterial({ color:0x2fb3d6, roughness:.18, metalness:.15 }));
+const mer = new THREE.Mesh(new THREE.PlaneGeometry(500, 160, tactile ? 30 : 80, tactile ? 10 : 24), new THREE.MeshStandardMaterial({ color:0x1f9fc7, roughness:.12, metalness:.25, normalMap:texVagues(), normalScale:new THREE.Vector2(.6, .6) }));
 mer.rotation.x = -Math.PI / 2; mer.position.set(0, .05, LIMITE + 108); scene.add(mer);
 const merBase = mer.geometry.attributes.position.array.slice();
 // Ponton avec une grande roue
@@ -222,6 +232,18 @@ const TJOUR = texFenetres(false), TNUIT = texFenetres(true);
 const PASTELS = [0xffb3c6, 0xffd6a5, 0xa0e7e5, 0xb4f8c8, 0xfbe7c6, 0xcdb4db, 0xffc8dd, 0xbde0fe];
 const NEONS = [neon(0xff2e88), neon(0x00f0ff), neon(0xffe600), neon(0x9d4dff)];
 const fenetresNuit = [];
+// Tours de verre (ligne d'horizon) : façade qui reflète le ciel, fenêtres allumées la nuit.
+const TVERRE = texFacadeVerre();
+function tourVerre(x, z, w, d, h, k){
+  const t = TVERRE.clone(); t.needsUpdate = true; t.repeat.set(Math.round(w / 3.2), Math.round(h / 3.4));
+  const tn = TNUIT.clone(); tn.needsUpdate = true; tn.repeat.set(Math.round(w / 3), Math.round(h / 4));
+  const m = new THREE.MeshStandardMaterial({ map:t, metalness:.75, roughness:.12, emissive:0xffffff, emissiveMap:tn, emissiveIntensity:0 });
+  fenetresNuit.push(m);
+  const o = boite(scene, x, h / 2, z, w, h, d, m); solides.push(o);
+  boite(scene, x, h + .4, z, w * .7, .8, d * .7, mat(0xdfe6ec, .5, .3));
+  boite(scene, x, h + .9, z, .25, 1.8 + (k % 3), .25, NEONS[k % NEONS.length], false);   // antenne lumineuse
+  murs.push({ x1:x - w / 2, x2:x + w / 2, z1:z - d / 2, z2:z + d / 2 });
+}
 function immeuble(x, z, w, d, h, c, k){
   const tj = TJOUR.clone(), tn = TNUIT.clone(); tj.needsUpdate = tn.needsUpdate = true;
   const rep = [Math.max(1, Math.round(w / 3)), Math.max(1, Math.round(h / 4))]; tj.repeat.set(...rep); tn.repeat.set(...rep);
@@ -236,8 +258,15 @@ function immeuble(x, z, w, d, h, c, k){
 }
 // Palmiers : deux objets instanciés (troncs + palmes) pour toute la ville.
 const palmiers = [];
-function palmier(x, z, s = 1){ palmiers.push({ x, z, s, a:Math.random() * 6.28, i:(Math.random() - .5) * .3 }); murs.push({ x1:x - .35, x2:x + .35, z1:z - .35, z2:z + .35 }); }
+// Nature Quaternius (CC0) : vrais palmiers, arbres, buissons et fleurs, fusionnés avec le décor.
+const nature = []; let graineN = 3; const aleaN = () => (graineN = (graineN * 16807) % 2147483647) / 2147483647;
+function palmier(x, z, s = 1){
+  if(KIT?.nature) nature.push({ nom:'PalmTree_' + (1 + Math.floor(aleaN() * 4)), x, z, ry:aleaN() * 6.28, s:1.45 * s });
+  else palmiers.push({ x, z, s, a:Math.random() * 6.28, i:(Math.random() - .5) * .3 });
+  murs.push({ x1:x - .35, x2:x + .35, z1:z - .35, z2:z + .35 });
+}
 function arbre(x, z, s = 1){
+  if(KIT?.nature){ nature.push({ nom:['CommonTree_1', 'CommonTree_2', 'CommonTree_4', 'BirchTree_2', 'Willow_2'][Math.floor(aleaN() * 5)], x, z, ry:aleaN() * 6.28, s:1.6 * s }); murs.push({ x1:x - .4 * s, x2:x + .4 * s, z1:z - .4 * s, z2:z + .4 * s }); return; }
   boite(scene, x, 1.2 * s, z, .5 * s, 2.4 * s, .5 * s, mat(0x8d5a35));
   const f = new THREE.Mesh(new THREE.IcosahedronGeometry(1.7 * s, 0), mat(0x3f9d5a, .9)); f.position.set(x, 3.3 * s, z); f.castShadow = !tactile; scene.add(f);
   murs.push({ x1:x - .4 * s, x2:x + .4 * s, z1:z - .4 * s, z2:z + .4 * s });
@@ -321,15 +350,37 @@ const etals = [];
 const pris = new Set(['0,0', '4,0', '2,0', '0,2', '4,2', '3,4', '1,1', '2,2']);
 let graine = 7; const alea = () => (graine = (graine * 16807) % 2147483647) / 2147483647;
 const trottoirs = []; let kImm = 0;
+const kitStatique = [];   // décor KayKit, fusionné en quelques objets
 for(let i = 0; i < N; i++) for(let j = 0; j < N; j++){
   const x = centre(i), z = centre(j);
   if(pris.has(i + ',' + j)) continue;
   boite(scene, x, .1, z, 24, .2, 24, trottoir, false);
   trottoirs.push({ x, z });
-  if((i + j) % 5 === 3){ for(let k = 0; k < 6; k++) palmier(x - 9 + alea() * 18, z - 9 + alea() * 18, .8 + alea() * .5); continue; }
-  for(const [dx, dz] of [[-5.5, -5.5], [5.5, -5.5], [-5.5, 5.5], [5.5, 5.5]]){
-    if(alea() < .2){ palmier(x + dx, z + dz, 1); continue; }
-    immeuble(x + dx, z + dz, 8 + alea() * 2, 8 + alea() * 2, 5 + alea() * (i === 2 || j === 2 ? 9 : 18), PASTELS[Math.floor(alea() * PASTELS.length)], kImm++);
+  if((i + j) % 5 === 3){
+    for(let k = 0; k < 6; k++) palmier(x - 9 + alea() * 18, z - 9 + alea() * 18, .8 + alea() * .5);
+    if(KIT?.nature){ // un vrai petit parc : pelouse, buissons, fleurs, rochers
+      boite(scene, x, .22, z, 21, .06, 21, mat(0x6cbf6a, .95), false);
+      for(let k = 0; k < 26; k++){ const nom = ['Flowers', 'Flowers', 'Bush_1', 'BushBerries_1', 'Grass', 'Grass_2', 'Plant_3', 'Rock_Moss_2', 'Plant_5'][Math.floor(aleaN() * 9)];
+        nature.push({ nom, x:x - 9.5 + aleaN() * 19, y:.24, z:z - 9.5 + aleaN() * 19, ry:aleaN() * 6.28, s:/Bush/.test(nom) ? 1.2 : 1.4 }); }
+    }
+    continue;
+  }
+  const quarts = [[-5.5, -5.5], [5.5, -5.5], [-5.5, 5.5], [5.5, 5.5]], tour = (i + j) % 3 === 0 ? Math.floor(alea() * 4) : -1;
+  quarts.forEach(([dx, dz], q) => {
+    if(alea() < .14){ palmier(x + dx, z + dz, 1); return; }
+    // Une grande tour art déco par endroits (la ligne d'horizon), sinon des immeubles KayKit.
+    if(KIT && q === tour){ tourVerre(x + dx, z + dz, 9, 9, 24 + alea() * 22, kImm++); return; }
+    if(!KIT){ immeuble(x + dx, z + dz, 8 + alea() * 2, 8 + alea() * 2, 5 + alea() * (q === tour ? 26 : (i === 2 || j === 2 ? 9 : 18)), PASTELS[Math.floor(alea() * PASTELS.length)], kImm++); return; }
+    const nom = 'building_' + 'ABCDEFGH'[Math.floor(alea() * 8)], s = 4.75;
+    // Façade (côté +z du modèle) tournée vers une rue ; on alterne les deux rues pour éviter les murs aveugles en série.
+    const versX = (i + j + q) % 2 === 0, ry = versX ? (dx > 0 ? Math.PI / 2 : -Math.PI / 2) : (dz > 0 ? 0 : Math.PI);
+    kitStatique.push({ nom, x:x + dx, z:z + dz, ry, s, bat:true });
+    murs.push({ x1:x + dx - 4.75, x2:x + dx + 4.75, z1:z + dz - 4.75, z2:z + dz + 4.75 });
+  });
+  if(KIT){ // mobilier urbain sur le trottoir
+    kitStatique.push({ nom:'bench', x:x - 11, z:z + (alea() - .5) * 6, ry:Math.PI / 2, s:4.6 }, { nom:'bush', x:x + 11.2, z:z - 2, s:4.2 }, { nom:'bush', x:x + 11.2, z:z + 2, s:4 },
+      { nom:'firehydrant', x:x - 11.3, z:z - 10, s:4.4 }, { nom:alea() < .5 ? 'trash_A' : 'box_A', x:x + 10.8, z:z + 10.5, s:4 });
+    murs.push({ x1:x - 11.8, x2:x - 10.2, z1:z - 3.5, z2:z + 3.5 });
   }
 }
 // Palmiers le long de la plage et du grand boulevard
@@ -348,11 +399,15 @@ for(let x = -LIMITE; x <= LIMITE; x += 12) if(Math.abs(x - ponton.x) > 7) palmie
 const lampes = [];
 for(let k = 0; k <= N; k++) for(let q = 0; q <= N; q++){ const x = centre(k) - PAS / 2 + 5.8, z = centre(q) - PAS / 2 + 5.8; if(Math.abs(x) < LIMITE + 4 && Math.abs(z) < LIMITE + 4) lampes.push([x, z]); }
 for(let x = -LIMITE + 6; x <= LIMITE; x += 24) lampes.push([x, LIMITE + 7.6]);
-instances(new THREE.CylinderGeometry(.09, .13, 1, 6), mat(0x39445e, .4, .5), lampes.map(([x, z]) => ({ x, y:2.3, z, sy:4.6 })));
+if(KIT) for(const [x, z] of lampes) kitStatique.push({ nom:'streetlight', x, z, ry:z > LIMITE ? Math.PI / 2 : 0, s:4.8 });
+else instances(new THREE.CylinderGeometry(.09, .13, 1, 6), mat(0x39445e, .4, .5), lampes.map(([x, z]) => ({ x, y:2.3, z, sy:4.6 })));
+const boutLampe = ([x, z]) => KIT ? (z > LIMITE ? [x, 4.4, z + 1.1] : [x - 1.1, 4.4, z]) : [x, 4.7, z];
+if(KIT){ const ms = fusionner(KIT, kitStatique, !tactile); for(const m of ms){ scene.add(m); solides.push(m); } }
+if(KIT?.nature) for(const m of fusionner(KIT, nature, !tactile)) scene.add(m);
 const tetesLampes = neon(0xfff2c0, .1);
-instances(new THREE.SphereGeometry(.28, 10, 8), tetesLampes, lampes.map(([x, z]) => ({ x, y:4.7, z })));
-const halos = new THREE.Points(new THREE.BufferGeometry().setAttribute('position', new THREE.Float32BufferAttribute(lampes.flatMap(([x, z]) => [x, 4.7, z]), 3)),
-  new THREE.PointsMaterial({ map:texHalo, size:7, transparent:true, depthWrite:false, blending:THREE.AdditiveBlending, opacity:0, sizeAttenuation:true }));
+instances(new THREE.SphereGeometry(.22, 10, 8), tetesLampes, lampes.map(l => { const [x, y, z] = boutLampe(l); return { x, y:y - .15, z }; }));
+const halos = new THREE.Points(new THREE.BufferGeometry().setAttribute('position', new THREE.Float32BufferAttribute(lampes.flatMap(boutLampe), 3)),
+  new THREE.PointsMaterial({ map:texHalo, size:4.2, transparent:true, depthWrite:false, blending:THREE.AdditiveBlending, opacity:0, sizeAttenuation:true }));
 scene.add(halos);
 for(const [x, z] of lampes) murs.push({ x1:x - .2, x2:x + .2, z1:z - .2, z2:z + .2 });
 // Tremplins
@@ -392,6 +447,7 @@ function humain(t){
 }
 // Le cycle de marche : cuisse en avant, genou qui plie pendant que la jambe revient, bras opposés.
 function animer(h, vitesse, dt, mode){
+  if(animerKit(h, vitesse, dt, mode)) return;   // vrai personnage animé (squelette)
   const u = h.userData;
   if(mode === 'assis'){
     for(let i = 0; i < 2; i++){ u.cuisses[i].rotation.x = -1.45; u.tibias[i].rotation.x = 1.4; u.bras[i].rotation.x = -.95; u.avants[i].rotation.x = -.35; }
@@ -418,12 +474,14 @@ function animer(h, vitesse, dt, mode){
   u.torse.rotation.y = amp ? Math.sin(u.phase) * .08 * amp : 0;
 }
 let perf = 0;
+// Un personnage : modèle animé KayKit si disponible, sinon le bonhomme articulé dessiné par le code.
+const personnage = (t, nom) => KIT ? perso(KIT, nom || (FOULE_OK.length ? 'q:' + FOULE_OK[Math.floor(Math.random() * FOULE_OK.length)] : ['rogue', 'mage', 'knight', 'barbarian'][Math.floor(Math.random() * 4)])) : humain(t);
 
 // Passants
 const passants = [];
-for(let k = 0; k < Math.min(18, trottoirs.length + 4); k++){
+for(let k = 0; k < Math.min(tactile ? 9 : 16, trottoirs.length + 4); k++){
   const t = trottoirs[(k * 3) % trottoirs.length];
-  const p = humain({ haut:PASTELS[k % PASTELS.length] - 0x202020, bas:[0x2d3a5a, 0x6b4f3a, 0x333333, 0x1b4965][k % 4], chaussures:0xffffff, casquette:k % 3 ? null : 0xff6f91 });
+  const p = personnage({ haut:PASTELS[k % PASTELS.length] - 0x202020, bas:[0x2d3a5a, 0x6b4f3a, 0x333333, 0x1b4965][k % 4], chaussures:0xffffff, casquette:k % 3 ? null : 0xff6f91 }, FOULE_OK.length ? 'q:' + FOULE_OK[k % FOULE_OK.length] : null);
   scene.add(p); passants.push({ p, t, s:Math.random() * 92, v:1.1 + Math.random() * .5, saut:0, calme:0 });
 }
 function surTour(t, s){
@@ -437,6 +495,7 @@ function surTour(t, s){
 // ═══ Véhicules ════════════════════════════════════════════════════
 const TYPES = {
   scooter:{ max:17, acc:13, frein:22, tourne:2.1, rayon:1.1, cam:8.5, camH:4.6, siege:[0, .32, -.3], passager:[0, .45, -1.0], roues:.42 },
+  voiture:{ max:26, acc:15, frein:30, tourne:1.75, rayon:1.9, cam:10.5, camH:4.8, siege:[-.45, .12, -.15], passager:[.45, .12, -.15], roues:.45 },
   cabriolet:{ max:27, acc:15, frein:30, tourne:1.75, rayon:1.8, cam:10.5, camH:4.8, siege:[-.45, .02, -.25], passager:[.45, .02, -.25], roues:.48 }
 };
 function phares(g, z, y, ecart){ const m = new THREE.MeshStandardMaterial({ color:0xfff7c2, emissive:0xfff2a0, emissiveIntensity:.3 }); lumineux.push(m); m.userData.base = .3;
@@ -462,21 +521,26 @@ function modeleCabriolet(c){
   return { g, roues:r };
 }
 const vehicules = [];
-function vehicule(type, c, x, z, h){
-  const { g, roues } = type === 'scooter' ? modeleScooter(c) : modeleCabriolet(c);
+function vehicule(type, c, x, z, h, nomKit){
+  if(type === 'voiture' && !KIT) type = 'cabriolet';
+  let modele;
+  if(type === 'voiture'){ modele = objet(KIT, nomKit, 4.8); phares(modele.g, 2.27, .95, [-.62, .62]); }
+  else modele = type === 'scooter' ? modeleScooter(c) : modeleCabriolet(c);
+  const { g, roues } = modele;
   scene.add(g); const v = { type, P:TYPES[type], g, roues, x, z, h, v:0, y:0, vy:0, enLair:false, braquage:0 };
   g.position.set(x, 0, z); g.rotation.y = h; vehicules.push(v); return v;
 }
 vehicule('scooter', 0xff5f6d, -14, 56, Math.PI);
-vehicule('cabriolet', 0xff6f91, -20.5, 44, Math.PI);
-vehicule('cabriolet', 0x2ec4b6, 17, -60, 0);
+vehicule('voiture', 0xff6f91, -20.5, 44, Math.PI, 'car_taxi');
+vehicule('voiture', 0x2ec4b6, 17, -60, 0, 'car_sedan');
 vehicule('scooter', 0xffc75f, 51.5, 30, Math.PI / 2);
 vehicule('cabriolet', 0xffd45c, -60, LIMITE + 2, Math.PI / 2);
+vehicule('voiture', 0x2ec4b6, 85.5, -10, 0, 'car_stationwagon');
 // Circulation (non conduisible)
 const voitures = [];
 for(const [k, [a, b, sens]] of [[-3, 1, 1], [-1, 3, -1], [-3, 3, 1], [-1, 1, -1], [-2, 2, 1], [-3, -1, -1]].entries()){
   const p1 = (a + .5) * PAS, p2 = (b - .5) * PAS;
-  const { g, roues } = modeleCabriolet([0x8ecae6, 0xffb703, 0xfb8500, 0x219ebc, 0xe5989b, 0xb5838d][k]); scene.add(g);
+  const { g, roues } = KIT ? objet(KIT, ['car_sedan', 'car_hatchback', 'car_stationwagon'][k % 3], 4.8) : modeleCabriolet([0x8ecae6, 0xffb703, 0xfb8500, 0x219ebc, 0xe5989b, 0xb5838d][k]); scene.add(g);
   voitures.push({ g, roues, coins:[[p1, p1], [p2, p1], [p2, p2], [p1, p2]], s:k * 40, sens, v:7 });
 }
 function surCarre(c, s, decal){
@@ -495,7 +559,7 @@ const phareNuit = new THREE.SpotLight(0xfff2c0, 0, 45, .5, .5, 1.2); scene.add(p
 let heros = null;
 function habiller(){
   const t = C.TENUES[save.tenue] || C.TENUES[0];
-  const ancien = heros; heros = humain(Object.assign({ peau:0xe0ac69 }, t));
+  const ancien = heros; heros = personnage(Object.assign({ peau:0xe0ac69 }, t), t.perso);
   if(ancien){ heros.position.copy(ancien.position); heros.rotation.copy(ancien.rotation); if(ancien.parent) ancien.parent.add(heros); ancien.parent && ancien.parent.remove(ancien); }
   else scene.add(heros);
 }
@@ -505,7 +569,7 @@ let conduite = null;   // véhicule conduit, ou null à pied
 const ctrl = () => conduite || pieton;
 const entree = { haut:false, bas:false, gauche:false, droite:false, saut:false };
 let courir = false;
-const passagerFig = humain({ haut:0xffffff, bas:0x555555, chaussures:0x333333, casquette:0xff9f1c }); passagerFig.visible = false; scene.add(passagerFig);
+const passagerFig = personnage({ haut:0xffffff, bas:0x555555, chaussures:0x333333, casquette:0xff9f1c }, 'mage'); passagerFig.visible = false; scene.add(passagerFig);
 const fleche = new THREE.Mesh(new THREE.ConeGeometry(.45, 1.3, 4), new THREE.MeshStandardMaterial({ color:0x3dfc9a, emissive:0x1fbf6a, emissiveIntensity:.8 }));
 fleche.rotation.x = Math.PI / 2; const porteFleche = new THREE.Group(); porteFleche.add(fleche); scene.add(porteFleche); porteFleche.visible = false;
 
@@ -538,7 +602,7 @@ function placerPassager(){
 // ═══ Cible de mission ════════════════════════════════════════════
 const anneau = new THREE.Mesh(new THREE.TorusGeometry(3.2, .25, 8, 32), new THREE.MeshStandardMaterial({ color:0x3dfc9a, emissive:0x3dfc9a, emissiveIntensity:1, transparent:true, opacity:.85 }));
 anneau.rotation.x = Math.PI / 2; anneau.visible = false; scene.add(anneau);
-const client = humain({ haut:0xff9f1c, bas:0x2d3a5a, chaussures:0xffffff }); client.visible = false; scene.add(client);
+const client = personnage({ haut:0xff9f1c, bas:0x2d3a5a, chaussures:0xffffff }, 'barbarian'); client.visible = false; scene.add(client);
 const clientBulle = etiquette('!', 'rgba(255,159,28,.95)'); clientBulle.position.y = 2.6; client.add(clientBulle);
 let lettresVolantes = [];
 
@@ -546,6 +610,10 @@ let lettresVolantes = [];
 const PLACES_DOREES = [[-17, 0], [17, -51], [-51, 68], [51, 51], [-85, -85], [85, -85], [85, 85], [-85, 20], [0, -85], [ponton.x, ponton.z2 - 13], [-40, LIMITE + 20], [60, LIMITE + 18],
   [centre(1), centre(1) + 10], [centre(3) + 9, centre(1)], [-34, 34], [34, -34], [-68, -17], [68, 17], [17, 85], [-17, -68]];
 const geoPlume = new THREE.OctahedronGeometry(.55, 0), matPlume = neon(0xffd45c, .9);
+// Une plume ne doit jamais tomber dans un mur : sinon on la déplace sur la rue la plus proche.
+const dansMur = (x, z) => murs.some(m => x > m.x1 - 1 && x < m.x2 + 1 && z > m.z1 - 1 && z < m.z2 + 1);
+const versRue = v => Math.round((v + PAS / 2) / PAS) * PAS - PAS / 2;
+for(const p of PLACES_DOREES) if(p[1] < LIMITE && dansMur(p[0], p[1])) p[0] = versRue(p[0]);
 const dorees = PLACES_DOREES.slice(0, C.PLUMES_DOREES.length).map(([x, z], i) => {
   const o = new THREE.Mesh(geoPlume, matPlume); o.scale.set(.6, 1.3, .6); o.position.set(x, 1.4 + (z > LIMITE && Math.abs(x - ponton.x) < 4 ? 1 : 0), z);
   o.visible = !save.dorees.includes(i); scene.add(o); return { o, i, x, z };
@@ -695,7 +763,7 @@ function semerLettres(){
   toutes.forEach((ch, i) => { const [x, z] = libres[i % libres.length]; const s = etiquette(ch, 'rgba(157,77,255,.95)', 96); s.scale.multiplyScalar(2.1); s.position.set(x, 2.4, z); scene.add(s); lettresVolantes.push({ s, c:ch, x, z }); });
 }
 function reussir(texte, correction, x, z){
-  sons.ok(); feuDArtifice(x, 2, z);
+  sons.ok(); feuDArtifice(x, 2, z); if(!conduite) geste(heros, 'Cheer'); geste(client, 'Cheer');
   const plumes = 3 + save.fun; save.plumes += plumes; save.reussies[mission.type]++;
   if(mission.voulu && !save.appris.includes(mission.voulu)) save.appris.push(mission.voulu);
   fun(+1);
@@ -710,7 +778,7 @@ function verifierMission(){
   const c = ctrl(), d = (x, z) => Math.hypot(c.x - x, c.z - z);
   // Plumes dorées
   for(const p of dorees) if(p.o.visible && d(p.x, p.z) < (conduite ? 2.8 : 1.9)){
-    p.o.visible = false; save.dorees.push(p.i); sons.doree(); const e = C.PLUMES_DOREES[p.i];
+    p.o.visible = false; save.dorees.push(p.i); sons.doree(); if(!conduite) geste(heros, 'PickUp', .9); const e = C.PLUMES_DOREES[p.i];
     if(!save.appris.includes(e)) save.appris.push(e); save.plumes += 5; C.garder(save); majCompteurs();
     bulle('<img src="img/pictos/' + MOTS[e].img + '.webp" alt=""><div class="qui">✨ Plume dorée ' + save.dorees.length + '/' + dorees.length + ' — nouveau mot !</div><div class="anglais">' + esc(C.en(e)) + '</div><div class="francais">= ' + esc(C.fr(e)) + ' · +5 🪶</div><div class="actions"><button data-b="redire">🔊 Réécouter</button><button data-b="ok">✓</button></div>', 'ok', 7000);
     dernierePhrase = C.en(e); parler(C.en(e)); majMission();
@@ -769,7 +837,7 @@ function fermerPanneau(){ $('#panneau').classList.remove('vu'); panneauOuvert = 
 function ecranTitre(){
   ouvrirPanneau('<div class="titre-jeu">MOTS CITY</div><p class="sous-titre">🌴 La ville où on apprend l’anglais en rigolant</p>' +
     '<p>Promène-toi, grimpe sur un scooter ou dans une voiture, écoute la radio, trouve les ✨ plumes dorées et réussis les missions du téléphone.</p>' +
-    '<b>Choisis ta tenue :</b><div class="tenues">' + C.TENUES.map((t, i) => '<button data-tenue="' + i + '" class="' + (i === save.tenue ? 'choisie' : '') + '"><i style="background:linear-gradient(#' + t.casquette.toString(16).padStart(6, '0') + ' 0 25%,#' + t.haut.toString(16).padStart(6, '0') + ' 25% 65%,#' + t.bas.toString(16).padStart(6, '0') + ' 65%)"></i>' + esc(t.nom) + '</button>').join('') + '</div>' +
+    '<b>Choisis ton personnage :</b><div class="tenues">' + C.TENUES.map((t, i) => '<button data-tenue="' + i + '" class="' + (i === save.tenue ? 'choisie' : '') + '"><i style="background:linear-gradient(#' + t.casquette.toString(16).padStart(6, '0') + ' 0 25%,#' + t.haut.toString(16).padStart(6, '0') + ' 25% 65%,#' + t.bas.toString(16).padStart(6, '0') + ' 65%)"></i>' + esc(t.nom) + '</button>').join('') + '</div>' +
     '<p style="font-size:.9rem;opacity:.85">🖥️ Flèches / ZQSD / WASD · <b>Maj</b> courir · <b>Espace</b> sauter · <b>E</b> monter/descendre · <b>M</b> missions · <b>R</b> radio · <b>H</b> klaxon<br>📱 Gros boutons en bas de l’écran.</p>' +
     '<button class="fermer jouer" data-m="fermer">▶ Jouer</button>');
 }
@@ -781,7 +849,8 @@ function ouvrirTelephone(){
     '<button class="carte-mission" data-m="lettres"><span class="ico">🔤</span><span><b>Chasse aux lettres</b>Attrape les lettres du mot anglais dans le bon ordre. (' + r.lettres + ' réussies)</span></button>' +
     '<p>✨ Plumes dorées : ' + save.dorees.length + '/' + dorees.length + ' · 📚 Mots appris : ' + save.appris.length + '</p>' +
     (mission ? '<button class="carte-mission" data-m="abandon"><span class="ico">🏳️</span><span><b>Abandonner la mission en cours</b>Tu gardes tes plumes.</span></button>' : '') +
-    '<button class="carte-mission" data-m="titre"><span class="ico">👕</span><span><b>Changer de tenue</b></span></button>' +
+    '<button class="carte-mission" data-m="titre"><span class="ico">🧑</span><span><b>Changer de personnage</b></span></button>' +
+    '<button class="carte-mission" data-m="qualite"><span class="ico">' + (qualiteHaute ? '✨' : '⚡') + '</span><span><b>Graphismes : ' + (qualiteHaute ? 'Haute qualité' : 'Rapide') + '</b>Touche pour passer en ' + (qualiteHaute ? 'Rapide (téléphones modestes)' : 'Haute qualité (lueurs, reflets)') + '. La page se recharge.</span></button>' +
     '<button class="fermer" data-m="fermer">Fermer</button>');
 }
 function aide(){
@@ -796,6 +865,7 @@ $('#panneau').addEventListener('click', ev => {
   const m = b.dataset.m;
   if(m === 'fermer'){ fermerPanneau(); audioPret(); }
   else if(m === 'titre') ecranTitre();
+  else if(m === 'qualite'){ try{ localStorage.setItem('motscity_qualite', qualiteHaute ? 'rapide' : 'haute'); }catch(e){} C.garder(save); location.reload(); }
   else if(m === 'abandon'){ mission = null; nettoyer(); majMission(); fermerPanneau(); }
   else if(m) lancer(m);
 });
@@ -838,7 +908,7 @@ let camDecal = 0, glisse = null;
 renderer.domElement.addEventListener('pointerdown', e => { glisse = { x:e.clientX, d:camDecal }; });
 addEventListener('pointermove', e => { if(glisse) camDecal = glisse.d - (e.clientX - glisse.x) * .008; });
 addEventListener('pointerup', () => { glisse = null; });
-addEventListener('resize', () => { camera.aspect = innerWidth / innerHeight; camera.updateProjectionMatrix(); renderer.setSize(innerWidth, innerHeight); });
+addEventListener('resize', () => { camera.aspect = innerWidth / innerHeight; camera.updateProjectionMatrix(); renderer.setSize(innerWidth, innerHeight); amb.redim(innerWidth, innerHeight); });
 
 // ═══ Physique ════════════════════════════════════════════════════
 let boboT = 0, passantT = 0;
@@ -911,9 +981,9 @@ function majCamera(dt){
 // Une journée dure 6 minutes. On commence à l'heure dorée (17 h 30).
 let heure = 17.5;
 const PALETTES = [ // [heure, haut du ciel, horizon, brouillard, intensité soleil, intensité ciel, nuit 0..1]
-  [0, '#0b1030', '#2a1b4a', 0x1a1838, .15, .35, 1], [5, '#141a45', '#5b3a6e', 0x3a2c58, .2, .45, .9], [6.5, '#6a7fd8', '#ffb38a', 0xffc9a0, 1.2, 1.1, .35],
+  [0, '#0b1030', '#2a1b4a', 0x1a1838, .3, .7, 1], [5, '#141a45', '#5b3a6e', 0x3a2c58, .35, .75, .9], [6.5, '#6a7fd8', '#ffb38a', 0xffc9a0, 1.2, 1.1, .35],
   [9, '#4b8fe0', '#bfe3ff', 0xcfe7ff, 2.6, 1.6, 0], [16, '#4b7bd8', '#ffd9a8', 0xffd9b0, 2.4, 1.5, 0], [18.5, '#5a4fb8', '#ff8a5c', 0xff9f80, 1.3, 1.1, .35],
-  [20, '#1c1d55', '#a3477a', 0x5a3260, .35, .55, .85], [24, '#0b1030', '#2a1b4a', 0x1a1838, .15, .35, 1]];
+  [20, '#1c1d55', '#a3477a', 0x5a3260, .45, .8, .85], [24, '#0b1030', '#2a1b4a', 0x1a1838, .3, .7, 1]];
 const cA = new THREE.Color(), cB = new THREE.Color(), cTmp = new THREE.Color();
 let nuit = 0, dernierCiel = -1;
 function majJour(dt){
@@ -925,7 +995,10 @@ function majJour(dt){
   scene.fog.color.copy(cA.setHex(A[3]).lerp(cB.setHex(B[3]), f));
   const ang = (heure - 6) / 12 * Math.PI;   // le soleil traverse le ciel de 6 h à 18 h
   const c = ctrl();
-  soleil.position.set(c.x - Math.cos(ang) * 80, Math.max(12, Math.sin(ang) * 110), c.z + 40); soleil.target.position.set(c.x, 0, c.z);
+  const dir = amb.soleil(Math.sin(ang) * 62, 205 + (heure - 12) * 9, nuit);
+  if(dir.y > .08) soleil.position.set(c.x + dir.x * 120, dir.y * 120, c.z + dir.z * 120);
+  else soleil.position.set(c.x - Math.cos(ang) * 80, 14, c.z + 40);   // la nuit : lumière de lune, venue d'en haut
+  soleil.target.position.set(c.x, 0, c.z);
   soleil.color.copy(cTmp.setHex(0xffe2bf).lerp(cB.setHex(0xff9a6b), Math.min(1, nuit * 1.5)));
   if(Math.abs(heure - dernierCiel) > .05){
     dernierCiel = heure; const g = ciel.getContext('2d'), d = g.createLinearGradient(0, 0, 0, 256);
@@ -935,8 +1008,10 @@ function majJour(dt){
   }
   for(const m of lumineux) m.emissiveIntensity = m.userData.base + nuit * 1.8;
   for(const m of fenetresNuit) m.emissiveIntensity = nuit * 1.1;
-  halos.material.opacity = Math.max(0, nuit - .2) * 1.1;
+  halos.material.opacity = Math.max(0, nuit - .2) * .8;
+  if(KIT && KIT.matVille) KIT.matVille.emissiveIntensity = Math.max(0, nuit - .3) * .38;
   phareNuit.intensity = conduite ? nuit * 60 : 0;
+  mer.material.normalMap.offset.set(temps * .012, temps * .007);
   if(conduite){ phareNuit.position.set(c.x + Math.sin(c.h) * 2, 1.2, c.z + Math.cos(c.h) * 2); phareNuit.target.position.set(c.x + Math.sin(c.h) * 20, 0, c.z + Math.cos(c.h) * 20); }
 }
 
@@ -989,16 +1064,16 @@ function boucle(maintenant){
   const c = ctrl();
   if(porteFleche.visible && mission && mission.cible){ porteFleche.position.set(c.x, (conduite ? 4 : 3.2) + c.y + (sobre ? 0 : Math.sin(temps * 4) * .2), c.z); porteFleche.rotation.y = Math.atan2(mission.cible[0] - c.x, mission.cible[1] - c.z); }
   if(anneau.visible){ anneau.rotation.z += dt; anneau.scale.setScalar(1 + (sobre ? 0 : Math.sin(temps * 5) * .05)); }
-  if(client.visible){ client.lookAt(c.x, 0, c.z); animer(client, 0, dt); client.userData.bras[1].rotation.x = -2.6 + Math.sin(temps * 8) * .4; }
+  if(client.visible){ client.lookAt(c.x, 0, c.z); animer(client, 0, dt); if(client.userData.bras) client.userData.bras[1].rotation.x = -2.6 + Math.sin(temps * 8) * .4; }
   // Passants : ils marchent (vraies jambes), et sautent de côté si on arrive trop vite.
   for(const q of passants){
     const pres = Math.hypot(q.p.position.x - c.x, q.p.position.z - c.z);
-    if(pres < 4 && Math.abs(c.v) > 5 && q.calme <= 0){ q.saut = .6; q.calme = 4; if(performance.now() - passantT > 3000){ passantT = performance.now(); const ph = C.phrase('passants'); toast('🗣️ ' + ph.en, ph.fr); } }
+    if(pres < 4 && Math.abs(c.v) > 5 && q.calme <= 0){ q.saut = .6; q.calme = 4; geste(q.p, Math.random() < .5 ? 'Dodge_Left' : 'Dodge_Right'); if(performance.now() - passantT > 3000){ passantT = performance.now(); const ph = C.phrase('passants'); toast('🗣️ ' + ph.en, ph.fr); } }
     q.calme -= dt;
     const marche = q.saut > 0 ? 0 : q.v; q.s += marche * dt;
     const [x, z, cote] = surTour(q.t, q.s); q.p.position.set(x, 0, z);
     q.p.rotation.y = [Math.PI / 2, 0, -Math.PI / 2, Math.PI][cote];
-    if(q.saut > 0){ q.saut -= dt; q.p.position.y = Math.sin((1 - q.saut / .6) * Math.PI) * 1.1; animer(q.p, 0, dt, 'air'); }
+    if(q.saut > 0){ q.saut -= dt; if(q.p.userData.kit) animer(q.p, 0, dt); else { q.p.position.y = Math.sin((1 - q.saut / .6) * Math.PI) * 1.1; animer(q.p, 0, dt, 'air'); } }
     else animer(q.p, marche, dt);
   }
   // Circulation
@@ -1019,7 +1094,7 @@ function boucle(maintenant){
   for(let i = confettis.length - 1; i >= 0; i--){ const k = confettis[i]; k.vy -= 15 * dt; k.o.position.x += k.vx * dt; k.o.position.y += k.vy * dt; k.o.position.z += k.vz * dt; k.o.rotation.x += dt * 8; k.t -= dt; if(k.t <= 0){ scene.remove(k.o); confettis.splice(i, 1); } }
   verifierMission();
   majCamera(dt);
-  renderer.render(scene, camera);
+  amb.rendre();
   dessinerPlan(temps);
   requestAnimationFrame(boucle);
 }
@@ -1029,6 +1104,7 @@ requestAnimationFrame(t => { avant = t; boucle(t); });
 ecranTitre();
 // Accès pour les tests automatiques.
 window.__city = { get etat(){ return ctrl(); }, pieton, entree, camera, lieux, etals, lancer, get mission(){ return mission; }, get conduite(){ return conduite; },
+  nature, foule:FOULE_OK,
   get lettres(){ return lettresVolantes.map(l => ({ c:l.c, x:l.x, z:l.z, pris:!!l.pris })); }, get heros(){ return heros; }, murs, save, voitures, vehicules, passants, scene, renderer,
   monter, descendre, dorees:() => dorees.map(d => ({ i:d.i, x:d.x, z:d.z, vu:d.o.visible })), regler:h => { heure = h; dernierCiel = -1; }, get nuit(){ return nuit; } };
 </script>
