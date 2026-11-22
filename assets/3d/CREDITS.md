@@ -19,3 +19,10 @@ Fichiers préparés par `outils/preparer-quaternius.mjs` et `outils/preparer-nat
   les 11 animations gardées sont rangées une seule fois dans `q/q-casual_male.glb` ;
 - 54 éléments de nature tempérée et de bord de mer (pas de neige ni d'arbres morts) dans `nature.glb` ;
 - compression meshopt (décodeur MIT : `vendor/jsm/libs/meshopt_decoder.module.js`, three.js r160).
+
+- **Realistic Car Pack (nov. 2018)**, **Public Transport Pack (févr. 2017)** et **Ultimate Modular Ruins Pack (août 2021)**
+  par Quaternius — licence **CC0 1.0** (fichier License.txt des packs voitures et ruines ; le pack Transports
+  est publié en CC0 par Quaternius sur OpenGameArt : opengameart.org/node/83020).
+  Préparés par `outils/preparer-nature.mjs` avec les listes `outils/listes/vehicules.json` et `ruines.json` :
+  `vehicules.glb` (voitures, taxi, bus, bus scolaire, ambulance, vélo, feu, cône) et `ruines.glb`
+  (arches, colonnes, statues du renard et du cerf, coffres, tonneaux… sans crânes ni pièges à loup).

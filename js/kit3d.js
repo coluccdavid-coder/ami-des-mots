@@ -32,7 +32,7 @@ const ECHELLE_Q = .6;   // les modèles Quaternius mesurent ~3,1 m : ramenés à
 // ── Chargement ────────────────────────────────────────────────────
 export async function chargerKit(progres){
   const gl = new GLTFLoader().setMeshoptDecoder(MeshoptDecoder); let n = 0;
-  const charge = u => gl.loadAsync(u).then(g => { if(progres) progres(++n, 6); return g; });
+  const charge = u => gl.loadAsync(u).then(g => { if(progres) progres(++n, 8); return g; });
   try{
     const [ville, ...persos] = await Promise.all(['assets/3d/ville-kaykit.glb'].concat(PERSOS.map(p => 'assets/3d/' + p + '.glb')).map(charge));
     const objets = {}; for(const s of ville.scenes) objets[s.name] = s;
@@ -50,6 +50,10 @@ export async function chargerKit(progres){
       // Les verts Blender d'origine paraissent ternes sous notre éclairage : un peu plus vifs et clairs.
       const vus = new Set(); for(const s of nat.scenes) s.traverse(o => { if(o.isMesh && !vus.has(o.material)){ vus.add(o.material); if(/Green|Leaves/.test(o.material.name)) o.material.color.offsetHSL(.01, .18, .07); } });
     }catch(e){}
+    // Véhicules (voitures, bus, ambulance, vélo) et ruines Quaternius (CC0) : facultatifs, comme la nature.
+    for(const [f, cle] of [['assets/3d/vehicules.glb', 'vehicules'], ['assets/3d/ruines.glb', 'ruines']]){
+      try{ const g = await charge(f); for(const s of g.scenes) objets[s.name] = s; KIT[cle] = true; }catch(e){}
+    }
     return KIT;
   }catch(e){ return null; }
 }
@@ -147,6 +151,26 @@ export function objet(KIT, nom, echelle){
   if(/^car_/.test(nom)) o.rotation.y = Math.PI;   // les voitures KayKit regardent vers -z ; nos véhicules avancent vers +z
   const roues = []; o.traverse(x => { if(x.isMesh){ x.castShadow = true; x.receiveShadow = true; } if(/wheel/i.test(x.name)) roues.push(x); });
   const g = new THREE.Group(); g.add(o); return { g, roues };
+}
+
+// Véhicule Quaternius : remis dans l'axe (avance vers +z, phares devant), posé au sol, à la longueur voulue (m).
+export const VEHICULES_Q = { NormalCar1:4.4, NormalCar2:4.4, SUV:4.8, Taxi:4.5, SportsCar:4.5, Cop:4.6, Bus:10, SchoolBus:9, Ambulance:6, Bicycle:1.8 };
+export function objetVehicule(KIT, nom, longueur){
+  const src = KIT.objets[nom]; if(!src) return null;
+  const o = src.clone(true), boite = new THREE.Box3().setFromObject(o), t = boite.getSize(new THREE.Vector3());
+  const pivot = new THREE.Group(); pivot.add(o);
+  if(t.x > t.z) pivot.rotation.y = Math.PI / 2;   // la longueur doit suivre l'axe z
+  pivot.updateMatrixWorld(true);
+  // Les phares (ou la lumière bleue) indiquent l'avant.
+  let avant = null; o.traverse(x => { if(x.isMesh && /Headlight|BlueLight/i.test(x.material.name)){ const b = new THREE.Box3().setFromObject(x); avant = b.getCenter(new THREE.Vector3()).z - new THREE.Box3().setFromObject(pivot).getCenter(new THREE.Vector3()).z; } });
+  if(avant !== null && avant < 0) pivot.rotation.y += Math.PI;
+  pivot.updateMatrixWorld(true);
+  const b2 = new THREE.Box3().setFromObject(pivot), t2 = b2.getSize(new THREE.Vector3()), c2 = b2.getCenter(new THREE.Vector3());
+  const k = (longueur || VEHICULES_Q[nom] || 4.5) / Math.max(t2.z, .01);
+  const g = new THREE.Group(); pivot.position.set(-c2.x, -b2.min.y, -c2.z); const echelle = new THREE.Group(); echelle.scale.setScalar(k); echelle.add(pivot); g.add(echelle);
+  g.traverse(x => { if(x.isMesh){ x.castShadow = true; x.receiveShadow = true; } });
+  g.userData.longueur = t2.z * k;
+  return { g, roues:[] };
 }
 
 // ── Ambiance : ciel réaliste, reflets, lueur des lumières (bloom) ─

@@ -1,17 +1,19 @@
 // Prépare le pack Quaternius « Ultimate Nature Pack » (CC0) : OBJ → un seul nature.glb.
 // Chaque objet devient une scène nommée (CommonTree_1, Rock_2…), comme ville-kaykit.glb.
 // Outils (hors appli) : @gltf-transform/core, functions, extensions, meshoptimizer.
-// Usage : node outils/preparer-nature.mjs <dossier OBJ du pack Nature> <sortie.glb>
+// Usage : node outils/preparer-nature.mjs <dossier OBJ[:autre dossier]> <sortie.glb> [liste.json]
+//   sans liste : la sélection Nature ; avec liste : outils/listes/vehicules.json, ruines.json…
 import { NodeIO, Document } from '@gltf-transform/core';
 import { ALL_EXTENSIONS } from '@gltf-transform/extensions';
 import { prune, dedup, weld, meshopt, mergeDocuments, unpartition } from '@gltf-transform/functions';
 import { MeshoptEncoder } from 'meshoptimizer';
 import fs from 'node:fs'; import path from 'node:path';
-const [src, sortie] = process.argv.slice(2);
+const [srcs, sortie, listeFichier] = process.argv.slice(2);
+const DOSSIERS = srcs.split(':');
 await MeshoptEncoder.ready;
 const io = new NodeIO().registerExtensions(ALL_EXTENSIONS).registerDependencies({ 'meshopt.encoder': MeshoptEncoder });
 // Végétation de climat tempéré et de bord de mer (le village et Mots City). Pas de neige ni d'arbres morts.
-export const OBJETS = [
+const NATURE = [
   ...[1, 2, 3, 4, 5].map(i => 'CommonTree_' + i), ...[1, 2, 3].map(i => 'CommonTree_Autumn_' + i),
   ...[1, 2, 3, 4, 5].map(i => 'BirchTree_' + i), ...[1, 2, 3].map(i => 'PineTree_' + i),
   ...[1, 2, 3].map(i => 'Willow_' + i), ...[1, 2, 3, 4].map(i => 'PalmTree_' + i),
@@ -29,6 +31,8 @@ function lireMtl(fichier){
   return mats;
 }
 function objVersDoc(nom){
+  const src = DOSSIERS.find(d => fs.existsSync(path.join(d, nom + '.obj')));
+  if(!src) throw new Error('OBJ introuvable : ' + nom);
   const txt = fs.readFileSync(path.join(src, nom + '.obj'), 'utf8');
   const kd = lireMtl(path.join(src, nom + '.mtl'));
   const v = [], vn = [], groupes = new Map(); let mat = 'defaut';
@@ -57,8 +61,9 @@ function objVersDoc(nom){
   d.createScene(nom).addChild(d.createNode(nom).setMesh(mesh));
   return d;
 }
+const OBJETS = listeFichier ? JSON.parse(fs.readFileSync(listeFichier, 'utf8')) : NATURE;
 let base = null;
 for(const nom of OBJETS){ const d = objVersDoc(nom); if(!base) base = d; else mergeDocuments(base, d); }
 await base.transform(dedup(), unpartition(), prune({ keepLeaves: true }), weld(), meshopt({ encoder: MeshoptEncoder, level: 'medium' }));
 await io.write(sortie, base);
-console.log('nature →', sortie, (fs.statSync(sortie).size / 1024).toFixed(0) + ' Ko,', base.getRoot().listScenes().length, 'objets,', base.getRoot().listMaterials().length, 'matériaux :', base.getRoot().listMaterials().map(m => m.getName()).join(' '));
+console.log(path.basename(sortie) + ' →', sortie, (fs.statSync(sortie).size / 1024).toFixed(0) + ' Ko,', base.getRoot().listScenes().length, 'objets,', base.getRoot().listMaterials().length, 'matériaux :', base.getRoot().listMaterials().map(m => m.getName()).join(' '));

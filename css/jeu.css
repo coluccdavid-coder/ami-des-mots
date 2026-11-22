@@ -1465,3 +1465,187 @@ html[data-facile="1"] .ami-rx,html[data-facile="1"] .ami-rx .ami-rx-objet{animat
 .dictee-corrige{font-size:1.2rem;line-height:1.8}
 .mot-ok{color:#7ef0c0}
 .mot-ko{color:#ffb4a2;text-decoration:underline wavy;font-weight:800}
+
+/* ── v5.41 : parcours, révision, histoires, répéter, parents, invente, vannes animées ── */
+.carte-parcours,.carte-revision{display:flex;align-items:center;gap:12px;width:100%;box-sizing:border-box;margin:10px 0;padding:14px 16px;border-radius:20px;border:2px solid #ffd740;background:rgba(255,215,64,.12);color:inherit;font:inherit;text-align:left;cursor:pointer;flex-wrap:wrap}
+.carte-revision{border-color:#7ef0c0;background:rgba(126,240,192,.12)}
+.carte-parcours .ic{font-size:2rem}
+.carte-parcours small,.carte-revision small{display:block;opacity:.85}
+.barre-prog{flex:1 1 100%;height:8px;border-radius:8px;background:rgba(255,255,255,.15);overflow:hidden}
+.barre-prog i{display:block;height:100%;background:linear-gradient(90deg,#7ef0c0,#ffd740)}
+.blague-jour{text-align:left;background:rgba(255,138,91,.14);border-radius:18px;padding:10px 16px;margin:10px 0}
+.blague-jour p{margin:6px 0}.bj-q,.bj-r{font-size:1.15rem;font-weight:800}.bj-jeu{background:rgba(255,255,255,.08);border-radius:10px;padding:6px 10px}
+.parcours .niveau{text-align:left;background:rgba(255,255,255,.06);border-radius:18px;padding:12px 16px;margin:12px 0}
+.parcours .niveau.ferme{opacity:.55}.parcours .niveau.valide{border:2px solid #7ef0c0}
+.parcours ul{list-style:none;padding:0;margin:8px 0}
+.parcours .etape{display:flex;justify-content:space-between;gap:10px;width:100%;padding:8px 12px;margin:4px 0;border-radius:12px;border:0;background:rgba(255,255,255,.08);color:inherit;font:inherit;cursor:pointer;text-align:left}
+.parcours li.ok .etape{background:rgba(126,240,192,.16)}
+.lecture-image{font-size:5rem;text-align:center;margin:10px 0}
+.lecture-texte{font-size:1.5rem;font-weight:800;text-align:center;line-height:1.4}
+.puces{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:8px}
+.puce{padding:8px 12px;border-radius:999px;border:2px solid rgba(255,255,255,.2);background:rgba(255,255,255,.06);color:inherit;font:inherit;cursor:pointer}
+.puce.choisie{border-color:#ffd740;background:rgba(255,215,64,.2);font-weight:800}
+.champ-court{width:6em;font:inherit;font-size:1.2rem;padding:8px;border-radius:10px;border:2px solid rgba(255,255,255,.25);background:rgba(0,0,0,.25);color:inherit}
+.pas-drole{position:fixed;top:calc(84px + env(safe-area-inset-top) + 46px);right:12px;z-index:5}
+.scene-anim{display:inline-flex;position:relative;width:2.6em;height:2.2em;vertical-align:middle;margin-right:.4em}
+.scene-anim span{position:absolute;inset:0;display:flex;align-items:center;justify-content:center}
+.scene-anim .pic-mini{width:2em;height:2em}
+.scene-anim .de{animation:scene-de 1.6s ease forwards}.scene-anim .vers{opacity:0;animation:scene-vers 1.6s ease forwards}
+@keyframes scene-de{0%,35%{opacity:1;transform:scale(1)}60%{opacity:0;transform:scale(.2) rotate(-200deg)}100%{opacity:0}}
+@keyframes scene-vers{0%,45%{opacity:0;transform:scale(.2) rotate(200deg)}75%{opacity:1;transform:scale(1.25)}100%{opacity:1;transform:scale(1)}}
+@media(prefers-reduced-motion:reduce){.scene-anim .de{display:none}.scene-anim .vers{opacity:1;animation:none}}
+
+/* ── v5.42 : jeux pour rire, maison, Avent, bêtisier, battles, rap, salon ── */
+.section-anglais{margin:18px 0 4px;text-align:left}
+.juste-btn{background:linear-gradient(135deg,#1f9d6b,#7ef0c0)!important;color:#05261a!important}
+.buzz-btn{background:linear-gradient(135deg,#e03131,#ff8787)!important;color:#fff!important}
+.avent-grille{display:grid;grid-template-columns:repeat(6,1fr);gap:8px;max-width:520px;margin:12px auto}
+.avent-case{aspect-ratio:1;border-radius:14px;border:2px solid #f2c230;background:linear-gradient(135deg,#b91c1c,#166534);color:#fff;font:inherit;font-size:1.3rem;font-weight:900;cursor:pointer}
+.avent-case.ouverte{background:#fff7e6;color:inherit;font-size:1.8rem}
+.avent-case:disabled{opacity:.45;cursor:not-allowed}
+.maison-ecran{max-width:720px;margin:0 auto;padding:16px;text-align:center}
+.salon-maison{position:relative;border-radius:22px;overflow:hidden;background:linear-gradient(#f6e7c8 0 45%,#c99a6b 45% 100%);padding:14px;color:#2b1d10}
+.salon-maison .murs{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:14px}
+.salon-maison .sols{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.fente{min-height:86px;border-radius:16px;border:2px dashed rgba(43,29,16,.35);background:rgba(255,255,255,.25);font:inherit;color:inherit;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.fente.pleine{border-style:solid;background:rgba(255,255,255,.55)}
+.fente .obj{font-size:2.4rem}.fente .vide{font-size:1.6rem;opacity:.5}.fente small{font-weight:700}
+.ami-maison{position:absolute;right:8px;bottom:6px;width:64px;pointer-events:none}
+.boutique{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px}
+.article{display:flex;flex-direction:column;align-items:center;gap:2px;padding:10px;border-radius:16px;border:2px solid rgba(255,255,255,.15);background:rgba(255,255,255,.07);color:inherit;font:inherit;cursor:pointer}
+.article .obj{font-size:2rem}.article em{font-style:normal;font-weight:800;color:#ffd740}.article.achete{opacity:.55}.article:disabled{cursor:not-allowed}
+.tele .ecran-tele{background:linear-gradient(135deg,#1e1b4b,#312e81);border:8px solid #111;border-radius:28px;padding:16px;box-shadow:0 0 40px rgba(99,102,241,.5);margin-bottom:14px}
+.tele .numero{font-size:2.4rem;font-weight:900;color:#ffd740;margin:0}
+.champ-pseudo,.champ-code,.champ-long{font:inherit;font-size:1.1rem;padding:8px 10px;border-radius:12px;border:2px solid rgba(255,255,255,.25);background:rgba(0,0,0,.25);color:inherit}
+.champ-code{width:7em;text-transform:uppercase;letter-spacing:.2em;text-align:center}.champ-long{width:min(100%,520px)}
+.podium{list-style:none;padding:0;font-size:1.2rem;font-weight:700;line-height:1.9}
+.lien-defi input{width:min(100%,560px);font:inherit;padding:8px;border-radius:10px;border:1px solid rgba(255,255,255,.3);background:rgba(0,0,0,.25);color:inherit}
+/* Battle de rap : scène */
+.rap-scene{position:relative;min-height:calc(100vh - 80px);background:radial-gradient(ellipse at 50% 0%,#4c1d95 0,#0b0716 70%);overflow:hidden;padding:12px 16px 90px}
+.projecteurs{position:absolute;inset:0;background:conic-gradient(from 200deg at 20% -10%,transparent 0 10deg,rgba(255,215,64,.18) 10deg 22deg,transparent 22deg),conic-gradient(from 140deg at 80% -10%,transparent 0 10deg,rgba(236,72,153,.18) 10deg 22deg,transparent 22deg);animation:projo 6s ease-in-out infinite alternate;pointer-events:none}
+@keyframes projo{to{filter:hue-rotate(60deg)}}
+.applaudimetre{position:relative;max-width:420px;margin:0 auto 10px;height:22px;border-radius:12px;background:rgba(255,255,255,.12);overflow:hidden}
+.applaudimetre i{display:block;height:100%;background:linear-gradient(90deg,#60a5fa,#facc15,#ef4444);transition:width .6s}
+.applaudimetre span{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:.8rem;font-weight:800}
+.rap-centre{position:relative;max-width:620px;margin:0 auto;text-align:center}
+.micro-ami{animation:balance 0.68s ease-in-out infinite alternate}
+@keyframes balance{from{transform:rotate(-4deg) translateY(0)}to{transform:rotate(4deg) translateY(-4px)}}
+.rap-ligne{font-size:1.35rem;font-weight:900;line-height:1.4;text-shadow:0 2px 10px rgba(0,0,0,.6)}
+.trou-mot{display:inline-block;min-width:3.5em;border-bottom:3px solid #facc15;color:#facc15}
+.foule{position:absolute;left:0;right:0;bottom:6px;text-align:center;font-size:2rem;letter-spacing:.15em;animation:foule .45s ease-in-out infinite alternate}
+@keyframes foule{to{transform:translateY(-4px)}}
+@media(prefers-reduced-motion:reduce){.projecteurs,.micro-ami,.foule{animation:none}}
+/* Salon en direct */
+.salle{max-width:760px;margin:0 auto;padding:16px;text-align:center}
+.code-salon{font-family:monospace;letter-spacing:.25em;background:#ffd740;color:#2b1600;padding:2px 10px;border-radius:10px}
+.vaisseau{display:flex;flex-wrap:wrap;justify-content:center;gap:14px;padding:18px;border-radius:40px;background:radial-gradient(ellipse at center,#1f2a5a,#0d1330);border:3px solid #5b6bbf;min-height:150px;margin:12px 0}
+.joueur-salon{position:relative;display:flex;flex-direction:column;align-items:center;border:0;background:none;color:inherit;font:inherit;cursor:pointer;animation:flotte 2.4s ease-in-out infinite alternate;animation-delay:var(--d)}
+@keyframes flotte{to{transform:translateY(-8px)}}
+.joueur-salon .avatar{width:72px}.joueur-salon .nom{font-weight:800;font-size:.9rem}.joueur-salon.muet{opacity:.4}
+.bulle-reaction{position:absolute;top:-18px;white-space:nowrap;background:#fff;color:#111;border-radius:12px;padding:2px 8px;font-size:.8rem;opacity:0}
+.bulle-reaction.vue{animation:bulleR 2.2s ease forwards}
+@keyframes bulleR{0%{opacity:0;transform:translateY(6px)}10%,80%{opacity:1;transform:none}100%{opacity:0}}
+.reactions{display:flex;flex-wrap:wrap;justify-content:center;gap:6px;margin:10px 0}
+.reaction{padding:6px 10px;border-radius:999px;border:1px solid rgba(255,255,255,.25);background:rgba(255,255,255,.08);color:inherit;font:inherit;cursor:pointer}
+.chat-salon ul{list-style:none;padding:8px;max-height:150px;overflow:auto;text-align:left;background:rgba(0,0,0,.25);border-radius:12px}
+.chrono{height:8px;border-radius:8px;background:rgba(255,255,255,.12);overflow:hidden;margin:6px 0 10px}.chrono i{display:block;height:100%;width:100%;background:linear-gradient(90deg,#ef4444,#facc15,#22c55e)}
+.scores-salon{text-align:left;max-width:360px;margin:10px auto}
+@media(prefers-reduced-motion:reduce){.joueur-salon{animation:none}}
+
+/* v5.44 — Coin maths (Prof Pi) et labo des sciences */
+.prof-pi{ width:100%; height:100%; }
+.prof-entete{ display:flex; gap:14px; align-items:center; }
+.prof-entete .ami-moyen{ flex:0 0 96px; height:96px; }
+.onglets-niveaux{ display:flex; flex-wrap:wrap; gap:6px; margin:10px 0; }
+.onglet{ font:inherit; font-weight:900; border:2px solid rgba(255,255,255,.25); background:transparent; color:inherit; border-radius:999px; padding:6px 14px; cursor:pointer; }
+.onglet.actif{ background:var(--lune, #FFC93C); color:#3A2600; border-color:transparent; }
+.ton-prof .petit-bouton.actif{ outline:2px solid var(--lune, #FFC93C); }
+.carte-anglais.bientot{ opacity:.55; }
+.coin-maths h3{ margin:16px 0 6px; }
+.gros-score{ font-size:2.2rem; font-weight:900; margin:.2em 0; }
+
+
+/* ═══════════════════════════════════════════════════════════════════════
+   v5.46 — refonte visuelle premium : pièges, battles et écrans de réponse
+   ═══════════════════════════════════════════════════════════════════════ */
+:root{
+  --ami-cyan:#6ee7f9;--ami-violet:#a78bfa;--ami-pink:#fb8acb;
+  --ami-gold:#ffd166;--ami-glass:rgba(255,255,255,.085);
+  --ami-line:rgba(255,255,255,.17);
+}
+.pieges-accueil-ecran,.piege-ecran,.coin-anglais,.battle-ecran{
+  width:min(calc(100% - 32px),1180px);
+  max-width:1180px;min-height:calc(100vh - 88px);margin:0 auto;
+  padding:clamp(22px,4vw,54px);box-sizing:border-box;position:relative;
+  isolation:isolate;border:1px solid rgba(255,255,255,.13);border-radius:30px;
+  background:
+    radial-gradient(ellipse at 8% 8%,rgba(120,94,240,.20),transparent 34%),
+    radial-gradient(ellipse at 92% 85%,rgba(40,205,190,.13),transparent 36%),
+    linear-gradient(145deg,rgba(30,22,76,.72),rgba(8,18,48,.66));
+  box-shadow:0 26px 80px rgba(0,0,0,.28),inset 0 1px 0 rgba(255,255,255,.10);
+  backdrop-filter:blur(16px);
+}
+.pieges-accueil-ecran:before,.piege-ecran:before,.coin-anglais:before,.battle-ecran:before{
+  content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;border-radius:inherit;
+  background-image:radial-gradient(rgba(255,255,255,.48) .8px,transparent .9px);
+  background-size:42px 42px;opacity:.10;mask-image:linear-gradient(135deg,#000,transparent 70%);
+}
+.piege-ecran{display:grid;grid-template-columns:minmax(0,.9fr) minmax(380px,1.1fr);grid-template-areas:"cat cat" "head opts" "retour retour";align-content:center;gap:22px 34px}
+.piege-cat{grid-area:cat;display:inline-flex;align-items:center;gap:9px;width:max-content;max-width:100%;padding:9px 15px;margin:0;border:1px solid rgba(255,255,255,.16);border-radius:999px;background:linear-gradient(90deg,rgba(167,139,250,.22),rgba(110,231,249,.10));color:#e8e5ff;font-weight:900;letter-spacing:.035em;box-shadow:0 8px 24px rgba(0,0,0,.14)}
+.piege-haut{grid-area:head;align-self:center;gap:clamp(16px,2.5vw,30px);padding:clamp(18px,2.5vw,30px);border-radius:26px;border:1px solid var(--ami-line);background:linear-gradient(145deg,rgba(255,255,255,.105),rgba(255,255,255,.035));box-shadow:inset 0 1px rgba(255,255,255,.13),0 16px 36px rgba(0,0,0,.14)}
+.piege-haut .ami-moyen{width:clamp(88px,10vw,132px);filter:drop-shadow(0 12px 20px rgba(255,190,90,.22));animation:ami-bob-v546 3.2s ease-in-out infinite}
+@keyframes ami-bob-v546{0%,100%{transform:translateY(0) rotate(-2deg)}50%{transform:translateY(-9px) rotate(2deg)}}
+.piege-consigne{font-size:clamp(1rem,1.3vw,1.2rem);font-weight:750;color:#c9c5ee;letter-spacing:.02em}
+.piege-fr{font-size:clamp(1.55rem,2.5vw,2.45rem);line-height:1.18;font-weight:950;letter-spacing:-.035em;margin:9px 0 0;text-wrap:balance;text-shadow:0 5px 22px rgba(0,0,0,.25)}
+.piege-options{grid-area:opts;display:grid;grid-template-columns:1fr;gap:14px;align-content:center;margin:0}
+.piege-opt{min-height:78px;padding:18px 22px!important;border:1px solid rgba(255,255,255,.20)!important;border-radius:19px!important;background:linear-gradient(135deg,rgba(255,255,255,.13),rgba(255,255,255,.055))!important;color:#fff!important;font-size:clamp(1.05rem,1.45vw,1.32rem)!important;font-weight:850!important;box-shadow:0 10px 24px rgba(0,0,0,.16),inset 0 1px rgba(255,255,255,.10);transition:transform .18s ease,border-color .18s ease,filter .18s ease,box-shadow .18s ease!important}
+.piege-opt:not(:disabled):hover{transform:translateY(-4px) scale(1.012);border-color:rgba(110,231,249,.75)!important;box-shadow:0 16px 32px rgba(36,190,210,.16),inset 0 1px rgba(255,255,255,.16);filter:brightness(1.12)}
+.piege-opt:focus-visible{outline:3px solid var(--ami-gold)!important;outline-offset:4px}
+.piege-opt.ok{background:linear-gradient(115deg,#059669,#34d399)!important;border-color:#8af3d2!important;box-shadow:0 0 0 4px rgba(52,211,153,.18),0 14px 30px rgba(16,185,129,.22)!important;animation:pop-v546 .35s ease-out}
+.piege-opt.ko{background:linear-gradient(115deg,#b93824,#f05b38)!important;border-color:#ff9a7d!important;box-shadow:0 0 0 4px rgba(240,91,56,.15)!important;opacity:1!important}
+@keyframes pop-v546{0%{transform:scale(.96)}65%{transform:scale(1.025)}100%{transform:scale(1)}}
+.piege-retour{grid-area:retour;min-height:0;padding:0;border-radius:22px;animation:retour-v546 .32s ease-out}
+@keyframes retour-v546{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+.piege-retour:has(.piege-vanne),.piege-retour:has(.piege-bravo){padding:clamp(16px,2.4vw,26px);border:1px solid rgba(255,255,255,.17);background:linear-gradient(120deg,rgba(255,255,255,.105),rgba(255,255,255,.045));box-shadow:0 14px 34px rgba(0,0,0,.15)}
+.piege-vanne{font-size:clamp(1.05rem,1.45vw,1.28rem);line-height:1.55;font-weight:800;color:#fff0b7;text-wrap:pretty}
+.piege-bravo{font-size:clamp(1.2rem,1.7vw,1.55rem);font-weight:950;color:#8df5d1}
+.piege-bon{font-size:clamp(1.15rem,1.5vw,1.4rem);padding:12px 0;color:#9cefe0}
+.piege-regle{padding:14px 18px;border-radius:15px;border:1px solid rgba(255,209,102,.25);border-left:5px solid var(--ami-gold);background:linear-gradient(100deg,rgba(255,209,102,.16),rgba(255,209,102,.055));font-size:1rem;line-height:1.55}
+.piege-retour .moyen.plein{min-height:54px;padding:12px 24px!important;border-radius:16px!important;background:linear-gradient(115deg,#38d9bd,#83f0d0)!important;color:#062c32!important;font-weight:950!important;box-shadow:0 12px 28px rgba(56,217,189,.22)}
+.pieges-accueil-ecran{text-align:center;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px}
+.pieges-accueil-ecran .ami-moyen{width:clamp(90px,12vw,140px);filter:drop-shadow(0 12px 22px rgba(255,190,90,.2));animation:ami-bob-v546 3.2s ease-in-out infinite}
+.pieges-accueil-ecran h2,.coin-anglais h2{font-size:clamp(2rem,4vw,3.2rem);font-weight:1000;letter-spacing:-.045em;background:linear-gradient(90deg,#fff,#b9a9ff 50%,#76e9e0);background-clip:text;-webkit-background-clip:text;color:transparent;margin:0}
+.pieges-intro{max-width:760px;font-size:clamp(1rem,1.4vw,1.2rem);line-height:1.65;color:#e1def8}
+.pieges-cats{max-width:760px;width:100%;display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:10px}
+.pieges-cats li{padding:13px 16px;border:1px solid rgba(255,255,255,.14);border-radius:15px;background:rgba(255,255,255,.065);box-shadow:inset 0 1px rgba(255,255,255,.07)}
+.pieges-accueil-ecran .gros{min-height:58px;padding:14px 30px;border-radius:18px;background:linear-gradient(110deg,#38d9bd,#9bf0d5)!important;color:#062c32!important;font-size:1.1rem;font-weight:950;box-shadow:0 12px 30px rgba(56,217,189,.22)}
+.coin-anglais{display:block;text-align:center}
+.cartes-anglais{grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:18px}
+.carte-anglais{border-radius:23px;border:1px solid rgba(255,255,255,.18);background:linear-gradient(145deg,rgba(255,255,255,.12),rgba(255,255,255,.045));box-shadow:0 14px 30px rgba(0,0,0,.16);transition:transform .2s ease,border-color .2s ease}
+.carte-anglais:hover{transform:translateY(-5px);border-color:rgba(110,231,249,.7);box-shadow:0 18px 36px rgba(40,180,200,.14)}
+.bulle-ami{border:1px solid rgba(255,255,255,.15);background:linear-gradient(130deg,rgba(167,139,250,.18),rgba(255,255,255,.06));box-shadow:0 12px 26px rgba(0,0,0,.14)}
+@media(max-width:760px){
+ .pieges-accueil-ecran,.piege-ecran,.coin-anglais,.battle-ecran{width:calc(100% - 18px);min-height:calc(100vh - 76px);padding:16px;border-radius:22px}
+ .piege-ecran{grid-template-columns:1fr;grid-template-areas:"cat" "head" "opts" "retour";gap:14px}
+ .piege-haut{padding:16px;gap:12px}.piege-haut .ami-moyen{width:68px}
+ .piege-opt{min-height:64px;padding:14px 16px!important}
+}
+@media(prefers-reduced-motion:reduce){.piege-haut .ami-moyen,.pieges-accueil-ecran .ami-moyen{animation:none!important}.piege-opt,.carte-anglais{transition:none!important}}
+
+
+/* V6 — résumé d'apprentissage adaptatif sur l'accueil */
+.carte-apprentissage{
+  display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between;
+  gap:.45rem .9rem; width:min(100%, 680px); margin:0 auto 1rem;
+  padding:.8rem 1rem; border:1px solid rgba(255,255,255,.22);
+  border-radius:18px; color:var(--texte);
+  background:linear-gradient(135deg,rgba(79,216,255,.15),rgba(139,108,255,.19));
+  box-shadow:0 8px 24px rgba(8,4,35,.16),inset 0 1px 0 rgba(255,255,255,.16);
+  text-align:left;
+}
+.carte-apprentissage strong{font-weight:900}
+.carte-apprentissage span{font-size:.9rem;color:var(--doux)}
+@media(max-width:520px){
+  .carte-apprentissage{border-radius:14px;padding:.7rem .8rem}
+  .carte-apprentissage span{width:100%}
+}

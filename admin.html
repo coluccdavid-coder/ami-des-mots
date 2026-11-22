@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Ami des mots — coin admin</title>
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data:; style-src 'self' 'unsafe-inline'; script-src 'self'; connect-src 'none'; base-uri 'none'; form-action 'none'">
+<link rel="icon" href="img/icone.svg" type="image/svg+xml">
+<style>
+:root{ color-scheme:dark; --fond:#120C38; --carte:#1F1757; --gratuit:#3FBF7F; --plus:#FFC93C; }
+*{ box-sizing:border-box; }
+body{ margin:0; background:var(--fond); color:#F4F1FF; font:16px/1.45 system-ui, sans-serif; }
+#app{ max-width:980px; margin:0 auto; padding:16px; }
+h1{ font-size:1.5rem; margin:.2em 0; } h2{ font-size:1.1rem; margin:1.2em 0 .5em; }
+section{ background:var(--carte); border-radius:16px; padding:4px 16px 14px; margin:12px 0; }
+.resume{ display:grid; grid-template-columns:repeat(auto-fit, minmax(150px, 1fr)); gap:8px; padding:14px 16px; }
+.resume b{ font-size:1.4rem; color:var(--plus); display:block; }
+.alerte{ background:#5A2330; border-radius:12px; padding:10px 14px; }
+.grille{ display:grid; grid-template-columns:repeat(auto-fill, minmax(230px, 1fr)); gap:8px; }
+.choix{ display:flex; align-items:center; gap:10px; padding:10px 12px; border-radius:12px; background:#2A2170; cursor:pointer; border:2px solid transparent; }
+.choix.gratuit{ border-color:var(--gratuit); } .choix.plus{ border-color:var(--plus); }
+.choix input{ width:22px; height:22px; accent-color:var(--gratuit); }
+.choix .nom{ flex:1; } .choix small{ opacity:.7; display:block; }
+.etat{ font-weight:800; font-size:.85rem; white-space:nowrap; } .plus .etat{ color:var(--plus); } .gratuit .etat{ color:var(--gratuit); }
+.ligne{ display:block; margin:8px 0; } .ligne input[type=checkbox]{ width:20px; height:20px; vertical-align:middle; }
+input[type=number], #prix{ background:#2A2170; color:inherit; border:1px solid #6A5FC0; border-radius:8px; padding:6px 8px; font:inherit; width:7em; }
+fieldset{ border:0; padding:0; margin:0; } fieldset[disabled]{ opacity:.45; }
+button{ font:inherit; font-weight:800; border:0; border-radius:12px; padding:10px 16px; background:var(--plus); color:#3A2600; cursor:pointer; margin:4px 4px 4px 0; }
+button[disabled]{ opacity:.4; cursor:default; }
+pre{ background:#0B0726; padding:12px; border-radius:10px; overflow:auto; font-size:.85rem; }
+.petit{ font-size:.9rem; opacity:.85; } code{ background:#0B0726; padding:1px 5px; border-radius:5px; }
+:focus-visible{ outline:3px solid var(--plus); outline-offset:2px; }
+</style>
+</head>
+<body>
+<main id="app"></main>
+<noscript>Le coin admin a besoin de JavaScript.</noscript>
+<script src="js/donnees.js"></script>
+<script src="js/textes.js"></script>
+<script src="js/offre.js"></script>
+<script src="js/admin.js"></script>
+</body>
+</html>

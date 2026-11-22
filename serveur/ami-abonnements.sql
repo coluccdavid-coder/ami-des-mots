@@ -80,3 +80,29 @@ revoke all on function public.ami_enregistrer_abonnement(text, text, text, text,
   from public, anon, authenticated;
 grant execute on function public.ami_enregistrer_abonnement(text, text, text, text, timestamptz)
   to service_role;
+
+-- v5.43 — Générateur de vannes (fonction ami-vannes) : 5 demandes par jour et par code Plus.
+create table if not exists public.ami_vannes_appels(
+  code text not null,
+  jour date not null default current_date,
+  n int not null default 0,
+  primary key (code, jour)
+);
+alter table public.ami_vannes_appels enable row level security;
+revoke all on public.ami_vannes_appels from anon, authenticated;
+
+-- Compte une demande ; renvoie false si le quota du jour est atteint (atomique).
+create or replace function public.ami_compter_vannes(p_code text, p_max int) returns boolean
+language plpgsql security definer set search_path = public, pg_temp as $$
+declare total int;
+begin
+  insert into public.ami_vannes_appels(code, jour, n) values (p_code, current_date, 1)
+    on conflict (code, jour) do update set n = public.ami_vannes_appels.n + 1
+    returning n into total;
+  if total > p_max then
+    update public.ami_vannes_appels set n = p_max where code = p_code and jour = current_date;
+    return false;
+  end if;
+  return true;
+end $$;
+revoke all on function public.ami_compter_vannes(text, int) from public, anon, authenticated;

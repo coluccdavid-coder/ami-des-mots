@@ -1,0 +1,7 @@
+{
+  "appId": "fr.amidesmots.app",
+  "appName": "Ami des mots",
+  "webDir": "www",
+  "server": { "androidScheme": "https" },
+  "android": { "allowMixedContent": false, "captureInput": true, "webContentsDebuggingEnabled": false }
+}

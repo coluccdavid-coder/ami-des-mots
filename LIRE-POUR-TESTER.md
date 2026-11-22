@@ -165,3 +165,34 @@ Le sélecteur affiche uniquement français et anglais. Les traductions coréenne
 3. **☕ Situations** : « Au café » — écoute le serveur, choisis ta réponse. Essaie « Give me hot ».
 4. **✍️ Dictée** : écris « I can sea the sea » quand Ami dit « I can see the sea » → vanne du maillot de bain.
 5. Village 3D : portail 🇬🇧 au nord ; **Professor Puzzle** (anneau orange) au nord-ouest.
+
+## v5.41 — Parcours, révision, histoires, vannes 2.0, ruines
+
+1. 🇬🇧 Coin anglais : **Mon parcours** (niveau 1), **Ma révision du jour**, la **blague du jour** (« Réponse… »).
+2. **📖 Mini-histoires** : « Ami’s lost hat » jusqu’au bout, puis les 2 questions.
+3. **🗣️ Répète après Ami** : autorise le micro, dis la phrase, réécoute-toi (rien n’est envoyé).
+4. **🎤 Battle** → « En famille » à deux, et « Invente ta vanne ».
+5. Jeu d’images : trompe-toi 3 fois sur la même paire → Ami s’en souvient. Touche **🙄 Pas drôle**.
+6. **👪 Espace parents** (petit calcul) : regarde « Ce qui coince ».
+7. Village 3D : va au sud-est, passe l’arche de pierre **The lost ruins** et suis les 5 indices.
+8. Mots City : regarde passer le bus, le bus scolaire et l’ambulance.
+
+## v5.42 — Rire et apprendre, battles entre potes, salon en ligne, coin admin
+
+1. 🇬🇧 Coin anglais → **😂 Pour rire** : Ami se trompe exprès (corrige-le !), Les oreilles d’Ami (ship/sheep), Vrai ou faux rigolo, Calendrier de l’Avent (décembre), Bêtisier, Maison d’Ami.
+2. **🎤 Battle** → **🎧 Rap battle** (son activé) : Ami rappe, tu complètes tes rimes, la foule réagit.
+3. **🏆 Tournoi** en famille et **🔗 Défi entre potes** : envoie le lien, ton pote rejoue les mêmes questions.
+4. **🚀 Salon en ligne** : il faut d’abord le brancher (voir SALON-EN-LIGNE.md). Deux téléphones, même code, une battle.
+5. **👪 Espace parents** : ajoute une vanne de famille. Essaie « Ta mère… » : le juge la refuse et dit pourquoi.
+6. Village 3D : parle au **Coach Kim** (« Ami says »), entre au **café** (Tom) et à **l’école** (Mr Brown), passe près des choses (étiquettes 🏷️), touche 🌦️ (neige) et 📷 (photo).
+7. Mots City : passe près d’un palmier, d’un bus, d’un lieu → l’étiquette anglaise s’affiche ; touche-la pour l’entendre.
+8. **Coin admin** : ouvre `admin.html`, coche/décoche, télécharge `offre.js` (voir COIN-ADMIN.md).
+
+## v5.43 et v5.44 — Maths de la 6e au bac, labo des sciences, serveur PHP, appli Android
+
+1. Accueil → **🔢 Maths de la 6e au bac** : choisis un niveau (onglets 6e → Tle), un ton (tout doux / taquin / sans pitié), un chapitre. Trompe-toi exprès : Prof Pi vanne et explique.
+2. 3e → **📝 Brevet blanc** ; 1re → **📝 Épreuve anticipée blanche** ; Tle → **📝 Bac blanc** (note sur 20).
+3. **🔗 Défier un pote** en maths : le lien garde le niveau.
+4. Accueil → **🚀 Sciences** : planètes, fusées, corps humain, médecine. Trompe-toi : le labo te clashe.
+5. Espace parents → **✨ Ami propose des vannes (IA)** (avec Plus et le serveur branché).
+6. Serveur PHP : `serveur-php/LISEZMOI.md`. Appli Android et installation : `ANDROID.md`.

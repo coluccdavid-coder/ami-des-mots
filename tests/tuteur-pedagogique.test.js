@@ -1,0 +1,11 @@
+'use strict';
+const assert = require('node:assert/strict');
+require('../js/tuteur-pedagogique.js');
+const T = globalThis.AMI_TUTEUR_LOCAL;
+assert.ok(T);
+assert.equal(T.aide({ notion:'fr.genre', indice:'Regarde le déterminant.' }, 'indice').texte, 'Regarde le déterminant.');
+assert.equal(T.aide({ notion:'x', explication:'', exemple:'' }, 'explication'), null);
+assert.equal(T.aide({ notion:'x', exemple:'I am ready.' }, 'exemple').source, 'contenu-valide');
+assert.equal(T.aide(null, 'indice'), null);
+assert.equal(T.aide({ indice:'x'.repeat(500) }, 'indice').texte.length, 420);
+console.log('Tuteur local : 5 assertions réussies.');

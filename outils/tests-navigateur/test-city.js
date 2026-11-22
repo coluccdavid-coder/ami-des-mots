@@ -13,6 +13,13 @@ const attendre = ms => new Promise(r => setTimeout(r, ms));
   await p.goto(URL, { waitUntil:'load', timeout:120000 });
   await p.waitForFunction(() => window.__city, { timeout:60000 }); await attendre(1500);
   await p.screenshot({ path:OUT + '1-titre.png' });
+  // v5.42 : étiquettes anglaises près des lieux, palmiers et véhicules
+  const et = await p.evaluate(async () => { const C = __city, e = Object.keys(C.lieux)[0], l = C.lieux[e];
+    const lieu = C.chosesProches(l.x + 1, l.z + 1); const v = C.voitures[0].g.position; const auto = C.chosesProches(v.x + .5, v.z + .5);
+    const loin = C.chosesProches(9999, 9999); return { lieu:lieu && lieu.en, attendu:MotsCity.en(e), auto:auto && auto.en, loin }; });
+  verif('étiquette du lieu en anglais (nom du mot)', et.lieu === et.attendu, JSON.stringify(et));
+  verif('étiquette des véhicules (car, taxi, bus…)', /^(car|taxi|bus|school bus|ambulance)$/.test(et.auto || ''), JSON.stringify(et));
+  verif('pas d’étiquette loin de tout', et.loin === null, JSON.stringify(et));
   verif('écran titre au départ', await p.$eval('#panneau', e => e.classList.contains('vu')));
   verif('8 tenues proposées', (await p.$$('.tenues button')).length === 8);
   await p.click('.tenues button[data-tenue="2"]'); await attendre(300);

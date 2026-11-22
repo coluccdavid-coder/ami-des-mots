@@ -27,6 +27,11 @@
 .answers button:hover,.close:hover{background:#ffffff2b}
 #toast{position:fixed;z-index:9;left:50%;top:22%;transform:translate(-50%,-12px);opacity:0;pointer-events:none;background:#173f4b;border:1px solid #62f4d0;color:#dffff7;padding:12px 18px;border-radius:15px;font-weight:900;transition:.25s}
 #toast.show{opacity:1;transform:translate(-50%,0)}
+#etiquette{position:fixed;z-index:6;left:50%;bottom:22px;transform:translateX(-50%);padding:10px 16px;border-radius:999px;border:2px solid #ffd740;background:#1e1a4bdd;color:#fff;font:700 16px system-ui;cursor:pointer;box-shadow:0 6px 20px #0006}
+#amisays{position:fixed;z-index:6;left:50%;top:88px;transform:translateX(-50%);min-width:280px;text-align:center;padding:12px 18px}
+#amisays-ordre{font:900 22px system-ui;margin:0}.chrono-as{height:8px;border-radius:8px;background:#ffffff33;overflow:hidden;margin-top:6px}.chrono-as i{display:block;height:100%;background:linear-gradient(90deg,#ef4444,#facc15,#22c55e)}
+#photo{position:fixed;z-index:9;inset:5% 5% auto 5%;text-align:center;padding:14px}#photo img{max-width:100%;max-height:60vh;border-radius:14px}.petit-photo{font-size:12px;opacity:.8}
+body.photo-en-cours .panel,body.photo-en-cours #controls,body.photo-en-cours #etiquette{visibility:hidden}
 #controls{position:fixed;z-index:4;left:18px;bottom:20px;display:grid;grid-template-columns:48px 48px 48px;grid-template-rows:48px 48px;gap:5px;opacity:.88}
 #controls button{border:1px solid #ffffff40;border-radius:14px;background:#241c64b8;color:#fff;font-size:20px;font-weight:900;touch-action:none}
 #controls [data-dir=up]{grid-column:2}#controls [data-dir=left]{grid-column:1;grid-row:2}#controls [data-dir=down]{grid-column:2;grid-row:2}#controls [data-dir=right]{grid-column:3;grid-row:2}#controls [data-dir=jump]{grid-column:3;grid-row:1}
@@ -58,7 +63,7 @@
 <div id="top">
  <div class="panel" id="brand"><img src="img/ami-3d.webp" alt=""> <span>AMI DES MOTS<br><small style="font-size:11px;color:#c9c0ff;font-weight:700">Le quartier des découvertes · aventure 3D</small></span></div>
  <div class="panel" id="mission"><strong>🎯 Ta première mission</strong><span id="missionText">Va parler à Léa, la marchande du marché.</span><div id="progress"><span id="progressBar"></span></div></div>
- <div class="panel top-actions"><span id="feathers">🪶 0</span><button id="journalBtn" class="ui-btn">📖 Quêtes</button><button id="mapBtn" class="ui-btn">🗺️ Carte</button><button id="skyBtn" class="ui-btn">🌅 Ambiance</button><a id="back" href="index.html?aller=classique" title="Revenir à la version classique (2D)">🏠 Version classique</a></div>
+ <div class="panel top-actions"><span id="feathers">🪶 0</span><button id="journalBtn" class="ui-btn">📖 Quêtes</button><button id="meteoBtn" class="ui-btn" aria-label="Changer la météo">🌦️</button><button id="photoBtn" class="ui-btn" aria-label="Prendre une photo">📷</button><button id="mapBtn" class="ui-btn">🗺️ Carte</button><button id="skyBtn" class="ui-btn">🌅 Ambiance</button><button id="qualityBtn" class="ui-btn" title="Choisir la qualité graphique">🎮 Qualité : Auto</button><a id="back" href="index.html?aller=classique" title="Revenir à la version classique (2D)">🏠 Version classique</a></div>
 </div>
 <div id="hint">ZQSD / WASD ou flèches : marcher · E : parler, jouer ou caresser · Maj : courir</div>
 <div id="toast"></div>
@@ -80,14 +85,19 @@
  <button data-dir="up" aria-label="Avancer">▲</button><button data-dir="left" aria-label="Gauche">◀</button><button data-dir="down" aria-label="Reculer">▼</button><button data-dir="right" aria-label="Droite">▶</button><button data-dir="jump" aria-label="Sauter (vol plané quand Ami a ses plumes)">⤒</button>
 </div>
 <div id="help">🖥️ Flèches / ZQSD / WASD : marcher<br>↔ Glisser : orienter la caméra<br>⌨️ E : parler / interagir<br>🏃 Maj : courir · Espace : saut</div>
+<button id="etiquette" class="etiquette" hidden></button>
+<div id="amisays" class="panel" hidden role="status" aria-live="assertive"><p id="amisays-ordre"></p><small id="amisays-fr"></small><div class="chrono-as"><i id="amisays-chrono"></i></div><p id="amisays-score"></p></div>
+<div id="photo" class="panel" hidden><h2>📷 Ma photo</h2><img id="photo-img" alt="Ta photo du village"><p><a id="photo-dl" class="ui-btn" download="ami-des-mots.jpg">💾 Enregistrer</a> <button id="photo-share" class="ui-btn">📤 Partager</button> <button id="photo-close" class="ui-btn">✕ Fermer</button></p><p class="petit-photo">La photo reste sur ton appareil : rien n’est envoyé.</p></div>
 <div id="dialog" class="panel">
  <h2 id="dialogTitle">Bonjour !</h2><p id="dialogText"></p><div class="answers" id="answers"></div>
  <button class="close" id="closeDialog" style="margin-top:9px;width:100%">Fermer</button>
 </div>
+<script src="js/capacitor-voix.js"></script>
 <script src="js/donnees.js"></script>
 <script src="js/metiers.js"></script>
 <script src="js/quetes.js"></script>
 <script src="js/pieges.js"></script>
+<script src="js/anglais.js"></script>
 <script type="importmap">
 {"imports":{"three":"./vendor/three.module.js"}}
 </script>
@@ -99,16 +109,17 @@ const KIT = await chargerKit();
 // Habitants Quaternius (CC0) : les 4 amis du village + les habitants anglophones (js/metiers.js).
 const ROLES={lea:'Casual_Female',max:'Casual2_Male',zoe:'Cowboy_Female',milo:'Chef_Male'};
 const METIERS=window.METIERS||{liste:[]};
-const HAB=KIT?await chargerHabitants(KIT,Object.values(ROLES).concat(METIERS.liste.map(m=>m.corps),['Suit_Male'])):[];
+const HAB=KIT?await chargerHabitants(KIT,Object.values(ROLES).concat(METIERS.liste.map(m=>m.corps),['Suit_Male','Casual3_Female','Casual_Bald','OldClassy_Male'])):[];
 const corpsDe=(q,kk)=>q&&HAB.includes(q)?'q:'+q:kk;
-const tactile = matchMedia('(pointer: coarse)').matches;
+const tactile = matchMedia('(pointer: coarse)').matches, prefersReduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
 const root=document.querySelector('#game');
 const scene=new THREE.Scene();scene.background=new THREE.Color(0x8cc9f2);scene.fog=new THREE.Fog(0x8cc9f2,32,90);
 const camera=new THREE.PerspectiveCamera(53,innerWidth/innerHeight,.1,180);
-const renderer=new THREE.WebGLRenderer({antialias:true,powerPreference:'high-performance'});
+const renderer=new THREE.WebGLRenderer({antialias:true,powerPreference:'high-performance', stencil:false, depth:true, preserveDrawingBuffer:false});
+const capaciteGPU=(()=>{try{const gl=renderer.getContext();return {maxTex:gl.getParameter(gl.MAX_TEXTURE_SIZE),maxRender:gl.getParameter(gl.MAX_RENDERBUFFER_SIZE),maxAniso:renderer.capabilities.getMaxAnisotropy()}}catch(e){return {maxTex:2048,maxRender:2048,maxAniso:1}}})();
 renderer.setPixelRatio(Math.min(devicePixelRatio,2));renderer.setSize(innerWidth,innerHeight);renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap;renderer.outputColorSpace=THREE.SRGBColorSpace;renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.2;root.appendChild(renderer.domElement);
 scene.add(new THREE.HemisphereLight(0xd9efff,0x60704b,2));
-const sun=new THREE.DirectionalLight(0xffedcf,3.2);sun.position.set(-18,30,12);sun.castShadow=true;sun.shadow.mapSize.set(2048,2048);sun.shadow.bias=-0.00018;sun.shadow.normalBias=.025;sun.shadow.camera.left=-40;sun.shadow.camera.right=40;sun.shadow.camera.top=40;sun.shadow.camera.bottom=-40;scene.add(sun);
+const sun=new THREE.DirectionalLight(0xffedcf,3.2);sun.position.set(-18,30,12);sun.castShadow=true;sun.shadow.mapSize.set(4096,4096);sun.shadow.bias=-0.00018;sun.shadow.normalBias=.025;sun.shadow.camera.left=-40;sun.shadow.camera.right=40;sun.shadow.camera.top=40;sun.shadow.camera.bottom=-40;scene.add(sun);
 renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=KIT?.95:1;renderer.outputColorSpace=THREE.SRGBColorSpace;
 const amb=ambiance(renderer,scene,camera,{haute:!tactile&&!!KIT});
 if(KIT){scene.fog.near=60;scene.fog.far=170;camera.far=400;camera.updateProjectionMatrix()}
@@ -130,7 +141,7 @@ function tree(x,z,s=1){rond(x,z,.55*s);if(KIT?.nature){vegetation.push({nom:ARBR
 for(const [x,z] of [[-10,-20],[10,-22],[-11,-7],[11,-6],[-11,13],[11,18],[-24,-17],[-25,9],[22,-20],[23,12]])tree(x,z,.85+Math.random()*.35);
 if(KIT?.nature){
  // Une vraie forêt autour du quartier (hors de la zone de jeu : rien ne bloque le joueur).
- for(let x=-48;x<=48;x+=5.5)for(let z=-48;z<=48;z+=5.5){const dehors=Math.abs(x)>31||z<-35||z>45;if(!dehors)continue;const jx=x+(aleaV()-.5)*3.5,jz=z+(aleaV()-.5)*3.5;if(aleaV()<.82)vegetation.push({nom:ARBRES[Math.floor(aleaV()*ARBRES.length)],x:jx,z:jz,ry:aleaV()*6.28,s:1.5+aleaV()*.9});else vegetation.push({nom:['Bush_1','BushBerries_1','Rock_Moss_2','TreeStump_Moss','WoodLog_Moss'][Math.floor(aleaV()*5)],x:jx,z:jz,ry:aleaV()*6.28,s:1.6})}
+ for(let x=-48;x<=48;x+=5.5)for(let z=-48;z<=48;z+=5.5){const dehors=(Math.abs(x)>31||z<-35||z>45)&&!(x>7&&x<31&&z<-31&&z>-49);if(!dehors)continue;const jx=x+(aleaV()-.5)*3.5,jz=z+(aleaV()-.5)*3.5;if(aleaV()<.82)vegetation.push({nom:ARBRES[Math.floor(aleaV()*ARBRES.length)],x:jx,z:jz,ry:aleaV()*6.28,s:1.5+aleaV()*.9});else vegetation.push({nom:['Bush_1','BushBerries_1','Rock_Moss_2','TreeStump_Moss','WoodLog_Moss'][Math.floor(aleaV()*5)],x:jx,z:jz,ry:aleaV()*6.28,s:1.6})}
  // Fleurs, herbes et petits buissons sur les pelouses, loin des routes, maisons et portails.
  const libre=(x,z)=>Math.abs(x)>8.2&&!(x<-6&&Math.abs(z)<7)&&!(Math.abs(Math.abs(x)-9)<4.6&&(Math.abs(z+17)<4||Math.abs(z-15)<4))&&!(Math.abs(Math.abs(x)-17)<3&&[-30,-10,10,30].some(p=>Math.abs(z-p)<3))&&!(z>36)&&!(Math.abs(Math.abs(x)-24)<3&&Math.abs(z-34)<3);
  const PETITS=['Flowers','Flowers','Grass','Grass_2','Grass_Short','Plant_1','Plant_3','Bush_2','BushBerries_2','Rock_2','Rock_Moss_3'];
@@ -294,7 +305,7 @@ document.querySelector('#journalBtn').onclick=()=>{const j=document.querySelecto
 document.querySelector('#journalClose').onclick=()=>document.querySelector('#journal').style.display='none';
 document.querySelector('#resetAdventure').onclick=()=>{
  if(!confirm('Recommencer le quartier ? La progression et les plumes de ce monde 3D seront remises à zéro.'))return;
- mission=0;etatQ=Q.propre({});localStorage.removeItem('ami3d_mission');localStorage.removeItem(Q.CLE);localStorage.removeItem('ami3d_metiers');appris.clear();
+ mission=0;etatQ=Q.propre({});tresor={etape:0,vu:false};localStorage.removeItem('ami3d_tresor');localStorage.removeItem('ami3d_mission');localStorage.removeItem(Q.CLE);localStorage.removeItem('ami3d_metiers');appris.clear();
  pickups.forEach(p=>{p.taken=false;p.g.visible=true});
  majPlumes();updateMission();document.querySelector('#journal').style.display='none';toast('Nouvelle aventure ! Ami a ciré ses petites pattes. 🦉');
 };
@@ -373,7 +384,7 @@ function repondreMetier(n,c){const m=n.metier;
 // Indice en anglais pour la quête des plumes (une fois par donneur).
 function donnerIndice(donneur,titre,avant=''){const p=Q.reveler(etatQ,donneur);if(!p)return false;Q.garder(etatQ);sayEn(p.en);
  showDialog(titre,(avant?avant+'\n\n':'')+'🪶 Indice pour retrouver une plume d’Ami :\n🇬🇧 « '+p.en+' »\n🇫🇷 '+p.fr+'\nMot clé : '+p.mot.en+' = '+p.mot.fr,[{label:'🔊 Réécouter',action:()=>sayEn(p.en)},{label:'👍 Je cherche !',action:closeDialog}]);return true}
-function trouverPlume(pk){if(!Q.trouver(etatQ,pk.id))return;Q.garder(etatQ);pk.taken=true;pk.g.visible=false;majPlumes();sfx('pick');const n=etatQ.trouvees.length,p=pk.pl;sayEn(p.mot.en);
+function trouverPlume(pk){if(!Q.trouver(etatQ,pk.id))return;Q.garder(etatQ);pk.taken=true;pk.g.visible=false;etincelles(pk.g.position.x,pk.g.position.y,pk.g.position.z);majPlumes();sfx('pick');const n=etatQ.trouvees.length,p=pk.pl;sayEn(p.mot.en);
  if(Q.toutes(etatQ)){sfx('good');showDialog('🦉 Ami peut revoler !','Tu as retrouvé les '+Q.PLUMES.length+' plumes ! Merci !\n'+Q.RECOMPENSE,[{label:'🦉 Essayer !',action:closeDialog}]);return}
  toast('🪶 Plume retrouvée ('+n+'/'+Q.PLUMES.length+') · « '+p.mot.en+' » = '+p.mot.fr)}
 // Carnet de quêtes : chaque quête dit son but, sa progression et sa récompense.
@@ -384,6 +395,10 @@ function rendreQuetes(){const ul=document.querySelector('#journalList'),esc=t=>S
  +'<li class="quete"><b>🪶 Les plumes perdues d’Ami</b> — '+etatQ.trouvees.length+'/'+Q.PLUMES.length+'<br><small>'+esc(Q.BUT)+' Récompense : '+esc(Q.RECOMPENSE)+'</small><ul>'
  +(indices.length?indices.map(p=>'<li class="'+(etatQ.trouvees.includes(p.id)?'done':'')+'"><button class="ui-btn ecouter" data-en="'+esc(p.en)+'" aria-label="Écouter">🔊</button> « '+esc(p.en)+' »<br><small>'+esc(p.fr)+'</small></li>').join(''):'<li><small>Pas encore d’indice : va relever le défi d’un habitant à l’anneau bleu.</small></li>')+'</ul></li>'
  +'<li class="quete"><b>🇬🇧 Hello, village!</b> — '+appris.size+'/'+METIERS.liste.length+'<br><small>But : réussir le petit défi de chaque habitant qui parle anglais (anneau bleu). Chacun te donne un indice pour une plume.</small></li>'
+ +'<li class="quete"><b>🏛️ Le trésor des ruines</b> — '+tresor.etape+'/5<br><small>But : au sud-est du village, suis les 5 indices en anglais de Captain Finn (through, behind, next to, up, under). Récompense : son trésor !</small>'+(tresor.etape&&tresor.etape<5?'<ul><li>Indice en cours : « '+esc(TRESOR[tresor.etape].en)+' »</li></ul>':'')+'</li>'
+ +'<li class="quete"><b>🏷️ Les mots du village</b> — '+vusE.size+'/'+nbMotsE()+'<br><small>But : approche-toi des objets (fontaine, banc, arbre, café…) pour découvrir leur nom anglais. Touche l’étiquette pour l’entendre.</small></li>'
+ +'<li class="quete"><b>🏃 Ami says</b><br><small>But : joue avec Coach Kim (près de la fontaine) au « Jacques a dit » anglais. Meilleur score : '+(localStorage.getItem('ami3d_amisays')||0)+'/8</small></li>'
+ +'<li class="quete"><b>☕ Le café et 📚 l’école</b><br><small>But : entre par les portes, commande au café avec Tom, et montre les objets de la classe à Mr Brown.'+(localStorage.getItem('ami3d_cafe')?' ✅ café':'')+(localStorage.getItem('ami3d_ecole')?' ✅ école':'')+'</small></li>'
  +'<li class="quete"><b>🐾 Paco et Mina</b> — '+((petQuest.paco?1:0)+(petQuest.mina?1:0))+'/2<br><small>But : gagner leur confiance avec un mot anglais. Ils savent aussi où sont des plumes.</small></li>';
  ul.querySelectorAll('.ecouter').forEach(b=>b.onclick=()=>sayEn(b.dataset.en))}
 // --- Professor Puzzle : un piège de l'anglais au hasard, vanne si on tombe dedans ---
@@ -396,11 +411,236 @@ function repondreProf(p,x){const ok=x===p.bon;sayEn(p.bon);
  if(ok){profSerie++;sfx('good');if(prof.kit)geste(prof.kit,'Cheer',1.6)}else{profSerie=0;sfx('bad')}
  const f=!ok&&p.faux.find(y=>y.en===x);
  showDialog('🪤 Professor Puzzle',(ok?'Well done! Tu as évité le piège. 🔥 Série : '+profSerie:'😂 '+(f?f.vanne:'Presque !'))+'\n✅ '+p.bon+'\n💡 '+p.regle,[{label:'🪤 Encore un !',action:piegeProf},{label:'🇬🇧 Le coin anglais',action:()=>{location.href='index.html?aller=anglais'}},{label:'👋 Bye!',action:closeDialog}]);return ok}
+// ═══ Les ruines (pack Quaternius CC0) et la chasse au trésor en anglais ═══
+const ruines=[],repR={};
+function pieceR(nom,x,z,ry=0,s=1,obst=null,cle=null){if(!KIT?.ruines||!KIT.objets[nom])return null;const o=KIT.objets[nom].clone(true);o.position.set(x,0,z);o.rotation.y=ry;o.scale.setScalar(s);o.traverse(m=>{if(m.isMesh){m.castShadow=!tactile;m.receiveShadow=true}});scene.add(o);ruines.push(o);
+ if(obst==='rond')rond(x,z,.45*s);else if(obst)bloc(x,z,obst[0],obst[1]);if(cle)repR[cle]={x,z,o};return o}
+if(KIT?.ruines){
+ const sol=new THREE.Mesh(new THREE.PlaneGeometry(19,14),new THREE.MeshStandardMaterial({color:0x9c9a86,roughness:1}));sol.rotation.x=-Math.PI/2;sol.position.set(19,.015,-39);sol.receiveShadow=true;scene.add(sol);
+ for(let x=14;x<=24;x+=2)pieceR('Floor_Squares',x,-36.5);for(let z=-38.5;z>=-42.5;z-=2)pieceR('Floor_Squares',19,z);
+ const arche=pieceR('Arch_Round_RoundColumn',19,-33.6,0,1,null,'arch');rond(17.5,-33.6,.45);rond(20.5,-33.6,.45);
+ pieceR('Statue_Fox',13,-38,Math.PI/2,.8,'rond','fox');pieceR('Column_Round',25,-37,0,1,'rond','column');pieceR('Barrel',26.3,-37.9,0,1,'rond','barrel');
+ pieceR('Stairs',19,-43.4,0,1.2,null,'stairs');
+ pieceR('Wall_ArchRound_Overgrown',25,-44.2,0,1,[4.2,.6]);pieceR('Flag_RoundArch',25,-44.0,0,1);pieceR('Chest',25,-42.6,Math.PI,1,'rond','chest');
+ pieceR('Statue_Stag',12.5,-43.5,Math.PI/3,.7,'rond');
+ for(const [n,x,z,r] of [['Wall_Broken',11,-35,Math.PI/2],['Wall_Broken',11,-40.5,Math.PI/2],['Wall_Half',27.5,-41,Math.PI/2],['Wall_Broken',15,-45.3,0]])pieceR(n,x,z,r,1,Math.abs(Math.sin(r))>.5?[.6,2.1]:[2.1,.6]);
+ for(const [n,x,z] of [['Column_Round_Short',15.5,-41],['Column_Round_Short',22.5,-41.5],['Column_Round',13,-34.5],['Column_Round',25,-34.5]])pieceR(n,x,z,0,1,'rond');
+ for(const [n,x,z,r] of [['Pot1',14.5,-43],['Pot2_Broken',23.2,-38.6],['Crate',27,-39.5],['Cart',22,-44.3,.4],['Bush_Round',16.8,-35],['Bush_Round',21.6,-38.9],['Bush_2x1',27.2,-35.6],['Torch',17.6,-33.15],['Torch',20.4,-33.15]])pieceR(n,x,z,r||0,1,/Bush|Torch|Pot2/.test(n)?null:'rond');
+ const pan=texteSprite('🗺️ The lost ruins','rgba(80,52,20,.9)',48,true);pan.scale.multiplyScalar(.95);pan.position.set(19,4.4,-33.4);scene.add(pan);
+}
+// Les indices : on les donne en anglais, on vérifie qu'on est au bon endroit.
+const TRESOR=[
+ {cle:'arch',x:19,z:-35.6,en:'Go through the arch.',fr:'Passe sous l’arche.',nom:'the arch'},
+ {cle:'fox',x:13,z:-40.3,en:'Look behind the fox statue.',fr:'Regarde derrière la statue du renard.',nom:'the fox statue'},
+ {cle:'barrel',x:26.2,z:-36.4,en:'Find the barrel next to the column.',fr:'Trouve le tonneau à côté de la colonne.',nom:'the barrel'},
+ {cle:'stairs',x:19,z:-42.1,en:'Go up the stairs.',fr:'Monte l’escalier.',nom:'the stairs'},
+ {cle:'chest',x:25,z:-41.3,en:'Open the chest under the flag!',fr:'Ouvre le coffre sous le drapeau !',nom:'the chest'}];
+let tresor=(()=>{try{const t=JSON.parse(localStorage.getItem('ami3d_tresor')||'{}');return{etape:Math.min(5,Math.max(0,t.etape|0)),vu:!!t.vu}}catch(e){return{etape:0,vu:false}}})();
+const garderTresor=()=>{try{localStorage.setItem('ami3d_tresor',JSON.stringify(tresor))}catch(e){}};
+let signaleR=null;
+function indiceTresor(){const c=TRESOR[tresor.etape];if(!c)return;sayEn(c.en);showDialog('🗺️ Indice '+(tresor.etape+1)+'/5','🇬🇧 « '+c.en+' »\n🇫🇷 '+c.fr,[{label:'🔊 Réécouter',action:()=>sayEn(c.en)},{label:'👍 J’y vais !',action:closeDialog}])}
+function majTresor(){
+ if(!KIT?.ruines||dialogOpen)return;const p=player.position;const dedans=p.z<-32&&p.x>9.5;
+ if(dedans&&!tresor.vu){tresor.vu=true;garderTresor();sayEn('Welcome to the lost ruins! Captain Finn hid a treasure here.');
+  showDialog('🗺️ The lost ruins','🇬🇧 « Welcome to the lost ruins! Captain Finn hid a treasure here. Follow the clues! »\n🇫🇷 Bienvenue dans les ruines perdues ! Captain Finn a caché un trésor ici. Suis les indices (en anglais) !',[{label:'🗺️ Premier indice',action:indiceTresor}]);return}
+ if(!dedans||tresor.etape>=5)return;
+ const c=TRESOR[tresor.etape];
+ if(Math.hypot(p.x-c.x,p.z-c.z)<1.9){tresor.etape++;garderTresor();sfx('good');etincelles(c.x,1,c.z);
+  if(tresor.etape>=5){if(repR.chest){repR.chest.o.visible=false;pieceR('Chest_Gold',repR.chest.x,repR.chest.z,Math.PI,1)}sayEn('You found the treasure! Well done!');
+   showDialog('💰 Treasure!','🇬🇧 « You found the treasure! Well done! »\n🇫🇷 Tu as trouvé le trésor ! Bravo !\nDedans : un livre de blagues en anglais… le vrai trésor de Captain Finn ! 📚😂',[{label:'🏅 Super !',action:closeDialog}]);return}
+  return indiceTresor()}
+ // Au mauvais endroit : Ami relit l'indice, en taquinant la confusion.
+ for(const [k,t] of TRESOR.entries()){if(k===tresor.etape)continue;if(Math.hypot(p.x-t.x,p.z-t.z)<1.7&&signaleR!==k){signaleR=k;toast('🦉 That’s '+t.nom+'… Mais l’indice dit : « '+c.en+' »');}}
+}
+if(KIT?.ruines&&tresor.etape>=5&&repR.chest){repR.chest.o.visible=false;pieceR('Chest_Gold',repR.chest.x,repR.chest.z,Math.PI,1)}
+
+// ═══ Vie du village : oiseaux, feuilles qui tombent, étincelles ═══
+const oiseaux=[];
+{const corpsO=new THREE.MeshStandardMaterial({color:0x3b3b4f,roughness:.8});
+ for(let i=0;i<7;i++){const o=new THREE.Group();const c=new THREE.Mesh(new THREE.SphereGeometry(.14,8,6),corpsO);c.scale.set(1,.8,1.6);o.add(c);
+  const ailes=[-1,1].map(s=>{const a=new THREE.Mesh(new THREE.PlaneGeometry(.55,.22),corpsO);a.material.side=THREE.DoubleSide;a.position.x=s*.3;o.add(a);return a});
+  scene.add(o);oiseaux.push({o,ailes,r:9+Math.random()*12,h:11+Math.random()*6,v:.25+Math.random()*.2,a:Math.random()*6.28,cx:(Math.random()-.5)*20,cz:(Math.random()-.5)*20})}}
+const NF=tactile?60:140,feuillesPos=new Float32Array(NF*3),feuillesV=[];
+for(let i=0;i<NF;i++){feuillesPos.set([(Math.random()-.5)*56,Math.random()*9,-30+Math.random()*66],i*3);feuillesV.push(.4+Math.random()*.6)}
+const texFeuille=(()=>{const c=document.createElement('canvas');c.width=c.height=32;const x=c.getContext('2d');x.translate(16,16);x.rotate(.6);x.fillStyle='#fff';x.beginPath();x.ellipse(0,0,13,6,0,0,Math.PI*2);x.fill();x.strokeStyle='rgba(0,0,0,.25)';x.lineWidth=1.5;x.beginPath();x.moveTo(-12,0);x.lineTo(12,0);x.stroke();return new THREE.CanvasTexture(c)})();
+const feuilles=new THREE.Points(new THREE.BufferGeometry().setAttribute('position',new THREE.BufferAttribute(feuillesPos,3)),new THREE.PointsMaterial({color:0xd98a2b,map:texFeuille,size:.32,transparent:true,alphaTest:.3,depthWrite:false}));scene.add(feuilles);
+const eclats=[];
+function etincelles(x,y,z){if(prefersReduced)return;const n=36,pos=new Float32Array(n*3),vit=[];for(let i=0;i<n;i++){pos.set([x,y,z],i*3);vit.push([(Math.random()-.5)*4,2+Math.random()*3,(Math.random()-.5)*4])}
+ const m=new THREE.Points(new THREE.BufferGeometry().setAttribute('position',new THREE.BufferAttribute(pos,3)),new THREE.PointsMaterial({color:0xffe066,size:.22,transparent:true,opacity:1,depthWrite:false}));scene.add(m);eclats.push({m,vit,t:1.1})}
+function animerVie(dt,t){
+ for(const b of oiseaux){b.a+=b.v*dt;b.o.position.set(b.cx+Math.cos(b.a)*b.r,b.h+Math.sin(t*.7+b.r)*.6,b.cz+Math.sin(b.a)*b.r);b.o.rotation.y=-b.a;const f=Math.sin(t*14+b.r)*.7;b.ailes[0].rotation.z=f;b.ailes[1].rotation.z=-f}
+ if(feuilles.visible){const p=feuilles.geometry.attributes.position;for(let i=0;i<NF;i++){let y=p.array[i*3+1]-feuillesV[i]*dt;p.array[i*3]+=Math.sin(t+i)*dt*.4;if(y<0)y=7+Math.random()*3;p.array[i*3+1]=y}p.needsUpdate=true}
+ for(let i=eclats.length-1;i>=0;i--){const e=eclats[i];e.t-=dt;const p=e.m.geometry.attributes.position;for(let k=0;k<e.vit.length;k++){e.vit[k][1]-=6*dt;p.array[k*3]+=e.vit[k][0]*dt;p.array[k*3+1]+=e.vit[k][1]*dt;p.array[k*3+2]+=e.vit[k][2]*dt}p.needsUpdate=true;e.m.material.opacity=Math.max(0,e.t);if(e.t<=0){scene.remove(e.m);e.m.geometry.dispose();eclats.splice(i,1)}}
+}
+// Profils graphiques : Auto protège les appareils modestes, Ultra exploite les écrans haute définition.
+let qualite=(()=>{try{return localStorage.getItem('ami3d_qualite')||'auto'}catch(e){return'auto'}})(),mesureQ={n:0,t:0,fini:false};
+const qualityBtn=document.querySelector('#qualityBtn');
+function appliquerQualite(mode,memoriser=true){
+  qualite=mode;mesureQ={n:0,t:0,fini:mode!=='auto'};
+  const mobile=tactile, ratio=mode==='ultra'?(mobile?Math.min(devicePixelRatio,1.6):Math.min(devicePixelRatio,2.5)):(mode==='basse'?1:Math.min(devicePixelRatio,mobile?1.35:1.8));
+  renderer.setPixelRatio(ratio);renderer.setSize(innerWidth,innerHeight);
+  const ombres=mode!=='basse';renderer.shadowMap.enabled=ombres;sun.castShadow=ombres;
+  sun.shadow.mapSize.set(mode==='ultra'&&!mobile?Math.min(4096,capaciteGPU.maxTex):2048,mode==='ultra'&&!mobile?Math.min(4096,capaciteGPU.maxTex):2048);
+  sun.shadow.map?.dispose();sun.shadow.map=null;
+  feuilles.visible=mode!=='basse';for(const b of oiseaux)b.o.visible=mode!=='basse';
+  if(qualityBtn)qualityBtn.textContent='🎮 Qualité : '+({auto:'Auto',ultra:'Ultra',basse:'Éco'}[mode]||'Auto');
+  if(memoriser)try{localStorage.setItem('ami3d_qualite',mode)}catch(e){}
+}
+appliquerQualite(['auto','ultra','basse'].includes(qualite)?qualite:'auto',false);
+qualityBtn?.addEventListener('click',()=>appliquerQualite(({auto:'ultra',ultra:'basse',basse:'auto'})[qualite]||'auto'));
+function alleger(){appliquerQualite('basse')}
+function mesurerQualite(dtBrut){if(mesureQ.fini||qualite!=='auto')return;mesureQ.n++;if(mesureQ.n<30)return;mesureQ.t+=dtBrut;if(mesureQ.n>=150){mesureQ.fini=true;if(mesureQ.t/120>.04)alleger()}}
+
+// ═══ v5.42 : Ami says, étiquettes, intérieurs, météo, photo ═══
+const sayFr=t=>{try{speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(t);u.lang='fr-FR';speechSynthesis.speak(u)}catch(e){}};
+// --- Coach Kim : « Ami says… » (Jacques a dit, en anglais) ---
+const coach=npc(-5.5,10.5,'Coach Kim 🏃',0x22c55e,0xc68642,0x2a1c14,'Casual3_Female');coach.coach=true;
+coach.marker.material=new THREE.MeshStandardMaterial({color:0x4ade80,emissive:0x16a34a,emissiveIntensity:.5});coach.dot.material=coach.marker.material;
+coach.waypoints=[[-1,-1],[1,-1],[1,1],[-1,1]].map(([dx,dz])=>new THREE.Vector3(-5.5+dx,0,10.5+dz));
+const ARBRES_POS=[[-10,-20],[10,-22],[-11,-7],[11,-6],[-11,13],[11,18],[-24,-17],[-25,9],[22,-20],[23,12]];
+const pres=(x,z,r)=>Math.hypot(player.position.x-x,player.position.z-z)<r;
+const ORDRES=[
+ {en:'jump',fr:'saute',test:()=>sautY>.5},
+ {en:'go to the fountain',fr:'va à la fontaine',test:()=>pres(0,4,3.7)},
+ {en:'touch a tree',fr:'touche un arbre',test:()=>ARBRES_POS.some(([x,z])=>pres(x,z,1.9))},
+ {en:'go to a bench',fr:'va à un banc',test:()=>pres(-5,-4,2)||pres(5,8,2)},
+ {en:'go to the school',fr:'va à l’école',test:()=>pres(9,-13,3.2)},
+ {en:'go to the café',fr:'va au café',test:()=>pres(9,19,3.2)},
+ {en:'freeze',fr:'ne bouge plus',fige:true}];
+let jeuAS=null;
+function parlerCoach(){if(coach.kit)geste(coach.kit,'Cheer',1.2);sayEn('Hi! I’m Coach Kim. Let’s play Ami says!');
+ showDialog('🏃 Coach Kim','🇬🇧 « Hi! I’m Coach Kim. Let’s play “Ami says”! »\n🇫🇷 Salut ! Je suis Coach Kim. On joue à « Ami says » (Jacques a dit) !\n\nRègle : fais l’action SEULEMENT si la phrase commence par « Ami says ». Sinon… ne bouge pas !',[{label:'▶ On joue !',action:()=>{closeDialog();lancerAS()}},{label:'👋 Bye!',action:closeDialog}])}
+function lancerAS(){jeuAS={n:0,score:0,ordre:null};ordreAS()}
+function ordreAS(){const J=jeuAS;if(!J)return;if(J.n>=8)return finAS();
+ const ami=J.n===0||Math.random()<.7,l=ORDRES.filter(o=>ami||!o.fige),o=l[Math.floor(Math.random()*l.length)];
+ J.ordre={...o,ami,t0:performance.now(),dur:o.fige?4000:8000,p0:player.position.clone(),bouge:0,fait:false};J.n++;
+ const txt=(ami?'Ami says: ':'')+o.en+'!';sayEn(txt);
+ const b=document.querySelector('#amisays');b.hidden=false;document.querySelector('#amisays-ordre').textContent='🦉 « '+txt+' »';
+ document.querySelector('#amisays-fr').textContent='('+(ami?'Ami dit : ':'')+o.fr+')';document.querySelector('#amisays-score').textContent='Score : '+J.score+' · '+J.n+'/8'}
+// Règle du jeu (pure, testée) : 'point', 'gotcha', 'bouge', 'lent' ou null (on attend encore).
+function resultatAS(o,t,fait,bouge){if(o.fige){if(bouge>=.4)return'bouge';return t>=o.dur?'point':null}
+ if(fait)return o.ami?'point':'gotcha';if(t>=o.dur)return o.ami?'lent':'point';return null}
+function majAS(){const J=jeuAS;if(!J||!J.ordre||dialogOpen)return;const o=J.ordre,t=performance.now()-o.t0;
+ document.querySelector('#amisays-chrono').style.width=Math.max(0,100-100*t/o.dur)+'%';
+ const d=player.position.distanceTo(o.p0);if(d>.4)o.bouge=d;
+ const r=resultatAS(o,t,!o.fige&&o.test(),o.bouge);if(!r)return;J.ordre=null;
+ if(r==='point'){J.score++;sfx('good');toast(o.fige?'🧊 Parfait, une vraie statue !':o.ami?'✅ Good job! (Bien joué !)':'✅ Bravo, tu n’as pas bougé : Ami n’avait pas dit « Ami says » !')}
+ else if(r==='gotcha'){sfx('bad');sayEn('Gotcha! Ami didn’t say “Ami says”!');toast('😂 Gotcha! Ami n’a pas dit « Ami says » !')}
+ else if(r==='bouge'){sfx('bad');toast('😂 Tu as bougé ! « freeze » = on ne bouge plus !')}
+ else{sfx('bad');toast('⏰ Too slow! (Trop lent !) « '+o.en+' » = '+o.fr)}
+ setTimeout(ordreAS,1600)}
+function finAS(){const J=jeuAS;jeuAS=null;document.querySelector('#amisays').hidden=true;try{localStorage.setItem('ami3d_amisays',String(Math.max(J.score,Number(localStorage.getItem('ami3d_amisays')||0))))}catch(e){}
+ sayEn(J.score>=6?'Amazing! You’re a champion!':'Good game! Let’s play again!');showDialog('🏃 Coach Kim','Score : '+J.score+'/8\n'+(J.score>=6?'🇬🇧 « Amazing! You’re a champion! » (Incroyable ! Tu es un champion !)':'🇬🇧 « Good game! Let’s play again! » (Bien joué ! On rejoue ?)'),[{label:'🔁 Encore',action:()=>{closeDialog();lancerAS()}},{label:'👋 Bye!',action:closeDialog}])}
+
+// --- Intérieurs : le café et l'école (on y entre par la porte) ---
+const DEDANS={cafe:{x:80,z:15,sortie:[9,20.2]},ecole:{x:80,z:-15,sortie:[9,-12.2]}};let dedans=null;
+const portes=[];const pnjDedans=[];const ETIQ=[];
+function porteObj(x,z,nom,dest){const g=new THREE.Group();g.position.set(x,0,z);scene.add(g);return{g,porte:dest,name:nom,verbe:''}}
+portes.push(porteObj(9,18.6,'🚪 Entrer dans le café','cafe'),porteObj(9,-13.4,'🚪 Entrer dans l’école','ecole'));
+function piece(cx,cz,couleurMur,couleurSol){const w=12,d=9,mm=mat(couleurMur,.9);
+ const sol=new THREE.Mesh(new THREE.PlaneGeometry(w,d),mat(couleurSol,.8));sol.rotation.x=-Math.PI/2;sol.position.set(cx,.02,cz);sol.receiveShadow=true;scene.add(sol);
+ box(scene,cx,1.3,cz-d/2,w,2.6,.2,mm);box(scene,cx-w/2,1.3,cz,.2,2.6,d,mm);box(scene,cx+w/2,1.3,cz,.2,2.6,d,mm);
+ box(scene,cx-3.6,.35,cz+d/2,4.8,.7,.2,mm);box(scene,cx+3.6,.35,cz+d/2,4.8,.7,.2,mm);
+ const pl=new THREE.PointLight(0xfff1d6,18,16);pl.position.set(cx,3.2,cz);scene.add(pl)}
+function etiq(x,z,en,fr){ETIQ.push({x,z,en,fr})}
+// Le café
+{const c=DEDANS.cafe;piece(c.x,c.z,0xf3d9b1,0x8b5a3c);
+ box(scene,c.x-3,.55,c.z-3.2,4.5,1.1,1,mat(0x6b3f24,.7));etiq(c.x-3,c.z-2.5,'counter','le comptoir');
+ for(const [dx,dz] of [[1.5,-1],[4,1.5],[-2,2]]){const t=new THREE.Mesh(new THREE.CylinderGeometry(.75,.75,.08,20),mat(0xfafafa,.5));t.position.set(c.x+dx,.8,c.z+dz);scene.add(t);
+  const pied=new THREE.Mesh(new THREE.CylinderGeometry(.08,.08,.8,8),mat(0x333333,.5));pied.position.set(c.x+dx,.4,c.z+dz);scene.add(pied);
+  const tasse=new THREE.Mesh(new THREE.CylinderGeometry(.09,.07,.14,12),mat(0xffffff,.4));tasse.position.set(c.x+dx+.25,.91,c.z+dz);scene.add(tasse);
+  for(const s of [-1,1])box(scene,c.x+dx+s*1.05,.25,c.z+dz,.45,.5,.45,mat(0xc0392b,.7));
+  rond(c.x+dx,c.z+dz,.95)}
+ etiq(c.x+1.5,c.z-1,'table','la table');etiq(c.x+4,c.z+1.5,'cup','la tasse');etiq(c.x-2,c.z+2,'chair','la chaise');
+ const menu=texteSprite('MENU ☕ hot chocolate · 🍵 tea · 🍰 cake · 🧃 juice','rgba(40,24,12,.92)',40,true);menu.scale.multiplyScalar(.9);menu.position.set(c.x,2.2,c.z-4.35);scene.add(menu);etiq(c.x,c.z-3.9,'menu','la carte');
+ bloc(c.x-3,c.z-3.2,4.6,1.1)}
+// L'école
+{const c=DEDANS.ecole;piece(c.x,c.z,0xdbeafe,0xc4a27a);
+ box(scene,c.x,1.5,c.z-4.3,5,1.6,.1,mat(0x1f3b2c,.9));const tab=texteSprite('Today: colours! 🔴 red · 🔵 blue · 🟢 green','rgba(31,59,44,.95)',40,true);tab.scale.multiplyScalar(.85);tab.position.set(c.x,1.6,c.z-4.15);scene.add(tab);
+ etiq(c.x,c.z-3.6,'blackboard','le tableau');
+ for(const dx of [-3,0,3])for(const dz of [-.5,2]){box(scene,c.x+dx,.6,c.z+dz,1.4,.08,.8,mat(0xd9a066,.7));box(scene,c.x+dx,.3,c.z+dz,1.3,.6,.1,mat(0x8b5a3c,.8));rond(c.x+dx,c.z+dz,.8)}
+ etiq(c.x-3,c.z-.5,'desk','le bureau');
+ const livre=texteSprite('📚',null,64);livre.scale.multiplyScalar(.6);livre.position.set(c.x+3,.9,c.z+2);scene.add(livre);etiq(c.x+3,c.z+2,'books','les livres');
+ const globe=texteSprite('🌍',null,64);globe.scale.multiplyScalar(.7);globe.position.set(c.x+5.3,1.2,c.z-3.6);scene.add(globe);etiq(c.x+5.3,c.z-3.6,'globe','le globe');
+ const reg=texteSprite('📏',null,64);reg.scale.multiplyScalar(.5);reg.position.set(c.x,.75,c.z-.5);scene.add(reg);etiq(c.x,c.z-.5,'ruler','la règle')}
+// Le serveur et le maître (personnages Quaternius)
+const serveur=npc(DEDANS.cafe.x-3,DEDANS.cafe.z-4,'Tom the waiter ☕',0x111827,0xd29c74,0x3a2a20,'Casual_Bald');serveur.serveur=true;serveur.waypoints=[new THREE.Vector3(DEDANS.cafe.x-4,0,DEDANS.cafe.z-4),new THREE.Vector3(DEDANS.cafe.x-2,0,DEDANS.cafe.z-4)];
+const maitre=npc(DEDANS.ecole.x+2,DEDANS.ecole.z-3.2,'Mr Brown 📚',0x7c3aed,0xf1c27d,0xbbbbbb,'OldClassy_Male');maitre.maitre=true;maitre.waypoints=[new THREE.Vector3(DEDANS.ecole.x+1.5,0,DEDANS.ecole.z-3.2),new THREE.Vector3(DEDANS.ecole.x+3.5,0,DEDANS.ecole.z-3.2)];
+pnjDedans.push(serveur,maitre);residents.push(coach,serveur,maitre);
+const sorties=[porteObj(DEDANS.cafe.x,DEDANS.cafe.z+4.2,'🚪 Sortir du café','dehors'),porteObj(DEDANS.ecole.x,DEDANS.ecole.z+4.2,'🚪 Sortir de l’école','dehors')];portes.push(...sorties);
+function passerPorte(dest){closeDialog();
+ if(dest==='dehors'){const s=DEDANS[dedans].sortie;dedans=null;player.position.set(s[0],0,s[1]);yaw=Math.PI;return}
+ dedans=dest;const c=DEDANS[dest];player.position.set(c.x,0,c.z+3);yaw=0;
+ const t=dest==='cafe'?['Welcome to the café!','Bienvenue au café !']:['Welcome to class!','Bienvenue en classe !'];sayEn(t[0]);toast('🇬🇧 « '+t[0]+' » ('+t[1]+')')}
+function bornerDedans(p){const c=DEDANS[dedans];p.x=THREE.MathUtils.clamp(p.x,c.x-5.5,c.x+5.5);p.z=THREE.MathUtils.clamp(p.z,c.z-4,c.z+4)}
+// Au café : la vraie scène « Au café » (js/anglais.js), avec Tom.
+let etapeCafe=0;
+function parlerServeur(){const S=(window.ANGLAIS&&ANGLAIS.SITUATIONS.find(x=>x.id==='cafe'));if(!S)return;if(serveur.kit)geste(serveur.kit,'Cheer',1);
+ const et=S.etapes[etapeCafe%S.etapes.length];sayEn(et.dit);const opts=[et.bon,...et.faux.map(f=>f.en)].sort(()=>Math.random()-.5);
+ showDialog('☕ Tom the waiter','🇬🇧 « '+et.dit+' »\n🇫🇷 '+et.fr+'\n\nTu réponds :',opts.map(o=>({label:o,action:()=>{if(o===et.bon){sayEn(o);sfx('good');etapeCafe++;
+   if(etapeCafe%S.etapes.length===0){try{localStorage.setItem('ami3d_cafe','1')}catch(e){}showDialog('☕ Tom the waiter','🎉 Bravo ! Tu as commandé, payé et dit au revoir en anglais !',[{label:'👋 Bye!',action:closeDialog}])}else parlerServeur()}
+  else{sfx('bad');const f=et.faux.find(x=>x.en===o);showDialog('☕ Tom the waiter','😂 '+(f?f.vanne:'Presque !')+'\nEssaie encore !',[{label:'🔁 Réessayer',action:parlerServeur}])}}})))}
+// À l'école : Mr Brown demande de montrer des objets (on se déplace jusqu'à l'objet).
+let classe=null;
+function parlerMaitre(){if(maitre.kit)geste(maitre.kit,'Cheer',1);const objets=ETIQ.filter(e=>Math.abs(e.x-DEDANS.ecole.x)<7&&Math.abs(e.z-DEDANS.ecole.z)<6);
+ const l=objets.sort(()=>Math.random()-.5).slice(0,3);classe={l,i:0};sayEn('Good morning! Show me the '+l[0].en+', please!');
+ showDialog('📚 Mr Brown','🇬🇧 « Good morning! Show me the '+l[0].en+', please! »\n🇫🇷 Bonjour ! Montre-moi '+l[0].fr+', s’il te plaît !\n(Va tout près de l’objet.)',[{label:'👍 OK!',action:closeDialog}])}
+function majClasse(){if(!classe||dedans!=='ecole'||dialogOpen)return;const o=classe.l[classe.i];if(!o||!pres(o.x,o.z,1.6))return;sfx('good');classe.i++;
+ if(classe.i>=classe.l.length){classe=null;sayEn('Excellent! You are a star student!');try{localStorage.setItem('ami3d_ecole','1')}catch(e){}return showDialog('📚 Mr Brown','🇬🇧 « Excellent! You are a star student! » ⭐\n🇫🇷 Excellent ! Tu es un élève vedette !',[{label:'🎉 Thank you!',action:closeDialog}])}
+ const n=classe.l[classe.i];sayEn('Yes! That’s the '+o.en+'. Now show me the '+n.en+'!');toast('✅ « '+o.en+' » ! Maintenant : the '+n.en+' ('+n.fr+')')}
+
+// --- Étiquettes : chaque objet dit son nom anglais quand on s'en approche ---
+etiq(0,4,'fountain','la fontaine');etiq(-5,-4,'bench','le banc');etiq(5,8,'bench','le banc');etiq(0,-3.8,'board','le panneau');
+for(const [x,z] of [[-7,-4],[7,-4],[-7,8],[7,20],[-15,18],[15,-23]])etiq(x,z,'streetlight','le lampadaire');
+for(const [x,z] of ARBRES_POS)etiq(x,z,'tree','l’arbre');
+etiq(-9,-14,'market','le marché');etiq(9,-13.6,'school','l’école');etiq(-9,18.2,'house','la maison');etiq(9,18.8,'café','le café');
+if(repR.arch)etiq(19,-33.6,'arch','l’arche');if(repR.fox)etiq(13,-38,'statue','la statue');if(repR.column)etiq(25,-37,'column','la colonne');if(repR.barrel)etiq(26.3,-37.9,'barrel','le tonneau');if(repR.stairs)etiq(19,-43.4,'stairs','l’escalier');if(repR.chest)etiq(25,-42.6,'chest','le coffre');
+const ETIQ_VOITURE={en:'car',fr:'la voiture'};
+const vusE=new Set((()=>{try{return JSON.parse(localStorage.getItem('ami3d_etiquettes')||'[]')}catch(e){return[]}})());
+const nbMotsE=()=>new Set(ETIQ.map(e=>e.en)).size;
+let etiqProche=null,tEtiq=0;
+function majEtiquette(dt){tEtiq+=dt;if(tEtiq<.25)return;tEtiq=0;let best=null,dm=3.6;
+ for(const e of ETIQ){const d=Math.hypot(player.position.x-e.x,player.position.z-e.z);if(d<dm){dm=d;best=e}}
+ for(const c of traffic){const p=c.g.position,d=Math.hypot(player.position.x-p.x,player.position.z-p.z);if(d<dm){dm=d;best=ETIQ_VOITURE}}
+ const b=document.querySelector('#etiquette');
+ if(best!==etiqProche){etiqProche=best;if(best){b.hidden=false;b.textContent='🏷️ '+best.en+' · '+best.fr+' 🔊';if(!vusE.has(best.en)){vusE.add(best.en);try{localStorage.setItem('ami3d_etiquettes',JSON.stringify([...vusE]))}catch(e){}toast('🏷️ Nouveau mot : '+best.en+' ('+vusE.size+'/'+nbMotsE()+')')}}else b.hidden=true}}
+document.querySelector('#etiquette').onclick=()=>{if(etiqProche)sayEn(etiqProche.en)};
+
+// --- Météo : soleil, pluie, neige (neige du 1er décembre au 6 janvier) ---
+const auj=new Date(),hiver=(auj.getMonth()===11)||(auj.getMonth()===0&&auj.getDate()<=6);
+let meteo=hiver?'neige':((Math.floor(Date.now()/864e5)*9301)%7<2?'pluie':'soleil');
+const NP=tactile?500:1100,pPos=new Float32Array(NP*3);for(let i=0;i<NP;i++)pPos.set([(Math.random()-.5)*60,Math.random()*22,(Math.random()-.5)*60],i*3);
+const texFlocon=(()=>{const c=document.createElement('canvas');c.width=c.height=32;const x=c.getContext('2d'),g=x.createRadialGradient(16,16,0,16,16,15);g.addColorStop(0,'#fff');g.addColorStop(1,'rgba(255,255,255,0)');x.fillStyle=g;x.fillRect(0,0,32,32);return new THREE.CanvasTexture(c)})();
+const precip=new THREE.Points(new THREE.BufferGeometry().setAttribute('position',new THREE.BufferAttribute(pPos,3)),new THREE.PointsMaterial({color:0xffffff,map:texFlocon,size:.35,transparent:true,depthWrite:false}));scene.add(precip);
+const herbeOrig=grass.color.clone(),herbeNeige=new THREE.Color(0xffffff),texHerbe=grass.map,texNeige=texBruit(0xeef3fa,.1,128,40);
+const METEO_TXT={soleil:['It’s sunny! ☀️','Il fait beau !'],pluie:['It’s raining! 🌧️','Il pleut !'],neige:['It’s snowing! ❄️','Il neige !']};
+function appliquerMeteo(dire){precip.visible=meteo!=='soleil';precip.material.size=meteo==='neige'?.35:.12;precip.material.color.setHex(meteo==='neige'?0xffffff:0x9fc5ff);precip.material.opacity=meteo==='neige'?.95:.6;
+ grass.color.copy(meteo==='neige'?herbeNeige:herbeOrig);grass.map=meteo==='neige'?texNeige:texHerbe;grass.needsUpdate=true;renderer.toneMappingExposure=meteo==='pluie'?.8:(KIT?.95:1);
+ if(dire){const t=METEO_TXT[meteo];sayEn(t[0]);toast('🇬🇧 « '+t[0]+' » ('+t[1]+')')}}
+appliquerMeteo(false);
+document.querySelector('#meteoBtn').onclick=()=>{meteo={soleil:'pluie',pluie:'neige',neige:'soleil'}[meteo];appliquerMeteo(true)};
+function majMeteo(dt){if(!precip.visible)return;const p=precip.geometry.attributes.position,v=meteo==='neige'?2.2:16,c=player.position;
+ for(let i=0;i<NP;i++){let y=p.array[i*3+1]-v*dt;if(meteo==='neige')p.array[i*3]+=Math.sin(i+performance.now()*.001)*dt*.5;if(y<0)y=18+Math.random()*4;p.array[i*3+1]=y}
+ precip.position.set(c.x,0,c.z);p.needsUpdate=true}
+
+// --- Mode photo : une photo du village avec une légende en anglais (reste sur l'appareil) ---
+const LEGENDES=[['Me and Ami in the village!','Moi et Ami au village !'],['Look at my new friends!','Regarde mes nouveaux amis !'],['Hello from the lost ruins!','Bonjour des ruines perdues !'],['Best day ever!','Le plus beau jour de ma vie !'],['I love English!','J’adore l’anglais !']];
+document.querySelector('#photoBtn').onclick=()=>showDialog('📷 Mode photo','Choisis ta légende en anglais :',LEGENDES.map(l=>({label:l[0],action:()=>{closeDialog();prendrePhoto(l)}})));
+function prendrePhoto(l){document.body.classList.add('photo-en-cours');requestAnimationFrame(()=>{amb.rendre();const src=renderer.domElement,c=document.createElement('canvas');c.width=src.width;c.height=src.height;const x=c.getContext('2d');x.drawImage(src,0,0);
+ const h=Math.round(c.height*.14);x.fillStyle='rgba(30,26,75,.85)';x.fillRect(0,c.height-h,c.width,h);x.fillStyle='#fff';x.font='900 '+Math.round(h*.38)+'px system-ui';x.textAlign='center';x.fillText('“'+l[0]+'”',c.width/2,c.height-h*.5);
+ x.font='600 '+Math.round(h*.2)+'px system-ui';x.fillStyle='#ffd740';x.fillText(l[1]+' · Ami des mots 🦉',c.width/2,c.height-h*.15);
+ const url=c.toDataURL('image/jpeg',.9);document.body.classList.remove('photo-en-cours');const p=document.querySelector('#photo');document.querySelector('#photo-img').src=url;document.querySelector('#photo-dl').href=url;p.hidden=false;sayEn(l[0]);
+ document.querySelector('#photo-share').onclick=async()=>{try{const b=await (await fetch(url)).blob(),f=new File([b],'ami-des-mots.jpg',{type:'image/jpeg'});if(navigator.canShare&&navigator.canShare({files:[f]}))await navigator.share({files:[f],title:'Ami des mots'});else toast('Utilise « Enregistrer » pour garder ta photo.')}catch(e){}}})}
+document.querySelector('#photo-close').onclick=()=>{document.querySelector('#photo').hidden=true};
 function interact(){
  if(!active||dialogOpen)return;
  if(active.portail)return entrerPortail(active);
  if(active.metier)return parlerMetier(active);
  if(active.prof)return parlerProf();
+ if(active.coach)return parlerCoach();
+ if(active.porte)return passerPorte(active.porte);
+ if(active.serveur)return parlerServeur();
+ if(active.maitre)return parlerMaitre();
  if(active===lea){
   if(mission===0)showDialog('Léa la marchande 🍎','« Je prépare une tarte. Comment dit-on “apple” en français ?',[
    {label:'🍎 Pomme',action:finishStep},{label:'🚲 Vélo',action:()=>{closeDialog();wrong('Un vélo dans une tarte ? Léa cuisine original, mais non ! 😄')}}]);
@@ -451,12 +691,19 @@ function portail(x,z,titre,icone,dest,couleur,ry=0){
  const g=new THREE.Group();g.position.set(x,0,z);g.rotation.y=ry;scene.add(g);
  for(const sx of [-1.35,1.35])rond(x+Math.cos(ry)*sx,z-Math.sin(ry)*sx,.4);
  const pierre=mat(0xf4ead8,.7),coul=new THREE.MeshStandardMaterial({color:couleur,emissive:couleur,emissiveIntensity:.35,roughness:.4});
- for(const sx of [-1.35,1.35]){box(g,sx,1.35,0,.42,2.7,.42,pierre);box(g,sx,.12,0,.62,.24,.62,coul)}
- const arche=new THREE.Mesh(new THREE.TorusGeometry(1.35,.2,10,28,Math.PI),coul);arche.position.y=2.7;arche.castShadow=true;g.add(arche);
+ let haut=2.7;
+ if(KIT?.ruines&&KIT.objets.Arch_Round_RoundColumn){ // arche en pierre Quaternius : même style que les ruines
+  const a=KIT.objets.Arch_Round_RoundColumn.clone(true);a.position.z=.11;a.traverse(o=>{if(o.isMesh){o.castShadow=!tactile;o.receiveShadow=true}});g.add(a);haut=3.55;
+  for(const sx of [-1.35,1.35])box(g,sx,.06,0,.7,.12,.7,coul);
+  const bandeau=new THREE.Mesh(new THREE.TorusGeometry(1.08,.07,8,28,Math.PI),coul);bandeau.position.set(0,2.45,.28);g.add(bandeau);
+ }else{
+  for(const sx of [-1.35,1.35]){box(g,sx,1.35,0,.42,2.7,.42,pierre);box(g,sx,.12,0,.62,.24,.62,coul)}
+  const arche=new THREE.Mesh(new THREE.TorusGeometry(1.35,.2,10,28,Math.PI),coul);arche.position.y=2.7;arche.castShadow=true;g.add(arche);
+ }
  const sol=new THREE.Mesh(new THREE.RingGeometry(.4,1.15,32),new THREE.MeshBasicMaterial({color:couleur,transparent:true,opacity:.55,side:THREE.DoubleSide}));sol.rotation.x=-Math.PI/2;sol.position.y=.03;g.add(sol);
  const voile=new THREE.Mesh(new THREE.CircleGeometry(1.15,32),new THREE.MeshBasicMaterial({color:couleur,transparent:true,opacity:.18,side:THREE.DoubleSide,depthWrite:false}));voile.position.y=1.5;g.add(voile);
- const ic=texteSprite(icone,null,96);ic.scale.multiplyScalar(2.4);ic.position.y=4.5;g.add(ic);
- const nom=texteSprite(titre,'rgba(38,28,100,.88)',48,true);nom.scale.multiplyScalar(.9);nom.position.y=3.35;g.add(nom);
+ const ic=texteSprite(icone,null,96);ic.scale.multiplyScalar(2.4);ic.position.y=haut+1.8;g.add(ic);
+ const nom=texteSprite(titre,'rgba(38,28,100,.88)',48,true);nom.scale.multiplyScalar(.9);nom.position.y=haut+.65;g.add(nom);
  const p={g,name:titre,verbe:'Entrer : ',dest,icone,sol,voile,ic,portail:true};portails.push(p);return p;
 }
 const COUL=[0x48c774,0xff6b6b,0xffb347,0xffd93d,0x4dabf7,0xb197fc,0xf783ac,0x63e6be];
@@ -469,10 +716,10 @@ function entrerPortail(p){
  const aller=()=>{sfx('good');location.href=p.dest==='motscity'?'mots-city.html':'index.html?aller='+encodeURIComponent(p.dest)};
  showDialog(p.icone+' '+p.name,'On y va ? (Le bouton « Accueil » du jeu te ramènera ici, dans le village.)',[{label:'▶ Entrer',action:aller},{label:'Plus tard',action:closeDialog}]);
 }
-function nearest(){let best=null,dist=4.3;for(const n of [lea,max,zoe,milo,paco,mina,wordBoard,...habitants,prof,...portails]){const d=player.position.distanceTo(n.g.position);if(d<dist){dist=d;best=n}}return best}
+function nearest(){let best=null,dist=4.3;for(const n of [lea,max,zoe,milo,paco,mina,wordBoard,...habitants,prof,coach,...portes,...pnjDedans,...portails]){const d=player.position.distanceTo(n.g.position);if(d<dist){dist=d;best=n}}return best}
 // Sauvegardes d'avant les quêtes : les défis déjà réussis donnent leur indice.
 for(const id of appris)Q.reveler(etatQ,id);if(petQuest.paco)Q.reveler(etatQ,'paco');if(petQuest.mina)Q.reveler(etatQ,'mina');Q.garder(etatQ);
-window.__monde={prof,piegeProf,repondreProf,get etatQ(){return etatQ},trouverPlume,donnerIndice,rendreQuetes,pickups,get peutVoler(){return peutVoler},move,obstacles,collisionsJoueur,get traffic(){return traffic},petQuiz,portails,entrerPortail,player,residents:()=>residents,keys,habitants,parlerMetier,repondreMetier,HAB,vegetation,kit:KIT};
+window.__monde={resultatAS,coach,lancerAS,get jeuAS(){return jeuAS},ORDRES,portes,passerPorte,get dedans(){return dedans},serveur,maitre,parlerServeur,parlerMaitre,get classe(){return classe},ETIQ,vusE,get meteo(){return meteo},precip,appliquerMeteo:m=>{meteo=m;appliquerMeteo(true)},prendrePhoto,get tresor(){return tresor},TRESOR,ruines,oiseaux,feuilles,alleger,get qualite(){return qualite},borner,prof,piegeProf,repondreProf,get etatQ(){return etatQ},trouverPlume,donnerIndice,rendreQuetes,pickups,get peutVoler(){return peutVoler},camera,get yaw(){return yaw},move,obstacles,collisionsJoueur,get traffic(){return traffic},petQuiz,portails,entrerPortail,player,residents:()=>residents,keys,habitants,parlerMetier,repondreMetier,HAB,vegetation,kit:KIT};
 
 // --- VIE DU QUARTIER : voitures, oiseaux, papillons, lucioles et pluie ---
 const traffic=[];
@@ -493,7 +740,9 @@ function makeCar(x,z,color,speed,phase=0){
   const lamp=new THREE.Mesh(new THREE.BoxGeometry(.28,.13,.07),glowMat);lamp.position.set(sx,.58,1.29);g.add(lamp);
   const rear=new THREE.Mesh(new THREE.BoxGeometry(.25,.12,.07),mat(0xd83b52));rear.position.set(sx,.52,-1.29);g.add(rear);
  }
- if(KIT){g.children.forEach(c=>c.visible=false);const k=objet(KIT,['car_sedan','car_hatchback','car_stationwagon'][traffic.length%3],2.8);k.g.rotation.y=speed<0?Math.PI:0;g.add(k.g);wheels.length=0;wheels.push(...k.roues)}
+ if(KIT){g.children.forEach(c=>c.visible=false);const k=objet(KIT,['car_sedan','car_hatchback','car_stationwagon'][traffic.length%3],2.8);g.add(k.g);wheels.length=0;wheels.push(...k.roues)}
+ // Repère commun : avant = +Z, donc les voitures roulant vers -Z sont retournées.
+ g.rotation.y=speed<0?Math.PI:0;
  traffic.push({g,wheels,speed,phase,baseX:x});
 }
 makeCar(-4.3,-32,0xf2a34a,2.4,0);
@@ -554,6 +803,8 @@ const rain=new THREE.Points(rainGeo,new THREE.PointsMaterial({color:0xc6e4ff,siz
 rain.visible=false;scene.add(rain);
 
 const clock=new THREE.Clock();let walk=0;
+// Limites : le quartier, plus les ruines au sud-est (x 10→28, z jusqu'à -45).
+function borner(p){p.x=THREE.MathUtils.clamp(p.x,-28,28);if(p.z<-30.2)p.x=THREE.MathUtils.clamp(p.x,10,28);p.z=THREE.MathUtils.clamp(p.z,p.x>=10?-45:-30,38)}
 // Collisions : bâtiments, fontaine, arbres, bancs, lampadaires, piliers des portails, habitants, animaux, voitures.
 function pousser(e,o,rayon){
  if(o.r!==undefined){const dx=e.x-o.x,dz=e.z-o.z,d=Math.hypot(dx,dz),lim=rayon+o.r;if(d<lim){if(d>1e-4){e.x=o.x+dx/d*lim;e.z=o.z+dz/d*lim}else e.x=o.x+lim;return true}return false}
@@ -569,7 +820,7 @@ function collisionsJoueur(){const e=player.position;let choc=false;
  return choc}
 // Une voiture s'arrête si le joueur est devant elle (on ne se fait pas renverser, on ne la traverse pas).
 const joueurDevant=c=>{const p=c.g.position,e=player.position,devant=(e.z-p.z)*Math.sign(c.speed);return Math.abs(e.x-p.x)<1.7&&devant>-.5&&devant<4.6};
-function animate(){requestAnimationFrame(animate);const dt=Math.min(clock.getDelta(),.04);if(!dialogOpen){let f=(keys.w||keys.z||keys.arrowup||move.up?1:0)-(keys.s||keys.arrowdown||move.down?1:0),side=(keys.d||keys.arrowright||move.right?1:0)-(keys.a||keys.q||keys.arrowleft||move.left?1:0);if(f||side){const forwardMove=new THREE.Vector3(Math.sin(yaw),0,Math.cos(yaw));const rightMove=new THREE.Vector3(Math.cos(yaw),0,-Math.sin(yaw));const direction=forwardMove.multiplyScalar(f).add(rightMove.multiplyScalar(side)).normalize();const angle=Math.atan2(direction.x,direction.z);const speed=(keys.shift?8:5);player.position.x+=direction.x*dt*speed;player.position.z+=direction.z*dt*speed;player.rotation.y=angle;walk+=dt*speed*2.2;bobY=Math.abs(Math.sin(walk))*.06;const sw=Math.sin(walk)*(keys.shift?.8:.6);player.userData.legs[0].rotation.x=sw;player.userData.legs[1].rotation.x=-sw}else{bobY=Math.sin(performance.now()*.002)*.025;for(const l of player.userData.legs)l.rotation.x*=.8}const saute=keys[' ']||move.jump;if(saute&&sautY<.02&&!jumpV)jumpV=peutVoler?9:5.5;/* m/s, même saut quel que soit l'appareil */if(jumpV){sautY+=jumpV*dt;const plane=peutVoler&&saute&&jumpV<0;jumpV-=dt*(plane?3:18);if(plane)jumpV=Math.max(jumpV,-1.2);if(sautY<=0){sautY=0;jumpV=0}}player.position.y=bobY+sautY;collisionsJoueur();player.position.x=THREE.MathUtils.clamp(player.position.x,-28,28);player.position.z=THREE.MathUtils.clamp(player.position.z,-30,38)}
+function animate(){requestAnimationFrame(animate);const dtBrut=clock.getDelta(),dt=Math.min(dtBrut,.04);mesurerQualite(dtBrut);animerVie(dt,performance.now()/1000);majTresor();majAS();majEtiquette(dt);majMeteo(dt);majClasse();if(!dialogOpen){let f=(keys.w||keys.z||keys.arrowup||move.up?1:0)-(keys.s||keys.arrowdown||move.down?1:0),side=(keys.d||keys.arrowright||move.right?1:0)-(keys.a||keys.q||keys.arrowleft||move.left?1:0);if(f||side){const forwardMove=new THREE.Vector3(Math.sin(yaw),0,Math.cos(yaw));const rightMove=new THREE.Vector3(1,0,0).applyQuaternion(camera.quaternion);rightMove.y=0;if(rightMove.lengthSq()<1e-8)rightMove.set(Math.cos(yaw),0,-Math.sin(yaw));rightMove.normalize();const direction=forwardMove.multiplyScalar(f).add(rightMove.multiplyScalar(side)).normalize();const angle=Math.atan2(direction.x,direction.z);const speed=(keys.shift?8:5);player.position.x+=direction.x*dt*speed;player.position.z+=direction.z*dt*speed;player.rotation.y=angle;walk+=dt*speed*2.2;bobY=Math.abs(Math.sin(walk))*.06;const sw=Math.sin(walk)*(keys.shift?.8:.6);player.userData.legs[0].rotation.x=sw;player.userData.legs[1].rotation.x=-sw}else{bobY=Math.sin(performance.now()*.002)*.025;for(const l of player.userData.legs)l.rotation.x*=.8}const saute=keys[' ']||move.jump;if(saute&&sautY<.02&&!jumpV)jumpV=peutVoler?9:5.5;/* m/s, même saut quel que soit l'appareil */if(jumpV){sautY+=jumpV*dt;const plane=peutVoler&&saute&&jumpV<0;jumpV-=dt*(plane?3:18);if(plane)jumpV=Math.max(jumpV,-1.2);if(sautY<=0){sautY=0;jumpV=0}}player.position.y=bobY+sautY;collisionsJoueur();if(dedans)bornerDedans(player.position);else borner(player.position)}
 active=nearest();document.querySelector('#interact').style.display=active&&!dialogOpen?'block':'none';document.querySelector('#interact').textContent=active?(active.verbe||'Parler à ')+active.name+' · E':'';
 for(const n of residents){
   n.marker.rotation.z+=dt*.9;
@@ -624,7 +875,7 @@ for(const car of traffic){
  car.g.position.z+=car.speed*dt;
  if(car.g.position.z>48)car.g.position.z=-42;
  if(car.g.position.z< -43)car.g.position.z=47;
- car.wheels.forEach(w=>w.rotation.x+=Math.abs(car.speed)*dt*2.5);
+ car.wheels.forEach(w=>w.rotation.x+=car.speed*dt*2.5);
 }
 // Vol des oiseaux : battements d'ailes synchronisés et petits virages.
 for(const b of birds){
@@ -658,7 +909,7 @@ if(rain.visible){
 const forward=new THREE.Vector3(Math.sin(yaw),0,Math.cos(yaw));const target=player.position.clone().add(new THREE.Vector3(0,2.5,0));const desired=player.position.clone().add(forward.clone().multiplyScalar(-cameraDistance)).add(new THREE.Vector3(0,4.2,0));camera.position.lerp(desired,.08);camera.lookAt(target);
 if(document.querySelector('#mapPanel').style.display==='block')drawMap();amb.rendre()}
 animate();
-addEventListener('resize',()=>{camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix();renderer.setSize(innerWidth,innerHeight);renderer.setPixelRatio(Math.min(devicePixelRatio,1.7));amb.redim(innerWidth,innerHeight)});
+addEventListener('resize',()=>{camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix();renderer.setSize(innerWidth,innerHeight);const r=qualite==='ultra'?(tactile?Math.min(devicePixelRatio,1.6):Math.min(devicePixelRatio,2.5)):(qualite==='basse'?1:Math.min(devicePixelRatio,tactile?1.35:1.8));renderer.setPixelRatio(r);amb.redim(innerWidth,innerHeight)});
 updateMission();
 </script>
 </body></html>

@@ -19,15 +19,12 @@
     // Où trouver les voix enregistrées (dossier audio/ de ReParole).
     AUDIO_BASE:'https://reparole.fr/audio/',
     // ── Gratuit / Ami des mots Plus (abonnement mensuel) ──
-    // Gratuit : 3 thèmes, 10 jeux sur 50, 1 joueur ; le défi du jour, la
-    // révision, le carnet, les trophées et le vestiaire restent gratuits (sur
-    // les mots gratuits). Plus : tous les thèmes, les 50 jeux, 6 joueurs.
-    // MODE_PAYANT:false ouvre tout (aucun paiement).
-    MODE_PAYANT:true,
-    THEMES_GRATUITS:['animaux', 'manger', 'maison'],
-    // Sortes de jeux gratuites, à tous leurs niveaux : 1 + 3 + 3 + 3 = 10 jeux sur 50.
-    JEUX_GRATUITS:['decouvrir', 'ecoute', 'quel_mot', 'traduction'],
-    JOUEURS_GRATUITS:1,
+    // Phase de lancement : tout l'univers est ouvert gratuitement.
+    // Le système Plus est conservé dans le code mais désactivé temporairement.
+    MODE_PAYANT:false,
+    THEMES_GRATUITS:['animaux', 'manger', 'maison', 'ville', 'nature', 'corps', 'ecole', 'transports'],
+    JEUX_GRATUITS:['decouvrir', 'ecoute', 'quel_mot', 'traduction', 'vrai_faux', 'ombre', 'devinette', 'intrus', 'panier', 'ecoute_mot', 'traduction_inverse', 'premiere_lettre', 'lettre_manquante', 'lettres', 'memoire', 'memoire_trad', 'relier', 'chrono', 'grand_quiz'],
+    JOUEURS_GRATUITS:6,
     PRIX:'5,99 €',
     // Lien de paiement Stripe (abonnement mensuel). Vide : « Bientôt disponible ».
     LIEN_PAIEMENT:'',
@@ -36,13 +33,40 @@
     // Fonction serveur qui dit si un code d'abonnement est actif
     // (serveur/functions/ami-abonnement). Vide : rien n'est vérifié.
     API_ABONNEMENT:'',
+    // Salon des battles en direct (Supabase Realtime) : URL du projet (https://xxxx.supabase.co) et clé PUBLIQUE
+    // « anon » (jamais la clé service_role). Vides : seul le défi par lien est proposé. Voir SALON-EN-LIGNE.md.
+    // Serveur PHP d'Ami des mots (serveur-php/, ex. 'https://ami-des-mots.fr/serveur/') : abonnement, salon, vannes IA,
+    // programmes de maths validés. Rempli par : node outils/configurer.js --serveur <adresse>. Vide : jeu sans serveur.
+    SERVEUR:'',
+    SALON_URL:'',
+    SALON_CLE:'',
+    // Générateur de vannes (serveur/functions/ami-vannes, clé Claude côté serveur seulement).
+    // Vide : pas de générateur. Réservé à Plus ; un adulte valide chaque vanne.
+    API_VANNES:'',
     // On ne demande jamais un mot jamais vu : il est d'abord présenté
     // (« Nouveau mot ! » : image, mot, traduction, voix).
     PRESENTER_NOUVEAUX:true,
     // Clé PUBLIQUE (JWK, ECDSA P-256) qui vérifie les certificats signés par
     // le serveur : node outils/generer-cles.js. Sans elle, Plus ne s'ouvre pas.
-    CLE_PUBLIQUE:null
-  }, window.CONFIG_JEU || {});
+    CLE_PUBLIQUE:null,
+    // Coins réservés à Plus (choisis dans admin.html, rangés dans js/offre.js).
+    COINS_PLUS:[]
+  }, offreLue(window.OFFRE_AMI), window.CONFIG_JEU || {});
+
+  // Avec le serveur PHP, l'abonnement et les vannes IA passent par lui (sauf adresse donnée à part).
+  if(CONFIG.SERVEUR){ const b = String(CONFIG.SERVEUR).replace(/\/?$/, '/'); if(!CONFIG.API_ABONNEMENT) CONFIG.API_ABONNEMENT = b + 'abonnement.php'; if(!CONFIG.API_VANNES) CONFIG.API_VANNES = b + 'vannes.php'; }
+
+  // js/offre.js (fabriqué par le coin admin) : on ne garde que les réglages connus, au bon format.
+  // Il ne peut que dire ce qui est réservé à Plus, jamais ouvrir Plus.
+  function offreLue(o){
+    const r = {}; if(!o || typeof o !== 'object') return r;
+    const liste = x => Array.isArray(x) ? x.filter(e => typeof e === 'string' && /^[a-z0-9_-]{1,30}$/.test(e)) : null;
+    if(typeof o.MODE_PAYANT === 'boolean') r.MODE_PAYANT = o.MODE_PAYANT;
+    if(typeof o.PRIX === 'string' && o.PRIX.length <= 20) r.PRIX = o.PRIX;
+    for(const k of ['THEMES_GRATUITS', 'JEUX_GRATUITS', 'COINS_PLUS']){ const l = liste(o[k]); if(l) r[k] = l; }
+    if(Number.isInteger(o.JOUEURS_GRATUITS) && o.JOUEURS_GRATUITS >= 1 && o.JOUEURS_GRATUITS <= 6) r.JOUEURS_GRATUITS = o.JOUEURS_GRATUITS;
+    return r;
+  }
 
   const UI = Object.keys(window.TEXTES);
   // Langues visibles pendant la phase de lancement des voix dédiées.
@@ -156,6 +180,26 @@
   }
   const ouvert = th => plus() || CONFIG.THEMES_GRATUITS.includes(th);
   const jeuOuvert = j => plus() || CONFIG.JEUX_GRATUITS.includes(String(j).split(':')[0]);
+  // Coins (pièges, rap, salon, village 3D…) : chaque coin peut être gratuit ou Plus (coin admin).
+  // Chaque action d'entrée mène à son coin ; les actions internes passent par l'entrée.
+  const COINS = {
+    pieges:['pieges', 'pieges-go'], situations:['situations', 'situation-go'], histoires:['histoires', 'histoire-go'],
+    dictee:['dictee'], parcours:['parcours'], phrases:['phrases'], battle:['battle', 'battle-go'], rap:['rap'],
+    tournoi:['tournoi', 'tournoi-go', 'tournoi-go-memes'], 'defi-pote':['defi-pote', 'defi-pote-go'],
+    salon:['salon', 'salon-creer', 'salon-rejoindre', 'salon-public', 'salon-entrer-public'],
+    trompe:['trompe'], oreilles:['oreilles'], vraifaux:['vraifaux'], avent:['avent'], betisier:['betisier'], maison:['maison'],
+    maths:['maths', 'maths-chap', 'maths-melange', 'maths-examen', 'maths-defi'], sciences:['sciences', 'sciences-theme'],
+    village3d:['accueil-3d'], motscity:[]
+  };
+  const COIN_DE = {}; for(const c in COINS) for(const a of COINS[c]) COIN_DE[a] = c;
+  const retourCoin = c => ['rap', 'tournoi', 'defi-pote', 'salon'].includes(c) && coinOuvert('battle') ? 'battle' : ['village3d', 'motscity'].includes(c) ? 'accueil' : 'anglais';
+  const coinOuvert = c => plus() || !CONFIG.MODE_PAYANT || !CONFIG.COINS_PLUS.includes(c);
+  // Après chaque écran : les boutons et liens d'un coin Plus portent le badge ✨.
+  function marquerCoins(r){
+    if(!CONFIG.MODE_PAYANT || plus() || !CONFIG.COINS_PLUS.length) return;
+    r.querySelectorAll('[data-a]').forEach(b => { const c = COIN_DE[b.dataset.a]; if(c && !coinOuvert(c) && !b.querySelector('.badge-plus')){ b.classList.add('verrou'); b.insertAdjacentHTML('beforeend', ' <span class="badge-plus">✨ ' + esc(t('plus_badge')) + '</span>'); } });
+    r.querySelectorAll('a[href="mots-city.html"]').forEach(a => { if(!coinOuvert('motscity')){ a.classList.add('verrou'); a.setAttribute('href', '#plus'); a.dataset.a = 'plus'; a.insertAdjacentHTML('beforeend', ' <span class="badge-plus">✨ ' + esc(t('plus_badge')) + '</span>'); } });
+  }
   // Nombre de mots réellement disponibles dans une langue (affiché dans le choix).
   const nbMots = lang => distincts(Object.keys(MOTS).filter(e => MOTS[e][lang]), lang).length;
   const motsDu = (theme, lang) => Object.keys(MOTS).filter(e => MOTS[e].theme === theme && MOTS[e][lang]);
@@ -192,6 +236,29 @@
     f.b = juste ? Math.min(4, f.b + 1) : 0;
     f.d = jour(INTERVALLES[f.b]);
     J().mots[k] = f;
+    noterAdaptatif(k, juste);
+  }
+  // V6 : le moteur adaptatif complète les boîtes de révision historiques.
+  // Données isolées par joueur, sans réseau et sans modifier les anciennes fiches.
+  function cartesAdaptatives(){
+    const profil = J();
+    if(!profil.apprentissage || typeof profil.apprentissage !== 'object') profil.apprentissage = { version:1, cartes:{} };
+    if(!profil.apprentissage.cartes || typeof profil.apprentissage.cartes !== 'object') profil.apprentissage.cartes = {};
+    return profil.apprentissage.cartes;
+  }
+  function noterAdaptatif(id, juste){
+    const A = window.AMI_APPRENTISSAGE;
+    if(!A || typeof A.noter !== 'function') return;
+    try{
+      const cartes = cartesAdaptatives(), ancienne = cartes[id] || A.nouvelleCarte(id);
+      cartes[id] = A.noter(ancienne, juste ? 2 : 0, Date.now());
+    }catch(e){ /* une fiche invalide ne doit jamais interrompre une partie */ }
+  }
+  function bilanAdaptatif(){
+    const A = window.AMI_APPRENTISSAGE;
+    if(!A) return { total:0, aRevoir:0, maitrisees:0, erreurs:0 };
+    const cartes = Object.values(cartesAdaptatives());
+    return A.resume(cartes, Date.now());
   }
   const aRevoir = () => motsOuverts(base.cible).filter(e => { const f = fiche(e); return f && f.d <= jour(); })
     .sort((a, b) => fiche(a).b - fiche(b).b || (fiche(a).d < fiche(b).d ? -1 : 1));
@@ -276,6 +343,12 @@
     try{
       const AC = window.AudioContext || window.webkitAudioContext; if(!AC) return;
       ctx = ctx || new AC();
+      if(sorte === 'boing'){ // petit « boing » comique avant une vanne
+        const o = ctx.createOscillator(), g = ctx.createGain(), t0 = ctx.currentTime;
+        o.type = 'sine'; o.frequency.setValueAtTime(180, t0); o.frequency.exponentialRampToValueAtTime(720, t0 + .12); o.frequency.exponentialRampToValueAtTime(260, t0 + .3);
+        g.gain.setValueAtTime(.0001, t0); g.gain.exponentialRampToValueAtTime(.09, t0 + .03); g.gain.exponentialRampToValueAtTime(.0001, t0 + .34);
+        o.connect(g); g.connect(ctx.destination); o.start(t0); o.stop(t0 + .36); return;
+      }
       const notes = { juste:[[660, 0], [880, .09]], faux:[[220, 0]], fin:[[523, 0], [659, .12], [784, .24], [1047, .36]], tuile:[[500, 0]] }[sorte] || [];
       notes.forEach(([f, d]) => {
         const o = ctx.createOscillator(), g = ctx.createGain(), t0 = ctx.currentTime + d;
@@ -287,6 +360,23 @@
   }
 
   // ── Ami ───────────────────────────────────────────────────────────
+  // Les visages d'Ami : content, fete, surpris, vexe, mdr, choque, fier, boude, malin, dort.
+  function visage(h, yeux, c1, immobile){
+    const pup = (dx, ry) => '<g class="pupilles"><ellipse cx="' + (37 + dx) + '" cy="45" rx="6.5" ry="' + ry + '" fill="#1d2521"/><ellipse cx="' + (63 + dx) + '" cy="45" rx="6.5" ry="' + ry + '" fill="#1d2521"/><circle cx="' + (40 + dx) + '" cy="41.5" r="2.6" fill="#fff"/><circle cx="' + (66 + dx) + '" cy="41.5" r="2.6" fill="#fff"/></g>';
+    const paup = immobile ? '' : '<g class="paupieres" fill="' + c1 + '"><ellipse cx="37" cy="44" rx="12" ry="12"/><ellipse cx="63" cy="44" rx="12" ry="12"/></g>';
+    const demi = '<g fill="' + c1 + '"><path d="M25.5 45 A11.5 11.5 0 0 1 48.5 45 Z"/><path d="M51.5 45 A11.5 11.5 0 0 1 74.5 45 Z"/></g>';
+    const trait = d => '<path d="' + d + '" fill="none" stroke="#5b3a1e" stroke-width="3" stroke-linecap="round"/>';
+    switch(h){
+      case 'mdr': return '<path d="M28 47 Q37 36 46 47 M54 47 Q63 36 72 47" fill="none" stroke="#1d2521" stroke-width="3.2" stroke-linecap="round"/><path d="M24 52 q-3 6 0 9 q3 -3 0 -9 Z M76 52 q-3 6 0 9 q3 -3 0 -9 Z" fill="#6ec6ff"/>';
+      case 'dort': return '<path d="M28 45 Q37 51 46 45 M54 45 Q63 51 72 45" fill="none" stroke="#1d2521" stroke-width="3" stroke-linecap="round"/><text x="76" y="22" font-size="13" font-weight="700" fill="#6b6bd6">z</text><text x="85" y="11" font-size="9" font-weight="700" fill="#6b6bd6">z</text>';
+      case 'malin': return '<ellipse cx="37" cy="45" rx="6.5" ry="6.5" fill="#1d2521"/><circle cx="40" cy="41.5" r="2.6" fill="#fff"/><path d="M54 46 Q63 39 72 46" fill="none" stroke="#1d2521" stroke-width="3.2" stroke-linecap="round"/>' + trait('M27 31 L46 28') + trait('M54 32 L73 34');
+      case 'choque': return '<circle cx="37" cy="44" r="3.2" fill="#1d2521"/><circle cx="63" cy="44" r="3.2" fill="#1d2521"/>' + trait('M26 27 Q37 18 48 27 M52 27 Q63 18 74 27');
+      case 'vexe': return pup(0, 6.5) + demi + trait('M26 30 L46 36 M74 30 L54 36') + '<path d="M80 16 l5 5 m0 -5 l-5 5" stroke="#e03131" stroke-width="2.4" stroke-linecap="round"/>';
+      case 'boude': return pup(4, 6) + demi + trait('M27 33 L46 33 M54 33 L73 33') + '<text x="78" y="26" font-size="12" fill="#6b6b6b">…</text>';
+      case 'fier': return pup(0, 6) + demi + trait('M27 29 Q37 23 47 29 M53 29 Q63 23 73 29') + '<text x="79" y="22" font-size="12">✨</text>';
+      default: return pup(0, yeux) + paup;
+    }
+  }
   function ami(humeur, opts){
     opts = opts || {};
     const [c1, c2, c3] = COULEURS[opts.couleur != null ? opts.couleur : (J().couleur || 0)] || COULEURS[0];
@@ -315,11 +405,9 @@
       '<ellipse cx="50" cy="70" rx="19" ry="22" fill="#F6EAD2" opacity=".92"/>' +
       '<circle cx="37" cy="44" r="17" fill="#F6EAD2" stroke="#C9A878" stroke-width="1.2"/><circle cx="63" cy="44" r="17" fill="#F6EAD2" stroke="#C9A878" stroke-width="1.2"/>' +
       '<circle cx="37" cy="44" r="11.5" fill="#fff"/><circle cx="63" cy="44" r="11.5" fill="#fff"/>' +
-      '<g class="pupilles"><ellipse cx="37" cy="45" rx="6.5" ry="' + yeux + '" fill="#1d2521"/><ellipse cx="63" cy="45" rx="6.5" ry="' + yeux + '" fill="#1d2521"/>' +
-      '<circle cx="40" cy="41.5" r="2.6" fill="#fff"/><circle cx="66" cy="41.5" r="2.6" fill="#fff"/></g>' +
-      (opts.immobile ? '' : '<g class="paupieres" fill="' + c1 + '"><ellipse cx="37" cy="44" rx="12" ry="12"/><ellipse cx="63" cy="44" rx="12" ry="12"/></g>') +
+      visage(humeur, yeux, c1, opts.immobile) +
       cou +
-      '<path class="companion-beak" fill="#E8973A" d="M 50 50 L 45 55 Q 50 63 55 55 Z"/>' +
+      (['mdr', 'choque'].includes(humeur) ? '<path class="companion-beak" fill="#E8973A" d="M 50 50 L 43 55 Q 50 70 57 55 Z"/><path d="M45.5 57 Q50 64 54.5 57 Z" fill="#7a2d12"/>' : '<path class="companion-beak" fill="#E8973A" d="M 50 50 L 45 55 Q 50 63 55 55 Z"/>') +
       dessus +
       '</svg>';
     if(opts.immobile || porte.length) return svg;
@@ -339,6 +427,7 @@
     document.documentElement.lang = base.ui;
     document.documentElement.dir = RTL.includes(base.ui) ? 'rtl' : 'ltr';
     if(facile()) document.documentElement.dataset.facile = '1'; else delete document.documentElement.dataset.facile;
+    marquerCoins(r);
     window.scrollTo(0, 0);
     const f = r.querySelector('h1, h2'); if(f){ f.setAttribute('tabindex', '-1'); f.focus({ preventScroll:true }); }
   }
@@ -359,6 +448,7 @@
   }
 
   function accueil(){
+    if(typeof arreterBeat === 'function'){ arreterBeat(); quitterSalon(); }
     if(base.joueurs.length > 1 && !accueil.choisi) return quiJoue();
     const fait = J().jours.includes(jour()), s = serie(), rev = aRevoir().length, defiFait = J().defis.includes(jour());
     const opts = (liste, choisi, compter) => liste.map(l => '<option value="' + l + '"' + (l === choisi ? ' selected' : '') + '>' + esc(LANGUES_APPRENDRE[l]) + (compter ? ' · ' + esc(t('nb_mots', nbMots(l))) : '') + '</option>').join('');
@@ -374,6 +464,7 @@
           '<label>' + esc(t('j_apprends')) + '<select id="cible">' + opts(APPRENDRE, base.cible) + '</select></label>' +
         '</div></div></section>' +
       '<main class="accueil">' +
+        (function(){ const b = bilanAdaptatif(); return b.total ? '<section class="carte-apprentissage" aria-label="Progression adaptative"><strong>🧠 Ton apprentissage</strong><span>' + b.aRevoir + ' notion(s) à revoir · ' + b.maitrisees + ' maîtrisée(s) · ' + b.total + ' suivie(s)</span></section>' : ''; })() +
         '<button class="gros defi' + (defiFait ? ' fait' : '') + '" data-a="defi">' + (defiFait ? '✓ ' : '⚡ ') + esc(t('defi')) + '</button>' +
         '<button class="gros apprendre" data-a="lecon">📚 ' + esc(t('apprendre')) + '</button>' +
         '<button class="gros phrases-accueil" data-a="phrases">💬 ' + (base.ui === 'en' ? 'Build your first sentences' : 'Atelier des phrases') + ' <span>✨</span></button>' +
@@ -381,6 +472,9 @@
         '<button class="gros village-accueil" data-a="village">🗺️ ' + {"fr": "Explorer le village", "en": "Explore the word village", "es": "Explorar el pueblo", "it": "Esplora il villaggio", "pt": "Explorar a aldeia", "de": "Das Wörterdorf erkunden", "ar": "استكشف قرية الكلمات", "tr": "Kelime köyünü keşfet", "pl": "Odkryj wioskę słów", "ja": "ことばの村を探検", "uk": "Дослідити селище слів", "ko": "단어 마을 탐험하기", "dz": "اكتشف قرية الكلمات", "ma": "اكتشف قرية الكلمات", "tn": "اكتشف قرية الكلمات", "kab": "Snirem tamdint n wawalen"}[base.ui] + '</button>' +
         '<button class="gros monde-3d-accueil" data-a="accueil-3d">🌍 ' + (base.ui === 'en' ? 'Play in the 3D village' : base.ui === 'fr' ? 'Jouer dans le village 3D' : '3D') + ' <span>🚀</span></button>' +
         '<a class="gros monde-3d-accueil mots-city-accueil" href="mots-city.html">🛵 Mots City — l’anglais en rigolant <span>😂</span></a>' +
+        (installation ? '<button class="moyen plein installer-appli" data-a="installer">📲 Installer l’appli sur cet appareil</button>' : '') +
+        (window.MATHS ? '<button class="gros monde-3d-accueil maths-accueil" data-a="maths">🔢 Maths de la 6e au bac — Prof Pi te vanne <span>🦝</span></button>' : '') +
+        (window.SCIENCES ? '<button class="gros monde-3d-accueil sciences-accueil" data-a="sciences">🚀 Sciences : planètes, fusées, corps humain <span>🔬</span></button>' : '') +
         '<div class="actions serrees">' +
           '<button class="moyen" data-a="themes">▶ ' + esc(t('jouer')) + '</button>' +
           '<button class="moyen" data-a="revoir">🔁 ' + esc(t('revoir')) + (rev ? ' <span class="pastille">' + rev + '</span>' : '') + '</button>' +
@@ -446,6 +540,10 @@
   }
   function fermerFenetre(){
     const f = $('#fenetre'); if(f) f.remove();
+    arreterMicro();
+  }
+  // Coupe le micro et efface l'enregistrement (rien n'est gardé ni envoyé).
+  function arreterMicro(){
     if(micro){ try{ micro.rec && micro.rec.state === 'recording' && micro.rec.stop(); micro.flux && micro.flux.getTracks().forEach(p => p.stop()); if(micro.url) URL.revokeObjectURL(micro.url); }catch(e){} micro = null; }
   }
   function aToi(e){
@@ -607,12 +705,19 @@
     const th = partie.mode === 'theme' ? theme : MOTS[motI()] && MOTS[motI()].theme;
     poser(barre(retourPartie()) + '<main class="partie" style="--th:' + couleurDe(th) + '">' +
       '<div class="tete"><div class="ami-petit" id="ami-partie">' + ami('content') + '</div><span class="combo' + ((partie.combo || 0) >= 2 ? ' vu' : '') + '" id="combo" aria-hidden="true">' + ((partie.combo || 0) >= 2 ? '🔥 ×' + partie.combo : '') + '</span><div><h2>' + esc(titre) + '</h2><p class="aide"><span id="consigne">' + esc(aide) + '</span> <button class="lire-consigne" data-a="consigne" aria-label="' + esc(t('lire_consigne')) + '">🔊</button></p></div></div>' +
-      chrono + prog + '<div class="scene">' + corps + '</div>' + '<p class="bulle" id="bulle" role="status" aria-live="polite"></p><button class="moyen continuer-erreur" id="continuer-erreur" data-a="continuer-erreur" hidden>✓ ' + (base.ui === 'en' ? 'I understand — next' : 'J’ai compris — continuer') + '</button><button class="petit-bouton garder-vanne" id="garder-vanne" data-a="garder-vanne" hidden>😂</button><p class="note" id="note-voix" aria-live="polite"></p></main>');
+      chrono + prog + '<div class="scene">' + corps + '</div>' + '<p class="bulle" id="bulle" role="status" aria-live="polite"></p><button class="moyen continuer-erreur" id="continuer-erreur" data-a="continuer-erreur" hidden>✓ ' + (base.ui === 'en' ? 'I understand — next' : 'J’ai compris — continuer') + '</button><button class="petit-bouton garder-vanne" id="garder-vanne" data-a="garder-vanne" hidden>😂</button><button class="petit-bouton pas-drole" id="pas-drole" data-a="pas-drole" hidden>🙄</button><p class="note" id="note-voix" aria-live="polite"></p></main>');
     if(facile() && partie.i === 0 && !partie.consigneLue){ partie.consigneLue = true; setTimeout(() => lireConsigne(aide), 250); }
   }
   // Humour réglable : les plaisanteries visent Ami, le mot ou la situation,
   // jamais le joueur. Le niveau est mémorisé par profil.
-  let derniereBlague = '';
+  let derniereBlague = '', sceneAnim = null;
+  // Suivi des erreurs (pour les vannes qui se souviennent et l'espace parents). Plafonné à 300 entrées.
+  function noterErreur(cle){
+    const j = J(); j.erreurs = j.erreurs && typeof j.erreurs === 'object' ? j.erreurs : {};
+    j.erreurs[cle] = (j.erreurs[cle] || 0) + 1;
+    const cles = Object.keys(j.erreurs); if(cles.length > 300) delete j.erreurs[cles.sort((a, b) => j.erreurs[a] - j.erreurs[b])[0]];
+    return j.erreurs[cle];
+  }
   const BLAGUES_AMI = {
     fr:[
       {
@@ -677,6 +782,12 @@
   const remplir = (modele, v) => modele.replace(/\{(\w+)\}/g, (_, k) => v[k] == null ? '' : String(v[k]));
   function tirerVanne(liste){
     if(!liste || !liste.length) return '';
+    // Les vannes notées « pas drôle » par la famille ne ressortent plus (s'il en reste d'autres).
+    const nul = J().pasDrole; if(Array.isArray(nul) && nul.length){ const l = liste.filter(x => !nul.includes(x)); if(l.length) liste = l; }
+    // Ami apprend (js/juge.js) : chaque vanne a un score familial (😂 +2, 🙄 -3). Les mauvaises disparaissent, les bonnes reviennent plus.
+    const sc = J().notesVannes, JG = window.JUGE;
+    if(JG && sc && typeof sc === 'object'){ const l = liste.filter(x => !JG.retiree(sc, x)); if(l.length) liste = l; liste = liste.flatMap(x => Array(JG.poids(sc, x)).fill(x)); }
+    const aime = J().vannesAimees; if(Array.isArray(aime) && aime.length){ const bonus = liste.filter(x => aime.includes(x)); if(bonus.length) liste = liste.concat(bonus, bonus); }
     let choix = liste[Math.floor(Math.random() * liste.length)];
     if(liste.length > 1 && choix === derniereBlague){
       const autres = liste.filter(x => x !== derniereBlague);
@@ -722,6 +833,18 @@
     const f = ctx.f != null ? ctx.f : nomVanne(mauvaise, langue);
     const j = ctx.j != null ? ctx.j : nomVanne(bonne, langue);
     let pool = null, scene = null;
+    // Vanne qui se souvient : la même confusion revient (3e, 5e, 8e, 12e fois).
+    if(mauvaise && bonne && f && j && f !== j){
+      const n = noterErreur('mot:' + mauvaise + '>' + bonne);
+      if(V.souvenir && !facile() && [3, 5, 8, 12, 20].includes(n)){ const b = tirerVanne(V.souvenir); derniereBlague = b; return remplir(b, { f, j, n }); }
+    }
+    // Le running gag de la chocolatine (rare), puis la révélation finale.
+    const R5 = window.RIGOLADE;
+    if(R5 && (type === 'mot' || type === 'ecoute') && !facile() && base.ui === 'fr' && (J().gag || 0) <= R5.GAG.length){ const j0 = J(); j0.vannesVues = (j0.vannesVues || 0) + 1;
+      if(j0.vannesVues % 30 === 0){ const g = j0.gag || 0; j0.gag = g + 1; const b = g < R5.GAG.length ? R5.GAG[g] : R5.REVELATION; derniereBlague = b; return b; } }
+    // Les vannes écrites par la famille (Espace parents).
+    const fam = (Array.isArray(J().vannesFamille) ? J().vannesFamille : []).filter(b => !window.JUGE || (JUGE.juger(b).ok && !JUGE.retiree(J().notesVannes, b)));
+    if(fam.length && f && j && Math.random() < .08){ const b = fam[Math.floor(Math.random() * fam.length)]; derniereBlague = b; return remplir(b, { f, j }); }
     if(type === 'mot' || type === 'ecoute'){
       if(!f || !j || f === j) pool = V.secours;
       else{
@@ -732,6 +855,8 @@
         if((ctx.serie || 0) >= 3 && hasard() < .7) pool = V.serie;
         else if(deja && hasard() < .6) pool = V.encore;
         else if(type === 'ecoute' && hasard() < .5) pool = V.ecoute;
+        // Un personnage du village passe dans la vanne (Paco, Mina, Professor Puzzle).
+        else if(V.cameos && !facile() && hasard() < .12){ const b = tirerVanne(V.cameos); derniereBlague = b; return remplir(b, { f, j }); }
         // Scène absurde : ce qui arrive avec le mauvais mot (+ la bonne phrase anglaise).
         else if(V.scenes && V.scenes[theme] && V.scenes[theme].some(x => x.t !== derniereBlague) && !facile() && (langue !== 'fr' || (art[0] && art[1])) && hasard() < .4){
           const toutes = V.scenes[theme], l = toutes.filter(x => x.t !== derniereBlague);
@@ -750,7 +875,7 @@
     if(scene){
       const de = x => x.F.replace(/^le /, 'du ').replace(/^la /, 'de la ').replace(/^l’/, 'de l’');
       if(art[1]) valeurs.de_J = de(art[1]); if(art[0]) valeurs.de_F = de(art[0]);
-      derniereBlague = scene.t;
+      derniereBlague = scene.t; sceneAnim = { de:bonne, vers:mauvaise };
       let txt = remplir(scene.t, valeurs);
       const je = nomVanne(bonne, 'en');
       if(scene.en && base.cible === 'en' && je) txt += ' 🇬🇧 « ' + majuscule(remplir(scene.en, { je })) + ' »';
@@ -1050,10 +1175,15 @@
       const vanne = blague(motChoisi, partie.bonne, ctx);
       const truc = astuce(motChoisi, partie.bonne, langueBlagues());
       const message = vanne + ' ' + correctionDansLangue(bonneReponse) + (truc ? ' 💡 ' + truc : '');
-      amiDit(message, 'surpris');
+      amiDit(message, niveauHumour() > 1 ? ['surpris', 'mdr', 'choque', 'malin'][Math.floor(Math.random() * 4)] : 'surpris'); noterBetisier(message);
+      if(sceneAnim && !sobre()){ const bl = $('#bulle'); if(bl){ const sa = document.createElement('span'); sa.className = 'scene-anim'; sa.setAttribute('aria-hidden', 'true'); sa.innerHTML = '<span class="de">' + image(sceneAnim.de, 'pic-mini') + '</span><span class="vers">' + image(sceneAnim.vers, 'pic-mini') + '</span>'; bl.prepend(sa); } }
+      sceneAnim = null;
+      if(niveauHumour() > 0) bruit('boing');
       reactionAmi(niveauHumour());
       partie.derniereVanne = { v:vanne, e:partie.bonne };
       const fav = $('#garder-vanne'); if(fav){ fav.hidden = false; fav.disabled = false; fav.textContent = '😂 ' + (base.ui === 'en' ? 'Keep it' : 'Je la garde'); }
+      const pd = $('#pas-drole'); if(pd){ pd.hidden = false; pd.disabled = false; pd.textContent = '🙄 ' + (base.ui === 'en' ? 'Not funny' : 'Pas drôle'); }
+      partie.dernierModele = derniereBlague;
       const suite = $('#continuer-erreur');
       if(suite){ suite.hidden = false; suite.focus({preventScroll:true}); }
       // Une seule lecture vocale : la blague ET la bonne réponse, dans cet ordre.
@@ -1337,7 +1467,10 @@
   function ouvrirDepuis3D(dest){
     const [quoi, v] = String(dest).split(':');
     if(quoi === 'lieu' && LIEUX_VILLAGE.some(x => x.theme === v)) return entrerVillageLieu(v);
-    const ecrans = { defi, lecon, phrases:atelierPhrases, pieges, anglais:coinAnglais, battle:battleGo, situations, dictee:dicteeGo, revoir, carnet, reglages, village };
+    const ecrans = { defi, lecon, phrases:atelierPhrases, pieges, anglais:coinAnglais, battle:battleMenu, situations, dictee:dicteeGo, parcours, revision:revisionGo, histoires, repeter, parents, trompe:amiTrompe, oreilles:oreillesGo, vraifaux:vraiFauxGo, avent, maison, betisier, rap:rapGo, tournoi:tournoiMenu, salon:salonAccueil, maths:mathsAccueil, sciences:sciencesAccueil, revoir, carnet, reglages, village };
+    // Un coin Plus reste fermé même par un lien du village 3D.
+    const coin = COINS[quoi] ? quoi : COIN_DE[quoi];
+    if(coin && !coinOuvert(coin)) return ecranPlus(retourCoin(coin));
     return (ecrans[quoi] || accueil)();
   }
 
@@ -1474,6 +1607,17 @@
     }
   }
 
+  // Punchline bonus : on chambre la phrase et Ami, jamais la personne qui joue.
+  function vannePiquante(texte){
+    const base = String(texte || 'Presque !');
+    const langue = base && base.ui === 'en' ? 'en' : 'fr';
+    const banque = window.VANNES && (window.VANNES[langue] || window.VANNES.fr);
+    const lignes = banque && banque.punchlines;
+    if(!Array.isArray(lignes) || !lignes.length) return base;
+    const extra = lignes[Math.floor(Math.random() * lignes.length)];
+    return base + ' — ' + extra;
+  }
+
   // ── Les pièges de l'anglais (js/pieges.js) : erreurs typiques des francophones ──
   // Une vanne par erreur (ce qu'un anglophone comprendrait), la règle, la bonne phrase dite à voix haute.
   // Révision espacée : chaque piège a sa boîte (0 à 4) ; les pièges ratés reviennent vite.
@@ -1533,9 +1677,10 @@
     garder();
     document.querySelectorAll('.piege-opt').forEach((b, k) => { b.disabled = true; if(pg.options[k] === p.bon) b.classList.add('ok'); else if(k === i) b.classList.add('ko'); });
     const faux = !juste && p.faux.find(f => f.en === choix);
+    const deja = juste ? 0 : noterErreur('piege:' + p.id); if(!juste) garder();
     const a = $('#ami-piege'); if(a) a.innerHTML = ami(juste ? 'fete' : 'surpris');
     const r = $('#piege-retour');
-    if(r) r.innerHTML = (juste ? '<p class="piege-bravo">Yes! 🎉 Tu as évité le piège.</p>' : '<p class="piege-vanne">😂 ' + esc(faux ? faux.vanne : 'Presque !') + '</p>') +
+    if(r) r.innerHTML = (juste ? '<p class="piege-bravo">Yes! 🎉 Tu as évité le piège.</p>' : '<p class="piege-vanne">😂 ' + (deja >= 2 ? 'Encore ce piège ! Il t’aime bien, on dirait. ' : '') + esc(vannePiquante(faux ? faux.vanne : 'Presque !')) + '</p>') +
       '<p class="piege-bon" lang="en">✅ ' + esc(p.bon) + ' <button class="bouton-rond" data-a="piege-ecouter" aria-label="Écouter la bonne phrase">🔊</button></p>' +
       '<p class="piege-regle">💡 ' + esc(p.regle) + '</p>' +
       '<button class="moyen plein" data-a="piege-suivant">' + (pg.i + 1 < pg.liste.length ? 'Piège suivant →' : 'Voir mon score') + '</button>';
@@ -1550,33 +1695,75 @@
   function etatAnglais(){
     const j = J(), o = j.anglais && typeof j.anglais === 'object' ? j.anglais : {}, ids = A_EN() ? A_EN().SITUATIONS.map(x => x.id) : [];
     const n = (x, max) => Math.min(max, Math.max(0, Math.floor(Number(x)) || 0));
-    j.anglais = { situations:Array.isArray(o.situations) ? [...new Set(o.situations.filter(x => ids.includes(x)))] : [], victoires:n(o.victoires, 1e5), battles:n(o.battles, 1e5), dictees:n(o.dictees, 1e5) };
+    const hs = window.HISTOIRES ? HISTOIRES.liste.map(x => x.id) : [], nr = window.PARCOURS ? PARCOURS.REPETER.length : 0;
+    j.anglais = { situations:Array.isArray(o.situations) ? [...new Set(o.situations.filter(x => ids.includes(x)))] : [], victoires:n(o.victoires, 1e5), battles:n(o.battles, 1e5), dictees:n(o.dictees, 1e5),
+      histoires:Array.isArray(o.histoires) ? [...new Set(o.histoires.filter(x => hs.includes(x)))] : [],
+      repete:Array.isArray(o.repete) ? [...new Set(o.repete.filter(x => Number.isInteger(x) && x >= 0 && x < nr))] : [],
+      niveaux:Array.isArray(o.niveaux) ? [...new Set(o.niveaux.filter(x => [1, 2, 3].includes(x)))].sort() : [],
+      revisions:Array.isArray(o.revisions) ? [...new Set(o.revisions.filter(x => Number.isInteger(x) && x > 0))].sort((a, b) => a - b).slice(-400) : [] };
     return j.anglais;
   }
   const traduire = fr => fr ? '<details class="trad"><summary>🇫🇷 Traduire</summary><p>' + esc(fr) + '</p></details>' : '';
   function coinAnglais(){
-    piege = battle = situation = dictee = null;
+    piege = battle = situation = dictee = qz = lecture = rep1 = null; arreterMicro(); arreterBeat(); if(salon && !salon.partie) quitterSalon();
     if(!piegesDispo() || !A_EN()) return pieges();
     const e = etatAnglais(), P = window.PIEGES, m = P.maitrises(etatPieges());
+    const prog = window.PARCOURS ? PARCOURS.progression(statsAnglais(), e.niveaux) : [], cour = prog.find(n => !n.valide) || prog[prog.length - 1];
+    const bj = window.BLAGUES_EN && BLAGUES_EN.duJour(), dus = revisionDue().length, serieJ = serieRevisions();
     const carte = (a, icone, titre, texte, info) => '<button class="carte-anglais" data-a="' + a + '"><span class="ic">' + icone + '</span><strong>' + titre + '</strong><small>' + texte + '</small><em>' + info + '</em></button>';
     poser(barre('accueil') + '<main class="coin-anglais"><div class="ami-moyen">' + ami('content') + '</div>' +
-      '<h2>🇬🇧 Le coin anglais</h2><p class="pieges-intro">Pour parler anglais pour de vrai… en rigolant.</p><div class="cartes-anglais">' +
+      '<h2>🇬🇧 Le coin anglais</h2><p class="pieges-intro">Pour parler anglais pour de vrai… en rigolant.</p>' +
+      (cour ? '<button class="carte-parcours" data-a="parcours"><span class="ic">' + cour.icone + '</span><span><strong>Mon parcours · Niveau ' + cour.n + ' : ' + esc(cour.titre) + '</strong><small>' + (cour.valide ? '🎓 Tous les niveaux réussis !' : cour.pret ? '🎓 Prêt pour l’examen !' : cour.etapes.filter(x => x.ok).length + '/' + cour.etapes.length + ' étapes') + '</small></span><span class="barre-prog"><i style="width:' + Math.round(100 * cour.etapes.filter(x => x.ok).length / cour.etapes.length) + '%"></i></span></button>' : '') +
+      '<button class="carte-revision" data-a="revision">🔁 <strong>Ma révision du jour</strong> <small>' + (dus ? dus + ' chose' + (dus > 1 ? 's' : '') + ' à revoir · 5 minutes' : 'De nouveaux pièges t’attendent') + (serieJ > 1 ? ' · 🔥 ' + serieJ + ' jours de suite' : '') + '</small></button>' +
+      (bj ? '<div class="blague-jour"><p><strong>😂 La blague anglaise du jour</strong></p><p class="bj-q" lang="en">' + esc(bj.q) + ' <button class="bouton-rond" data-a="bj-ecouter" aria-label="Écouter la blague">🔊</button></p>' +
+        '<details><summary>Réponse…</summary><p class="bj-r" lang="en">' + esc(bj.r) + '</p><p class="petit">🇫🇷 ' + esc(bj.fr) + '</p><p class="bj-jeu">💡 ' + esc(bj.jeu) + '</p></details></div>' : '') +
+      '<div class="cartes-anglais">' +
       carte('pieges', '🪤', 'Les pièges', 'Les erreurs que font tous les francophones', '🏅 ' + m + '/' + P.liste.length) +
       carte('situations', '☕', 'Situations de la vie', 'Café, école, magasin… choisis ta réplique', '✅ ' + e.situations.length + '/' + A_EN().SITUATIONS.length) +
       carte('dictee', '✍️', 'Dictée rigolote', 'Ami parle, tu écris (attention aux mots jumeaux !)', '✍️ ' + e.dictees + ' phrase' + (e.dictees > 1 ? 's' : '') + ' parfaite' + (e.dictees > 1 ? 's' : '')) +
-      carte('battle', '🎤', 'Battle de vannes', 'Ami se vante en anglais : cloue-lui le bec !', '🏆 ' + e.victoires + ' victoire' + (e.victoires > 1 ? 's' : '')) +
-      '</div></main>');
+      carte('histoires', '📖', 'Mini-histoires', 'Lis et écoute de petites histoires du village', '📖 ' + e.histoires.length + '/' + (window.HISTOIRES ? HISTOIRES.liste.length : 0)) +
+      carte('repeter', '🗣️', 'Répète après Ami', 'Dis la phrase, réécoute-toi, compare', '🗣️ ' + e.repete.length + '/' + (window.PARCOURS ? PARCOURS.REPETER.length : 0)) +
+      carte('battle', '🎤', 'Battles', 'Rap, vannes, en famille, entre potes, en direct', '🏆 ' + e.victoires + ' victoire' + (e.victoires > 1 ? 's' : '')) +
+      '</div><h3 class="section-anglais">😂 Pour rire (et apprendre)</h3><div class="cartes-anglais">' +
+      carte('trompe', '🦉', 'Ami se trompe exprès', 'Trouve ses fautes et corrige-le !', '🔔') +
+      carte('oreilles', '👂', 'Le jeu des oreilles', 'ship ou sheep ? three ou tree ?', '👂') +
+      carte('vraifaux', '🤥', 'True or false?', 'Ami raconte des bêtises…', '🤥') +
+      carte('avent', '🎄', 'Calendrier de l’Avent', 'Un mot d’hiver par jour', '🎄 ' + (Array.isArray(J().avent) ? J().avent.length : 0) + '/24') +
+      carte('betisier', '📺', 'Le bêtisier', 'Le best-of de tes vannes de la semaine', '📺') +
+      carte('maison', '🏠', 'Ma maison', 'Dépense tes plumes, apprends les meubles', '🪶 ' + J().plumes) +
+      '</div><p><button class="moyen" data-a="parents">👪 Espace parents</button></p></main>');
   }
 
   // Battle : 3 manches. Ami se vante ; on choisit la réplique juste et drôle. Point seulement du premier coup.
   let battle = null;
-  function battleGo(){
+  function battleMenu(){
+    battle = null; arreterBeat(); quitterSalon();
     if(!piegesDispo() || !A_EN()) return pieges();
-    battle = { manches:A_EN().melanger(A_EN().BATTLE).slice(0, 3), i:0, toi:0, ami:0, essai:0, fini:false };
+    poser(barre('anglais') + '<main class="coin-anglais"><h2>🎤 Battle de vannes</h2><div class="cartes-anglais">' +
+      '<button class="carte-anglais" data-a="battle-go" data-v="ami"><span class="ic">🦉</span><strong>Contre Ami</strong><small>3 manches : cloue-lui le bec !</small></button>' +
+      '<button class="carte-anglais" data-a="battle-go" data-v="famille"><span class="ic">🦊🐼</span><strong>En famille</strong><small>Deux équipes, chacun son tour, Ami arbitre</small></button>' +
+      '<button class="carte-anglais" data-a="invente"><span class="ic">✍️</span><strong>Invente ta vanne</strong><small>Fabrique une vanne en anglais pour Ami</small></button>' +
+      '<button class="carte-anglais" data-a="rap"><span class="ic">🎤🔥</span><strong>Battle de rap</strong><small>Sur scène : complète les rimes d’Ami, fais crier le public !</small></button>' +
+      '<button class="carte-anglais" data-a="tournoi"><span class="ic">👨‍👩‍👧</span><strong>Battle en famille</strong><small>2 à 4 joueurs, chacun son tour</small></button>' +
+      '<button class="carte-anglais" data-a="defi-pote"><span class="ic">📨</span><strong>Défier un pote</strong><small>Par lien : mêmes questions, on compare</small></button>' +
+      '<button class="carte-anglais" data-a="salon"><span class="ic">🛸</span><strong>Salon en direct</strong><small>Retrouve tes potes et battle en même temps</small></button></div></main>');
+  }
+  function battleGo(mode){
+    if(!piegesDispo() || !A_EN()) return pieges();
+    const fam = mode === 'famille';
+    battle = { manches:A_EN().melanger(A_EN().BATTLE).slice(0, fam ? 4 : 3), i:0, toi:0, ami:0, essai:0, fini:false, fam, eq:[0, 0] };
     afficherBattle();
   }
   function afficherBattle(){
     const b = battle; if(!b) return coinAnglais();
+    if(b.i >= b.manches.length && b.fam){
+      const g = b.eq[0] === b.eq[1] ? -1 : b.eq[0] > b.eq[1] ? 0 : 1;
+      poser(barre('anglais') + '<main class="centre battle-fin"><div class="ami-moyen">' + ami('fete') + '</div>' +
+        '<h2>' + (g < 0 ? 'Égalité ! Ami offre des plumes à tout le monde. 🤝' : 'Victoire de l’équipe ' + ['🦊', '🐼'][g] + ' !') + '</h2>' +
+        '<p class="battle-score">🦊 ' + b.eq[0] + ' – ' + b.eq[1] + ' 🐼</p><p lang="en">🦉 « What a battle! You both speak great English! »</p><p>Quelle battle ! Vous parlez tous très bien anglais !</p>' +
+        '<div class="actions serrees"><button class="moyen plein" data-a="battle-go" data-v="famille">🔁 Revanche</button><button class="moyen" data-a="battle">🎤 Autres battles</button></div></main>');
+      return;
+    }
     if(b.i >= b.manches.length){
       const e = etatAnglais(); e.battles++; const gagne = b.toi > b.ami; if(gagne) e.victoires++; garder();
       poser(barre('anglais') + '<main class="centre battle-fin"><div class="ami-moyen">' + ami(gagne ? 'surpris' : 'fete') + '</div>' +
@@ -1584,12 +1771,12 @@
         '<p class="battle-score">Toi ' + b.toi + ' – ' + b.ami + ' Ami</p>' +
         '<p lang="en">🦉 « ' + (gagne ? 'OK, you win… Rematch tomorrow?' : 'I win! But your English is getting better!') + ' »</p>' +
         '<p>' + (gagne ? 'D’accord, tu as gagné… Revanche demain ?' : 'J’ai gagné ! Mais ton anglais progresse !') + '</p>' +
-        '<div class="actions serrees"><button class="moyen plein" data-a="battle">🔁 Revanche</button><button class="moyen" data-a="anglais">🇬🇧 Coin anglais</button></div></main>');
+        '<div class="actions serrees"><button class="moyen plein" data-a="battle-go" data-v="ami">🔁 Revanche</button><button class="moyen" data-a="battle">🎤 Autres battles</button></div></main>');
       return;
     }
     const m = b.manches[b.i]; b.essai = 0; b.fini = false;
     b.options = A_EN().melanger([m.bon.en].concat(m.faux.map(f => f.en)));
-    poser(barre('anglais') + '<main class="battle-ecran"><p class="piege-cat">🎤 Manche ' + (b.i + 1) + '/3 · Toi ' + b.toi + ' – ' + b.ami + ' Ami</p>' +
+    poser(barre('battle') + '<main class="battle-ecran"><p class="piege-cat">🎤 Manche ' + (b.i + 1) + '/' + b.manches.length + ' · ' + (b.fam ? '🦊 ' + b.eq[0] + ' – ' + b.eq[1] + ' 🐼 · <strong>À l’équipe ' + ['🦊', '🐼'][b.i % 2] + ' !</strong>' : 'Toi ' + b.toi + ' – ' + b.ami + ' Ami') + '</p>' +
       '<div class="piege-haut"><div class="ami-moyen" id="ami-battle">' + ami('content') + '</div>' +
       '<div class="bulle-ami"><p class="piege-fr" lang="en">« ' + esc(m.ami) + ' » <button class="bouton-rond" data-a="battle-ecouter" aria-label="Réécouter Ami">🔊</button></p>' + traduire(m.fr) + '</div></div>' +
       '<p class="piege-consigne">Ta réplique (juste ET drôle) :</p>' +
@@ -1602,11 +1789,11 @@
     const m = b.manches[b.i], choix = b.options[i], bouton = document.querySelectorAll('.piege-opt')[i]; if(choix == null || !bouton || bouton.disabled) return;
     const r = $('#battle-retour'), a = $('#ami-battle');
     if(choix === m.bon.en){
-      b.fini = true; if(b.essai === 0){ b.toi++; J().plumes += 2; } else b.ami++;
+      b.fini = true; if(b.fam){ if(b.essai === 0) b.eq[b.i % 2]++; } else if(b.essai === 0){ b.toi++; J().plumes += 2; } else b.ami++;
       garder(); bouton.classList.add('ok'); document.querySelectorAll('.piege-opt').forEach(x => { x.disabled = true; });
       const aie = A_EN().AIE[Math.floor(Math.random() * A_EN().AIE.length)];
       if(a) a.innerHTML = ami('surpris');
-      if(r) r.innerHTML = '<p class="piege-bravo">🎤 ' + (b.essai === 0 ? 'Bien envoyé ! Point pour toi.' : 'Trouvé ! Mais le point va à Ami cette fois.') + '</p>' +
+      if(r) r.innerHTML = '<p class="piege-bravo">🎤 ' + (b.essai === 0 ? (b.fam ? 'Bien envoyé ! Point pour l’équipe ' + ['🦊', '🐼'][b.i % 2] + '.' : 'Bien envoyé ! Point pour toi.') : (b.fam ? 'Trouvé ! Mais pas de point cette fois.' : 'Trouvé ! Mais le point va à Ami cette fois.')) + '</p>' +
         '<p class="piege-bon" lang="en">« ' + esc(m.bon.en) + ' »</p><p class="petit">🇫🇷 ' + esc(m.bon.fr) + '</p>' +
         '<p lang="en">🦉 « ' + esc(aie.en) + ' » <small>(' + esc(aie.fr) + ')</small></p>' +
         '<button class="moyen plein" data-a="battle-suivant">' + (b.i + 1 < b.manches.length ? 'Manche suivante →' : 'Résultat') + '</button>';
@@ -1615,7 +1802,7 @@
       b.essai++; bouton.disabled = true; bouton.classList.add('ko');
       const f = m.faux.find(x => x.en === choix);
       if(a) a.innerHTML = ami('fete');
-      if(r) r.innerHTML = '<p class="piege-vanne">😂 ' + esc(f ? f.vanne : 'Presque !') + '</p><p class="petit">Essaie une autre réplique !</p>';
+      if(r) r.innerHTML = '<p class="piege-vanne">😂 ' + esc(vannePiquante(f ? f.vanne : 'Presque !')) + '</p><p class="petit">Essaie une autre réplique !</p>';
       bruit('faux');
     }
   }
@@ -1669,7 +1856,7 @@
     } else {
       sn.essai++; bouton.disabled = true; bouton.classList.add('ko');
       const f = et.faux.find(x => x.en === choix);
-      if(r) r.innerHTML = '<p class="piege-vanne">😂 ' + esc(f ? f.vanne : 'Presque !') + '</p><p class="petit">Essaie encore !</p>';
+      if(r) r.innerHTML = '<p class="piege-vanne">😂 ' + esc(vannePiquante(f ? f.vanne : 'Presque !')) + '</p><p class="petit">Essaie encore !</p>';
       bruit('faux');
     }
   }
@@ -1705,6 +1892,7 @@
     if(!texte.trim()){ if(z) z.focus(); return; }
     d.fait = true; const ph = d.liste[d.i], c = A_EN().corriger(ph.en, texte);
     if(c.juste){ d.parfaites++; J().plumes += 2; etatAnglais().dictees++; garder(); }
+    else { for(const e of c.erreurs) if(e.ecrit) noterErreur('dictee:' + e.ecrit + '>' + e.attendu); garder(); }
     const rendu = c.mots.map((m, k) => '<span class="' + (c.ok[k] ? 'mot-ok' : 'mot-ko') + '">' + esc(m) + '</span>').join(' ');
     const r = $('#dictee-retour');
     if(r) r.innerHTML = (c.juste ? '<p class="piege-bravo">✨ Parfait ! Pas une faute.</p>' : '<p class="piege-vanne">😂 ' + esc(c.erreurs.length ? A_EN().vanneDictee(c.erreurs.find(x => x.ecrit) || c.erreurs[0], c.score) : '« ' + c.enTrop[0] + ' » est en trop : Ami ne l’a pas dit ! 🤫') + '</p>' + '<p class="dictee-corrige" lang="en">' + rendu + '</p>') +
@@ -1712,6 +1900,684 @@
       '<button class="moyen plein" data-a="dictee-suivant">' + (d.i + 1 < d.liste.length ? 'Phrase suivante →' : 'Résultat') + '</button>';
     if(z) z.readOnly = true; const vb = $('[data-a="dictee-verifier"]'); if(vb) vb.hidden = true;
     bruit(c.juste ? 'juste' : 'faux');
+  }
+
+
+
+  // ═══════════ v5.42 : on rigole et on apprend ═══════════
+  const RG = () => window.RIGOLADE;
+  // Le bêtisier garde les vannes vues (pour le best-of du dimanche).
+  function noterBetisier(texte){
+    if(!texte) return; const j = J(); j.betisier = Array.isArray(j.betisier) ? j.betisier : [];
+    j.betisier.push({ v:String(texte).slice(0, 300), t:Date.now() }); if(j.betisier.length > 80) j.betisier = j.betisier.slice(-80);
+  }
+  const melangeLocal = (l, rnd) => { const o = l.slice(); rnd = rnd || Math.random; for(let i = o.length - 1; i > 0; i--){ const k = Math.floor(rnd() * (i + 1)); [o[i], o[k]] = [o[k], o[i]]; } return o; };
+
+  // ── Ami se trompe exprès : on le juge, puis on le corrige ──
+  let trompe = null;
+  function amiTrompe(){
+    if(!window.PIEGES || !RG()) return coinAnglais();
+    const l = melangeLocal(PIEGES.liste).slice(0, 8).map((p, k) => ({ p, faute:k % 5 !== 2 && Math.random() < .75, k:Math.floor(Math.random() * p.faux.length) }));
+    trompe = { l, i:0, score:0, etape:'juger' }; afficherTrompe();
+  }
+  function afficherTrompe(){
+    const t = trompe; if(!t) return coinAnglais();
+    if(t.i >= t.l.length){
+      J().plumes += t.score; garder(); bruit('fin');
+      return poser(barre('anglais') + '<main class="centre"><div class="ami-moyen">' + ami(t.score >= 12 ? 'vexe' : 'malin') + '</div><h2>' + (t.score >= 12 ? 'Tu es le prof d’Ami ! 🎓' : 'Ami t’a eu quelques fois… 😏') + '</h2>' +
+        '<p>' + t.score + ' points · ⭐ +' + t.score + ' plumes</p><p lang="en">🦉 « ' + (t.score >= 12 ? 'OK… you’re the teacher now.' : 'Sneaky Ami strikes again!') + ' »</p>' +
+        '<div class="actions serrees"><button class="moyen plein" data-a="trompe">🔁 Encore</button><button class="moyen" data-a="anglais">🇬🇧 Coin anglais</button></div></main>');
+    }
+    const x = t.l[t.i], phrase = x.faute ? x.p.faux[x.k].en : x.p.bon;
+    t.etape = 'juger';
+    poser(barre('anglais') + '<main class="piege-ecran"><p class="piege-cat">🦉 Ami se trompe exprès · ' + (t.i + 1) + '/' + t.l.length + ' · ' + t.score + ' pts</p>' +
+      '<div class="piege-haut"><div class="ami-moyen" id="ami-trompe">' + ami('malin') + '</div><div><p class="piege-consigne">Ami veut dire : « ' + esc(x.p.fr) + ' »</p>' +
+      '<p class="piege-fr" lang="en">🦉 « ' + esc(phrase) + ' » <button class="bouton-rond" data-a="trompe-ecouter" aria-label="Réécouter">🔊</button></p></div></div>' +
+      '<p class="piege-consigne">Sa phrase anglaise est…</p><div class="actions serrees"><button class="gros juste-btn" data-a="trompe-juge" data-v="juste">✅ Juste</button><button class="gros buzz-btn" data-a="trompe-juge" data-v="faux">❌ Faux !</button></div>' +
+      '<div class="piege-retour" id="trompe-retour" role="status" aria-live="polite"></div></main>');
+    direPhrase(phrase, 'en');
+  }
+  function jugerTrompe(v){
+    const t = trompe; if(!t || t.etape !== 'juger') return; const x = t.l[t.i], R = RG(), r = $('#trompe-retour'), a = $('#ami-trompe');
+    document.querySelectorAll('[data-a="trompe-juge"]').forEach(b => { b.disabled = true; });
+    const ligne = (l, h) => { if(a) a.innerHTML = ami(h); direPhrase(l.en, 'en'); return '<p lang="en">🦉 « ' + esc(l.en) + ' » <small>(' + esc(l.fr) + ')</small></p>'; };
+    const suite = '<button class="moyen plein" data-a="trompe-suivant">' + (t.i + 1 < t.l.length ? 'Suivant →' : 'Résultat') + '</button>';
+    if(x.faute && v === 'faux'){
+      t.etape = 'corriger'; t.score += 1; bruit('juste');
+      const opts = melangeLocal([x.p.bon, x.p.faux[x.k].en].concat(x.p.faux.filter((f, k) => k !== x.k).map(f => f.en)).slice(0, 3));
+      t.opts = opts;
+      if(r) r.innerHTML = '<p class="piege-bravo">🔔 Bien vu, il y a une faute ! Maintenant, corrige Ami :</p><div class="piege-options">' + opts.map((o, k) => '<button class="moyen piege-opt" data-a="trompe-corrige" data-v="' + k + '" lang="en">' + esc(o) + '</button>').join('') + '</div>';
+      if(a) a.innerHTML = ami('choque');
+    } else if(x.faute){
+      t.etape = 'fini'; bruit('faux'); noterBetisier(x.p.faux[x.k].vanne);
+      if(r) r.innerHTML = ligne(R.AMI_FILOU[t.i % R.AMI_FILOU.length], 'malin') + '<p class="piege-vanne">😂 ' + esc(x.p.faux[x.k].vanne) + '</p><p class="piege-bon" lang="en">✅ ' + esc(x.p.bon) + '</p><p class="piege-regle">💡 ' + esc(x.p.regle) + '</p>' + suite;
+    } else if(v === 'juste'){
+      t.etape = 'fini'; t.score += 1; bruit('juste');
+      if(r) r.innerHTML = '<p class="piege-bravo">✅ Bien vu, c’était juste !</p>' + ligne({ en:'Thank you! I’m a genius.', fr:'Merci ! Je suis un génie.' }, 'fier') + suite;
+    } else {
+      t.etape = 'fini'; bruit('faux');
+      if(r) r.innerHTML = ligne(R.AMI_MALIN[t.i % R.AMI_MALIN.length], 'malin') + '<p class="piege-bon" lang="en">✅ ' + esc(x.p.bon) + '</p><p class="piege-regle">💡 ' + esc(x.p.regle) + '</p>' + suite;
+    }
+  }
+  function corrigerTrompe(k){
+    const t = trompe; if(!t || t.etape !== 'corriger') return; const x = t.l[t.i], choix = t.opts[k], r = $('#trompe-retour'), a = $('#ami-trompe');
+    t.etape = 'fini'; const ok = choix === x.p.bon; if(ok) t.score += 2;
+    const l = ok ? RG().AMI_VEXE[t.i % RG().AMI_VEXE.length] : { en:'Ha! Not that one either!', fr:'Ha ! Ce n’est pas ça non plus !' };
+    if(a) a.innerHTML = ami(ok ? 'vexe' : 'mdr'); direPhrase(ok ? x.p.bon : l.en, 'en');
+    if(r) r.innerHTML = (ok ? '<p class="piege-bravo">🎓 Corrigé ! +3 points</p>' : '<p class="piege-vanne">😂 Presque ! La bonne correction :</p>') +
+      '<p lang="en">🦉 « ' + esc(l.en) + ' » <small>(' + esc(l.fr) + ')</small></p><p class="piege-bon" lang="en">✅ ' + esc(x.p.bon) + '</p><p class="piege-regle">💡 ' + esc(x.p.regle) + '</p>' +
+      '<button class="moyen plein" data-a="trompe-suivant">' + (t.i + 1 < t.l.length ? 'Suivant →' : 'Résultat') + '</button>';
+    bruit(ok ? 'juste' : 'faux');
+  }
+
+  // ── Le jeu des oreilles et True or false? (moteur de questions) ──
+  function oreillesGo(){
+    const R = RG(); if(!R) return coinAnglais();
+    const l = melangeLocal(R.PAIRES).slice(0, 8).map(p => { const c = Math.random() < .5 ? p.a : p.b, o = c === p.a ? p.b : p.a;
+      return { consigne:'👂 Écoute bien : qu’a dit Ami ?', enonce:'', ecoute:c.en, lent:true, bon:c.e, bonTexte:c.e + ' ' + c.en + ' = ' + c.fr, dire:c.en,
+        faux:[{ en:o.e, vanne:'« ' + o.en + ' » au lieu de « ' + c.en + ' » : ' + p.rire }], regle:'« ' + p.a.en + ' » ' + p.a.e + ' / « ' + p.b.en + ' » ' + p.b.e + ' : réécoute-les avec 🐢.' }; });
+    questionsGo(l, { titre:'👂 Le jeu des oreilles', retour:'anglais', fin:z => finJeu(z, '👂 Tes oreilles parlent anglais !', 'oreilles') });
+  }
+  function vraiFauxGo(){
+    const R = RG(); if(!R) return coinAnglais();
+    const l = melangeLocal(R.VRAI_FAUX).slice(0, 8).map(v => ({ consigne:'🦉 Ami dit… True or false?', enonce:'« ' + v.en + ' »', ecoute:v.en, trad:v.fr, bon:v.vrai ? 'True' : 'False', dire:v.en,
+      bonTexte:(v.vrai ? 'True — c’est vrai !' : 'False — c’est faux !'), faux:[{ en:v.vrai ? 'False' : 'True', vanne:v.rire }], regle:'😂 ' + v.rire, humeurJuste:v.vrai ? 'fier' : 'mdr', humeurFaux:'malin' }));
+    questionsGo(l, { titre:'🤥 True or false?', retour:'anglais', fin:z => finJeu(z, z.bonnes >= 6 ? 'Impossible de te raconter des salades ! 🥗' : 'Ami t’a fait avaler quelques bêtises… 😏', 'vraifaux') });
+  }
+  function finJeu(z, titre, rejouer){
+    J().plumes += z.bonnes; garder(); bruit('fin');
+    poser(barre('anglais') + '<main class="centre"><div class="ami-moyen">' + ami(z.bonnes >= z.liste.length - 1 ? 'fete' : 'mdr') + '</div><h2>' + esc(titre) + '</h2><p>' + z.bonnes + '/' + z.liste.length + ' · ⭐ +' + z.bonnes + ' plumes</p>' +
+      '<div class="actions serrees"><button class="moyen plein" data-a="' + rejouer + '">🔁 Encore</button><button class="moyen" data-a="anglais">🇬🇧 Coin anglais</button></div></main>');
+  }
+
+  // ── Calendrier de l'Avent ──
+  function avent(){
+    const R = RG(); if(!R) return coinAnglais();
+    const j = J(), ouv = R.aventOuvert(), faits = Array.isArray(j.avent) ? j.avent : [];
+    poser(barre('anglais') + '<main class="coin-anglais avent"><h2>🎄 Le calendrier de l’Avent anglais</h2>' +
+      '<p class="pieges-intro">' + (ouv ? 'Une case par jour : un mot d’hiver, une phrase, une vanne… et un petit défi !' : 'Il s’ouvre le 1er décembre ! En avant-première, tu peux ouvrir la case 1.') + '</p>' +
+      '<div class="avent-grille">' + R.AVENT.map((x, k) => { const d = k + 1, ok = d <= Math.max(ouv, 1), fait = faits.includes(d);
+        return '<button class="avent-case' + (fait ? ' ouverte' : '') + '" data-a="avent-case" data-v="' + d + '"' + (ok ? '' : ' disabled') + ' aria-label="Jour ' + d + (fait ? ', ouvert' : ok ? '' : ', pas encore') + '">' + (fait ? x.e : ok ? d : '🔒') + '</button>'; }).join('') + '</div></main>');
+  }
+  function aventCase(d){
+    const R = RG(), x = R && R.AVENT[d - 1]; if(!x || d > Math.max(R.aventOuvert(), 1)) return avent();
+    const autres = melangeLocal(R.AVENT.filter(y => y !== x)).slice(0, 2).map(y => y.en), opts = melangeLocal([x.en].concat(autres));
+    poser(barre('avent') + '<main class="battle-ecran avent-carte"><p class="piege-cat">🎄 Jour ' + d + '</p><div class="lecture-image" aria-hidden="true">' + x.e + '</div>' +
+      '<p class="lecture-texte" lang="en">' + esc(x.en) + ' <button class="bouton-rond" data-a="dire-en" data-v="' + esc(x.en) + '" aria-label="Écouter">🔊</button></p><p class="petit">🇫🇷 ' + esc(x.fr) + '</p>' +
+      '<p class="piege-fr" lang="en">« ' + esc(x.phrase.en) + ' » <button class="bouton-rond" data-a="dire-en" data-v="' + esc(x.phrase.en) + '" aria-label="Écouter la phrase">🔊</button></p>' + traduire(x.phrase.fr) +
+      '<p class="piege-vanne">😂 ' + esc(x.vanne) + '</p><p class="piege-consigne">Petit défi : comment dit-on « ' + esc(x.fr) + ' » ?</p>' +
+      '<div class="piege-options">' + opts.map(o => '<button class="moyen piege-opt" data-a="avent-rep" data-v="' + d + ':' + esc(o) + '" lang="en">' + esc(o) + '</button>').join('') + '</div><p class="aide" id="avent-retour" role="status"></p></main>');
+    direPhrase(x.en, 'en');
+  }
+  function aventRep(v){
+    const [d, rep] = [Number(String(v).split(':')[0]), String(v).slice(String(v).indexOf(':') + 1)], x = RG().AVENT[d - 1]; if(!x) return;
+    const ok = rep === x.en, r = $('#avent-retour');
+    document.querySelectorAll('.piege-opt').forEach(b => { b.disabled = true; if(b.textContent === x.en) b.classList.add('ok'); else if(b.textContent === rep) b.classList.add('ko'); });
+    const j = J(); j.avent = Array.isArray(j.avent) ? j.avent : []; const neuf = !j.avent.includes(d); if(neuf){ j.avent.push(d); j.plumes += 2; } garder();
+    if(r) r.textContent = (ok ? '🎉 Yes! « ' + x.en + ' » !' : '😂 Presque ! C’était « ' + x.en + ' ».') + (neuf ? ' ⭐ +2 plumes' : '');
+    bruit(ok ? 'juste' : 'faux'); direPhrase(x.en, 'en');
+  }
+
+  // ── Ma maison : les plumes servent à acheter des meubles (avec leur nom anglais) ──
+  function etatMaison(){
+    const R = RG(), j = J(), o = j.maison && typeof j.maison === 'object' ? j.maison : {}, ids = R ? R.MAISON.map(x => x.id) : [];
+    const achats = Array.isArray(o.achats) ? [...new Set(o.achats.filter(x => ids.includes(x)))] : [];
+    const places = {}; for(const [k, v] of Object.entries(o.places || {})) if(/^(sol[0-5]|mur[0-2])$/.test(k) && achats.includes(v) && !Object.values(places).includes(v) && R.MAISON.find(x => x.id === v).zone === k.replace(/\d$/, '')) places[k] = v;
+    j.maison = { achats, places }; return j.maison;
+  }
+  let maisonMsg = '';
+  function maison(){
+    const R = RG(); if(!R) return accueil();
+    const m = etatMaison(), objet = id => R.MAISON.find(x => x.id === id), carton = m.achats.filter(id => !Object.values(m.places).includes(id));
+    const fente = k => { const id = m.places[k], x = id && objet(id);
+      return '<button class="fente ' + k.replace(/\d$/, '') + (x ? ' pleine' : '') + '" data-a="maison-fente" data-v="' + k + '" aria-label="' + (x ? esc(x.en) : 'Place libre') + '">' + (x ? '<span class="obj">' + x.e + '</span><small lang="en">' + esc(x.en) + '</small>' : '<span class="vide">＋</span>') + '</button>'; };
+    poser(barre(piegesDispo() ? 'anglais' : 'accueil') + '<main class="maison-ecran"><h2>🏠 Ma maison</h2><p class="petit">Tes plumes : <strong>' + J().plumes + ' 🪶</strong> · Touche un objet pour entendre son nom.</p>' +
+      '<div class="salon-maison"><div class="murs">' + [0, 1, 2].map(i => fente('mur' + i)).join('') + '</div><div class="sols">' + [0, 1, 2, 3, 4, 5].map(i => fente('sol' + i)).join('') + '</div>' +
+      '<div class="ami-maison">' + ami('content') + '</div></div>' +
+      '<p class="aide" id="maison-msg" role="status" aria-live="polite">' + esc(maisonMsg) + '</p>' +
+      (carton.length ? '<p class="petit">📦 Dans le carton : ' + carton.map(id => objet(id).e).join(' ') + ' (touche une place libre pour le poser)</p>' : '') +
+      '<h3>🛒 La boutique d’Ami</h3><div class="boutique">' + R.MAISON.map(x => { const a = m.achats.includes(x.id);
+        return '<button class="article' + (a ? ' achete' : '') + '" data-a="maison-acheter" data-v="' + x.id + '"' + (a || J().plumes < x.prix ? ' disabled' : '') + '><span class="obj">' + x.e + '</span><span lang="en">' + esc(x.en) + '</span><small>' + esc(x.fr) + '</small><em>' + (a ? '✓' : x.prix + ' 🪶') + '</em></button>'; }).join('') + '</div></main>');
+    maisonMsg = '';
+  }
+  function maisonAcheter(id){
+    const R = RG(), x = R && R.MAISON.find(y => y.id === id), m = etatMaison(); if(!x || m.achats.includes(id) || J().plumes < x.prix) return maison();
+    J().plumes -= x.prix; m.achats.push(id);
+    const libre = Array.from({ length:R.PLACES[x.zone] }, (_, i) => x.zone + i).find(k => !m.places[k]); if(libre) m.places[libre] = id;
+    garder(); bruit('juste'); direPhrase(x.en, 'en');
+    maisonMsg = '🦉 « ' + x.en + ' » = ' + x.fr + ' ! ' + x.rire + (libre ? '' : ' (Plus de place : il attend dans le carton 📦)');
+    maison();
+  }
+  function maisonFente(k){
+    const R = RG(), m = etatMaison(), id = m.places[k];
+    if(id){ const x = R.MAISON.find(y => y.id === id); direPhrase(x.en, 'en'); const e = $('#maison-msg');
+      if(e) e.innerHTML = '🔊 « <span lang="en">' + esc(x.en) + '</span> » = ' + esc(x.fr) + ' <button class="petit-bouton" data-a="maison-ranger" data-v="' + k + '">📦 Ranger</button>'; return; }
+    const zone = k.replace(/\d$/, ''), dispo = m.achats.find(i => !Object.values(m.places).includes(i) && R.MAISON.find(y => y.id === i).zone === zone);
+    if(dispo){ m.places[k] = dispo; garder(); const x = R.MAISON.find(y => y.id === dispo); direPhrase(x.en, 'en'); maisonMsg = '🔊 « ' + x.en + ' » = ' + x.fr; return maison(); }
+    const e = $('#maison-msg'); if(e) e.textContent = 'Place libre ! Achète un objet ' + (zone === 'mur' ? 'pour le mur' : 'pour le sol') + ' dans la boutique. 🛒';
+  }
+
+  // ── Le bêtisier de la semaine (best-of des vannes des 7 derniers jours) ──
+  let best = null;
+  function betisier(){
+    const l = (J().betisier || []).filter(x => x && typeof x.v === 'string' && Date.now() - x.t < 7 * 864e5);
+    const uniques = [...new Map(l.reverse().map(x => [x.v, x])).values()].slice(0, 5).reverse();
+    best = { l:uniques, i:-1 }; afficherBest();
+  }
+  function afficherBest(){
+    const b = best; if(!b) return coinAnglais();
+    if(!b.l.length) return poser(barre('anglais') + '<main class="centre"><div class="ami-moyen">' + ami('boude') + '</div><h2>📺 Le bêtisier d’Ami</h2><p>Pas encore de vannes cette semaine ! Joue un peu, trompe-toi un peu… et reviens. 😄</p><p><button class="moyen plein" data-a="anglais">🇬🇧 Coin anglais</button></p></main>');
+    if(b.i < 0) return poser(barre('anglais') + '<main class="centre tele"><div class="ecran-tele"><div class="ami-moyen">' + ami('fete') + '</div><h2>📺 Le bêtisier d’Ami</h2><p>Bienvenue dans l’émission la plus drôle du village ! Voici le top ' + b.l.length + ' de tes confusions de la semaine. Pas de honte : on rit, et on retient !</p></div><button class="gros" data-a="best-suivant">▶ Lancer l’émission</button></main>');
+    if(b.i >= b.l.length) return poser(barre('anglais') + '<main class="centre tele"><div class="ecran-tele"><div class="ami-moyen">' + ami('mdr') + '</div><h2>C’était le bêtisier d’Ami !</h2><p>Rendez-vous la semaine prochaine pour de nouvelles bêtises. 👋</p></div><p><button class="moyen plein" data-a="anglais">🇬🇧 Coin anglais</button></p></main>');
+    const n = b.l.length - b.i, x = b.l[b.i];
+    poser(barre('anglais') + '<main class="centre tele"><div class="ecran-tele"><p class="numero">N° ' + n + (n === 1 ? ' 🏆' : '') + '</p><div class="ami-moyen">' + ami(n === 1 ? 'mdr' : ['choque', 'malin', 'fier', 'surpris'][n % 4]) + '</div><p class="piege-vanne">😂 ' + esc(x.v) + '</p></div>' +
+      '<button class="gros" data-a="best-suivant">' + (n > 1 ? 'Suivant ▶' : 'Fin de l’émission') + '</button></main>');
+    if(n === 1) bruit('fin'); else bruit('boing');
+  }
+
+  // ── Battles en famille (2 à 4 joueurs, chacun son tour sur le même téléphone) ──
+  let tournoi = null;
+  function tournoiMenu(){
+    const noms = Array.isArray(base.famille) ? base.famille : [];
+    poser(barre('battle') + '<main class="coin-anglais"><h2>👨‍👩‍👧 Battle en famille</h2><p class="pieges-intro">2 à 4 joueurs, chacun son tour sur ce téléphone. Mêmes types de questions pour tous : pièges, répliques, oreilles, vrai ou faux.</p>' +
+      [0, 1, 2, 3].map(i => '<p><label>Joueur ' + (i + 1) + (i > 1 ? ' (facultatif)' : '') + ' : <input class="champ-pseudo" id="fam' + i + '" maxlength="12" value="' + esc(noms[i] || '') + '" placeholder="Pseudo"></label></p>').join('') +
+      '<p><button class="gros" data-a="tournoi-go">▶ C’est parti !</button></p><p class="aide" id="tournoi-msg" role="status"></p></main>');
+  }
+  function tournoiGo(){
+    const noms = [0, 1, 2, 3].map(i => RG().nettoiePseudo(($('#fam' + i) || {}).value)).filter(Boolean);
+    if(noms.length < 2){ const m = $('#tournoi-msg'); if(m) m.textContent = 'Il faut au moins 2 joueurs ! 👥'; return; }
+    base.famille = noms; garder();
+    tournoi = { noms, scores:[], i:0, graine:Math.floor(Math.random() * 1e9) }; tournoiTour();
+  }
+  function tournoiTour(){
+    const t = tournoi; if(!t) return tournoiMenu();
+    if(t.i >= t.noms.length){
+      const cl = t.noms.map((n, k) => ({ n, s:t.scores[k] })).sort((a, b) => b.s - a.s), ex = cl.filter(x => x.s === cl[0].s).length > 1;
+      J().plumes += 3; garder(); bruit('fin');
+      return poser(barre('battle') + '<main class="centre"><div class="ami-moyen">' + ami('mdr') + '</div><h2>' + (ex ? '🤝 Égalité au sommet !' : '👑 ' + esc(cl[0].n) + ' gagne la battle !') + '</h2>' +
+        '<ol class="podium">' + cl.map((x, k) => '<li>' + ['🥇', '🥈', '🥉', '🏅'][k] + ' ' + esc(x.n) + ' — ' + x.s + '/6</li>').join('') + '</ol>' +
+        '<p lang="en">🦉 « And Ami? Ami got zero… because Ami was the referee! »</p><p class="petit">Et Ami ? Zéro… parce qu’il était l’arbitre !</p>' +
+        '<div class="actions serrees"><button class="moyen plein" data-a="tournoi-go-memes">🔁 Revanche</button><button class="moyen" data-a="battle">🎤 Battles</button></div></main>');
+    }
+    poser(barre('battle') + '<main class="centre"><div class="ami-moyen">' + ami('fete') + '</div><h2>📱 Passe le téléphone à ' + esc(t.noms[t.i]) + ' !</h2><p>6 questions. Les autres, pas de souffle ! 🤫</p><button class="gros" data-a="tournoi-joue">C’est moi, ' + esc(t.noms[t.i]) + ' ! ▶</button></main>');
+  }
+  function tournoiJoue(){
+    const t = tournoi; if(!t) return;
+    questionsGo(window.SALON.questionsMixtes(t.graine + t.i * 7919, 6), { titre:'👨‍👩‍👧 ' + t.noms[t.i], retour:'battle', fin:z => { t.scores[t.i] = z.bonnes; t.i++; tournoiTour(); } });
+  }
+
+  // ── Défi entre potes par lien (sans serveur) ──
+  let defiRecu = null, defiCree = null;
+  function defiPote(){
+    poser(barre('battle') + '<main class="coin-anglais"><h2>📨 Défier un pote</h2><p class="pieges-intro">Tu joues 8 questions, puis tu envoies un lien à ton pote : il joue les MÊMES questions et compare son score. Pas de compte, rien n’est enregistré sur internet : tout est dans le lien.</p>' +
+      '<p><label>Ton pseudo (pas ton vrai nom complet) : <input class="champ-pseudo" id="pseudo" maxlength="12" value="' + esc(base.pseudo || '') + '"></label></p><p><button class="gros" data-a="defi-pote-go">▶ Jouer mon défi</button></p></main>');
+  }
+  // m : niveau de maths (« 6e »…« Tle ») pour un défi de maths ; absent : défi d'anglais.
+  const questionsBattle = (graine, n, m) => m && window.MATHS && MATHS.NIVEAUX.includes(m) ? MATHS.questionsSalon(graine, n, m) : window.SALON.questionsMixtes(graine, n);
+  function defiPoteGo(recu, maths){
+    const p = RG().nettoiePseudo(($('#pseudo') || {}).value || base.pseudo) || 'Moi'; base.pseudo = p; garder();
+    const graine = recu ? recu.s : Math.floor(Math.random() * 1e9), n = recu ? recu.n : 8, m = recu ? recu.m : maths;
+    questionsGo(questionsBattle(graine, n, m), { titre:(recu ? '📨 Défi de ' + recu.p : '📨 Mon défi') + (m ? ' · maths ' + m : ''), retour:m ? 'maths' : 'battle', prof:!!m, lang:m ? 'fr' : undefined, fin:z => {
+      J().plumes += z.bonnes; garder(); bruit('fin');
+      // Revanche : nouveau défi avec de nouvelles questions… si on veut ; ici, on renvoie son score sur les MÊMES questions.
+      const code = RG().coderDefi({ s:graine, n, sc:z.bonnes, p, m }), lien = location.origin + location.pathname + '?defi=' + code;
+      defiCree = { lien, texte:p + ' te défie sur Ami des mots ! Score à battre : ' + z.bonnes + '/' + n + ' 🦉' };
+      const comp = recu ? (z.bonnes > recu.sc ? '🏆 Tu bats ' + esc(recu.p) + ' (' + z.bonnes + ' contre ' + recu.sc + ') !' : z.bonnes === recu.sc ? '🤝 Égalité avec ' + esc(recu.p) + ' (' + z.bonnes + '/' + n + ') !' : '😅 ' + esc(recu.p) + ' gagne cette fois (' + recu.sc + ' contre ' + z.bonnes + ')… revanche !') : '';
+      poser(barre('battle') + '<main class="centre"><div class="ami-moyen">' + ami(recu && z.bonnes > recu.sc ? 'fete' : 'mdr') + '</div><h2>' + (comp || 'Ton score : ' + z.bonnes + '/' + n) + '</h2>' +
+        '<p>Envoie le lien à ' + (recu ? esc(recu.p) : 'ton pote') + ' : il joue les mêmes questions et compare !</p>' +
+        '<div class="actions serrees"><button class="moyen plein" data-a="defi-partager">📤 Envoyer le défi</button><button class="moyen" data-a="defi-copier">📋 Copier le lien</button></div>' +
+        '<p class="lien-defi"><input readonly id="lien-defi" value="' + esc(lien) + '" aria-label="Lien du défi"></p><p class="aide" id="defi-msg" role="status"></p>' +
+        '<p><button class="moyen" data-a="battle">🎤 Battles</button></p></main>');
+    } });
+  }
+  function ecranDefiRecu(d){
+    defiRecu = d;
+    poser(barre('accueil') + '<main class="centre"><div class="ami-moyen">' + ami('malin') + '</div><h2>🎤 ' + esc(d.p) + ' te défie !</h2><p>Score à battre : <strong>' + d.sc + '/' + d.n + '</strong>. Mêmes questions pour vous deux : pièges, répliques, oreilles, vrai ou faux.</p>' +
+      '<p><label>Ton pseudo : <input class="champ-pseudo" id="pseudo" maxlength="12" value="' + esc(base.pseudo || '') + '"></label></p><button class="gros" data-a="defi-relever">🔥 Relever le défi</button></main>');
+  }
+
+
+  // ── Battle de rap : un rythme qui tourne, Ami rappe, on complète ses rimes ──
+  let rap = null, beat = null;
+  function lancerBeat(){
+    arreterBeat(); if(!base.son) return;
+    try{
+      const AC = window.AudioContext || window.webkitAudioContext; if(!AC) return; ctx = ctx || new AC();
+      const bpm = 88, pas = 60 / bpm / 2; let t = ctx.currentTime + .1, n = 0;
+      const coup = (f, d, v, type, t0) => { const o = ctx.createOscillator(), g = ctx.createGain(); o.type = type; o.frequency.setValueAtTime(f, t0); if(type === 'sine') o.frequency.exponentialRampToValueAtTime(40, t0 + d);
+        g.gain.setValueAtTime(v, t0); g.gain.exponentialRampToValueAtTime(.0001, t0 + d); o.connect(g); g.connect(ctx.destination); o.start(t0); o.stop(t0 + d + .02); };
+      const bruitBlanc = (d, v, t0, f) => { const b = ctx.createBuffer(1, Math.floor(ctx.sampleRate * d), ctx.sampleRate), x = b.getChannelData(0); for(let i = 0; i < x.length; i++) x[i] = Math.random() * 2 - 1;
+        const src = ctx.createBufferSource(), g = ctx.createGain(), hp = ctx.createBiquadFilter(); hp.type = 'highpass'; hp.frequency.value = f; src.buffer = b; g.gain.setValueAtTime(v, t0); g.gain.exponentialRampToValueAtTime(.0001, t0 + d);
+        src.connect(hp); hp.connect(g); g.connect(ctx.destination); src.start(t0); };
+      beat = setInterval(() => {
+        while(t < ctx.currentTime + .3){ const k = n % 8;
+          if(k === 0 || k === 3 || k === 5) coup(120, .32, .5, 'sine', t);          // grosse caisse
+          if(k === 2 || k === 6) bruitBlanc(.16, .22, t, 1500);                     // caisse claire
+          bruitBlanc(.04, .06, t, 7000);                                            // charleston
+          t += pas; n++; }
+      }, 80);
+    }catch(e){}
+  }
+  function arreterBeat(){ if(beat){ clearInterval(beat); beat = null; } }
+  function rapGo(){
+    const R = RG(); if(!R) return coinAnglais();
+    rap = { manche:0, ligne:-1, couplet:0, score:0, foule:50, choisi:[] }; lancerBeat(); afficherRap();
+  }
+  function scene(contenu){
+    return '<main class="rap-scene"><div class="projecteurs" aria-hidden="true"></div><div class="applaudimetre" role="meter" aria-label="Applaudimètre" aria-valuemin="0" aria-valuemax="100" aria-valuenow="' + rap.foule + '"><i style="width:' + rap.foule + '%"></i><span>📣 Le public</span></div>' +
+      contenu + '<div class="foule" aria-hidden="true">🙋🧑‍🦱👧🙋‍♂️🧒👦🙋‍♀️🧑👩‍🦰🧔</div></main>';
+  }
+  function afficherRap(){
+    const r = rap, R = RG(); if(!r) return coinAnglais();
+    if(r.manche >= R.RAP.length){
+      arreterBeat(); const gagne = r.score >= 4; J().plumes += r.score * 2; if(gagne){ const e = etatAnglais(); e.victoires++; } garder(); bruit('fin');
+      return poser(barre('battle') + scene('<div class="rap-centre"><div class="ami-moyen">' + ami(gagne ? 'vexe' : 'fier') + '</div><h2>' + (gagne ? '🏆 Champion du micro !' : '🎤 Ami garde le micro… pour cette fois !') + '</h2>' +
+        '<p>' + r.score + '/6 rimes parfaites · ⭐ +' + r.score * 2 + ' plumes</p><p lang="en">🦉 « ' + (gagne ? 'OK… you win. Mic drop. 🎤⬇️' : 'Ami is still the king! But you’re getting close…') + ' »</p>' +
+        '<div class="actions serrees"><button class="moyen plein" data-a="rap">🔁 Revanche</button><button class="moyen" data-a="battle">🎤 Battles</button></div></div>'));
+    }
+    const m = R.RAP[r.manche];
+    if(r.ligne < 4){ // Ami rappe son couplet, ligne par ligne
+      const l = r.ligne < 0 ? null : m.ami[r.ligne];
+      poser(barre('battle') + scene('<div class="rap-centre"><p class="piege-cat">🎤 Manche ' + (r.manche + 1) + '/3 · Ami rappe</p><div class="ami-moyen micro-ami">' + ami(r.ligne % 2 ? 'fier' : 'malin') + '</div>' +
+        (l ? '<p class="rap-ligne" lang="en">' + esc(l[0]) + '</p>' + traduire(l[1]) : '<p class="rap-ligne">🎶 Le DJ lance le son…</p>') +
+        '<button class="gros" data-a="rap-suivant">' + (r.ligne < 3 ? 'Ligne suivante ▶' : 'À toi de répondre ! 🎤') + '</button></div>'));
+      if(l) direPhrase(l[0], 'en', 1.05);
+      return;
+    }
+    const c = m.toi[r.couplet]; r.opts = melangeLocal([c.bon].concat(c.faux.map(f => f.m)));
+    poser(barre('battle') + scene('<div class="rap-centre"><p class="piege-cat">🎤 À toi ! Rime ' + (r.manche * 2 + r.couplet + 1) + '/6 · ' + r.score + ' parfaites</p><div class="ami-moyen micro-ami">' + ami('surpris') + '</div>' +
+      '<p class="rap-ligne" lang="en">' + esc(c.a[0]) + '</p><p class="rap-ligne trou" lang="en">' + esc(c.b).replace('___', '<span class="trou-mot">___</span>') + '</p>' + traduire(c.a[1] + ' / ' + c.bfr) +
+      '<p class="piege-consigne">Choisis le mot qui RIME et qui a du SENS :</p><div class="piege-options rap-mots">' + r.opts.map((o, k) => '<button class="moyen piege-opt" data-a="rap-rime" data-v="' + k + '" lang="en">' + esc(o) + '</button>').join('') + '</div>' +
+      '<div class="piege-retour" id="rap-retour" role="status" aria-live="polite"></div></div>'));
+    direPhrase(c.a[0], 'en', 1.05);
+  }
+  function rimeRap(k){
+    const r = rap; if(!r || r.fini) return; const R = RG(), c = R.RAP[r.manche].toi[r.couplet], mot = r.opts[k]; if(mot == null) return;
+    r.fini = true; const ok = mot === c.bon, f = !ok && c.faux.find(x => x.m === mot);
+    if(ok){ r.score++; r.foule = Math.min(100, r.foule + 18); } else { r.foule = Math.max(0, r.foule - 15); noterBetisier(f.vanne); noterErreur('rap:' + c.bon + '>' + mot); }
+    garder();
+    document.querySelectorAll('.rap-mots .piege-opt').forEach((b, i) => { b.disabled = true; if(r.opts[i] === c.bon) b.classList.add('ok'); else if(i === k) b.classList.add('ko'); });
+    const vers = c.b.replace('___', c.bon), cri = (ok ? R.FOULE.feu : R.FOULE.froid)[Math.floor(Math.random() * 3)];
+    const el = $('#rap-retour'), jauge = document.querySelector('.applaudimetre i'); if(jauge) jauge.style.width = r.foule + '%';
+    if(el) el.innerHTML = '<p class="' + (ok ? 'piege-bravo' : 'piege-vanne') + '">' + cri + (ok ? '' : ' ' + esc(f.vanne)) + '</p><p class="piege-bon" lang="en">🎤 « ' + esc(vers) + ' »</p>' +
+      '<button class="moyen plein" data-a="rap-apres">Suite ▶</button>';
+    bruit(ok ? 'juste' : 'boing'); direPhrase(c.a[0] + ' ' + vers, 'en', 1.05);
+  }
+
+  // ── Le salon des battles en direct (Supabase Realtime) ──
+  let salon = null;
+  const salonPret = () => !!(window.SALON && (CONFIG.SERVEUR || (CONFIG.SALON_URL && CONFIG.SALON_CLE)));
+  // Serveur PHP s'il est configuré, sinon Supabase Realtime.
+  const connexionSalon = () => CONFIG.SERVEUR ? window.SALON.connecterPhp(CONFIG.SERVEUR) : window.SALON.connecter(CONFIG.SALON_URL, CONFIG.SALON_CLE);
+  function salonAccueil(){
+    quitterSalon();
+    if(!salonPret()) return poser(barre('battle') + '<main class="coin-anglais"><h2>🛸 Le salon des battles en direct</h2><p class="pieges-intro">Le direct n’est pas encore branché sur ce site (il faut le serveur des parents : voir SALON-EN-LIGNE.md).</p><p>En attendant, défie tes potes avec un lien : c’est la même battle, chacun de son côté !</p><p><button class="gros" data-a="defi-pote">📨 Défier un pote par lien</button></p></main>');
+    poser(barre('battle') + '<main class="coin-anglais"><h2>🛸 Le salon des battles</h2><p class="pieges-intro">Retrouve tes potes ou ta famille dans un salon, puis battle en direct : pièges, répliques, oreilles, vrai ou faux !</p>' +
+      '<p><label>Ton pseudo (pas ton vrai nom complet) : <input class="champ-pseudo" id="pseudo" maxlength="12" value="' + esc(base.pseudo || '') + '"></label></p>' +
+      '<div class="cartes-anglais"><button class="carte-anglais" data-a="salon-creer" data-v="prive"><span class="ic">🔒</span><strong>Salon privé</strong><small>Tu partages un code avec tes potes</small></button>' +
+      '<div class="carte-anglais"><span class="ic">🔑</span><strong>J’ai un code</strong><input class="champ-code" id="code-salon" maxlength="5" autocapitalize="characters" placeholder="ABCDE" aria-label="Code du salon"><button class="moyen plein" data-a="salon-rejoindre">Entrer</button></div>' +
+      '<button class="carte-anglais" data-a="salon-public"><span class="ic">🌍</span><strong>Salons publics</strong><small>Avec d’autres joueurs : réactions toutes faites seulement</small></button></div>' +
+      '<p class="aide" id="salon-msg" role="status"></p><p class="petit">🔒 Rien n’est enregistré sur le serveur. Pas de photo, pas de vrai nom.' + (base.salonChat ? ' Le chat est activé pour les salons privés.' : ' Le chat écrit est désactivé (activable par un parent).') + '</p></main>');
+  }
+  function pseudoSalon(){ const p = RG().nettoiePseudo(($('#pseudo') || {}).value || base.pseudo); if(p){ base.pseudo = p; garder(); } return p; }
+  function quitterSalon(){ if(salon){ try{ salon.canal && salon.canal.quitter(); salon.lobby && salon.lobby.quitter(); salon.cnx && salon.cnx.fermer(); }catch(e){} clearInterval(salon.chrono); salon = null; } }
+  function ouvrirSalon(code, publicS){
+    const S = window.SALON, p = pseudoSalon(); if(!p){ const m = $('#salon-msg'); if(m) m.textContent = 'Choisis d’abord un pseudo ! 🙂'; return; }
+    if(!S.codeValide(code)){ const m = $('#salon-msg'); if(m) m.textContent = 'Le code fait 5 lettres (ex. KTRZB).'; return; }
+    quitterSalon();
+    const id = Math.random().toString(36).slice(2, 10), cnx = connexionSalon();
+    salon = { code, public:!!publicS, id, cnx, joueurs:{}, muets:new Set(), messages:[], partie:null, entree:Date.now(), couleur:Math.floor(Math.random() * 6) };
+    salon.canal = cnx.rejoindre('ami-salon-' + code, id, {
+      rejoint:() => { salon.canal.suivre({ id, p, c:salon.couleur, t:salon.entree, pub:salon.public }); },
+      presence:pr => { if(!salon) return; salon.joueurs = pr; majLobbyPublic(); if(!salon.partie) afficherSalle(); else majScores(); },
+      message:(ev, d) => recevoirSalon(ev, d),
+      erreur:() => { const m = $('#salle-msg'); if(m) m.textContent = '⚠️ Connexion perdue. Vérifie internet.'; }
+    });
+    afficherSalle();
+  }
+  const listeJoueurs = () => Object.values(salon.joueurs || {}).filter(Boolean).sort((a, b) => a.t - b.t || (a.id < b.id ? -1 : 1));
+  const estHote = () => { const l = listeJoueurs(); return !!l.length && l[0].id === salon.id; };
+  function majLobbyPublic(){
+    if(!salon || !salon.public) return;
+    if(estHote()){ if(!salon.lobby){ salon.lobby = salon.cnx.rejoindre(window.SALON.PUBLIC, 'salon-' + salon.code, {}); setTimeout(() => majLobbyPublic(), 300); return; }
+      salon.lobby.suivre({ code:salon.code, p:base.pseudo, n:listeJoueurs().length, joue:!!salon.partie, t:salon.entree }); }
+  }
+  function afficherSalle(){
+    const S = window.SALON; if(!salon) return salonAccueil();
+    const l = listeJoueurs(), hote = estHote(), chat = !salon.public && base.salonChat;
+    poser(barre('salon') + '<main class="salle"><h2>🛸 Salon <span class="code-salon">' + salon.code + '</span>' + (salon.public ? ' 🌍' : ' 🔒') + '</h2>' +
+      (salon.public ? '' : '<p class="petit">Donne ce code à tes potes, ou <button class="petit-bouton" data-a="salon-inviter">📤 envoie l’invitation</button></p>') +
+      '<div class="vaisseau">' + l.map((j, k) => '<button class="joueur-salon' + (salon.muets.has(j.id) ? ' muet' : '') + '" data-a="salon-muet" data-v="' + esc(j.id) + '" aria-label="' + esc(j.p) + (salon.muets.has(j.id) ? ' (muet)' : '') + '" style="--d:' + (k * .3) + 's">' +
+        '<span class="avatar">' + ami(k === 0 ? 'fier' : 'content', { couleur:j.c % 6, immobile:true }) + '</span><span class="nom">' + (k === 0 ? '👑 ' : '') + esc(j.p) + (j.id === salon.id ? ' (toi)' : '') + '</span><span class="bulle-reaction" id="r-' + esc(j.id) + '"></span></button>').join('') + '</div>' +
+      '<p class="aide" id="salle-msg" role="status">' + (l.length < 2 ? 'En attente d’au moins un autre joueur…' : l.length + ' joueurs dans le salon') + '</p>' +
+      '<div class="reactions">' + S.REACTIONS.map(r => '<button class="reaction" data-a="salon-reaction" data-v="' + r.id + '" title="' + esc(r.fr) + '" lang="en">' + r.e + ' ' + esc(r.en) + '</button>').join('') + '</div>' +
+      (chat ? '<div class="chat-salon"><ul id="chat-liste">' + salon.messages.map(m => '<li><strong>' + esc(m.p) + ' :</strong> ' + esc(m.t) + '</li>').join('') + '</ul><p><input id="chat-texte" maxlength="80" placeholder="Message (sois sympa !)" aria-label="Message"> <button class="moyen" data-a="salon-chat">Envoyer</button></p></div>' : '') +
+      (hote ? '<p><button class="gros" data-a="salon-lancer"' + (l.length < 2 ? ' disabled' : '') + '>▶ Lancer la battle d’anglais (6 questions)</button></p>' + (window.MATHS ? '<p><button class="moyen" data-a="salon-lancer" data-v="' + etatMaths().niveau + '"' + (l.length < 2 ? ' disabled' : '') + '>🔢 Battle de maths (' + etatMaths().niveau + ')</button></p>' : '') : '<p class="petit">👑 ' + esc(l[0] ? l[0].p : '') + ' lancera la battle.</p>') +
+      '<p class="petit">Touche un joueur pour le rendre muet. 🔇</p></main>');
+  }
+  function recevoirSalon(ev, d){
+    if(!salon || !d || typeof d !== 'object') return;
+    const S = window.SALON, auteur = d.id && salon.joueurs[d.id] ? salon.joueurs[d.id] : null;
+    if(d.id && salon.muets.has(d.id) && ev !== 'debut' && ev !== 'suivante' && ev !== 'rep') return;
+    if(ev === 'reaction'){ const r = S.REACTIONS.find(x => x.id === d.r); const b = r && $('#r-' + CSS.escape(String(d.id))); if(b){ b.textContent = r.e + ' ' + r.en; b.classList.remove('vue'); void b.offsetWidth; b.classList.add('vue'); } else if(r && salon.partie) toastSalon((auteur ? auteur.p : '?') + ' : ' + r.e + ' ' + r.en); return; }
+    if(ev === 'chat'){ if(salon.public || !base.salonChat || !auteur) return; const f = S.filtrer(d.t); if(!f.texte) return;
+      salon.messages = salon.messages.concat({ p:auteur.p, t:f.texte }).slice(-30); const ul = $('#chat-liste'); if(ul){ const li = document.createElement('li'); li.innerHTML = '<strong>' + esc(auteur.p) + ' :</strong> ' + esc(f.texte); ul.appendChild(li); ul.scrollTop = 1e6; } return; }
+    if(ev === 'debut' && Number.isInteger(d.graine) && [6, 8].includes(d.n)){ const m = typeof d.m === 'string' && window.MATHS && MATHS.NIVEAUX.includes(d.m) ? d.m : null; salon.partie = { graine:d.graine, n:d.n, m, i:-1, liste:questionsBattle(d.graine, d.n, m), scores:{}, reps:{} }; return questionSalon(0); }
+    if(ev === 'suivante' && salon.partie && Number.isInteger(d.i) && d.i > salon.partie.i) return questionSalon(d.i);
+    if(ev === 'rep' && salon.partie && auteur && Number.isInteger(d.i)){ const P = salon.partie; P.reps[d.i] = P.reps[d.i] || {};
+      if(P.reps[d.i][d.id] == null){ P.reps[d.i][d.id] = !!d.ok; P.scores[d.id] = (P.scores[d.id] || 0) + S.points(!!d.ok, Math.max(0, Math.min(15000, Number(d.ms) || 15000)), 15000); }
+      majScores(); if(estHote() && Object.keys(P.reps[d.i]).length >= listeJoueurs().length) setTimeout(() => passerSalon(d.i + 1), 2200); }
+  }
+  function toastSalon(t){ const m = $('#salle-msg'); if(m) m.textContent = t; }
+  function passerSalon(i){ if(salon && salon.partie && estHote() && i > salon.partie.i) salon.canal.envoyer('suivante', { i }); }
+  function questionSalon(i){
+    const P = salon.partie; if(!P || i <= P.i) return; P.i = i; clearInterval(salon.chrono);
+    if(i >= P.n){ return finSalon(); }
+    const q = P.liste[i]; P.opts = melangeLocal([q.bon].concat(q.faux.map(f => f.en))); P.debut = Date.now(); P.repondu = false;
+    poser(barre('salon') + '<main class="piege-ecran salle-partie"><p class="piege-cat">🛸 ' + salon.code + ' · Question ' + (i + 1) + '/' + P.n + '</p><div class="chrono"><i id="chrono"></i></div>' +
+      '<div class="piege-haut"><div class="ami-moyen" id="ami-qz">' + ami('malin') + '</div><div><p class="piege-consigne">' + esc(q.consigne) + '</p><p class="piege-fr">' + esc(q.enonce || '') + (q.ecoute ? ' <button class="bouton-rond" data-a="salon-ecouter" aria-label="Écouter">🔊</button>' : '') + '</p></div></div>' +
+      '<div class="piege-options">' + P.opts.map((o, k) => '<button class="moyen piege-opt" data-a="salon-rep" data-v="' + k + '" lang="en">' + esc(o) + '</button>').join('') + '</div>' +
+      '<div class="piege-retour" id="qz-retour" role="status" aria-live="polite"></div><ol class="scores-salon" id="scores-salon"></ol>' +
+      '<div class="reactions">' + window.SALON.REACTIONS.slice(0, 4).map(r => '<button class="reaction" data-a="salon-reaction" data-v="' + r.id + '" lang="en">' + r.e + '</button>').join('') + '</div><p class="aide" id="salle-msg" role="status"></p></main>');
+    majScores(); if(q.ecoute) direPhrase(q.ecoute, 'en');
+    salon.chrono = setInterval(() => { const ms = Date.now() - P.debut, c = $('#chrono'); if(c) c.style.width = Math.max(0, 100 - ms / 150) + '%';
+      if(ms > 15000){ if(!P.repondu) repondreSalon(-1); if(estHote() && ms > 17500) passerSalon(i + 1); } }, 200);
+  }
+  function repondreSalon(k){
+    const P = salon && salon.partie; if(!P || P.repondu) return; P.repondu = true;
+    const q = P.liste[P.i], choix = P.opts[k], ok = choix === q.bon, ms = Date.now() - P.debut;
+    salon.canal.envoyer('rep', { id:salon.id, i:P.i, ok, ms });
+    document.querySelectorAll('.piege-opt').forEach((b, i) => { b.disabled = true; if(P.opts[i] === q.bon) b.classList.add('ok'); else if(i === k) b.classList.add('ko'); });
+    const f = !ok && k >= 0 && q.faux.find(x => x.en === choix), r = $('#qz-retour'), a = $('#ami-qz');
+    if(a) a.innerHTML = ami(ok ? 'fete' : 'mdr');
+    if(r) r.innerHTML = (ok ? '<p class="piege-bravo">Yes! 🎉 +' + window.SALON.points(true, ms, 15000) + '</p>' : '<p class="piege-vanne">😂 ' + esc(k < 0 ? 'Trop tard ! Ami a eu le temps de faire une sieste. 😴' : (f && f.vanne) || 'Presque !') + '</p>') + '<p class="piege-bon" lang="en">✅ ' + esc(q.bonTexte || q.bon) + '</p><p class="petit">En attente des autres joueurs…</p>';
+    bruit(ok ? 'juste' : 'faux'); if(f && f.vanne) noterBetisier(f.vanne);
+  }
+  function majScores(){
+    const ol = $('#scores-salon'); if(!ol || !salon || !salon.partie) return; const P = salon.partie;
+    ol.innerHTML = listeJoueurs().map(j => ({ j, s:P.scores[j.id] || 0, ok:P.reps[P.i] && P.reps[P.i][j.id] != null })).sort((a, b) => b.s - a.s)
+      .map(x => '<li>' + esc(x.j.p) + (x.j.id === salon.id ? ' (toi)' : '') + ' — ' + x.s + (x.ok ? ' ✓' : ' …') + '</li>').join('');
+  }
+  function finSalon(){
+    clearInterval(salon.chrono); const P = salon.partie, cl = listeJoueurs().map(j => ({ j, s:P.scores[j.id] || 0 })).sort((a, b) => b.s - a.s);
+    const moi = cl.findIndex(x => x.j.id === salon.id); J().plumes += Math.max(1, 4 - moi); if(moi === 0){ etatAnglais().victoires++; } garder(); bruit('fin');
+    salon.partie = null; majLobbyPublic();
+    poser(barre('salon') + '<main class="centre salle"><div class="ami-moyen">' + ami(moi === 0 ? 'fete' : 'mdr') + '</div><h2>' + (moi === 0 ? '👑 Tu gagnes la battle !' : '🏁 Battle terminée !') + '</h2>' +
+      '<ol class="podium">' + cl.map((x, k) => '<li>' + (['🥇', '🥈', '🥉'][k] || '🏅') + ' ' + esc(x.j.p) + ' — ' + x.s + ' pts</li>').join('') + '</ol>' +
+      '<div class="reactions">' + window.SALON.REACTIONS.map(r => '<button class="reaction" data-a="salon-reaction" data-v="' + r.id + '" lang="en">' + r.e + ' ' + esc(r.en) + '</button>').join('') + '</div><p class="aide" id="salle-msg" role="status"></p>' +
+      '<div class="actions serrees"><button class="moyen plein" data-a="salon-retour">🛸 Retour au salon</button><button class="moyen" data-a="salon-quitter">🚪 Quitter</button></div></main>');
+  }
+  function salonsPublics(){
+    if(!salonPret()) return salonAccueil(); const p = pseudoSalon(); if(!p){ const m = $('#salon-msg'); if(m) m.textContent = 'Choisis d’abord un pseudo ! 🙂'; return; }
+    quitterSalon(); const cnx = connexionSalon(), id = 'v' + Math.random().toString(36).slice(2, 9);
+    salon = { cnx, lobbyVue:true }; const rendre = pr => { if(!salon || !salon.lobbyVue) return; const l = Object.values(pr || {}).filter(x => x && window.SALON.codeValide(x.code) && !x.joue && x.n < 8);
+      poser(barre('salon') + '<main class="coin-anglais"><h2>🌍 Salons publics</h2><p class="petit">Dans les salons publics, on communique seulement avec des réactions toutes faites. 🛡️</p>' +
+        (l.length ? '<div class="cartes-anglais">' + l.map(x => '<button class="carte-anglais" data-a="salon-entrer-public" data-v="' + x.code + '"><span class="ic">🛸</span><strong>' + esc(x.p || '?') + '</strong><small>' + x.n + ' joueur' + (x.n > 1 ? 's' : '') + '</small></button>').join('') + '</div>' : '<p>Aucun salon public ouvert pour l’instant.</p>') +
+        '<p><button class="gros" data-a="salon-creer" data-v="public">🌍 Ouvrir un salon public</button></p></main>'); };
+    salon.lobby = cnx.rejoindre(window.SALON.PUBLIC, id, { presence:rendre }); rendre({});
+  }
+
+  // ── Statistiques d'anglais (parcours, espace parents) ──
+  function statsAnglais(){
+    const e = etatAnglais();
+    return { mots:base.cible === 'en' ? bienConnus() : 0, pieges:window.PIEGES ? PIEGES.maitrises(etatPieges()) : 0, situations:e.situations.length,
+      histoires:e.histoires.length, dictees:e.dictees, repete:e.repete.length, victoires:e.victoires };
+  }
+  function serieRevisions(){
+    const l = etatAnglais().revisions; if(!l.length) return 0;
+    const auj = Math.floor(Date.now() / 864e5); if(l[l.length - 1] < auj - 1) return 0;
+    let n = 1; for(let i = l.length - 1; i > 0 && l[i] - l[i - 1] === 1; i--) n++; return n;
+  }
+
+  // ── Moteur de questions à choix (examens, révision, histoires) : une réponse, une vanne si on se trompe ──
+  let qz = null;
+  function questionsGo(liste, opts){ qz = Object.assign({ liste, i:0, bonnes:0, repondu:false }, opts); afficherQuestion(); }
+  function afficherQuestion(){
+    const z = qz; if(!z) return coinAnglais();
+    if(z.i >= z.liste.length) return z.fin(z);
+    const q = z.liste[z.i]; z.repondu = false; z.options = A_EN().melanger([q.bon].concat(q.faux.map(f => f.en)));
+    poser(barre(z.retour || 'anglais') + '<main class="piege-ecran"><p class="piege-cat">' + esc(z.titre) + ' · ' + (z.i + 1) + '/' + z.liste.length + '</p>' +
+      '<div class="piege-haut"><div class="ami-moyen" id="ami-qz">' + (q.image ? image(q.image, 'pic-moyenne') : z.prof ? profPi('content') : ami('content')) + '</div>' +
+      '<div><p class="piege-consigne">' + esc(q.consigne) + '</p><p class="piege-fr">' + esc(q.enonce || '') + (q.ecoute ? ' <button class="bouton-rond" data-a="qz-ecouter" aria-label="Écouter">🔊</button>' + (q.lent ? ' <button class="bouton-rond" data-a="qz-lent" aria-label="Écouter lentement">🐢</button>' : '') : '') + '</p>' + (q.trad ? traduire(q.trad) : '') + '</div></div>' +
+      '<div class="piege-options">' + z.options.map((o, i) => '<button class="moyen piege-opt" data-a="qz-rep" data-v="' + i + '" lang="' + (z.lang || q.lang || 'en') + '">' + esc(o) + '</button>').join('') + '</div>' +
+      '<div class="piege-retour" id="qz-retour" role="status" aria-live="polite"></div></main>');
+    if(q.ecoute) direPhrase(q.ecoute, 'en');
+  }
+  function repondreQuestion(i){
+    const z = qz; if(!z || z.repondu) return;
+    const q = z.liste[z.i], choix = z.options[i]; if(choix == null) return;
+    z.repondu = true; const juste = choix === q.bon; if(juste) z.bonnes++;
+    if(q.apres) q.apres(juste, choix); garder();
+    document.querySelectorAll('.piege-opt').forEach((b, k) => { b.disabled = true; if(z.options[k] === q.bon) b.classList.add('ok'); else if(k === i) b.classList.add('ko'); });
+    const f = !juste && (q.vanneDe ? { vanne:q.vanneDe(choix) } : q.faux.find(x => x.en === choix));
+    if(f && f.vanne) noterBetisier(f.vanne);
+    const az = $('#ami-qz'); if(az && !q.image) az.innerHTML = z.prof ? profPi(juste ? 'fier' : 'mdr') : ami(juste ? (q.humeurJuste || 'fete') : (q.humeurFaux || (niveauHumour() > 1 ? 'mdr' : 'surpris')));
+    if(z.onReponse) z.onReponse(juste, q);
+    const r = $('#qz-retour');
+    const fr_ = (z.lang || q.lang) === 'fr';
+    if(r) r.innerHTML = (juste ? '<p class="piege-bravo">' + (fr_ ? (z.bravo ? z.bravo() : 'Bravo ! 🎉') : 'Yes! 🎉') + '</p>' : '<p class="piege-vanne">' + (z.prof ? '🦝 ' : '😂 ') + esc(f && f.vanne ? f.vanne : 'Presque !') + '</p>') +
+      '<p class="piege-bon" lang="' + (fr_ ? 'fr' : 'en') + '">✅ ' + esc(q.bonTexte || q.bon) + '</p>' + (q.regle ? '<p class="piege-regle">💡 ' + esc(q.regle) + '</p>' : '') +
+      '<button class="moyen plein" data-a="qz-suivant">' + (z.i + 1 < z.liste.length ? 'Suivant →' : 'Voir le résultat') + '</button>';
+    bruit(juste ? 'juste' : 'faux'); if(!juste && niveauHumour() > 0) bruit('boing');
+    if(q.dire) direPhrase(q.dire, 'en');
+  }
+  const qPiege = p => ({ consigne:'Comment dit-on en anglais ?', enonce:'🇫🇷 ' + p.fr, bon:p.bon, faux:p.faux, regle:p.regle, dire:p.bon,
+    apres:juste => { PIEGES.noter(etatPieges(), p.id, juste); if(!juste) noterErreur('piege:' + p.id); } });
+
+  // ── Parcours par niveaux + examen ──
+  function parcours(){
+    qz = null;
+    if(!piegesDispo() || !window.PARCOURS) return pieges();
+    const e = etatAnglais(), prog = PARCOURS.progression(statsAnglais(), e.niveaux);
+    poser(barre('anglais') + '<main class="coin-anglais parcours"><h2>🧭 Mon parcours d’anglais</h2><p class="pieges-intro">Trois niveaux. Chaque étape se fait en jouant ; à la fin, un petit examen.</p>' +
+      prog.map(n => '<section class="niveau' + (n.ouvert ? '' : ' ferme') + (n.valide ? ' valide' : '') + '"><h3>' + n.icone + ' Niveau ' + n.n + ' · ' + esc(n.titre) + (n.valide ? ' 🎓' : n.ouvert ? '' : ' 🔒') + '</h3>' +
+        (n.ouvert ? '<ul>' + n.etapes.map(x => '<li class="' + (x.ok ? 'ok' : '') + '"><button class="etape" data-a="' + x.action + '">' + x.icone + ' ' + esc(x.texte) + '<span>' + (x.ok ? '✅' : x.fait + '/' + x.n) + '</span></button></li>').join('') + '</ul>' +
+          (n.valide ? '<p class="petit">Examen réussi ! 🎓</p>' : n.pret ? '<button class="gros" data-a="examen" data-v="' + n.n + '">🎓 Passer l’examen du niveau ' + n.n + '</button>' : '<p class="petit">Termine les étapes pour débloquer l’examen.</p>')
+          : '<p class="petit">Réussis l’examen du niveau ' + (n.n - 1) + ' pour ouvrir celui-ci.</p>') + '</section>').join('') + '</main>');
+  }
+  function examenGo(n){
+    const e = etatAnglais(), prog = PARCOURS.progression(statsAnglais(), e.niveaux), niv = prog.find(x => x.n === n);
+    if(!niv || !niv.pret || niv.valide) return parcours();
+    const liste = PARCOURS.examen(n, PIEGES, A_EN()).map(q => Object.assign({}, q, { apres:juste => { if(!juste) noterErreur('examen:' + n); } }));
+    questionsGo(liste, { titre:'🎓 Examen du niveau ' + n, retour:'parcours', fin:z => {
+      const ok = z.bonnes >= PARCOURS.REUSSITE;
+      if(ok){ const et = etatAnglais(); if(!et.niveaux.includes(n)) et.niveaux.push(n); J().plumes += 10; garder(); bruit('fin'); }
+      poser(barre('parcours') + '<main class="centre"><div class="ami-moyen">' + ami(ok ? 'fete' : 'content') + '</div><h2>' + (ok ? '🎓 Niveau ' + n + ' réussi !' : 'Presque !') + '</h2>' +
+        '<p>' + z.bonnes + '/' + z.liste.length + ' bonnes réponses (il en faut ' + PARCOURS.REUSSITE + ').</p>' +
+        (ok ? '<p>⭐ +10 plumes. ' + (n < 3 ? 'Le niveau ' + (n + 1) + ' est ouvert !' : 'Tu as terminé tout le parcours ! 🏆') + '</p>' : '<p>Fais ta révision du jour et retente ta chance : les questions changent à chaque fois.</p>') +
+        '<div class="actions serrees"><button class="moyen plein" data-a="parcours">🧭 Mon parcours</button>' + (ok ? '' : '<button class="moyen" data-a="revision">🔁 Révision</button>') + '</div></main>');
+    } });
+  }
+
+  // ── Révision du jour : un seul paquet avec tout ce qui est fragile (mots, pièges, répliques, histoires) ──
+  function revisionDue(){
+    if(!piegesDispo()) return [];
+    const auj = PIEGES.jourNum(), ep = etatPieges();
+    const mots = base.cible === 'en' ? aRevoir().slice(0, 4) : [];
+    const pg = PIEGES.liste.filter(p => ep[p.id] && ep[p.id].d <= auj).sort((a, b) => ep[a.id].b - ep[b.id].b).slice(0, 3);
+    return mots.map(m => ({ mot:m })).concat(pg.map(p => ({ piege:p })));
+  }
+  function revisionGo(){
+    if(!piegesDispo() || !A_EN()) return pieges();
+    const e = etatAnglais(), M = A_EN().melanger;
+    const liste = revisionDue().map(x => x.mot ? qMot(x.mot) : qPiege(x.piege));
+    // Une réplique de situation déjà jouée, une question d'histoire déjà lue.
+    const sits = A_EN().SITUATIONS.filter(s => e.situations.includes(s.id));
+    const reps = []; for(const s of sits) for(const et of s.etapes) if(et.dit && et.mode !== 'comprendre') reps.push({ consigne:s.icone + ' ' + s.qui + ' te dit :', enonce:'« ' + et.dit + ' »', ecoute:et.dit, bon:et.bon, faux:et.faux, regle:'🇫🇷 ' + et.fr, dire:et.bon });
+    if(reps.length) liste.push(M(reps)[0]);
+    const hq = []; if(window.HISTOIRES) for(const h of HISTOIRES.liste.filter(h => e.histoires.includes(h.id))) for(const q of h.questions) hq.push(qHistoire(h, q));
+    if(hq.length) liste.push(M(hq)[0]);
+    // Rien de dû ? Des pièges nouveaux pour avancer.
+    if(liste.length < 6) for(const p of PIEGES.seance(etatPieges(), 6)) if(liste.length < 6 && !liste.some(q => q.bon === p.bon)) liste.push(qPiege(p));
+    questionsGo(M(liste).slice(0, 8), { titre:'🔁 Révision du jour', retour:'anglais', fin:z => {
+      const r = etatAnglais(), auj = Math.floor(Date.now() / 864e5); if(!r.revisions.includes(auj)) r.revisions.push(auj);
+      J().plumes += z.bonnes; garder(); bruit('fin');
+      const sj = serieRevisions();
+      poser(barre('anglais') + '<main class="centre"><div class="ami-moyen">' + ami('fete') + '</div><h2>🔁 Révision faite !</h2><p>' + z.bonnes + '/' + z.liste.length + ' · ⭐ +' + z.bonnes + ' plumes</p>' +
+        (sj > 1 ? '<p class="battle-score">🔥 ' + sj + ' jours de suite</p>' : '<p>Reviens demain : 5 minutes par jour, c’est le secret pour retenir.</p>') +
+        '<div class="actions serrees"><button class="moyen plein" data-a="anglais">🇬🇧 Coin anglais</button><button class="moyen" data-a="parcours">🧭 Mon parcours</button></div></main>');
+    } });
+  }
+  function qMot(e){
+    const autres = motsOuverts(base.cible).filter(x => x !== e && MOTS[x] && MOTS[e] && MOTS[x].theme === MOTS[e].theme);
+    const l = A_EN().melanger(autres.length >= 2 ? autres : motsOuverts(base.cible).filter(x => x !== e)).slice(0, 2);
+    const nom = x => nomMot(x);
+    return { consigne:'Comment dit-on en anglais ?', image:e, enonce:traduction(e) ? '🇫🇷 ' + traduction(e) : '', bon:nom(e), faux:l.map(x => ({ en:nom(x) })), dire:nom(e),
+      vanneDe:choix => { const x = l.find(y => nom(y) === choix); return x ? blague(x, e) : 'Presque !'; }, apres:juste => noter(e, juste) };
+  }
+  const qHistoire = (h, q) => ({ consigne:h.icone + ' ' + h.titre, enonce:q.q, trad:q.fr, bon:q.bon, faux:q.faux, dire:q.bon });
+
+  // ── Mini-histoires : une phrase à la fois, puis 2 questions ──
+  let lecture = null;
+  function histoires(){
+    lecture = null;
+    if(!piegesDispo() || !window.HISTOIRES) return pieges();
+    const e = etatAnglais();
+    poser(barre('anglais') + '<main class="coin-anglais"><h2>📖 Mini-histoires</h2><p class="pieges-intro">Écoute, lis, et réponds à 2 petites questions.</p><div class="cartes-anglais">' +
+      HISTOIRES.liste.map(h => '<button class="carte-anglais" data-a="histoire-go" data-v="' + h.id + '"><span class="ic">' + h.icone + '</span><strong lang="en">' + esc(h.titre) + '</strong><small>' + esc(h.fr) + '</small><em>' + (e.histoires.includes(h.id) ? '✅ lue' : '▶ à lire') + '</em></button>').join('') + '</div></main>');
+  }
+  function histoireGo(id){ const h = window.HISTOIRES && HISTOIRES.liste.find(x => x.id === id); if(!h) return histoires(); lecture = { h, i:0 }; afficherLigne(); }
+  function afficherLigne(){
+    const L = lecture; if(!L) return histoires();
+    const h = L.h;
+    if(L.i >= h.lignes.length){
+      return questionsGo(h.questions.map(q => qHistoire(h, q)), { titre:h.icone + ' ' + h.titre, retour:'histoires', fin:z => {
+        const e = etatAnglais(); const neuve = !e.histoires.includes(h.id); if(neuve) e.histoires.push(h.id); J().plumes += z.bonnes + (neuve ? 2 : 0); garder(); bruit('fin');
+        poser(barre('histoires') + '<main class="centre"><div class="ami-moyen">' + ami('fete') + '</div><h2>' + h.icone + ' The end!</h2><p>' + z.bonnes + '/' + z.liste.length + ' bonnes réponses' + (neuve ? ' · ⭐ +' + (z.bonnes + 2) + ' plumes' : '') + '</p>' +
+          '<div class="actions serrees"><button class="moyen plein" data-a="histoires">📖 Autres histoires</button><button class="moyen" data-a="anglais">🇬🇧 Coin anglais</button></div></main>');
+      } });
+    }
+    const [em, en, fr] = h.lignes[L.i];
+    poser(barre('histoires') + '<main class="battle-ecran lecture"><p class="piege-cat">' + h.icone + ' <span lang="en">' + esc(h.titre) + '</span> · ' + (L.i + 1) + '/' + h.lignes.length + '</p>' +
+      '<div class="lecture-image" aria-hidden="true">' + em + '</div>' +
+      '<p class="lecture-texte" lang="en">' + esc(en) + ' <button class="bouton-rond" data-a="ligne-ecouter" aria-label="Écouter">🔊</button></p>' + traduire(fr) +
+      '<div class="actions serrees">' + (L.i ? '<button class="moyen" data-a="ligne-avant">←</button>' : '') + '<button class="moyen plein" data-a="ligne-suivante">' + (L.i + 1 < h.lignes.length ? 'Suite →' : 'Les questions →') + '</button></div></main>');
+    direPhrase(en, 'en');
+  }
+
+  // ── Répète après Ami : on s'enregistre (sur l'appareil seulement), on se réécoute, on compare ──
+  let rep1 = null;
+  function repeter(){
+    if(!piegesDispo() || !window.PARCOURS) return pieges();
+    const e = etatAnglais(), l = PARCOURS.REPETER;
+    let i = l.findIndex((x, k) => !e.repete.includes(k)); if(i < 0) i = Math.floor(Math.random() * l.length);
+    afficherRepeter(i);
+  }
+  function afficherRepeter(i){
+    arreterMicro();
+    const l = PARCOURS.REPETER, ph = l[i]; if(!ph) return repeter();
+    rep1 = { i };
+    const fait = etatAnglais().repete.includes(i);
+    poser(barre('anglais') + '<main class="battle-ecran repeter"><p class="piege-cat">🗣️ Répète après Ami · ' + etatAnglais().repete.length + '/' + l.length + ' phrases dites</p>' +
+      '<div class="piege-haut"><div class="ami-moyen">' + ami('content') + '</div><div><p class="piege-fr" lang="en">« ' + esc(ph.en) + ' »</p>' + traduire(ph.fr) + '</div></div>' +
+      '<div class="actions serrees"><button class="moyen" data-a="repeter-ecouter">🔊 Écouter</button><button class="moyen" data-a="repeter-lent">🐢 Lentement</button></div>' +
+      '<p><button class="gros micro" id="btn-micro" data-a="repeter-micro">🎤 À moi de le dire</button></p>' +
+      '<p class="aide" id="rep-etat">' + (fait ? '✅ Déjà dite. Tu peux t’entraîner encore !' : 'Écoute, puis appuie sur 🎤 et dis la phrase.') + '</p>' +
+      '<div class="actions serrees" id="rep-apres" hidden><button class="moyen" data-a="me-reecouter">👂 Me réécouter</button><button class="moyen" data-a="repeter-ecouter">🦉 Ami</button><button class="moyen plein" data-a="repeter-bien">👍 Bien dit !</button></div>' +
+      '<p class="petit">🔒 Ta voix reste sur cet appareil : elle n’est ni gardée ni envoyée.</p>' +
+      '<p><button class="moyen" data-a="repeter-suivant">Phrase suivante →</button></p></main>');
+    direPhrase(ph.en, 'en');
+  }
+  async function enregistrerPhrase(){
+    const r = rep1; if(!r) return;
+    const ph = PARCOURS.REPETER[r.i], etat = $('#rep-etat'), btn = $('#btn-micro'), apres = $('#rep-apres');
+    const sansMicro = () => { if(etat) etat.textContent = 'Pas de micro ici : dis-la à voix haute, puis touche « 👍 Bien dit ! ».'; if(apres) apres.hidden = false; };
+    if(!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia || !window.MediaRecorder) return sansMicro();
+    try{
+      arreterMicro();
+      const flux = await navigator.mediaDevices.getUserMedia({ audio:true }), morceaux = [], rec = new MediaRecorder(flux);
+      micro = { flux, rec };
+      rec.ondataavailable = ev => { if(ev.data && ev.data.size) morceaux.push(ev.data); };
+      rec.onstop = () => {
+        flux.getTracks().forEach(p => p.stop()); if(!micro || !rep1) return;
+        micro.url = URL.createObjectURL(new Blob(morceaux, { type:rec.mimeType || 'audio/webm' }));
+        if(btn){ btn.classList.remove('enregistre'); btn.textContent = '🎤 Encore une fois'; }
+        if(apres) apres.hidden = false; if(etat) etat.textContent = 'Écoute-toi, puis Ami : c’est pareil ?';
+        const a = new Audio(micro.url); a.onended = () => setTimeout(() => direPhrase(ph.en, 'en'), 300); a.play().catch(() => {});
+      };
+      rec.start(); if(btn){ btn.classList.add('enregistre'); btn.textContent = '⏺ J’écoute…'; }
+      if(etat) etat.textContent = 'Vas-y, dis : « ' + ph.en + ' »';
+      setTimeout(() => { if(rec.state === 'recording') rec.stop(); }, Math.min(7000, 2500 + ph.en.length * 70));
+    }catch(err){ sansMicro(); }
+  }
+
+  // ── Invente ta vanne : 3 choix, toujours une phrase anglaise juste ──
+  let invente = null;
+  function inventeGo(){
+    if(!piegesDispo() || !window.PARCOURS) return pieges();
+    invente = invente || { v:0, a:0, l:0 };
+    const I = PARCOURS.INVENTE, ph = PARCOURS.inventer(invente.v, invente.a, invente.l);
+    const rangee = (cle, liste, titre) => '<p class="piege-consigne">' + titre + '</p><div class="puces">' + liste.map((x, k) => '<button class="puce' + (invente[cle] === k ? ' choisie' : '') + '" data-a="invente-choix" data-v="' + cle + ':' + k + '" aria-pressed="' + (invente[cle] === k) + '" lang="en">' + esc(x.en) + '</button>').join('') + '</div>';
+    poser(barre('battle') + '<main class="battle-ecran invente"><h2>✍️ Invente ta vanne pour Ami</h2>' +
+      rangee('v', I.verbes, '1. Ce que fait Ami') + rangee('a', I.animaux, '2. Comme qui ?') + rangee('l', I.lieux, '3. Où ça ?') +
+      '<div class="bulle-ami"><p class="piege-fr" lang="en">« ' + esc(ph.en) + ' »</p><p class="petit">🇫🇷 ' + esc(ph.fr) + '</p></div>' +
+      '<div class="actions serrees"><button class="moyen plein" data-a="invente-dire">🎤 Ami, écoute ça !</button><button class="moyen" data-a="invente-garder">😂 Je la garde</button></div>' +
+      '<p class="aide" id="invente-retour" role="status" aria-live="polite"></p></main>');
+  }
+
+  // ── Espace parents : petite question de calcul (pour que les enfants ne tombent pas dessus par hasard) ──
+  let porteParents = null, jugeMsg = '';
+  // Vannes proposées par l'IA : le juge d'Ami trie d'abord, puis un adulte garde ou jette.
+  let vannesIA = null, vannesIAMsg = '', vannesIAEnCours = false;
+  async function demanderVannesIA(theme, ton){
+    if(!CONFIG.API_VANNES || !plus() || vannesIAEnCours) return;
+    vannesIAEnCours = true; vannesIAMsg = '⏳ Ami réfléchit à des vannes…'; revoirVannesIA();
+    try{
+      const r = await fetch(CONFIG.API_VANNES, { method:'POST', cache:'no-store', headers:{ 'Content-Type':'application/json' }, body:JSON.stringify({ code:base.abo.code, theme, ton }) });
+      const d = await r.json().catch(() => ({}));
+      if(d && Array.isArray(d.vannes)){
+        const l = d.vannes.filter(x => typeof x === 'string').map(x => x.replace(/[<>]/g, '').trim().slice(0, 140)).filter(Boolean).slice(0, 6);
+        const avis = l.map(t => ({ t, a:window.JUGE ? JUGE.juger(t) : { ok:false, raisons:['juge absent'] } }));
+        vannesIA = avis.filter(x => x.a.ok).map(x => x.t);
+        const refus = avis.length - vannesIA.length;
+        vannesIAMsg = vannesIA.length ? '🦉 ' + vannesIA.length + ' proposition(s). À vous de choisir !' + (refus ? ' (Le juge en a déjà retiré ' + refus + '.)' : '') : '🤖 Aucune proposition n’a passé le juge. Réessayez.';
+      }
+      else vannesIAMsg = d && d.erreur === 'quota' ? '⏰ C’est tout pour aujourd’hui (' + (d.max || 5) + ' demandes par jour).' : d && d.erreur === 'plus_requis' ? '✨ Réservé aux abonnés Plus.' : '😴 Le générateur ne répond pas. Réessayez plus tard.';
+    }catch(e){ vannesIAMsg = '📡 Pas de connexion : réessayez plus tard.'; }
+    vannesIAEnCours = false; if($('#vannes-ia')) revoirVannesIA();
+  }
+  function revoirVannesIA(){ tableauParents(); const h = $('#vannes-ia'); if(h && h.scrollIntoView) h.scrollIntoView({ block:'start' }); }
+  function parents(){
+    porteParents = { a:6 + Math.floor(Math.random() * 4), b:6 + Math.floor(Math.random() * 4) };
+    poser(barre('anglais') + '<main class="centre"><h2>👪 Espace parents</h2><p>Pour entrer : combien font ' + porteParents.a + ' × ' + porteParents.b + ' ?</p>' +
+      '<p><input id="porte-parents" type="number" inputmode="numeric" aria-label="Résultat" class="champ-court"> <button class="moyen plein" data-a="parents-ouvrir">Entrer</button></p><p class="aide" id="porte-msg" role="status"></p></main>');
+  }
+  function libelleErreur(k){
+    const [t, x] = [k.slice(0, k.indexOf(':')), k.slice(k.indexOf(':') + 1)];
+    if(t === 'mot'){ const [m, b] = x.split('>'); if(MOTS[m] && MOTS[b]) return 'Confond ' + b + ' « ' + nomMot(b) + ' » avec ' + m + ' « ' + nomMot(m) + ' »'; }
+    if(t === 'piege' && window.PIEGES){ const p = PIEGES.liste.find(y => y.id === x); if(p) return 'Piège : « ' + p.fr + ' » → ' + p.bon; }
+    if(t === 'maths' && window.MATHS){ for(const n of MATHS.NIVEAUX){ const c = MATHS.chapitresDe(n).find(y => y[0] === x); if(c) return 'Maths ' + n + ' : ' + c[2]; } }
+    if(t === 'sciences' && window.SCIENCES){ const q = SCIENCES.parId(x); if(q) return 'Sciences : ' + q.q; }
+    if(t === 'dictee'){ const [e, a] = x.split('>'); return 'Dictée : écrit « ' + e + ' » au lieu de « ' + a + ' »'; }
+    if(t === 'examen') return 'Erreurs à l’examen du niveau ' + x;
+    return null;
+  }
+  function tableauParents(){
+    const e = etatAnglais(), s = statsAnglais(), nv = window.PARCOURS ? PARCOURS.niveauActuel(e.niveaux) : 0;
+    const err = Object.entries(J().erreurs || {}).map(([k, n]) => [libelleErreur(k), n]).filter(x => x[0]).sort((a, b) => b[1] - a[1]).slice(0, 6);
+    const der = e.revisions.length ? new Date(e.revisions[e.revisions.length - 1] * 864e5).toLocaleDateString('fr-FR') : 'jamais';
+    const ligne = (ic, t, v) => '<li><span>' + ic + ' ' + t + '</span><strong>' + v + '</strong></li>';
+    poser(barre('anglais') + '<main class="coin-anglais parents"><h2>👪 Espace parents</h2>' +
+      '<p class="pieges-intro">Niveau réussi : <strong>' + (nv ? nv + ' / 3' : 'pas encore') + '</strong> · Révisions : <strong>' + e.revisions.length + ' jour' + (e.revisions.length > 1 ? 's' : '') + '</strong> (dernière : ' + der + ', série : ' + serieRevisions() + ')</p>' +
+      '<ul class="pieges-cats">' + ligne('📚', 'Mots anglais bien connus', s.mots) + ligne('🪤', 'Pièges déjoués', s.pieges + '/' + (window.PIEGES ? PIEGES.liste.length : 0)) + ligne('☕', 'Situations réussies', s.situations + '/' + A_EN().SITUATIONS.length) +
+        ligne('📖', 'Histoires lues', s.histoires + '/' + (window.HISTOIRES ? HISTOIRES.liste.length : 0)) + ligne('✍️', 'Phrases parfaites en dictée', s.dictees) + ligne('🗣️', 'Phrases dites à voix haute', s.repete) + ligne('🎤', 'Battles gagnées', s.victoires) + '</ul>' +
+      '<h3>🔎 Ce qui coince</h3>' + (err.length ? '<ul class="pieges-cats">' + err.map(([t, n]) => ligne('•', esc(t), n + '×')).join('') + '</ul><p class="petit">Astuce : la révision du jour reprend ces points automatiquement.</p>' : '<p>Rien de particulier pour l’instant. 👍</p>') +
+      '<h3>🤖 Le juge de vannes d’Ami</h3><p class="petit">Ami garde les vannes qui font rire (😂) et retire celles qui tombent à plat (🙄). Il refuse toute vanne qui vise la personne (insulte, physique, gros mot, violence, infos perso).</p>' +
+      '<ul class="pieges-cats">' + (() => { const sc = J().notesVannes || {}, v = Object.values(sc); return '<li><span>😂 Vannes favorites</span><strong>' + v.filter(x => x >= 2).length + '</strong></li><li><span>🗑️ Vannes retirées</span><strong>' + v.filter(x => window.JUGE && x <= JUGE.SEUIL).length + '</strong></li>'; })() + '</ul>' +
+      '<h3>😂 Les vannes de la famille</h3><p class="petit">Ami les ressortira de temps en temps. Écrivez {f} pour le mauvais mot et {j} pour le bon (facultatif). Restez gentils : on taquine la confusion, pas la personne !</p>' +
+      '<p><input id="vanne-famille" maxlength="140" placeholder="Ex. : « {f} » ? Même tonton Marcel n’aurait pas osé ! C’était « {j} »." class="champ-long"> <button class="moyen" data-a="vanne-famille-ajout">Ajouter</button></p>' +
+      (jugeMsg ? '<p class="aide" role="status">' + esc(jugeMsg) + '</p>' : '') +
+      '<ul class="pieges-cats">' + (J().vannesFamille || []).map((v, k) => '<li><span>' + esc(v) + '</span><button class="petit-bouton" data-a="vanne-famille-suppr" data-v="' + k + '" aria-label="Supprimer">🗑️</button></li>').join('') + '</ul>' +
+      (CONFIG.API_VANNES ? '<h3 id="vannes-ia">✨ Ami propose des vannes (IA)</h3>' + (plus()
+        ? '<p class="petit">L’IA propose, le juge d’Ami trie, et c’est vous qui choisissez : rien n’arrive dans le jeu sans votre accord.</p>' +
+          '<p><select id="vannes-ia-theme" aria-label="Thème">' + THEMES.map(th => '<option value="' + th + '">' + esc(t('th_' + th)) + '</option>').join('') + '<option value="anglais">🇬🇧 Coin anglais</option></select> ' +
+          '<select id="vannes-ia-ton" aria-label="Ton"><option value="tout-doux">Tout doux</option><option value="normal" selected>Taquin</option><option value="corse">Corsé (ados)</option></select> ' +
+          '<button class="moyen" data-a="vannes-ia"' + (vannesIAEnCours ? ' disabled' : '') + '>✨ Proposer 6 vannes</button></p>' +
+          (vannesIAMsg ? '<p class="aide" role="status">' + esc(vannesIAMsg) + '</p>' : '') +
+          (vannesIA && vannesIA.length ? '<ul class="pieges-cats">' + vannesIA.map((v, k) => '<li><span>' + esc(v) + '</span><span><button class="petit-bouton" data-a="vanne-ia-garder" data-v="' + k + '" aria-label="Garder">✅</button> <button class="petit-bouton" data-a="vanne-ia-non" data-v="' + k + '" aria-label="Jeter">❌</button></span></li>').join('') + '</ul>' : '')
+        : '<p class="petit">✨ Avec Plus, Ami peut vous proposer des vannes inventées par l’IA, que vous validez une à une.</p>') : '') +
+      '<h3>🛸 Salon des battles</h3><p><label><input type="checkbox" id="salon-chat"' + (base.salonChat ? ' checked' : '') + ' data-a="salon-chat-reglage"> Autoriser le chat écrit dans les salons PRIVÉS (entre potes qui ont le code). Les salons publics restent en réactions toutes faites.</label></p>' +
+      '<p class="petit">🔒 Ces informations restent sur cet appareil.</p></main>');
   }
 
   // Leçon : 5 mots nouveaux d'un même thème, présentés puis joués 10 fois.
@@ -1799,6 +2665,94 @@
       '<p><button class="moyen" data-a="effacer-tout">' + esc(t('effacer_progres')) + '</button></p></main>');
   }
 
+  // ── Installer l'appli depuis le site (Android, PC : invite du navigateur ; iPhone : Partager → Sur l'écran d'accueil) ──
+  let installation = null;
+  window.addEventListener('beforeinstallprompt', ev => { ev.preventDefault(); installation = ev; if($('#app') && $('#app').dataset.ecran === 'accueil') accueil(); });
+  window.addEventListener('appinstalled', () => { installation = null; });
+
+  // ── Coin maths (6e → Terminale) : Prof Pi, le raton laveur prof de maths, vanne à chaque erreur ──
+  // Exercices fabriqués par js/maths.js (correction calculée), programmes validés par la veille si un serveur est branché.
+  function profPi(humeur){
+    const bouche = humeur === 'mdr' ? '<path d="M44 74 Q60 92 76 74 Z" fill="#5a2a2a"/>' : humeur === 'fier' ? '<path d="M46 74 Q60 86 74 74" stroke="#2b2b3a" stroke-width="4" fill="none" stroke-linecap="round"/>' : '<path d="M48 76 Q60 82 72 76" stroke="#2b2b3a" stroke-width="4" fill="none" stroke-linecap="round"/>';
+    return '<svg class="prof-pi" viewBox="0 0 120 120" role="img" aria-label="Prof Pi"><title>Prof Pi</title>' +
+      '<path d="M22 40 L30 12 L48 30 Z M98 40 L90 12 L72 30 Z" fill="#7d7f8c"/><ellipse cx="60" cy="62" rx="42" ry="38" fill="#a7a9b5"/>' +
+      '<path d="M20 56 Q60 30 100 56 Q92 70 74 66 Q60 58 46 66 Q28 70 20 56 Z" fill="#33343f"/><ellipse cx="60" cy="84" rx="22" ry="14" fill="#e9e6ee"/>' +
+      '<circle cx="42" cy="58" r="11" fill="#fff" stroke="#ffc93c" stroke-width="3"/><circle cx="78" cy="58" r="11" fill="#fff" stroke="#ffc93c" stroke-width="3"/><path d="M53 58 H67" stroke="#ffc93c" stroke-width="3"/>' +
+      '<circle cx="' + (humeur === 'mdr' ? 42 : 44) + '" cy="59" r="4" fill="#1b1b24"/><circle cx="' + (humeur === 'mdr' ? 78 : 76) + '" cy="59" r="4" fill="#1b1b24"/><ellipse cx="60" cy="72" rx="6" ry="4" fill="#1b1b24"/>' + bouche +
+      '<path d="M30 22 L60 10 L90 22 L60 34 Z" fill="#1f1757"/><path d="M84 24 L88 40" stroke="#ffc93c" stroke-width="3"/><circle cx="88" cy="42" r="3" fill="#ffc93c"/>' +
+      '<text x="60" y="27" font-size="10" text-anchor="middle" fill="#ffc93c" font-weight="900">π</text></svg>';
+  }
+  const TONS_PROF = [['doux', '🧸 Tout doux'], ['taquin', '😏 Taquin'], ['sanspitie', '🔥 Sans pitié (ados)']];
+  function etatMaths(){
+    const j = J(), o = j.maths && typeof j.maths === 'object' ? j.maths : {}, M = window.MATHS;
+    const niveau = M && M.NIVEAUX.includes(o.niveau) ? o.niveau : '6e', ton = TONS_PROF.some(x => x[0] === o.ton) ? o.ton : 'taquin';
+    const chap = {}; if(o.chap && typeof o.chap === 'object') for(const [k, v] of Object.entries(o.chap)) if(/^[0-9A-Za-z-]{1,40}$/.test(k) && v && typeof v === 'object') chap[k] = { ok:Math.min(1e5, Math.max(0, Math.floor(+v.ok) || 0)), n:Math.min(1e5, Math.max(0, Math.floor(+v.n) || 0)) };
+    const examens = {}; if(o.examens && typeof o.examens === 'object') for(const [k, v] of Object.entries(o.examens)) if(/^(6e|5e|4e|3e|2nde|1re|Tle)$/.test(k) && Number.isFinite(+v)) examens[k] = Math.min(20, Math.max(0, +v));
+    j.maths = { niveau, ton, chap, examens }; return j.maths;
+  }
+  let carteMathsDemandee = false, annalesMaths = {};
+  function chargerCarteMaths(){
+    // Carte des programmes validée par un adulte sur le serveur (veille). Sans serveur : carte intégrée.
+    if(carteMathsDemandee || !CONFIG.SERVEUR || !window.MATHS) return; carteMathsDemandee = true;
+    fetch(String(CONFIG.SERVEUR).replace(/\/?$/, '/') + 'programme.php?quoi=maths', { cache:'no-cache' }).then(r => r.ok ? r.json() : null)
+      .then(c => { if(!c) return; let maj = false; if(c.carte && MATHS.adopterCarte(c.carte)) maj = true;
+        if(c.annales && typeof c.annales === 'object'){ annalesMaths = c.annales; maj = true; } if(maj && $('#app').dataset.ecran === 'maths') mathsAccueil(); }).catch(() => {});
+  }
+  function mathsAccueil(){
+    qz = null; const M = window.MATHS; if(!M) return accueil(); chargerCarteMaths();
+    const e = etatMaths(), niv = M.carte.niveaux[e.niveau], doms = [];
+    for(const c of niv.chapitres){ let d = doms.find(x => x.d === c[1]); if(!d) doms.push(d = { d:c[1], l:[] }); d.l.push(c); }
+    const etoiles = id => { const s = e.chap[id]; if(!s || !s.n) return ''; const p = s.ok / s.n; return s.n >= 10 && p >= .9 ? '⭐⭐⭐' : p >= .7 ? '⭐⭐' : '⭐'; };
+    poser(barre('accueil') + '<main class="coin-anglais coin-maths"><div class="prof-entete"><div class="ami-moyen">' + profPi('fier') + '</div><div><h2>🔢 Le coin maths de Prof Pi</h2>' +
+      '<p class="pieges-intro">Trompe-toi : je vanne. Réussis : je m’incline. Programme ' + esc(M.carte.annee) + '.</p></div></div>' +
+      '<div class="onglets-niveaux" role="tablist">' + M.NIVEAUX.map(n => '<button role="tab" aria-selected="' + (n === e.niveau) + '" class="onglet' + (n === e.niveau ? ' actif' : '') + '" data-a="maths-niveau" data-v="' + n + '">' + n + '</button>').join('') + '</div>' +
+      '<p class="petit">📚 ' + esc(niv.nom) + ' — ' + esc(niv.note || '') + '</p>' +
+      '<p class="ton-prof">Ton de Prof Pi : ' + TONS_PROF.map(([k, l]) => '<button class="petit-bouton' + (k === e.ton ? ' actif' : '') + '" data-a="maths-ton" data-v="' + k + '" aria-pressed="' + (k === e.ton) + '">' + l + '</button>').join(' ') + '</p>' +
+      '<div class="actions serrees"><button class="moyen plein" data-a="maths-melange">🔁 Entraînement mélangé</button>' +
+        (niv.examen && M.EXAMENS[niv.examen] ? '<button class="moyen" data-a="maths-examen">📝 ' + esc(M.EXAMENS[niv.examen].titre) + (e.examens[e.niveau] != null ? ' (' + window.MATHS.nb(e.examens[e.niveau], 1) + '/20)' : '') + '</button>' : '') +
+        '<button class="moyen" data-a="maths-defi">🔗 Défier un pote</button></div>' +
+      doms.map(d => '<h3>' + esc(d.d) + '</h3><div class="cartes-anglais">' + d.l.map(c => M.disponible(c[0])
+        ? '<button class="carte-anglais" data-a="maths-chap" data-v="' + esc(c[0]) + '"><strong>' + esc(c[2]) + '</strong><span>' + (etoiles(c[0]) || '▶ 10 questions') + '</span></button>'
+        : '<div class="carte-anglais bientot" aria-disabled="true"><strong>' + esc(c[2]) + '</strong><span>🛠️ bientôt</span></div>').join('') + '</div>').join('') +
+      (() => { const l = (Array.isArray(annalesMaths[e.niveau]) ? annalesMaths[e.niveau] : []).filter(x => x && /^https:\/\/(www\.)?(education\.gouv\.fr|eduscol\.education\.(gouv\.)?fr)\//.test(x.lien)).slice(0, 20);
+        return l.length ? '<h3>📄 Sujets officiels (sur le site du ministère)</h3><ul class="pieges-cats">' + l.map(x => '<li><a href="' + esc(x.lien) + '" target="_blank" rel="noopener noreferrer">' + esc((x.session ? x.session + ' — ' : '') + x.titre) + '</a></li>').join('') + '</ul>' : ''; })() +
+      '<p class="petit">👥 Battle en direct : ouvre le salon des battles et choisis « maths ».</p></main>', 'maths');
+  }
+  const BRAVO_PROF = ['Bravo ! Prof Pi range sa vanne… pour l’instant. 😏', 'Juste ! Prof Pi est vexé de ne rien trouver à redire.', 'Exact ! Même ma calculatrice applaudit. 👏', 'Parfait. Je note… et je surveille. 🦝'];
+  function mathsSerie(cible, n, titre, fin){
+    const M = window.MATHS, e = etatMaths(), liste = M.serie(cible, n, Math.floor(Math.random() * 1e9), e.ton);
+    if(!liste.length) return mathsAccueil();
+    questionsGo(liste, { titre, retour:'maths', prof:true, lang:'fr', bravo:() => BRAVO_PROF[Math.floor(Math.random() * BRAVO_PROF.length)],
+      onReponse:(juste, q) => { const s = e.chap[q.chap] || (e.chap[q.chap] = { ok:0, n:0 }); s.n++; if(juste) s.ok++; else noterErreur('maths:' + q.chap); garder(); },
+      fin:fin || (z => finJeuMaths(z, titre)) });
+  }
+  function finJeuMaths(z, titre, note){
+    const p = z.bonnes / z.liste.length; J().plumes += z.bonnes; garder(); bruit('fin');
+    const mot = p === 1 ? 'Sans faute. Prof Pi pose sa craie et applaudit. 👏' : p >= .7 ? 'Solide ! Prof Pi n’a presque rien à vanner. 😏' : p >= .4 ? 'Ça vient ! Prof Pi a eu de quoi rigoler, mais tu progresses.' : 'Prof Pi a vidé tout son stock de vannes. On recommence, tu vas le faire taire !';
+    poser(barre('maths') + '<main class="centre"><div class="ami-moyen">' + profPi(p >= .7 ? 'fier' : 'mdr') + '</div><h2>' + esc(titre) + '</h2>' +
+      '<p class="gros-score">' + z.bonnes + '/' + z.liste.length + (note != null ? ' · ' + window.MATHS.nb(note, 1) + '/20' : '') + '</p><p>' + esc(mot) + '</p><p>🪶 +' + z.bonnes + ' plumes</p>' +
+      '<div class="actions serrees"><button class="moyen plein" data-a="maths-melange">🔁 Encore</button><button class="moyen" data-a="maths">🔢 Coin maths</button></div></main>');
+  }
+  function mathsExamen(){
+    const M = window.MATHS, e = etatMaths(), niv = M.carte.niveaux[e.niveau], ex = niv.examen && M.EXAMENS[niv.examen]; if(!ex) return mathsAccueil();
+    mathsSerie(e.niveau, ex.n, '📝 ' + ex.titre + ' · ' + e.niveau, z => { const note = Math.round(20 * z.bonnes / z.liste.length * 10) / 10; etatMaths().examens[e.niveau] = note; garder(); finJeuMaths(z, '📝 ' + ex.titre, note); });
+  }
+
+  // ── Coin sciences : espace, fusées, corps humain et médecine — avec des clashs quand on se trompe ──
+  function sciencesAccueil(){
+    qz = null; const SC = window.SCIENCES; if(!SC) return accueil();
+    poser(barre('accueil') + '<main class="coin-anglais coin-sciences"><h2>🚀 Le labo des sciences</h2><p class="pieges-intro">Planètes, fusées, corps humain, médecine. Trompe-toi et le labo te clashe (gentiment… enfin presque).</p>' +
+      '<div class="cartes-anglais">' + SC.THEMES.map(t => '<button class="carte-anglais" data-a="sciences-theme" data-v="' + t.id + '"><strong>' + t.e + ' ' + esc(t.titre) + '</strong><span>' + esc(t.sous) + '</span></button>').join('') +
+      '<button class="carte-anglais" data-a="sciences-theme" data-v="tout"><strong>🎲 Tout mélangé</strong><span>10 questions</span></button></div></main>', 'sciences');
+  }
+  function sciencesGo(theme){
+    const SC = window.SCIENCES; if(!SC) return accueil();
+    const ton = etatMaths().ton, liste = SC.serie(theme, 10, Math.floor(Math.random() * 1e9), ton), t = SC.THEMES.find(x => x.id === theme);
+    questionsGo(liste, { titre:(t ? t.e + ' ' + t.titre : '🎲 Sciences'), retour:'sciences', lang:'fr', humeurFaux:'mdr',
+      onReponse:(juste, q) => { if(!juste) noterErreur('sciences:' + q.id); },
+      fin:z => { J().plumes += z.bonnes; garder(); bruit('fin'); poser(barre('sciences') + '<main class="centre"><div class="ami-moyen">' + ami(z.bonnes >= 8 ? 'fete' : 'mdr') + '</div><h2>🔬 Résultat du labo</h2><p class="gros-score">' + z.bonnes + '/' + z.liste.length + '</p><p>' + (z.bonnes >= 8 ? 'Le labo s’incline : prix Nobel de la récré ! 🏅' : 'Le labo a bien rigolé. Revanche ?') + '</p><p>🪶 +' + z.bonnes + ' plumes</p><div class="actions serrees"><button class="moyen plein" data-a="sciences-theme" data-v="' + esc(theme) + '">🔁 Encore</button><button class="moyen" data-a="sciences">🚀 Labo</button></div></main>'); } });
+  }
+
   // ── Ami des mots Plus ─────────────────────────────────────────────
   let retourPlus = 'accueil';
   function ecranPlus(retour){
@@ -1856,7 +2810,18 @@
           porte:Array.isArray(j.porte) ? j.porte.filter(k => ACCESSOIRES.some(a => a[0] === k)) : [],
           mots:filtrerObjet(j.mots, CLE_MOT, v => v && [0, 1, 2, 3, 4].includes(v.b) && DATE.test(v.d), 5000),
           pieges:window.PIEGES ? window.PIEGES.propre(j.pieges) : {},
-          anglais:{ situations:Array.isArray(j.anglais && j.anglais.situations) ? j.anglais.situations.filter(x => window.ANGLAIS && ANGLAIS.SITUATIONS.some(s => s.id === x)).slice(0, 50) : [], victoires:Math.min(1e5, Math.max(0, Math.floor(Number(j.anglais && j.anglais.victoires)) || 0)), battles:Math.min(1e5, Math.max(0, Math.floor(Number(j.anglais && j.anglais.battles)) || 0)), dictees:Math.min(1e5, Math.max(0, Math.floor(Number(j.anglais && j.anglais.dictees)) || 0)) },
+          anglais:j.anglais && typeof j.anglais === 'object' ? JSON.parse(JSON.stringify(j.anglais)) : {},
+          erreurs:Object.fromEntries(Object.entries(j.erreurs && typeof j.erreurs === 'object' ? j.erreurs : {}).filter(([k, v]) => typeof k === 'string' && k.length < 80 && Number.isInteger(v) && v > 0 && v < 1e5).slice(0, 300)),
+          pasDrole:Array.isArray(j.pasDrole) ? j.pasDrole.filter(x => typeof x === 'string' && x.length < 400).slice(-200) : [],
+          notesVannes:Object.fromEntries(Object.entries(j.notesVannes && typeof j.notesVannes === 'object' ? j.notesVannes : {}).filter(([k, v]) => typeof k === 'string' && k.length <= 300 && Number.isFinite(v)).map(([k, v]) => [k, Math.max(-20, Math.min(20, Math.round(v)))]).slice(0, 300)),
+          vannesAimees:Array.isArray(j.vannesAimees) ? j.vannesAimees.filter(x => typeof x === 'string' && x.length < 400).slice(-100) : [],
+          vannesFamille:Array.isArray(j.vannesFamille) ? j.vannesFamille.filter(x => typeof x === 'string' && x.length <= 140).slice(0, 30) : [],
+          betisier:Array.isArray(j.betisier) ? j.betisier.filter(x => x && typeof x.v === 'string' && x.v.length <= 300 && Number.isFinite(x.t)).slice(-80) : [],
+          avent:Array.isArray(j.avent) ? [...new Set(j.avent.filter(x => Number.isInteger(x) && x >= 1 && x <= 24))] : [],
+          maison:j.maison && typeof j.maison === 'object' ? { achats:Array.isArray(j.maison.achats) ? j.maison.achats.filter(x => typeof x === 'string').slice(0, 40) : [], places:j.maison.places && typeof j.maison.places === 'object' ? Object.fromEntries(Object.entries(j.maison.places).filter(([k, v]) => /^(sol[0-5]|mur[0-2])$/.test(k) && typeof v === 'string')) : {} } : { achats:[], places:{} },
+          gag:Math.min(20, Math.max(0, Math.floor(Number(j.gag)) || 0)),
+          maths:j.maths && typeof j.maths === 'object' ? j.maths : {},
+          vannesVues:Math.min(1e6, Math.max(0, Math.floor(Number(j.vannesVues)) || 0)),
           trophees:Array.isArray(j.trophees) ? j.trophees.filter(k => TROPHEES.includes(k)) : [], facile:!!j.facile });
         base.joueurs = d.joueurs.map(propre); base.actif = 0;
         if(UI.includes(d.ui)) base.ui = d.ui;
@@ -1878,6 +2843,8 @@
   document.addEventListener('click', ev => {
     const b = ev.target.closest('[data-a]'); if(!b) return;
     const v = b.dataset.v;
+    if(COIN_DE[b.dataset.a] && !coinOuvert(COIN_DE[b.dataset.a])){ ev.preventDefault(); return ecranPlus(retourCoin(COIN_DE[b.dataset.a])); }
+    if(b.tagName === 'A' && b.dataset.a === 'plus') ev.preventDefault();
     switch(b.dataset.a){
       case 'accueil': return depuis3D() ? retour3D() : accueil();
       case 'accueil-3d': try{ localStorage.setItem('ami_accueil3d', '1'); }catch(e){} location.href = 'monde-3d.html'; return;
@@ -1890,7 +2857,99 @@
       case 'phrases': return atelierPhrases();
       case 'pieges': return pieges();
       case 'anglais': return coinAnglais();
-      case 'battle': return battleGo();
+      case 'battle': return battleMenu();
+      case 'installer': if(installation){ const ev = installation; installation = null; ev.prompt(); ev.userChoice.finally(() => accueil()); } return;
+      case 'maths': return mathsAccueil();
+      case 'maths-niveau': if(window.MATHS && MATHS.NIVEAUX.includes(v)){ etatMaths().niveau = v; garder(); } return mathsAccueil();
+      case 'maths-ton': if(TONS_PROF.some(x => x[0] === v)){ etatMaths().ton = v; garder(); } return mathsAccueil();
+      case 'maths-chap': { const c = window.MATHS && MATHS.disponible(v) && MATHS.carte.niveaux[etatMaths().niveau].chapitres.find(x => x[0] === v); return c ? mathsSerie(v, 10, '🔢 ' + c[2]) : mathsAccueil(); }
+      case 'maths-melange': return mathsSerie(etatMaths().niveau, 10, '🔁 Maths ' + etatMaths().niveau);
+      case 'maths-examen': return mathsExamen();
+      case 'maths-defi': return defiPoteGo(null, etatMaths().niveau);
+      case 'sciences': return sciencesAccueil();
+      case 'sciences-theme': return sciencesGo(v === 'tout' || (window.SCIENCES && SCIENCES.THEMES.some(x => x.id === v)) ? v : 'tout');
+      case 'battle-go': return battleGo(v);
+      case 'invente': return inventeGo();
+      case 'invente-choix': { const [c, k] = String(v).split(':'); if(invente && ['v', 'a', 'l'].includes(c)) invente[c] = Number(k) || 0; return inventeGo(); }
+      case 'invente-dire': { const ph = invente && PARCOURS.inventer(invente.v, invente.a, invente.l); if(ph){ direPhrase(ph.en, 'en'); const aie = A_EN().AIE[Math.floor(Math.random() * A_EN().AIE.length)]; const r = $('#invente-retour'); if(r) r.textContent = '🦉 « ' + aie.en + ' » (' + aie.fr + ')'; bruit('juste'); } return; }
+      case 'invente-garder': { const ph = invente && PARCOURS.inventer(invente.v, invente.a, invente.l); if(ph){ const j = J(); j.fousRires = Array.isArray(j.fousRires) ? j.fousRires : []; const vv = ph.en + ' (' + ph.fr + ')'; if(!j.fousRires.some(x => x.v === vv)) j.fousRires = [{ v:vv, e:'🦉' }].concat(j.fousRires).slice(0, 60); garder(); const r = $('#invente-retour'); if(r) r.textContent = '✓ Rangée dans tes fous rires !'; } return; }
+      case 'parcours': return parcours();
+      case 'trompe': return amiTrompe();
+      case 'trompe-juge': return jugerTrompe(v);
+      case 'trompe-corrige': return corrigerTrompe(Number(v));
+      case 'trompe-suivant': if(trompe){ trompe.i++; } return afficherTrompe();
+      case 'trompe-ecouter': if(trompe && trompe.l[trompe.i]){ const x = trompe.l[trompe.i]; direPhrase(x.faute ? x.p.faux[x.k].en : x.p.bon, 'en'); } return;
+      case 'oreilles': return oreillesGo();
+      case 'vraifaux': return vraiFauxGo();
+      case 'qz-lent': if(qz && qz.liste[qz.i] && qz.liste[qz.i].ecoute) direPhrase(qz.liste[qz.i].ecoute, 'en', .6); return;
+      case 'dire-en': return direPhrase(String(v || ''), 'en');
+      case 'avent': return avent();
+      case 'avent-case': return aventCase(Number(v));
+      case 'avent-rep': return aventRep(v);
+      case 'maison': return maison();
+      case 'maison-acheter': return maisonAcheter(v);
+      case 'maison-fente': return maisonFente(v);
+      case 'maison-ranger': { const m = etatMaison(); delete m.places[v]; garder(); maisonMsg = '📦 Rangé dans le carton.'; return maison(); }
+      case 'betisier': return betisier();
+      case 'best-suivant': if(best){ best.i++; } return afficherBest();
+      case 'tournoi': return tournoiMenu();
+      case 'tournoi-go': return tournoiGo();
+      case 'tournoi-go-memes': if(tournoi){ tournoi = { noms:tournoi.noms, scores:[], i:0, graine:Math.floor(Math.random() * 1e9) }; return tournoiTour(); } return tournoiMenu();
+      case 'tournoi-joue': return tournoiJoue();
+      case 'defi-pote': return defiPote();
+      case 'defi-pote-go': return defiPoteGo(null);
+      case 'defi-relever': return defiPoteGo(defiRecu);
+      case 'defi-partager': { if(!defiCree) return; if(navigator.share) navigator.share({ title:'Ami des mots', text:defiCree.texte, url:defiCree.lien }).catch(() => {}); else { const m = $('#defi-msg'); if(m) m.textContent = 'Copie le lien et envoie-le à ton pote. 📋'; } return; }
+      case 'defi-copier': { if(!defiCree) return; const m = $('#defi-msg'); try{ navigator.clipboard.writeText(defiCree.lien).then(() => { if(m) m.textContent = '📋 Lien copié !'; }, () => { if(m) m.textContent = 'Sélectionne le lien et copie-le.'; }); }catch(e){ if(m) m.textContent = 'Sélectionne le lien et copie-le.'; } const i = $('#lien-defi'); if(i) i.select(); return; }
+      case 'rap': return rapGo();
+      case 'rap-suivant': if(rap){ rap.ligne++; rap.fini = false; } return afficherRap();
+      case 'rap-rime': return rimeRap(Number(v));
+      case 'rap-apres': if(rap){ rap.fini = false; rap.couplet++; if(rap.couplet > 1){ rap.couplet = 0; rap.ligne = -1; rap.manche++; } } return afficherRap();
+      case 'salon': return salonAccueil();
+      case 'salon-creer': return ouvrirSalon(window.SALON.nouveauCode(), v === 'public');
+      case 'salon-rejoindre': return ouvrirSalon(String((($('#code-salon') || {}).value || '')).toUpperCase().trim(), false);
+      case 'salon-public': return salonsPublics();
+      case 'salon-entrer-public': return ouvrirSalon(String(v), true);
+      case 'salon-retour': return afficherSalle();
+      case 'salon-quitter': quitterSalon(); return salonAccueil();
+      case 'salon-lancer': if(salon && estHote() && listeJoueurs().length >= 2) salon.canal.envoyer('debut', Object.assign({ id:salon.id, graine:Math.floor(Math.random() * 1e9), n:6 }, window.MATHS && MATHS.NIVEAUX.includes(v) ? { m:v } : {})); return;
+      case 'salon-rep': return repondreSalon(Number(v));
+      case 'salon-ecouter': if(salon && salon.partie){ const q = salon.partie.liste[salon.partie.i]; if(q && q.ecoute) direPhrase(q.ecoute, 'en'); } return;
+      case 'salon-reaction': if(salon && salon.canal) salon.canal.envoyer('reaction', { id:salon.id, r:String(v) }); return;
+      case 'salon-chat': { if(!salon || salon.public || !base.salonChat) return; const z = $('#chat-texte'), f = window.SALON.filtrer(z && z.value); if(f.texte){ salon.canal.envoyer('chat', { id:salon.id, t:f.texte }); z.value = ''; } return; }
+      case 'salon-muet': if(salon && v && v !== salon.id){ if(salon.muets.has(v)) salon.muets.delete(v); else salon.muets.add(v); afficherSalle(); } return;
+      case 'salon-inviter': { if(!salon) return; const lien = location.origin + location.pathname + '?salon=' + salon.code; if(navigator.share) navigator.share({ title:'Ami des mots', text:'Rejoins mon salon de battle ! Code : ' + salon.code, url:lien }).catch(() => {}); else toastSalon('Code : ' + salon.code + ' — lien : ' + lien); return; }
+      case 'salon-chat-reglage': base.salonChat = !!($('#salon-chat') || {}).checked; garder(); return;
+      case 'vanne-famille-ajout': { const z = $('#vanne-famille'), t = String(z && z.value || '').replace(/[<>]/g, '').trim().slice(0, 140); if(!t) return;
+        const avis = window.JUGE ? JUGE.juger(t) : { ok:true, raisons:[] };
+        if(!avis.ok){ jugeMsg = '🤖 Ami refuse cette vanne (' + avis.raisons.join(', ') + ') : on taquine la confusion, jamais la personne. 🙂'; return tableauParents(); }
+        const j = J(); j.vannesFamille = (Array.isArray(j.vannesFamille) ? j.vannesFamille : []).concat(t).slice(0, 30); garder(); jugeMsg = '✅ Vanne acceptée par le juge d’Ami !'; return tableauParents(); }
+      case 'vannes-ia': { const th = $('#vannes-ia-theme'), to = $('#vannes-ia-ton'); demanderVannesIA(th ? th.value : 'animaux', to ? to.value : 'normal'); return; }
+      case 'vanne-ia-garder': case 'vanne-ia-non': { const k = Number(v), x = vannesIA && vannesIA[k]; if(!x) return;
+        vannesIA.splice(k, 1);
+        if(b.dataset.a === 'vanne-ia-garder' && (!window.JUGE || JUGE.juger(x).ok)){ const j = J(); j.vannesFamille = (Array.isArray(j.vannesFamille) ? j.vannesFamille : []).concat(x).slice(0, 30); garder(); vannesIAMsg = '✅ Gardée ! Ami la ressortira de temps en temps.'; }
+        else vannesIAMsg = '🗑️ Jetée.';
+        return revoirVannesIA(); }
+      case 'vanne-famille-suppr': { const j = J(); if(Array.isArray(j.vannesFamille)) j.vannesFamille.splice(Number(v), 1); garder(); return tableauParents(); }
+      case 'examen': return examenGo(Number(v));
+      case 'revision': return revisionGo();
+      case 'qz-rep': return repondreQuestion(Number(v));
+      case 'qz-suivant': if(qz){ qz.i++; } return afficherQuestion();
+      case 'qz-ecouter': if(qz && qz.liste[qz.i] && qz.liste[qz.i].ecoute) direPhrase(qz.liste[qz.i].ecoute, 'en'); return;
+      case 'bj-ecouter': if(window.BLAGUES_EN){ const bj = BLAGUES_EN.duJour(); direPhrase(bj.q + ' … ' + bj.r, 'en'); } return;
+      case 'histoires': return histoires();
+      case 'histoire-go': return histoireGo(v);
+      case 'ligne-suivante': if(lecture){ lecture.i++; } return afficherLigne();
+      case 'ligne-avant': if(lecture && lecture.i > 0){ lecture.i--; } return afficherLigne();
+      case 'ligne-ecouter': if(lecture && lecture.h.lignes[lecture.i]) direPhrase(lecture.h.lignes[lecture.i][1], 'en'); return;
+      case 'repeter': return repeter();
+      case 'repeter-ecouter': if(rep1) direPhrase(PARCOURS.REPETER[rep1.i].en, 'en'); return;
+      case 'repeter-lent': if(rep1) direPhrase(PARCOURS.REPETER[rep1.i].en, 'en', .6); return;
+      case 'repeter-micro': return enregistrerPhrase();
+      case 'repeter-bien': { if(rep1){ const e = etatAnglais(); if(!e.repete.includes(rep1.i)){ e.repete.push(rep1.i); J().plumes += 1; garder(); } const s2 = $('#rep-etat'); if(s2) s2.textContent = '✅ Bravo ! Phrase suivante ?'; bruit('juste'); } return; }
+      case 'repeter-suivant': { const l = PARCOURS.REPETER, e = etatAnglais(); let i = l.findIndex((x, k) => !e.repete.includes(k) && (!rep1 || k !== rep1.i)); if(i < 0) i = rep1 ? (rep1.i + 1) % l.length : 0; return afficherRepeter(i); }
+      case 'parents': return parents();
+      case 'parents-ouvrir': { const z = $('#porte-parents'); if(porteParents && z && Number(z.value) === porteParents.a * porteParents.b) return tableauParents(); const m = $('#porte-msg'); if(m) m.textContent = 'Ce n’est pas ça. Demande à un adulte ! 😉'; return; }
       case 'battle-rep': return repondreBattle(Number(v));
       case 'battle-suivant': if(battle){ battle.i++; } return afficherBattle();
       case 'battle-ecouter': if(battle && battle.manches[battle.i]) direPhrase(battle.manches[battle.i].ami, 'en'); return;
@@ -1938,7 +2997,8 @@
       case 'effacer': return effacer();
       case 'carnet': return carnet();
       case 'fous-rires': return fousRires();
-      case 'garder-vanne': return garderVanne();
+      case 'garder-vanne': { const m = partie && partie.dernierModele; if(m){ const j = J(); j.vannesAimees = (Array.isArray(j.vannesAimees) ? j.vannesAimees : []).filter(x => x !== m).concat(m).slice(-100); if(window.JUGE) j.notesVannes = JUGE.noter(j.notesVannes, m, 2); } return garderVanne(); }
+      case 'pas-drole': { const m = partie && partie.dernierModele; if(m){ const j = J(); j.pasDrole = (Array.isArray(j.pasDrole) ? j.pasDrole : []).filter(x => x !== m).concat(m).slice(-200); if(window.JUGE) j.notesVannes = JUGE.noter(j.notesVannes, m, -3); garder(); } const pd = $('#pas-drole'); if(pd){ pd.textContent = '✓ ' + (base.ui === 'en' ? 'Noted' : 'Noté, Ami la range au placard'); pd.disabled = true; } return; }
       case 'oublier-vanne': { const j = J(), i = Number(v); if(Array.isArray(j.fousRires) && Number.isInteger(i)){ j.fousRires.splice(i, 1); garder(); } return fousRires(); }
       case 'trophees': return ecranTrophees();
       case 'vestiaire': return vestiaire();
@@ -1969,7 +3029,7 @@
       case 'porter': { const j = J(); j.porte = j.porte.includes(v) ? j.porte.filter(x => x !== v) : j.porte.concat(v); garder(); return vestiaire(); }
       case 'effacer-tout':
         if(!b.dataset.ok){ b.dataset.ok = 1; b.textContent = t('confirmer'); return; }
-        Object.assign(J(), { plumes:0, etoiles:{}, jours:[], porte:[], mots:{}, trophees:[], defis:[], pieges:{}, anglais:{} }); garder(); return accueil();
+        Object.assign(J(), { plumes:0, etoiles:{}, jours:[], porte:[], mots:{}, trophees:[], defis:[], pieges:{}, anglais:{}, erreurs:{}, pasDrole:[], vannesAimees:[], notesVannes:{}, vannesFamille:[], betisier:[], avent:[], maison:{ achats:[], places:{} }, gag:0, maths:{} }); garder(); return accueil();
     }
   });
   document.addEventListener('keydown', ev => { if(ev.key === 'Escape' && $('#fenetre')) fermerFenetre(); });
@@ -1997,22 +3057,31 @@
   // Retour de la page de paiement (?abonne=1) : on vérifie tout de suite.
   const retourPaiement = /[?&]abonne=1/.test(location.search);
   // Accueil en 3D : un lien du village 3D (?aller=…) ouvre directement un jeu ; « Accueil » y ramène.
-  const lienAller = new URLSearchParams(location.search).get('aller');
+  const params = new URLSearchParams(location.search), lienAller = params.get('aller'), lienDefi = params.get('defi'), lienSalon = params.get('salon');
   if(retourPaiement) try{ history.replaceState(null, '', location.pathname); }catch(e){}
   // Au lancement : le certificat gardé est vérifié (hors connexion aussi), puis le serveur est consulté.
-  window.AmiDesMotsPret = verifierJeton(base.abo.jeton, base.abo.code).then(d => { droits = d; if(d && !partie && !lienAller && !depuis3D()) accueil(); return rafraichir(retourPaiement); });
+  window.AmiDesMotsPret = verifierJeton(base.abo.jeton, base.abo.code).then(d => { droits = d; if(d && !partie && !lienAller && !lienDefi && !lienSalon && !depuis3D()) accueil(); return rafraichir(retourPaiement); });
   // Le webhook Stripe peut arriver quelques secondes après le retour.
   if(retourPaiement) [5000, 15000, 40000].forEach(ms => setTimeout(() => { if(!plus()) rafraichir(true); }, ms));
   if(window.Articulation) try{ Articulation.init(); }catch(e){}
   if('serviceWorker' in navigator && location.protocol === 'https:') navigator.serviceWorker.register('sw.js').catch(() => {});
-  window.AmiDesMots = { base, J, affiche, fnv1a, urlVoix, accueil, themes, choisirJeu, commencer, lettresPossibles, distincts, motsDu, aDire, CATALOGUE, MECAS, disponible, nomJeu, aRevoir, noter, jour, defi, revoir, lecon, astuces, aToi, blague, carnet, avecArticle, astuce, niveauHumour, fousRires, reglages, CONFIG, facile, nbMots, restaurer, verifierJeton, plus, ecranPlus, formatCode, rafraichir,
+  window.AmiDesMots = { base, J, affiche, fnv1a, urlVoix, accueil, themes, choisirJeu, commencer, lettresPossibles, distincts, motsDu, aDire, CATALOGUE, MECAS, disponible, nomJeu, aRevoir, noter, jour, defi, revoir, lecon, astuces, aToi, blague, carnet, avecArticle, astuce, niveauHumour, fousRires, reglages, CONFIG, COINS, coinOuvert, offreLue, facile, nbMots, restaurer, verifierJeton, plus, ecranPlus, formatCode, rafraichir,
     get etat(){ return J(); } };
   garder();
-  if(lienAller){
+  if(lienDefi || lienSalon){
+    try{ history.replaceState(null, '', location.pathname); }catch(e){}
+    const d = lienDefi && window.RIGOLADE && RIGOLADE.lireDefi(lienDefi);
+    if(d && !coinOuvert('defi-pote')) ecranPlus('accueil');
+    else if(d) ecranDefiRecu(d);
+    else if(lienSalon && !coinOuvert('salon')) ecranPlus('accueil');
+    else if(lienSalon && window.SALON && SALON.codeValide(String(lienSalon).toUpperCase())){ salonAccueil(); const z = $('#code-salon'); if(z) z.value = String(lienSalon).toUpperCase(); }
+    else accueil();
+  }
+  else if(lienAller){
     try{ history.replaceState(null, '', location.pathname); }catch(e){}
     if(lienAller === 'classique'){ try{ sessionStorage.removeItem('ami_depuis3d'); localStorage.setItem('ami_accueil3d', '0'); }catch(e){} accueil(); }
     else{ try{ sessionStorage.setItem('ami_depuis3d', '1'); }catch(e){} ouvrirDepuis3D(lienAller); }
   }
-  else if(!location.search && accueil3DAuto()) location.replace('monde-3d.html');
+  else if(!location.search && accueil3DAuto() && coinOuvert('village3d')) location.replace('monde-3d.html');
   else accueil();
 })();

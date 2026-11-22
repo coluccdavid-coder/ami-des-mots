@@ -142,21 +142,23 @@ lancé dans ReParole) ; le kabyle n'a que les enregistrements humains.
 Pour héberger les voix ailleurs : changer `AUDIO_BASE` dans `js/jeu.js`
 **et** `media-src` dans `index.html`.
 
-## Gratuit / Ami des mots Plus (abonnement mensuel)
+## Phase de lancement : tout l’univers est gratuit
 
-| | Gratuit | Plus (5,99 €/mois conseillé) |
-|---|---|---|
-| Thèmes | 3 sur 8 (Animaux, À table, La maison) | les 8 |
-| Jeux | **10 sur 50** : Découvrir, Écoute et trouve, Quel mot ?, Traduction (à leurs niveaux) | **les 50** |
-| Joueurs | 1 | jusqu'à 6 (formule famille) |
-| Défi du jour, révision, carnet, trophées, vestiaire | oui (mots gratuits) | oui (tous les mots) |
+**Décision produit actuelle : aucun abonnement ni contenu payant n'est activé.**
+Tous les thèmes, jeux, mondes, activités, maths, sciences et les six profils
+familiaux sont ouverts sans paiement. Les anciens mécanismes Ami des mots Plus
+et Stripe sont conservés dans le dépôt pour une éventuelle réactivation future,
+mais ils ne doivent pas limiter l'expérience pendant cette phase.
 
-Tout se règle dans `CONFIG` en haut de `js/jeu.js` : `PRIX`,
-`THEMES_GRATUITS`, `JEUX_GRATUITS`, `JOUEURS_GRATUITS`. `MODE_PAYANT:false`
-ouvre tout. Tant que `LIEN_PAIEMENT` est vide, la page Plus affiche
-« Bientôt disponible » : on peut publier le jeu avant de vendre.
+Les réglages de lancement sont `MODE_PAYANT:false` dans `js/jeu.js`,
+`js/offre.js` et `js/config-site.js`, avec six joueurs et les listes complètes
+de thèmes et de jeux. Le coin admin démarre lui aussi sur cette offre gratuite.
 
-### Brancher le paiement (une fois, ~1 h)
+Les fonctions qui dépendent d'un service externe (par exemple les vannes IA
+hébergées ou le salon multijoueur en direct) restent soumises à la disponibilité
+de leur serveur ; cela ne doit pas verrouiller les activités locales du jeu.
+
+### Réactiver un jour l'abonnement (ne pas faire pendant la phase gratuite)
 
 Le paiement passe par **Stripe** (carte, Apple Pay, Google Pay ; Stripe
 prélève chaque mois et gère la résiliation). Le jeu ne voit jamais une

@@ -1,7 +1,7 @@
 // GÉNÉRÉ par outils/construire-sw.js — ne pas éditer.
 // Les ressources locales sont gardées pour jouer hors connexion. Le module 3D charge Three.js en ligne. Les voix (autre site)
 // ne sont pas gardées ici : sans réseau, c'est la voix du téléphone.
-const CACHE = 'amidesmots-a8ae686577';
+const CACHE = 'amidesmots-b81b0ce773';
 const FICHIERS = [
  "./",
  "index.html",
@@ -15,6 +15,8 @@ const FICHIERS = [
  "js/genres.js",
  "js/confusions.js",
  "js/vannes.js",
+ "js/apprentissage-adaptatif.js",
+ "js/tuteur-pedagogique.js",
  "js/jeu.js",
  "mots-city.html",
  "js/mots-city.js",
@@ -44,6 +46,19 @@ const FICHIERS = [
  "js/quetes.js",
  "js/pieges.js",
  "js/anglais.js",
+ "js/histoires.js",
+ "js/blagues-en.js",
+ "js/parcours.js",
+ "js/rigolade.js",
+ "js/salon.js",
+ "js/juge.js",
+ "js/offre.js",
+ "js/capacitor-voix.js",
+ "js/maths.js",
+ "js/sciences.js",
+ "js/config-site.js",
+ "assets/3d/vehicules.glb",
+ "assets/3d/ruines.glb",
  "vendor/jsm/libs/meshopt_decoder.module.js",
  "img/icone.svg",
  "img/icone-192.png",

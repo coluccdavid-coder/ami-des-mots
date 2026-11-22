@@ -6,7 +6,7 @@
 <title>Ami des mots</title>
 <meta name="description" content="Un jeu pour apprendre des mots en images, dans 16 langues, avec Ami le hibou. Sans compte, sans publicité.">
 <meta name="theme-color" content="#120C38">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data:; media-src 'self' blob: https://reparole.fr; style-src 'self' 'unsafe-inline'; script-src 'self'; connect-src 'self' https://*.supabase.co; base-uri 'none'; form-action 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data:; media-src 'self' blob: https://reparole.fr; style-src 'self' 'unsafe-inline'; script-src 'self'; connect-src 'self' https://*.supabase.co wss://*.supabase.co; base-uri 'none'; form-action 'none'">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="img/icone.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="img/icone-192.png">
@@ -15,6 +15,8 @@
 <body>
 <div id="app" aria-live="off"></div>
 <noscript>Ami des mots a besoin de JavaScript.</noscript>
+<script src="js/capacitor-voix.js"></script>
+<script src="js/config-site.js"></script>
 <script src="js/donnees.js"></script>
 <script src="js/voix.js"></script>
 <script src="js/textes.js"></script>
@@ -24,6 +26,17 @@
 <script src="js/vannes.js"></script>
 <script src="js/pieges.js"></script>
 <script src="js/anglais.js"></script>
+<script src="js/histoires.js"></script>
+<script src="js/blagues-en.js"></script>
+<script src="js/parcours.js"></script>
+<script src="js/rigolade.js"></script>
+<script src="js/salon.js"></script>
+<script src="js/juge.js"></script>
+<script src="js/maths.js"></script>
+<script src="js/sciences.js"></script>
+<script src="js/offre.js"></script>
+<script src="js/apprentissage-adaptatif.js"></script>
+<script src="js/tuteur-pedagogique.js"></script>
 <script src="js/jeu.js"></script>
 </body>
 </html>

@@ -1,0 +1,55 @@
+# Fabrique l'appli Android d'Ami des mots (APK à installer, et AAB pour le Play Store si la clé de signature est fournie).
+# Lancer : GitHub → Actions → « Appli Android » → Run workflow (ou pousser une étiquette v5.44.0).
+name: Appli Android
+on:
+  workflow_dispatch:
+  push:
+    tags: ['v*']
+permissions:
+  contents: read
+jobs:
+  android:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    env:
+      AMI_SIGNER: ${{ secrets.AMI_KEYSTORE_B64 != '' }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 22 }
+      - uses: actions/setup-java@v4
+        with: { distribution: temurin, java-version: 21 }
+      - uses: android-actions/setup-android@v3
+      - name: Tests
+        run: npm ci && npm run verifier
+      - name: Jeu à embarquer
+        run: node outils/preparer-www.js www --appli
+      - name: Capacitor (seulement pour fabriquer l'appli, pas dans le jeu)
+        run: npm install --no-save @capacitor/cli@8 @capacitor/core@8 @capacitor/android@8 @capacitor-community/text-to-speech@8 @capacitor/assets@3
+      - name: Projet Android
+        run: |
+          npx cap add android
+          node outils/android-reglages.js
+          mkdir -p assets && cp img/icone-512.png assets/icon-only.png && cp img/icone-512.png assets/icon-foreground.png
+          npx @capacitor/assets generate --android --iconBackgroundColor '#120C38' --splashBackgroundColor '#120C38' --splashBackgroundColorDark '#120C38'
+          npx cap sync android
+      - name: APK à installer (test)
+        run: cd android && ./gradlew --no-daemon assembleDebug
+      - name: Version Play Store (si la clé de signature est dans les secrets)
+        env:
+          AMI_KEYSTORE_B64: ${{ secrets.AMI_KEYSTORE_B64 }}
+          AMI_KEYSTORE_MDP: ${{ secrets.AMI_KEYSTORE_MDP }}
+          AMI_CLE_ALIAS: ${{ secrets.AMI_CLE_ALIAS }}
+          AMI_CLE_MDP: ${{ secrets.AMI_CLE_MDP }}
+        if: env.AMI_SIGNER == 'true'
+        run: |
+          echo "$AMI_KEYSTORE_B64" | base64 -d > "$RUNNER_TEMP/ami.keystore"
+          export AMI_KEYSTORE="$RUNNER_TEMP/ami.keystore"
+          cd android && ./gradlew --no-daemon bundleRelease assembleRelease
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ami-des-mots-android
+          path: |
+            android/app/build/outputs/apk/**/*.apk
+            android/app/build/outputs/bundle/**/*.aab
+          if-no-files-found: error

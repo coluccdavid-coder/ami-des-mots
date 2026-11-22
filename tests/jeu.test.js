@@ -6,7 +6,7 @@ const { JSDOM } = require('jsdom');
 const ICI = path.join(__dirname, '..');
 const lire = f => fs.readFileSync(path.join(ICI, f), 'utf8');
 let ok = 0, ko = 0;
-const test = async (n, f) => { try{ await f(); console.log('  ✔', n); ok++; }catch(e){ console.log('  ✘', n, '—', e.message); ko++; } };
+const test = async (n, f) => { try{ await f(); console.log('  ✔', n); ok++; }catch(e){ console.log('  ✘', n, '—', e.message, process.env.PILE ? e.stack : ''); ko++; } };
 
 function page(langue, config, avant){
   const dom = new JSDOM(lire('index.html').replace(/<script[\s\S]*?<\/script>/g, ''), { url:'https://jeu.example/', runScripts:'outside-only', pretendToBeVisual:true });
@@ -21,7 +21,7 @@ function page(langue, config, avant){
   w.TextEncoder = TextEncoder; w.TextDecoder = TextDecoder;
   w.__fetch = []; w.fetch = async (u) => { w.__fetch.push(String(u)); return { ok:true, json:async () => (w.__reponse || { actif:false }) }; };
   if(avant) avant(w);
-  for(const f of ['js/donnees.js', 'js/voix.js', 'js/textes.js', 'js/articulation.js', 'js/genres.js', 'js/confusions.js', 'js/vannes.js', 'js/pieges.js', 'js/anglais.js', 'js/jeu.js']) w.eval(lire(f));
+  for(const f of ['js/donnees.js', 'js/voix.js', 'js/textes.js', 'js/articulation.js', 'js/genres.js', 'js/confusions.js', 'js/vannes.js', 'js/pieges.js', 'js/anglais.js', 'js/histoires.js', 'js/blagues-en.js', 'js/parcours.js', 'js/rigolade.js', 'js/salon.js', 'js/juge.js', 'js/maths.js', 'js/sciences.js', 'js/offre.js', 'js/jeu.js']) w.eval(lire(f));
   return w;
 }
 // Certificats d'abonnement comme les signe le serveur (même format que serveur/functions/ami-abonnement).
@@ -529,9 +529,9 @@ await test('dictée : correction tolérante, mots fautifs repérés, vannes sur 
 });
 await test('coin anglais : battle, situation et dictée jouables de bout en bout', () => {
   const w = page(); const d = w.document, A = w.AmiDesMots, E = w.ANGLAIS; A.base.ui = 'fr'; A.base.cible = 'en'; A.accueil();
-  clic(w, '[data-a="anglais"]'); assert.strictEqual(d.querySelectorAll('.carte-anglais').length, 4);
+  clic(w, '[data-a="anglais"]'); assert.strictEqual(d.querySelectorAll('.carte-anglais').length, 12);
   // Battle : une mauvaise réplique (vanne, pas de point) puis la bonne
-  clic(w, '[data-a="battle"]'); const plumes = A.J().plumes;
+  clic(w, '[data-a="battle"]'); clic(w, '[data-a="battle-go"][data-v="ami"]'); const plumes = A.J().plumes;
   for(let k = 0; k < 3; k++){
     const txt = d.querySelector('.bulle-ami .piege-fr').textContent, m = E.BATTLE.find(x => txt.includes(x.ami)); assert.ok(m, txt);
     const opts = [...d.querySelectorAll('.piege-opt')];
@@ -560,8 +560,189 @@ await test('coin anglais : battle, situation et dictée jouables de bout en bout
   assert.match(d.querySelector('main').textContent, /Dictée terminée/);
   // Sauvegarde : l'état anglais est filtré
   A.J().anglais = { situations:['cafe', 'pirate', 'cafe'], victoires:-3, dictees:'x' }; clic(w, '[data-a="anglais"]');
-  assert.deepStrictEqual(JSON.parse(JSON.stringify(A.J().anglais)), { situations:['cafe'], victoires:0, battles:0, dictees:0 });
+  assert.deepStrictEqual(JSON.parse(JSON.stringify(A.J().anglais)), { situations:['cafe'], victoires:0, battles:0, dictees:0, histoires:[], repete:[], niveaux:[], revisions:[] });
   assert.ok(lire('index.html').includes('js/anglais.js') && lire('sw.js').includes('"js/anglais.js"'));
+});
+await test('parcours : niveaux, étapes, examen (8 questions, 6 pour réussir), niveaux suivants verrouillés', () => {
+  const w = page(); const P = w.PARCOURS;
+  const vide = P.progression({}, []);
+  assert.strictEqual(vide.length, 3); assert.ok(vide[0].ouvert && !vide[1].ouvert && !vide[0].pret);
+  const plein = { mots:99, pieges:99, situations:9, histoires:9, dictees:99, repete:99, victoires:9 };
+  const p1 = P.progression(plein, []); assert.ok(p1[0].pret && !p1[1].ouvert);
+  const p2 = P.progression(plein, [1]); assert.ok(p2[0].valide && p2[1].ouvert && p2[1].pret);
+  assert.strictEqual(P.niveauActuel([1, 2]), 2); assert.strictEqual(P.niveauActuel([2]), 0);
+  for(const n of [1, 2, 3]){ const q = P.examen(n, w.PIEGES, w.ANGLAIS); assert.strictEqual(q.length, 8);
+    for(const x of q){ assert.ok(x.bon && x.faux.length >= 1 && x.consigne && x.enonce, JSON.stringify(x)); } }
+  for(const e of P.REPETER) assert.ok(e.en && e.fr && /[.!?]$/.test(e.en));
+  for(let v = 0; v < 5; v++) for(let a = 0; a < 5; a++) for(let l = 0; l < 5; l++){ const x = P.inventer(v, a, l); assert.match(x.en, /^Ami, you [a-z]+ like an? [a-z ]+ (on|in|at) [a-z ]+!$/); assert.ok(!/undefined/.test(x.fr)); }
+  assert.strictEqual(P.inventer(9, 0, 0), null);
+});
+await test('histoires et blague du jour : contenus complets, une blague par jour', () => {
+  const w = page(); const H = w.HISTOIRES.liste, B = w.BLAGUES_EN;
+  assert.ok(H.length >= 5); assert.strictEqual(new Set(H.map(h => h.id)).size, H.length);
+  for(const h of H){ assert.ok(h.titre && h.fr && h.icone && h.lignes.length >= 6, h.id);
+    for(const [e, en, fr] of h.lignes) assert.ok(e && en && fr, h.id);
+    assert.strictEqual(h.questions.length, 2);
+    for(const q of h.questions){ assert.ok(q.q && q.fr && q.bon && q.faux.length === 2); for(const f of q.faux) assert.ok(f.vanne.length > 15 && f.en !== q.bon); } }
+  assert.ok(B.liste.length >= 20); for(const b of B.liste) assert.ok(b.q && b.r && b.fr && b.jeu, b.q);
+  const t = Date.UTC(2026, 10, 20); assert.strictEqual(B.duJour(t), B.duJour(t + 3600e3)); assert.notStrictEqual(B.duJour(t), B.duJour(t + 864e5));
+});
+await test('vannes : souvenirs, personnages du village, « pas drôle » respecté', () => {
+  const w = page(); const A = w.AmiDesMots, V = w.VANNES;
+  for(const l of ['fr', 'en']){ assert.ok(V[l].souvenir.length >= 3 && V[l].cameos.length >= 3); for(const x of V[l].souvenir.concat(V[l].cameos)) assert.ok(x.includes('{f}') && x.includes('{j}'), x); }
+  A.J().humour = 1; A.choisirJeu('animaux'); A.commencer('quel_mot');
+  const sorties = []; for(let k = 0; k < 12; k++) sorties.push(A.blague('🐢', '🐱'));
+  assert.match(sorties[2], /3ᵉ|n° 3|Encore « la tortue »|Encore « tortue »/, 'à la 3e fois, Ami s’en souvient : ' + sorties[2]);
+  assert.match(sorties[4], /5ᵉ|n° 5|Encore/, sorties[4]);
+  assert.strictEqual(A.J().erreurs['mot:🐢>🐱'], 12);
+  const cam = new Set(); for(let k = 0; k < 300; k++) cam.add(A.blague('🐶', '🐱')); assert.ok([...cam].some(x => /Paco|Mina|Professor Puzzle/.test(x)), 'un personnage passe dans les vannes');
+  // « Pas drôle » : toutes les vannes cameo sauf une notées → seule celle-là peut sortir
+  A.J().pasDrole = V.fr.cameos.slice(1); const restes = new Set(); for(let k = 0; k < 400; k++){ const b = A.blague('🐶', '🐱'); if(/Paco|Mina|Professor/.test(b)) restes.add(b); }
+  for(const b of restes) assert.ok(b.startsWith('Paco renifle'), b);
+});
+await test('coin anglais 2 : parcours, révision du jour, histoire, répéter, invente ta vanne, espace parents', () => {
+  const w = page(); const d = w.document, A = w.AmiDesMots; A.base.ui = 'fr'; A.base.cible = 'en'; A.accueil();
+  clic(w, '[data-a="anglais"]');
+  assert.ok(d.querySelector('.carte-parcours') && d.querySelector('.carte-revision') && d.querySelector('.blague-jour'));
+  // Parcours : niveau 1 ouvert, niveaux 2-3 fermés, pas d'examen
+  clic(w, '[data-a="parcours"]'); assert.strictEqual(d.querySelectorAll('.niveau.ferme').length, 2); assert.ok(!d.querySelector('[data-a="examen"]'));
+  // Histoire : lire les lignes puis 2 questions
+  clic(w, '[data-a="anglais"]'); clic(w, '[data-a="histoires"]'); clic(w, '[data-a="histoire-go"][data-v="chapeau"]');
+  for(let k = 0; k < 8; k++){ assert.ok(d.querySelector('.lecture-texte')); clic(w, '[data-a="ligne-suivante"]'); }
+  const h = w.HISTOIRES.liste[0];
+  for(const q of h.questions){ [...d.querySelectorAll('.piege-opt')].find(b => b.textContent === q.bon).click(); clic(w, '[data-a="qz-suivant"]'); }
+  assert.match(d.querySelector('main').textContent, /The end!/); assert.deepStrictEqual(JSON.parse(JSON.stringify(A.J().anglais.histoires)), ['chapeau']);
+  // Révision du jour : 6 à 8 questions, la série de jours démarre
+  clic(w, '[data-a="anglais"]'); clic(w, '[data-a="revision"]'); let n = 0;
+  while(d.querySelector('.piege-opt') && n < 10){ d.querySelector('.piege-opt').click(); clic(w, '[data-a="qz-suivant"]'); n++; }
+  assert.ok(n >= 6 && n <= 8, 'questions : ' + n); assert.match(d.querySelector('main').textContent, /Révision faite/); assert.strictEqual(A.J().anglais.revisions.length, 1);
+  // Répète après Ami (sans micro dans jsdom) : on peut quand même valider
+  clic(w, '[data-a="anglais"]'); clic(w, '[data-a="repeter"]'); assert.ok(d.querySelector('.repeter .piege-fr'));
+  clic(w, '[data-a="repeter-bien"]'); assert.deepStrictEqual(JSON.parse(JSON.stringify(A.J().anglais.repete)), [0]);
+  clic(w, '[data-a="repeter-suivant"]'); assert.ok(d.querySelector('.repeter .piege-fr').textContent.includes(w.PARCOURS.REPETER[1].en));
+  // Invente ta vanne : la phrase change avec les choix, on peut la garder
+  clic(w, '[data-a="anglais"]'); clic(w, '[data-a="battle"]'); clic(w, '[data-a="invente"]');
+  clic(w, '[data-a="invente-choix"][data-v="a:1"]'); assert.match(d.querySelector('.bulle-ami').textContent, /like a snail/);
+  clic(w, '[data-a="invente-garder"]'); assert.ok(A.J().fousRires.some(x => /like a snail/.test(x.v) && x.e === '🦉'));
+  // Battle en famille : 4 manches, équipes
+  clic(w, '[data-a="battle"]'); clic(w, '[data-a="battle-go"][data-v="famille"]'); assert.match(d.querySelector('.piege-cat').textContent, /🦊 0 – 0 🐼/);
+  // Espace parents : fermé sans le bon calcul, puis ouvert ; « ce qui coince » lisible
+  A.J().erreurs = { 'mot:🐢>🐱':4, 'piege:age':2, 'dictee:sea>see':3 };
+  clic(w, '[data-a="battle"]'); clic(w, '[data-a="anglais"]'); clic(w, '[data-a="parents"]'); d.querySelector('#porte-parents').value = '1'; clic(w, '[data-a="parents-ouvrir"]');
+  assert.ok(!d.querySelector('.parents'));
+  const txt = d.querySelector('main').textContent, [a, b] = txt.match(/(\d) × (\d)/).slice(1).map(Number);
+  d.querySelector('#porte-parents').value = String(a * b); clic(w, '[data-a="parents-ouvrir"]');
+  const t2 = d.querySelector('.parents').textContent;
+  assert.ok(/Confond 🐱/.test(t2) && /J’ai 10 ans/.test(t2) && /écrit « sea » au lieu de « see »/.test(t2), t2);
+  assert.ok(lire('index.html').includes('js/parcours.js') && lire('sw.js').includes('"js/histoires.js"') && lire('sw.js').includes('"assets/3d/ruines.glb"'));
+});
+await test('v5.42 contenus : oreilles, vrai/faux, Avent, maison, rap, gag — complets et gentils', () => {
+  const w = page(); const R = w.RIGOLADE, interdit = /\b(nul|nulle|bête|idiot|stupide|moche|honte)\b/i;
+  assert.ok(R.PAIRES.length >= 12); for(const p of R.PAIRES){ assert.ok(p.a.en !== p.b.en && p.a.e !== p.b.e && p.a.fr && p.b.fr && p.rire && !interdit.test(p.rire)); }
+  assert.ok(R.VRAI_FAUX.length >= 16 && R.VRAI_FAUX.some(v => v.vrai) && R.VRAI_FAUX.some(v => !v.vrai)); for(const v of R.VRAI_FAUX) assert.ok(v.en && v.fr && v.rire && typeof v.vrai === 'boolean');
+  assert.strictEqual(R.AVENT.length, 24); assert.strictEqual(new Set(R.AVENT.map(x => x.en)).size, 24); for(const x of R.AVENT) assert.ok(x.e && x.fr && x.phrase.en && x.phrase.fr && x.vanne);
+  assert.strictEqual(R.aventOuvert(new Date(2026, 11, 7)), 7); assert.strictEqual(R.aventOuvert(new Date(2026, 11, 30)), 24); assert.strictEqual(R.aventOuvert(new Date(2027, 0, 3)), 24); assert.strictEqual(R.aventOuvert(new Date(2026, 10, 22)), 0);
+  assert.ok(R.MAISON.length >= 14); for(const x of R.MAISON) assert.ok(/^(a|an) /.test(x.en) && x.prix > 0 && ['sol', 'mur'].includes(x.zone), x.id);
+  assert.ok(R.MAISON.filter(x => x.en.startsWith('an ')).every(x => /^an [aeiou]/.test(x.en)), 'a / an justes');
+  assert.strictEqual(R.RAP.length, 3); for(const m of R.RAP){ assert.strictEqual(m.ami.length, 4); assert.strictEqual(m.toi.length, 2);
+    for(const c of m.toi){ assert.ok(c.b.includes('___') && c.bfr && c.faux.length === 2); for(const f of c.faux) assert.ok(f.m !== c.bon && f.vanne.length > 20 && !interdit.test(f.vanne)); } }
+  assert.strictEqual(R.GAG.length, 8); assert.match(R.REVELATION, /pain au chocolat/);
+});
+await test('défi entre potes : lien codé (graine, score, pseudo), mêmes questions des deux côtés, refus des liens trafiqués', () => {
+  const w = page(); const R = w.RIGOLADE, S = w.SALON;
+  const c = R.coderDefi({ s:123456, n:8, sc:6, p:'Léo <img src=x>' }), d = R.lireDefi(c);
+  assert.deepStrictEqual(JSON.parse(JSON.stringify(d)), { s:123456, n:8, sc:6, p:'Léo img srcx' });
+  for(const mauvais of ['', 'x', 'eyJ2IjoyfQ', R.coderDefi({ s:1, n:8, sc:9, p:'a' }), R.coderDefi({ s:1, n:7, sc:1, p:'a' }), 'A'.repeat(300)]) assert.strictEqual(R.lireDefi(mauvais), null, mauvais.slice(0, 20));
+  const q1 = S.questionsMixtes(987, 8), q2 = S.questionsMixtes(987, 8), q3 = S.questionsMixtes(988, 8);
+  assert.deepStrictEqual(JSON.parse(JSON.stringify(q1.map(q => q.id))), JSON.parse(JSON.stringify(q2.map(q => q.id))));
+  assert.notDeepStrictEqual(q1.map(q => q.id), q3.map(q => q.id)); assert.strictEqual(new Set(q1.map(q => q.id)).size, 8);
+  for(const q of q1) assert.ok(q.bon && q.faux.length >= 1 && q.consigne);
+  // Le lien ouvre l'écran du défi reçu
+  const w2 = page(undefined, undefined, x => x.history.replaceState(null, '', '/?defi=' + c)); assert.match(w2.document.querySelector('main').textContent, /Léo img srcx te défie/);
+  assert.ok(!w2.document.querySelector('main img[src="x"]'));
+});
+await test('salon en direct : filtre des messages, codes, points ; publics = réactions seulement', () => {
+  const w = page(); const S = w.SALON;
+  const f = S.filtrer('salut idiot, mon snap c’est @leo123, appelle le 06 12 34 56 78 ou www.site.com <b>');
+  assert.ok(!/idiot|snap|@leo|06 12|www\.|<b>/i.test(f.texte), f.texte); assert.ok(f.masques.length >= 4);
+  assert.strictEqual(S.filtrer('Good game! 😂').texte, 'Good game! 😂');
+  assert.ok(S.filtrer('a'.repeat(200)).texte.length <= 80);
+  for(let k = 0; k < 50; k++) assert.ok(S.codeValide(S.nouveauCode()));
+  assert.ok(!S.codeValide('ABCD') && !S.codeValide('ABCDI') && !S.codeValide('abcde'));
+  assert.strictEqual(S.points(false, 100, 15000), 0); assert.strictEqual(S.points(true, 0, 15000), 150); assert.strictEqual(S.points(true, 15000, 15000), 100);
+  // Sans configuration, le salon propose le défi par lien
+  const A = w.AmiDesMots; A.base.ui = 'fr'; A.base.cible = 'en'; A.accueil(); clic(w, '[data-a="anglais"]'); clic(w, '[data-a="battle"]'); clic(w, '[data-a="salon"]');
+  assert.match(w.document.querySelector('main').textContent, /pas encore branché/); assert.ok(w.document.querySelector('[data-a="defi-pote"]'));
+  const J = lire('js/jeu.js'); assert.match(J, /if\(salon\.public \|\| !base\.salonChat \|\| !auteur\) return;/, 'chat ignoré en salon public ou sans accord parental');
+});
+await test('v5.42 écrans : Ami se trompe, oreilles, vrai/faux, Avent, maison, bêtisier, famille, rap, visages', () => {
+  const w = page(); const d = w.document, A = w.AmiDesMots; A.base.ui = 'fr'; A.base.cible = 'en'; A.accueil();
+  // Visages d'Ami
+  for(const h of ['vexe', 'mdr', 'choque', 'fier', 'boude', 'malin', 'dort']){ const div = d.createElement('div'); div.innerHTML = A.ami ? A.ami(h) : ''; }
+  clic(w, '[data-a="anglais"]'); assert.ok(d.querySelector('[data-a="trompe"]') && d.querySelector('[data-a="maison"]'));
+  // Ami se trompe : on juge 8 phrases
+  clic(w, '[data-a="trompe"]'); let n = 0;
+  while(d.querySelector('[data-a="trompe-juge"]') && n < 10){ clic(w, '[data-a="trompe-juge"][data-v="faux"]'); const c = d.querySelector('[data-a="trompe-corrige"]'); if(c) c.click(); clic(w, '[data-a="trompe-suivant"]'); n++; }
+  assert.strictEqual(n, 8); assert.match(d.querySelector('main').textContent, /points/);
+  // Oreilles et vrai/faux
+  for(const jeu of ['oreilles', 'vraifaux']){ clic(w, '[data-a="anglais"]'); clic(w, '[data-a="' + jeu + '"]'); let k = 0; while(d.querySelector('.piege-opt') && k < 10){ d.querySelector('.piege-opt').click(); clic(w, '[data-a="qz-suivant"]'); k++; } assert.strictEqual(k, 8, jeu); }
+  // Avent : case 1 en avant-première, défi, +2 plumes une fois
+  clic(w, '[data-a="anglais"]'); clic(w, '[data-a="avent"]'); const p0 = A.J().plumes; clic(w, '[data-a="avent-case"][data-v="1"]');
+  [...d.querySelectorAll('.piege-opt')].find(b => b.textContent === 'snow').click(); assert.strictEqual(A.J().plumes, p0 + 2); assert.deepStrictEqual(JSON.parse(JSON.stringify(A.J().avent)), [1]);
+  // Maison : acheter, poser, entendre, ranger ; pas assez de plumes = bouton grisé
+  A.J().plumes = 20; clic(w, '[data-a="avent"]'); clic(w, '[data-a="anglais"]'); clic(w, '[data-a="maison"]');
+  clic(w, '[data-a="maison-acheter"][data-v="sofa"]'); assert.strictEqual(A.J().plumes, 10); assert.strictEqual(A.J().maison.places.sol0, 'sofa');
+  assert.match(d.querySelector('#maison-msg').textContent, /a comfy sofa/); assert.ok(d.querySelector('[data-a="maison-acheter"][data-v="piano"]').disabled);
+  clic(w, '[data-a="maison-fente"][data-v="sol0"]'); clic(w, '[data-a="maison-ranger"]'); assert.ok(!A.J().maison.places.sol0);
+  clic(w, '[data-a="maison-fente"][data-v="sol3"]'); assert.strictEqual(A.J().maison.places.sol3, 'sofa');
+  // Bêtisier : les vannes vues reviennent en best-of
+  clic(w, '[data-a="anglais"]'); clic(w, '[data-a="betisier"]'); clic(w, '[data-a="best-suivant"]'); assert.match(d.querySelector('main').textContent, /N° \d/);
+  // Battle en famille : 2 joueurs
+  clic(w, '[data-a="anglais"]'); clic(w, '[data-a="battle"]'); clic(w, '[data-a="tournoi"]'); d.querySelector('#fam0').value = 'Papa'; d.querySelector('#fam1').value = 'Léa'; clic(w, '[data-a="tournoi-go"]');
+  for(let k = 0; k < 2; k++){ clic(w, '[data-a="tournoi-joue"]'); for(let q = 0; q < 6; q++){ d.querySelector('.piege-opt').click(); clic(w, '[data-a="qz-suivant"]'); } }
+  assert.ok(d.querySelector('.podium') && /Papa/.test(d.querySelector('.podium').textContent) && /Léa/.test(d.querySelector('.podium').textContent));
+  // Rap : 3 manches de 4 lignes + 2 rimes
+  clic(w, '[data-a="battle"]'); clic(w, '[data-a="rap"]');
+  for(let m = 0; m < 3; m++){ for(let l = 0; l < 5; l++) clic(w, '[data-a="rap-suivant"]'); for(let c = 0; c < 2; c++){ const R = w.RIGOLADE.RAP[m].toi[c]; [...d.querySelectorAll('.rap-mots .piege-opt')].find(b => b.textContent === R.bon).click(); assert.match(d.querySelector('#rap-retour').textContent, /crowd|Oooo|Mic drop/); clic(w, '[data-a="rap-apres"]'); } }
+  assert.match(d.querySelector('main').textContent, /Champion du micro/);
+});
+await test('Ami apprend : vannes gardées favorisées, vannes de la famille, gag de la chocolatine toutes les 30 vannes', () => {
+  const w = page(); const A = w.AmiDesMots, V = w.VANNES; A.J().humour = 1; A.choisirJeu('animaux'); A.commencer('quel_mot');
+  A.J().vannesFamille = ['« {f} » ? Même tonton n’aurait pas osé ! C’était « {j} ».'];
+  const vus = []; for(let k = 0; k < 400; k++) vus.push(A.blague('🐶', '🐱'));
+  assert.ok(vus.some(v => /Même tonton n’aurait pas osé ! C’était « le chat »|Même tonton n’aurait pas osé ! C’était « chat »/.test(v)), 'la vanne de la famille sort');
+  assert.ok(vus.some(v => /chocolatine/.test(v)), 'le gag revient');
+  assert.ok(A.J().gag >= 8, 'le gag avance jusqu’à la révélation : ' + A.J().gag); assert.ok(vus.some(v => /pain au chocolat/.test(v)));
+});
+await test('juge de vannes : refuse ce qui vise la personne, laisse passer les vannes sur la confusion', () => {
+  const w = page(); const J = w.JUGE;
+  for(const mauvaise of ['Tu es nul en anglais !', 't’es trop moche', 'You are so stupid!', 'Ta mère confond cat et dog', 'Je vais te taper si tu te trompes', 'Mon insta : @leo_123', 'Appelle-moi au 06 12 34 56 78',
+    'C’est de la merde', 'What the fuck', 'Quel mongol', 'You’re fat and slow', 'Va sur www.blagues.example', 'I will kill you'])
+    assert.ok(!J.juger(mauvaise).ok, 'devait être refusée : ' + mauvaise);
+  for(const bonne of ['« {f} » ? Même tonton Marcel n’aurait pas osé ! C’était « {j} ».', 'Ami a confondu la cloche et la sonnette ! 🔔', 'You dance like a penguin on ice skates!', 'Le chat est nul en natation ? Non : le chat ne nage pas, c’est tout ! 🐱']
+    .slice(0, 3)) assert.ok(J.juger(bonne).ok, 'devait passer : ' + bonne + ' — ' + J.juger(bonne).raisons);
+  // Tout le contenu de l'appli passe le juge (régression : aucune vanne livrée ne vise la personne)
+  const tout = []; const parcourir = x => { if(typeof x === 'string'){ if(x.trim()) tout.push(x); } else if(Array.isArray(x)) x.forEach(parcourir); else if(x && typeof x === 'object') Object.values(x).forEach(parcourir); };
+  for(const k of ['VANNES', 'PIEGES', 'ANGLAIS', 'HISTOIRES', 'BLAGUES_EN', 'PARCOURS', 'RIGOLADE']) parcourir(w[k]);
+  const refus = tout.filter(t => !J.juger(t).ok); assert.deepStrictEqual(refus, [], refus.slice(0, 3).join(' | '));
+  assert.ok(tout.length > 2000);
+  // Apprentissage : 😂 monte, 🙄 retire
+  let sc = {}; sc = J.noter(sc, 'A', 2); sc = J.noter(sc, 'A', 2); assert.strictEqual(J.poids(sc, 'A'), 4);
+  sc = J.noter(sc, 'B', -3); assert.ok(J.retiree(sc, 'B') && J.poids(sc, 'B') === 0);
+});
+await test('juge de vannes en jeu : vanne de famille refusée, « pas drôle » retire, « je la garde » favorise', () => {
+  const w = page(); const d = w.document, A = w.AmiDesMots; A.base.ui = 'fr'; A.base.cible = 'en'; A.accueil();
+  clic(w, '[data-a="anglais"]'); clic(w, '[data-a="parents"]'); const [a, b] = d.querySelector('main').textContent.match(/(\d) × (\d)/).slice(1).map(Number);
+  d.querySelector('#porte-parents').value = String(a * b); clic(w, '[data-a="parents-ouvrir"]');
+  d.querySelector('#vanne-famille').value = 'Tu es vraiment nul !'; clic(w, '[data-a="vanne-famille-ajout"]');
+  assert.match(d.querySelector('main').textContent, /Ami refuse cette vanne \(vise la personne\)/); assert.strictEqual((A.J().vannesFamille || []).length, 0);
+  d.querySelector('#vanne-famille').value = '« {f} » ? Même Paco aurait trouvé « {j} » !'; clic(w, '[data-a="vanne-famille-ajout"]');
+  assert.match(d.querySelector('main').textContent, /Vanne acceptée/); assert.strictEqual(A.J().vannesFamille.length, 1);
+  // « Pas drôle » sur toutes les vannes de personnages sauf une : seule celle-ci peut sortir (le juge la garde)
+  A.J().humour = 1; A.choisirJeu('animaux'); A.commencer('quel_mot');
+  for(const m of w.VANNES.fr.cameos.slice(1)) A.J().notesVannes = w.JUGE.noter(A.J().notesVannes, m, -3);
+  A.J().pasDrole = []; const restes = new Set(); for(let k = 0; k < 400; k++){ const v = A.blague('🐶', '🐱'); if(/Paco|Mina|Professor/.test(v) && !/Même Paco|chocolatine/.test(v)) restes.add(v); }
+  for(const v of restes) assert.ok(v.startsWith('Paco renifle'), v);
 });
 await test('familles de confusions : astuce affichée quand on confond cat et dog en apprenant l’anglais', () => {
   const w = page(); const A = w.AmiDesMots;
@@ -710,6 +891,16 @@ await test('quête des plumes : 10 indices en anglais, un par habitant/animal, �
   assert.ok(html.includes('js/quetes.js') && !html.includes('featherSpots'), 'les anciennes plumes visibles sont remplacées');
   assert.ok(!/fillStyle='#ffe27a';for/.test(html), 'les plumes ne sont plus sur la carte');
 });
+await test('3D : véhicules et ruines Quaternius préparés, chargés en option, crédités', () => {
+  const kit = lire('js/kit3d.js');
+  assert.match(kit, /export function objetVehicule/); assert.match(kit, /assets\/3d\/vehicules\.glb/); assert.match(kit, /assets\/3d\/ruines\.glb/);
+  for(const f of ['vehicules.glb', 'ruines.glb']){ const b = fs.readFileSync(path.join(ICI, 'assets/3d', f)); assert.ok(b.length < 800e3, f + ' léger'); assert.strictEqual(b.slice(0, 4).toString(), 'glTF'); }
+  const ruines = fs.readFileSync(path.join(ICI, 'assets/3d/ruines.glb')).toString('latin1');
+  for(const n of ['Skull', 'BearTrap', 'DeadTree']) assert.ok(!ruines.includes('"' + n), n + ' exclu');
+  assert.match(lire('assets/3d/CREDITS.md'), /Ruins Pack[\s\S]*CC0/);
+  const m = lire('monde-3d.html'); assert.match(m, /TRESOR=\[/); assert.match(m, /Go through the arch\./); assert.match(m, /function alleger/);
+  assert.match(lire('mots-city.html'), /'Bus', 'SUV', 'SchoolBus', 'Ambulance'/);
+});
 await test('CSS : rien sur <html>/<body> ne casse position:fixed (fenêtres décalées après défilement)', () => {
   const css = lire('css/jeu.css').replace(/\/\*[\s\S]*?\*\//g, '');
   for(const [, sel, corps] of css.matchAll(/(^|[}\s])((?:html|body)\s*)\{([^}]*)\}/g) ? [...css.matchAll(/(?:^|[}\n])\s*((?:html|body))\s*\{([^}]*)\}/g)] : [])
@@ -767,7 +958,7 @@ await test('vannes : une série cassée, un mot raté deux fois, la même initia
   vus.clear(); for(let k = 0; k < 40; k++) vus.add(A.blague('🐱', '🐶'));
   assert.ok([...vus].some(b => /Encore|encore|coriace|Re-coucou|échappe|rendez-vous|filé|invisible|retour|ennemi|manche|RECHERCHÉ|adore/.test(b)), 'mot raté plusieurs fois');
   const c = Object.keys(w.MOTS).filter(k => w.MOTS[k].theme === 'animaux' && w.MOTS[k].fr[0] === 'C');
-  vus.clear(); for(let k = 0; k < 60; k++) vus.add(A.blague(c[0], c[1]));
+  vus.clear(); for(let k = 0; k < 200; k++) vus.add(A.blague(c[0], c[1]));
   assert.ok([...vus].some(b => /« c »/.test(b)), 'même initiale remarquée : ' + c.slice(0, 2));
   void debut; void V;
 });
@@ -825,38 +1016,30 @@ await test('écoute lente et bouche disponibles sur la carte « Nouveau mot ! »
 });
 
 console.log('Gratuit et Ami des mots Plus');
-await test('gratuit : 3 thèmes et 3 jeux ouverts ; les autres mènent à la page Plus', () => {
+await test('phase de lancement : tout l’univers est gratuit', () => {
   const w = page(undefined, null); const A = w.AmiDesMots, d = w.document;
-  assert.strictEqual(A.CONFIG.MODE_PAYANT, true);
+  assert.strictEqual(A.CONFIG.MODE_PAYANT, false);
+  assert.strictEqual(A.plus(), true);
   A.themes();
-  const verrous = [...d.querySelectorAll('.theme.verrou')].map(b => b.dataset.v);
-  for(const th of ['animaux', 'manger', 'maison']) assert.ok(!verrous.includes(th), th);
-  assert.ok(verrous.includes('ville') && verrous.includes('nature'));
+  assert.strictEqual(d.querySelectorAll('.theme.verrou').length, 0, 'aucun thème verrouillé');
   A.choisirJeu('animaux');
-  const ouverts = [...d.querySelectorAll('[data-a="jeu"]')].map(b => b.dataset.v.split(':')[0]);
-  assert.deepStrictEqual([...new Set(ouverts)].sort(), ['decouvrir', 'ecoute', 'quel_mot', 'traduction']);
-  assert.strictEqual(ouverts.length, 10, '10 jeux gratuits');
-  assert.strictEqual(d.querySelectorAll('.niv.verrou').length, 40, '40 jeux Plus');
+  assert.strictEqual(d.querySelectorAll('[data-a="jeu"].verrou').length, 0, 'aucun jeu verrouillé');
   A.commencer('memoire');
-  assert.ok(d.querySelector('main.plus'));
+  assert.ok(!d.querySelector('main.plus'), 'les jeux avancés restent accessibles');
   A.choisirJeu('ville');
-  assert.ok(d.querySelector('main.plus'));
-  assert.match(d.body.textContent, /5,99 €/);
-  assert.match(d.body.textContent, /Bientôt disponible/);
+  assert.ok(!d.querySelector('main.plus'), 'les thèmes sont ouverts');
 });
-await test('gratuit : un seul joueur ; le deuxième demande Plus', () => {
+await test('phase de lancement : six profils familiaux sont accessibles', () => {
   const w = page(undefined, null); const d = w.document;
-  clic(w, '[data-a="reglages"]'); clic(w, '[data-a="nouveau-joueur"]');
-  assert.ok(d.querySelector('#form-joueur'), 'le premier joueur se nomme librement');
-  d.getElementById('nom-joueur').value = 'Léa';
-  d.getElementById('form-joueur').dispatchEvent(new w.Event('submit', { cancelable:true }));
-  clic(w, '[data-a="reglages"]'); clic(w, '[data-a="nouveau-joueur"]');
-  assert.ok(d.querySelector('main.plus'));
+  clic(w, '[data-a="reglages"]');
+  for(let i=0;i<5;i++){ clic(w, '[data-a="nouveau-joueur"]'); assert.ok(d.querySelector('#form-joueur')); d.getElementById('nom-joueur').value='Joueur '+(i+2); d.getElementById('form-joueur').dispatchEvent(new w.Event('submit', { cancelable:true })); clic(w, '[data-a="reglages"]'); }
+  clic(w, '[data-a="nouveau-joueur"]');
+  assert.ok(!d.querySelector('main.plus'), 'aucun paywall pour les six profils');
 });
-await test('défi du jour gratuit : il ne puise que dans les thèmes gratuits', () => {
+await test('défi du jour : il puise dans tous les thèmes ouverts', () => {
   const w = page(undefined, null); const A = w.AmiDesMots;
   for(let k = 0; k < 5; k++){ A.defi(); }
-  const libres = ['animaux', 'manger', 'maison'];
+  const libres = ['animaux', 'manger', 'maison', 'ville', 'nature', 'corps', 'ecole', 'transports'];
   assert.ok(A.distincts(Object.keys(w.MOTS).filter(e => w.MOTS[e].kab), 'kab').length > 30);
   w.document.querySelectorAll('[data-a="repondre"], [data-a="ecouter"]').forEach(b => { if(b.dataset.v) assert.ok(libres.includes(w.MOTS[b.dataset.v].theme), b.dataset.v); });
 });
@@ -994,8 +1177,209 @@ await test('aucune promesse de santé, aucun traceur ; un seul envoi : le code d
   assert.ok(!/rééduc|thérap|aphasi|AVC|guérir|soigne(?!\s+rien)|Alzheimer/i.test(tout.replace(/il ne soigne rien/g, '')), 'promesse de santé');
   const J = lire('js/jeu.js');
   assert.ok(!/google-analytics|gtag|fbq|matomo|sendBeacon|XMLHttpRequest/.test(J));
-  assert.strictEqual((J.match(/fetch\(/g) || []).length, 1, 'un seul fetch (vérification du code)');
-  assert.match(lire('index.html'), /connect-src 'self' https:\/\/\*\.supabase\.co;/);
+  assert.strictEqual((J.match(/fetch\(/g) || []).length, 3, 'trois fetch : vérification du code, vannes IA (Plus), carte des programmes de maths (serveur configuré)');
+  assert.match(J, /fetch\(String\(CONFIG\.SERVEUR\)\.replace\(\/\\\/\?\$\/, '\/'\) \+ 'programme\.php\?quoi=maths'/);
+  assert.match(J, /fetch\(CONFIG\.API_ABONNEMENT \+/); assert.match(J, /fetch\(CONFIG\.API_VANNES, /);
+  assert.match(lire('index.html'), /connect-src 'self' https:\/\/\*\.supabase\.co wss:\/\/\*\.supabase\.co;/);
+  // Le salon en direct : une seule connexion WebSocket, seulement si le parent a configuré SALON_URL (vide par défaut),
+  // et seulement quand on ouvre le salon. Ce qui est envoyé : pseudo, couleur, réponses, réactions (et chat privé si autorisé).
+  const S = lire('js/salon.js');
+  assert.strictEqual((S.match(/new WS\(/g) || []).length, 1); assert.ok(!/sendBeacon|XMLHttpRequest|localStorage/.test(S));
+  // Sans Supabase : un seul point d'envoi, vers salon.php du serveur configuré (SERVEUR, vide par défaut).
+  assert.strictEqual((S.match(/fetch/g) || []).length, 2, 'window.fetch une seule fois (connecterPhp)'); assert.match(S, /adresse = base\.replace\(\/\\\/\?\$\/, '\/'\) \+ 'salon\.php'/);
+  assert.match(J, /SERVEUR:'',/);
+  assert.match(J, /SALON_URL:'',\s*\n\s*SALON_CLE:'',/);
+  assert.ok(!/service_role/.test(J.replace(/jamais la clé service_role/, '')), 'jamais la clé secrète dans le client');
+});
+await test('vannes proposées par l’IA : Plus seulement, le juge trie, un adulte garde ou jette', async () => {
+  const { publique } = await cles(); const fin = new Date(Date.now() + 30 * 864e5).toISOString();
+  const cfg = { API_ABONNEMENT:'https://x.supabase.co/functions/v1/ami-abonnement', API_VANNES:'https://x.supabase.co/functions/v1/ami-vannes', CLE_PUBLIQUE:publique };
+  const w = page(undefined, cfg), d = w.document, A = w.AmiDesMots; A.base.ui = 'fr'; A.base.cible = 'en';
+  await w.AmiDesMotsPret;
+  const parents = () => { A.accueil(); clic(w, '[data-a="anglais"]'); clic(w, '[data-a="parents"]'); const [a, b] = d.querySelector('main').textContent.match(/(\d) × (\d)/).slice(1).map(Number); d.querySelector('#porte-parents').value = String(a * b); clic(w, '[data-a="parents-ouvrir"]'); };
+  parents(); assert.ok(!d.querySelector('[data-a="vannes-ia"]'), 'sans Plus : pas de bouton'); assert.match(d.querySelector('main').textContent, /Avec Plus, Ami peut vous proposer/);
+  w.__reponse = { actif:true, fin, jeton:await jeton('AMI-ABCD-EFGH-JKMN', fin) };
+  A.ecranPlus(); d.getElementById('code').value = 'AMI-ABCD-EFGH-JKMN'; d.getElementById('form-code').dispatchEvent(new w.Event('submit', { cancelable:true })); await attendre(80);
+  assert.ok(A.plus()); parents();
+  const avant = (A.etat.vannesFamille || []).length;
+  // Le « serveur » renvoie 3 bonnes vannes et 2 mauvaises : le juge retire les mauvaises avant qu'un adulte les voie.
+  w.__fetch.length = 0; let corps = null; const f0 = w.fetch; w.fetch = async (u, o) => { corps = o && o.body; return f0(u, o); };
+  w.__reponse = { vannes:['« {f} » ? Ami a confondu, il porte ses lunettes à l’envers ! C’est « {j} ».', 'Ta mère dit « {f} », c’est « {j} » !', 'Tu es vraiment nul : c’est « {j} » !', '« {f} » ? Même la tortue a fait mieux ! On dit « {j} ».', 'Ami a rangé « {f} » dans le frigo. Le bon mot : « {j} » !', '<script>x</script> {j}'.repeat(30)] };
+  d.querySelector('#vannes-ia-theme').value = 'animaux'; clic(w, '[data-a="vannes-ia"]'); await attendre(60);
+  assert.deepStrictEqual(w.__fetch, ['https://x.supabase.co/functions/v1/ami-vannes'], 'un seul envoi, vers le générateur');
+  assert.deepStrictEqual(Object.keys(JSON.parse(corps)).sort(), ['code', 'theme', 'ton'], 'on n’envoie que le code, le thème et le ton');
+  const props = [...d.querySelectorAll('[data-a="vanne-ia-garder"]')].map(b => b.closest('li').textContent);
+  assert.ok(props.length >= 3 && props.length <= 4, props.join(' | '));
+  assert.ok(!props.some(t => /Ta mère|nul/.test(t)), 'le juge a retiré les mauvaises');
+  assert.ok(!d.querySelector('main script'), 'aucune balise');
+  assert.match(d.querySelector('main').textContent, /Le juge en a déjà retiré/);
+  assert.strictEqual((A.etat.vannesFamille || []).length, avant, 'rien n’est gardé sans un adulte');
+  clic(w, '[data-a="vanne-ia-garder"]'); clic(w, '[data-a="vanne-ia-non"]');
+  assert.strictEqual(A.etat.vannesFamille.length, avant + 1); assert.match(A.etat.vannesFamille[avant], /lunettes à l’envers/);
+  assert.ok(etat(w).joueurs.some(j => (j.vannesFamille || []).length === avant + 1), 'gardée sur l’appareil');
+  w.__reponse = { erreur:'quota', max:5 }; clic(w, '[data-a="vannes-ia"]'); await attendre(60);
+  assert.match(d.querySelector('main').textContent, /C’est tout pour aujourd’hui \(5 demandes par jour\)/);
+});
+await test('générateur de vannes (serveur) : clé Claude jamais dans le client, Plus vérifié, quota, règles du juge', () => {
+  const F = lire('serveur/functions/ami-vannes/index.ts');
+  assert.match(F, /Deno\.env\.get\('ANTHROPIC_API_KEY'\)/); assert.match(F, /from\('ami_abonnements'\)/); assert.match(F, /ami_compter_vannes/);
+  assert.match(F, /JAMAIS la personne/); assert.match(F, /pas de « ta mère »/);
+  for(const f of ['js/jeu.js', 'index.html', 'js/juge.js', 'js/offre.js']) assert.ok(!/ANTHROPIC|sk-ant-|api\.anthropic\.com/.test(lire(f)), f);
+  assert.match(lire('js/jeu.js'), /API_VANNES:'',/);
+});
+console.log('Maths (6e → Terminale) et sciences');
+await test('maths : chaque chapitre du programme a son générateur, chaque erreur a sa vanne et son explication', () => {
+  const w = page(); const M = w.MATHS;
+  assert.deepStrictEqual([...M.NIVEAUX], ['6e', '5e', '4e', '3e', '2nde', '1re', 'Tle']);
+  for(const n of M.NIVEAUX){ const l = M.chapitresDe(n); assert.ok(l.length >= 7, n); for(const c of l) assert.ok(M.disponible(c[0]), c[0]); }
+  for(const id of Object.keys(M.G)) for(let g = 1; g <= 150; g++){
+    const q = M.question(id, M.hasard(g * 31 + id.length), 'sanspitie'), tout = [q.bon, ...q.faux.map(f => f.en)];
+    assert.ok(q.faux.length >= 1 && new Set(tout).size === tout.length, id + ' ' + JSON.stringify(tout));
+    assert.ok(!/NaN|undefined|Infinity|\bnull\b|\{f\}|\{j\}/.test(JSON.stringify(q)), id + ' ' + JSON.stringify(q));
+    for(const f of q.faux){ assert.ok(M.ERREURS[f.cle], f.cle); assert.ok(f.vanne.length > 10); }
+  }
+});
+await test('maths : les corrections sont justes (recalculées autrement)', () => {
+  const w = page(); const M = w.MATHS, num = s => Number(String(s).replace(/ /g, '').replace(/−/g, '-').replace(',', '.').replace(/[^\d.\-/]/g, ''));
+  const val = s => { const t = String(s).replace(/ /g, '').replace(/−/g, '-'); const m = t.match(/^(-?\d+)\/(\d+)$/); return m ? +m[1] / +m[2] : num(t); };
+  const nombres = s => (String(s).replace(/ /g, '').replace(/−/g, '-').match(/-?\d+(?:,\d+)?/g) || []).map(x => +x.replace(',', '.'));
+  for(let g = 1; g <= 300; g++){
+    const r = () => M.hasard(g);
+    let q = M.question('6-fractions-somme', r()); let [a, b, c, d] = nombres(q.enonce); assert.ok(Math.abs(val(q.bon) - (a / b + c / d)) < 1e-9, q.enonce + ' → ' + q.bon);
+    q = M.question('4-fractions-quotient', r()); [a, b, c, d] = nombres(q.enonce); assert.ok(Math.abs(val(q.bon) - (a / b) / (c / d)) < 1e-9, q.enonce);
+    q = M.question('4-equations', r()); { const [A, B, Cc] = nombres(q.enonce.replace('x', ' x ')); const x = num(q.bon.slice(4)); const m = q.enonce.match(/: (-?\d+)x ([+−]) (\d+) = (−?[\d ]+)/); const aa = +m[1], bb = (m[2] === '+' ? 1 : -1) * +m[3], cc = num(m[4]); assert.strictEqual(aa * x + bb, cc, q.enonce + ' → ' + q.bon); }
+    q = M.question('3-arithmetique', r()); [a, b] = nombres(q.enonce); { let x = a, y = b; while(y) [x, y] = [y, x % y]; assert.strictEqual(num(q.bon), x); }
+    q = M.question('4-pythagore', r()); { const n = nombres(q.enonce); const v = num(q.bon); assert.ok(/Hypoténuse/.test(q.enonce) ? v * v === n[0] ** 2 + n[1] ** 2 : v * v + n[1] ** 2 === n[0] ** 2, q.enonce + ' → ' + q.bon); }
+    q = M.question('1-second-degre', r()); if(/Racines/.test(q.enonce)){ const p = q.enonce.match(/de (.*) \?/)[1]; const f = x => w.eval('(' + p.replace(/−/g, '-').replace(/x²/g, 'Math.pow(x,2)').replace(/(\d)x/g, '$1*x').replace(/(\d)Math/g, '$1*Math').replace(/\bx\b/g, '(' + x + ')').replace(/\)\(/g, ')*(') + ')'); for(const x of nombres(q.bon)) assert.strictEqual(f(x), 0, p + ' en ' + x); }
+    q = M.question('6-durees', r()); { const [h, m, dd] = nombres(q.enonce); const [H, Mi] = nombres(q.bon); assert.strictEqual((H * 60 + Mi) % 1440, (h * 60 + m + dd) % 1440); }
+    q = M.question('T-binomiale', r()); if(/P\(X =/.test(q.enonce)){ const [n, p, k] = nombres(q.enonce); let C = 1; for(let i = 0; i < k; i++) C = C * (n - i) / (i + 1); assert.ok(Math.abs(num(q.bon) - C * p ** k * (1 - p) ** (n - k)) < 6e-4, q.enonce + ' ' + q.bon); }
+  }
+});
+await test('maths : même graine = mêmes questions (battles), et le ton change les vannes', () => {
+  const w = page(); const M = w.MATHS;
+  assert.strictEqual(JSON.stringify(M.questionsSalon(42, 6, '3e')), JSON.stringify(M.questionsSalon(42, 6, '3e')));
+  assert.notStrictEqual(JSON.stringify(M.questionsSalon(42, 6, '3e')), JSON.stringify(M.questionsSalon(43, 6, '3e')));
+  const doux = M.question('6-fractions-somme', M.hasard(3), 'doux'), dur = M.question('6-fractions-somme', M.hasard(3), 'sanspitie');
+  assert.match(doux.faux[0].vanne, /Pas grave|Presque|Bonne tentative/); assert.ok(!/Pas grave|Presque !|Bonne tentative/.test(dur.faux[0].vanne)); assert.match(dur.faux[0].vanne, /💡/);
+  assert.ok(!/\bnul\b|idiot|bête|ta mère/i.test(JSON.stringify(Object.values(M.ERREURS).map(e => [e.t, e.s]))), 'les vannes visent l’erreur, jamais la personne');
+  for(const e of Object.values(M.ERREURS)) for(const l of [...e.t, ...e.s]) assert.ok(w.JUGE.juger(l.replace(/\{\w+\}/g, '12')).ok, l);
+});
+await test('coin maths : niveaux, Prof Pi vanne à l’erreur, progrès gardés, examen et défi de maths', () => {
+  const w = page(), d = w.document, A = w.AmiDesMots; A.accueil();
+  clic(w, '[data-a="maths"]'); assert.ok(d.querySelector('.coin-maths .prof-pi'), 'Prof Pi est là');
+  assert.strictEqual(d.querySelectorAll('[data-a="maths-niveau"]').length, 7);
+  clic(w, '[data-a="maths-niveau"][data-v="3e"]'); assert.match(d.querySelector('main').textContent, /Brevet blanc/); assert.match(d.querySelector('main').textContent, /Thalès/);
+  clic(w, '[data-a="maths-ton"][data-v="sanspitie"]'); assert.strictEqual(A.etat.maths.ton, 'sanspitie');
+  clic(w, '[data-a="maths-chap"][data-v="3-thales"]');
+  const bon = d.querySelector('.piege-bon') ? null : null; const opts = [...d.querySelectorAll('.piege-opt')]; assert.ok(opts.length >= 2 && opts[0].lang === 'fr');
+  const q = w.document.querySelector('.piege-fr').textContent; assert.match(q, /AN/);
+  // Réponse fausse : vanne de Prof Pi + explication
+  const juste = opts.find(b => /^AN = /.test(b.textContent) && false); const faux = opts.find(b => b.textContent !== opts.find(x => x)._ok);
+  let mauvais = null; for(const b of opts){ b.click(); const r = d.querySelector('#qz-retour').textContent; if(/🦝/.test(r)){ mauvais = r; break; } A.ecranPlus; break; }
+  if(!mauvais){ clic(w, '[data-a="qz-suivant"]'); const o2 = [...d.querySelectorAll('.piege-opt')]; for(const b of o2){ if(!/AN = /.test(b.textContent)) continue; } o2[o2.length - 1].click(); mauvais = d.querySelector('#qz-retour').textContent; }
+  assert.ok(A.etat.maths.chap['3-thales'].n >= 1, 'progrès enregistré');
+  assert.match(d.querySelector('#qz-retour').textContent, /Bravo|Juste|Exact|Parfait|🦝/);
+  clic(w, '[data-a="maths"]'); clic(w, '[data-a="maths-examen"]'); assert.match(d.querySelector('.piege-cat').textContent, /Brevet blanc · 3e · 1\/12/);
+  for(let i = 0; i < 12; i++){ clic(w, '.piege-opt'); clic(w, '[data-a="qz-suivant"]'); }
+  assert.match(d.querySelector('main').textContent, /\/20/); assert.ok(A.etat.maths.examens['3e'] >= 0);
+  // Défi de maths par lien : le niveau voyage dans le lien.
+  clic(w, '[data-a="maths"]'); clic(w, '[data-a="maths-defi"]'); assert.match(d.querySelector('.piege-cat').textContent, /maths 3e/);
+  for(let i = 0; i < 8; i++){ clic(w, '.piege-opt'); clic(w, '[data-a="qz-suivant"]'); }
+  const lien = d.querySelector('#lien-defi').value, code = new URL(lien).searchParams.get('defi');
+  assert.strictEqual(w.RIGOLADE.lireDefi(code).m, '3e');
+  const w2 = page(undefined, undefined, x => x.history.replaceState(null, '', '/?defi=' + code));
+  clic(w2, '[data-a="defi-relever"]'); assert.match(w2.document.querySelector('.piege-cat').textContent, /maths 3e/);
+});
+await test('labo des sciences : 4 thèmes, clash à l’erreur, explication, faits uniques', () => {
+  const w = page(), d = w.document, A = w.AmiDesMots, S = w.SCIENCES; A.accueil();
+  assert.ok(S.Q.length >= 40); assert.strictEqual(new Set(S.Q.map(x => x[0])).size, S.Q.length);
+  for(const x of S.Q){ assert.ok(S.THEMES.some(t => t.id === x[1]), x[0]); assert.ok(x[4].length >= 2 && !x[4].some(f => f[0] === x[3]), x[0]); for(const f of x[4]) assert.ok(w.JUGE.juger(f[1]).ok, f[1]); }
+  clic(w, '[data-a="sciences"]'); assert.strictEqual(d.querySelectorAll('[data-a="sciences-theme"]').length, 5);
+  clic(w, '[data-a="sciences-theme"][data-v="fusees"]'); assert.match(d.querySelector('.piege-cat').textContent, /Fusées/);
+  const q = S.Q.find(x => x[2] === d.querySelector('.piege-fr').textContent); assert.ok(q);
+  [...d.querySelectorAll('.piege-opt')].find(b => b.textContent !== q[3]).click();
+  const r = d.querySelector('#qz-retour').textContent; assert.ok(q[4].some(f => r.includes(f[1])), 'le clash correspond à l’erreur'); assert.ok(r.includes(q[5]), 'explication');
+});
+await test('salon : la battle peut être de maths (même niveau, mêmes questions pour tous)', () => {
+  const w = page(), M = w.MATHS;
+  const a = M.questionsSalon(7, 6, '1re'); assert.strictEqual(a.length, 6); assert.ok(a.every(q => q.bon && q.faux.length >= 1 && /Maths 1re/.test(q.consigne)));
+  assert.match(lire('js/jeu.js'), /questionsBattle\(d\.graine, d\.n, m\)/);
+});
+console.log('Coin admin : gratuit ou Plus');
+await test('offre.js ouvre tout l’univers : thèmes, jeux, six joueurs et coins', () => {
+  const w = page(undefined, null); const C = w.AmiDesMots.CONFIG;
+  assert.strictEqual(C.MODE_PAYANT, false);
+  assert.strictEqual(C.THEMES_GRATUITS.length, 8);
+  assert.strictEqual(C.JOUEURS_GRATUITS, 6);
+  assert.deepStrictEqual([...C.COINS_PLUS], []);
+  assert.strictEqual(w.AmiDesMots.plus(), true);
+});
+await test('offre.js ne peut que fermer des coins : réglages inconnus ignorés, jamais Plus', () => {
+  const w = page(); const L = w.AmiDesMots.offreLue;
+  const r = L({ MODE_PAYANT:'non', PLUS:true, droits:{ fin:'2999' }, THEMES_GRATUITS:['animaux', '<img>', 3], JOUEURS_GRATUITS:99, COINS_PLUS:'rap', PRIX:'x'.repeat(50) });
+  assert.deepStrictEqual(JSON.parse(JSON.stringify(r)), { THEMES_GRATUITS:['animaux'] });
+  assert.ok(!/plus\(\)|droits/.test(lire('js/offre.js').replace(/^\/\/.*$/gm, '')), 'offre.js ne touche pas aux droits');
+});
+await test('admin : mêmes jeux et mêmes coins que le jeu', () => {
+  const w = page(); const A = w.AmiDesMots;
+  const d = new JSDOM('<main id="app"></main>', { runScripts:'outside-only', url:'https://jeu.example/admin.html' }).window;
+  for(const f of ['js/donnees.js', 'js/textes.js', 'js/offre.js', 'js/admin.js']) d.eval(lire(f));
+  const M = d.AdminAmi;
+  assert.strictEqual(JSON.stringify(M.JEUX.map(j => [j[0], j[2]])), JSON.stringify(A.MECAS.map(m => [m[0], m[3].length])));
+  assert.strictEqual(JSON.stringify([...M.TOUS_COINS].sort()), JSON.stringify(Object.keys(A.COINS).sort()));
+  // Chaque coin a un écran qui marche quand il est gratuit.
+  for(const c of Object.keys(A.COINS)) if(A.COINS[c].length) assert.ok(lire('js/jeu.js').includes("case '" + A.COINS[c][0] + "'"), c);
+});
+await test('admin : cocher, décocher, télécharger un offre.js que le jeu relit à l’identique', () => {
+  const d = new JSDOM('<main id="app"></main>', { runScripts:'outside-only', url:'https://jeu.example/admin.html' }).window;
+  for(const f of ['js/donnees.js', 'js/textes.js', 'js/offre.js', 'js/admin.js']) d.eval(lire(f));
+  const doc = d.document, M = d.AdminAmi, coche = (sel, v) => { const e = doc.querySelector(sel); assert.ok(e, sel); e.checked = v; e.dispatchEvent(new d.Event('change', { bubbles:true })); };
+  assert.ok(doc.querySelector('#telecharger').disabled, 'rien à publier au départ');
+  assert.match(doc.querySelector('.resume').textContent, /8\/8 thèmes gratuits.*50\/50 jeux gratuits.*21\/21 coins gratuits/);
+  coche('[data-theme="nature"]', false); coche('[data-jeu="memoire"]', false); coche('[data-coin="rap"]', true); coche('[data-coin="motscity"]', true);
+  assert.match(doc.querySelector('.resume').textContent, /7\/8 thèmes gratuits.*47\/50 jeux gratuits.*19\/21 coins gratuits/);
+  assert.ok(!doc.querySelector('#telecharger').disabled);
+  assert.match(doc.querySelector('[data-coin="rap"]').closest('label').textContent, /✨ Plus/);
+  const texte = M.fichier(M.offre), z = new JSDOM('', { runScripts:'outside-only' }).window; z.eval(texte);
+  assert.deepStrictEqual(JSON.parse(JSON.stringify(z.OFFRE_AMI)), JSON.parse(JSON.stringify(M.offre)));
+  assert.deepStrictEqual([...z.OFFRE_AMI.COINS_PLUS], ['rap', 'motscity']);
+  for(const id of ['nature', 'memoire']) assert.ok(texte.includes("'" + id + "'"));
+  // Tout décocher : l'admin prévient.
+  for(const e of doc.querySelectorAll('[data-theme]')) if(e.checked) coche('[data-theme="' + e.dataset.theme + '"]', false);
+  assert.match(doc.querySelector('.alerte').textContent, /Aucun thème gratuit/);
+  doc.querySelector('#annuler').click(); assert.ok(doc.querySelector('#telecharger').disabled, 'retour à l’offre en ligne');
+  // Une saisie piégée ne casse pas le fichier.
+  doc.querySelector('#prix').value = "5' ;alert(1)//"; doc.querySelector('#prix').dispatchEvent(new d.Event('change', { bubbles:true }));
+  const z2 = new JSDOM('', { runScripts:'outside-only' }).window; z2.alert = () => { throw new Error('injection'); }; z2.eval(M.fichier(M.offre));
+  assert.strictEqual(z2.OFFRE_AMI.PRIX, '5 ;alert(1)//');
+});
+await test('coin réservé à Plus : badge ✨, écran Plus au clic, aussi par lien du village 3D ou par lien de salon', () => {
+  const w = page(undefined, { MODE_PAYANT:true, COINS_PLUS:['rap', 'trompe', 'motscity', 'village3d', 'salon'] }), d = w.document, A = w.AmiDesMots;
+  A.accueil();
+  const city = d.querySelector('a.mots-city-accueil'); assert.ok(city.classList.contains('verrou') && /✨/.test(city.textContent), 'Mots City marqué Plus');
+  clic(w, '[data-a="accueil-3d"]'); assert.ok(d.querySelector('main.plus'), 'village 3D → Plus');
+  A.accueil(); clic(w, '[data-a="anglais"]');
+  const tr = d.querySelector('[data-a="trompe"]'); assert.ok(tr && tr.querySelector('.badge-plus'), 'badge sur « Ami se trompe »');
+  assert.ok(!d.querySelector('[data-a="oreilles"] .badge-plus'), 'les coins gratuits restent sans badge');
+  tr.click(); assert.ok(d.querySelector('main.plus'));
+  clic(w, '[data-a="anglais"]'); clic(w, '[data-a="oreilles"]'); assert.ok(!d.querySelector('main.plus'), 'coin gratuit ouvert');
+  clic(w, '[data-a="anglais"]'); clic(w, '[data-a="battle"]'); clic(w, '[data-a="rap"]'); assert.ok(d.querySelector('main.plus'), 'rap → Plus');
+  assert.strictEqual(d.querySelector('.barre [data-a]').dataset.a, 'battle', 'retour au menu battle');
+  const w2 = page(undefined, { COINS_PLUS:['rap'] }, x => x.history.replaceState(null, '', '/?aller=rap'));
+  assert.ok(w2.document.querySelector('main.plus'), 'lien ?aller=rap du village 3D → Plus');
+  const w3 = page(undefined, { COINS_PLUS:['salon'] }, x => x.history.replaceState(null, '', '/?salon=ABCDE'));
+  assert.ok(w3.document.querySelector('main.plus'), 'lien de salon → Plus');
+});
+await test('coin réservé : un vrai abonné Plus y entre ; offre sans paiement : tout est ouvert', async () => {
+  const { publique } = await cles(); const fin = new Date(Date.now() + 30 * 864e5).toISOString();
+  const w = page(undefined, { COINS_PLUS:['trompe'], API_ABONNEMENT:'https://x.supabase.co/functions/v1/ami-abonnement', CLE_PUBLIQUE:publique }), d = w.document;
+  await w.AmiDesMotsPret;
+  w.__reponse = { actif:true, fin, jeton:await jeton('AMI-ABCD-EFGH-JKMN', fin) };
+  w.AmiDesMots.ecranPlus(); d.getElementById('code').value = 'AMI-ABCD-EFGH-JKMN'; d.getElementById('form-code').dispatchEvent(new w.Event('submit', { cancelable:true })); await attendre(80);
+  assert.ok(w.AmiDesMots.plus());
+  clic(w, '[data-a="anglais"]'); assert.ok(!d.querySelector('[data-a="trompe"] .badge-plus')); clic(w, '[data-a="trompe"]'); assert.ok(!d.querySelector('main.plus'), 'abonné : coin ouvert');
+  const w2 = page(undefined, { MODE_PAYANT:false, COINS_PLUS:['trompe'] });
+  clic(w2, '[data-a="anglais"]'); clic(w2, '[data-a="trompe"]'); assert.ok(!w2.document.querySelector('main.plus'), 'sans offre payante : ouvert');
 });
 await test('hors connexion : le service worker garde le jeu et toutes ses images', () => {
   const S = lire('sw.js');

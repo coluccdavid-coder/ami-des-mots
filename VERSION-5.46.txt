@@ -1,0 +1,6 @@
+Ami des mots v5.46 — humour renforcé et refonte visuelle premium
+
+- Punchlines supplémentaires après les erreurs des pièges d’anglais, en français et en anglais.
+- Les répliques visent les phrases, la grammaire et le hibou Ami, jamais l’enfant.
+- Refonte responsive des écrans pièges, coin anglais, cartes et retours : fond glass, profondeur, typographie, boutons et animations légères.
+- Respect de prefers-reduced-motion et conservation des règles pédagogiques existantes.

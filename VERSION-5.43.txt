@@ -1,0 +1,11 @@
+AMI DES MOTS — VERSION 5.43
+Ami propose des vannes (IA), un adulte choisit
+
+- Espace parents → « ✨ Ami propose des vannes (IA) » : on choisit un thème et un ton (tout doux, taquin,
+  corsé), l'IA (Claude) propose 6 vannes, le juge d'Ami retire les mauvaises, et un adulte garde ✅ ou jette ❌.
+  Rien n'entre dans le jeu sans un adulte. Les vannes gardées rejoignent les vannes de la famille.
+- Réservé aux abonnés Plus, 5 demandes par jour. La clé Claude reste sur le serveur (fonction ami-vannes).
+- À brancher : voir VANNES-IA.md (clé API, SQL, déploiement, API_VANNES).
+- Tests : 96 automatiques (dont générateur : juge, adulte, quota, aucune clé dans le client).
+- Limite : la fonction serveur est vérifiée (types, nettoyage des réponses) mais pas encore appelée sur ton
+  vrai Supabase avec ta vraie clé.

@@ -23,12 +23,12 @@ let ok = 0, ko = 0; const verif = (nom, c, info) => { c ? ok++ : ko++; console.l
   await w.evaluate(() => { const b = AmiDesMots.base; b.ui = 'fr'; b.cible = 'en'; localStorage.setItem('amidesmots:v2', JSON.stringify(b)); });
   await w.goto('http://localhost:8765/index.html?aller=anglais', { waitUntil:'load' }); await w.waitForFunction(() => window.AmiDesMots);
   const c = await w.evaluate(() => ({ cartes:document.querySelectorAll('.carte-anglais').length, ui:AmiDesMots.base.ui, cible:AmiDesMots.base.cible }));
-  verif('?aller=anglais ouvre le coin anglais (4 activités)', c.cartes === 4, c);
+  verif('?aller=anglais ouvre le coin anglais (12 activités)', c.cartes === 12, c);
   await w.screenshot({ path:dossier + '/coin-anglais.png' });
-  await w.evaluate(() => document.querySelector('[data-a="battle"]').click()); await new Promise(r => setTimeout(r, 300));
+  await w.evaluate(() => { document.querySelector('[data-a="battle"]').click(); document.querySelector('[data-a="battle-go"][data-v="ami"]').click(); }); await new Promise(r => setTimeout(r, 300));
   await w.evaluate(() => { const t = document.querySelector('.bulle-ami .piege-fr').textContent, m = ANGLAIS.BATTLE.find(x => t.includes(x.ami)); [...document.querySelectorAll('.piege-opt')].find(x => x.textContent !== m.bon.en).click(); });
   await new Promise(r => setTimeout(r, 300)); await w.screenshot({ path:dossier + '/battle.png', fullPage:true });
-  await w.evaluate(() => { document.querySelector('[data-a="anglais"]').click(); document.querySelector('[data-a="dictee"]').click(); });
+  await w.evaluate(() => { document.querySelector('[data-a="battle"]').click(); document.querySelector('[data-a="anglais"]').click(); document.querySelector('[data-a="dictee"]').click(); });
   await w.evaluate(() => { document.querySelector('#dictee-texte').value = 'I can sea the see'; document.querySelector('[data-a="dictee-verifier"]').click(); });
   await new Promise(r => setTimeout(r, 300)); await w.screenshot({ path:dossier + '/dictee.png', fullPage:true });
   verif('écrans : aucune erreur', !err.length, err);

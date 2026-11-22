@@ -799,3 +799,105 @@ window.VANNES.en.scenes = {
   musique:[ { t:'At the show, you were waiting for the {j}… and the {f} walks on stage! 👏' }, { t:'For your birthday, you wanted the {j}… and you get the {f}. Smile and say thank you! 🎂' } ],
   atelier:[ { t:'You ask for the {j}… and someone hands you the {f}. DIY gets exciting! 🔧' } ]
 };
+
+// ── Vannes qui se souviennent (v5.41) : quand la même confusion revient (3e, 5e, 8e fois…). {n} = combien de fois.
+window.VANNES.fr.souvenir = [
+  'C’est la {n}ᵉ fois que « {f} » se déguise en « {j} »… Ami note ça dans son carnet secret ! 📒',
+  '« {f} » au lieu de « {j} », {n}ᵉ épisode ! Ami pense en faire une série télé. 📺',
+  'Encore « {f} » ! Ami commence à croire que « {f} » est amoureux de ta réponse. 💘 C’était « {j} ».',
+  'Fois n° {n} ! Ami va offrir des lunettes à « {f} » pour qu’il arrête de se prendre pour « {j} ». 👓'
+];
+window.VANNES.en.souvenir = [
+  'That’s {n} times “{f}” has dressed up as “{j}”… Ami is writing it in his secret notebook! 📒',
+  '“{f}” instead of “{j}”, episode {n}! Ami wants to make a TV series. 📺',
+  'Time number {n}! Ami will buy “{f}” some glasses so it stops pretending to be “{j}”. 👓'
+];
+// ── Personnages récurrents du village (Paco, Mina, Professor Puzzle) qui passent dans les vannes.
+window.VANNES.fr.cameos = [
+  'Paco renifle « {f} »… Non, ça sent plutôt « {j} » ! 🐶',
+  'Mina regarde « {f} », soupire, et pousse « {j} » du bout de la patte. 🐱',
+  'Professor Puzzle note dans son cahier : « {f} » au lieu de « {j} ». Il adore ce piège ! 🪤',
+  'Paco a caché « {j} » sous sa niche et t’a laissé « {f} ». Coquin de chien ! 🐶',
+  'Mina fait semblant de dormir… mais elle a vu « {f} » ! C’était « {j} ». 🐱💤'
+];
+window.VANNES.en.cameos = [
+  'Paco sniffs “{f}”… No, it smells like “{j}”! 🐶',
+  'Mina looks at “{f}”, sighs, and pushes “{j}” with her paw. 🐱',
+  'Professor Puzzle writes in his notebook: “{f}” instead of “{j}”. He loves this trap! 🪤'
+];
+
+
+// ── v5.46 : punchlines plus mordantes (la cible reste Ami, jamais le joueur) ──
+window.VANNES.fr.punchlines = [
+  'Ami vient de perdre 3 points de QI. Il en avait 4, ça va.',
+  'Le dictionnaire vient de demander un changement d’école.',
+  'Même le correcteur automatique a posé sa démission.',
+  'Ami a relu ta réponse. Il a demandé un deuxième avis à une pomme de terre.',
+  'Cette phrase a tellement dérapé que le GPS a appelé les secours.',
+  'Le Bescherelle vient de se mettre en mode avion.',
+  'Ami voulait corriger ça, mais son stylo a pris un arrêt maladie.',
+  'On a retrouvé la grammaire. Elle était cachée sous le tapis, en position fœtale.',
+  'Le dictionnaire a fermé boutique. Pour aujourd’hui. Et peut-être demain.',
+  'Ami a cligné des yeux. La phrase n’a toujours pas retrouvé le nord.',
+  'Même les lettres ont demandé à être séparées.',
+  'Cette traduction a été contrôlée par zéro hibou. Ça se voit.',
+  'Ami a appelé le service après-vente de la phrase. Musique d’attente depuis 1998.',
+  'Le verbe a quitté la pièce. Il ne se sentait plus en sécurité.',
+  'La phrase est tombée dans l’escalier. On ramasse les mots après la pub.',
+  'Un grammairien vient de faire tomber son café. Il n’a même pas lu la suite.',
+  'Ami a voulu sauver la phrase. Il est revenu avec une bouée et un sandwich.',
+  'Les mots ont fait une réunion de crise. Personne ne veut prendre la responsabilité.',
+  'Cette réponse a mis le dictionnaire en PLS. Il demande une pause syndicale.',
+  'Ami a regardé la phrase si longtemps que ses plumes ont pris la poussière.',
+  'La grammaire a envoyé un recommandé. C’est du sérieux.',
+  'Même le perroquet du voisin a dit : « On recommence ? »',
+  'Les mots sont en grève. Ils réclament une phrase qui tient debout.',
+  'Ami a cherché la logique. Il est revenu avec une carte postale.',
+  'Cette phrase a raté son bus, son train et son contrôle technique.',
+  'Le dictionnaire a toussé. Puis il a demandé de ne plus jamais voir ça.',
+  'Ami a ouvert le manuel d’urgence. Il n’y avait qu’une photo de lui qui panique.',
+  'La phrase a tellement mélangé les mots qu’on dirait une valise après un ouragan.',
+  'Le professeur a dit « intéressant ». C’est le mot poli pour « au secours ».',
+  'Ami a demandé un joker à un hibou. Le hibou a raccroché.',
+  'Le verbe et le sujet ne se parlent plus. Médiation demain à 9 h.',
+  'On a retrouvé le sens de la phrase. Il était parti acheter du pain.',
+  'Ami a tenté une réparation. Maintenant, la phrase fait un bruit de casserole.',
+  'Les mots ont appelé leurs parents. Ils veulent rentrer à la maison.',
+  'Cette phrase est collector : même les erreurs n’osent pas la copier.',
+  'Ami a mis ses lunettes, puis une deuxième paire. Toujours pas convaincu.',
+  'Le dictionnaire a demandé un extincteur. La phrase fume.',
+  'La grammaire vient de passer en mode « je ne connais pas cette personne ».',
+  'Ami a voulu traduire. Son cerveau affiche « mise à jour en cours » depuis midi.',
+  'Le mot correct était juste à côté. Il a préféré ne pas se mêler de ça.',
+  'Cette réponse a fait un salto arrière au sens. Atterrissage non homologué.',
+  'Le dictionnaire a appelé sa mère. Il a besoin de parler.',
+  'Ami a demandé à son GPS : « Où est la logique ? » Réponse : « Faites demi-tour. »',
+  'Les lettres ont demandé un plan de protection des témoins.',
+  'La phrase a été envoyée en réparation. Délai annoncé : trois saisons.',
+  'Ami a tellement soupiré qu’il a déplacé un nuage.',
+  'Même les voyelles ont voulu quitter le groupe WhatsApp.',
+  'Le sens de la phrase est parti sans laisser d’adresse.',
+  'Ami a fait une capture d’écran pour montrer ça au musée des curiosités.',
+  'Le dictionnaire a dit « non ». Puis il a éteint la lumière.',
+  'Cette phrase a besoin d’un adulte. Et d’un mécanicien.',
+  'Ami a demandé une minute de silence pour la grammaire.',
+  'Les mots se sont mélangés comme des chaussettes dans une machine folle.',
+  'Le correcteur a vu ça et s’est mis en congé parental.',
+  'La phrase est techniquement vivante. Mais elle ne répond plus.',
+  'Ami a voulu faire le malin. Le dictionnaire l’a remis en mode débutant.',
+  'On va laisser cette phrase réfléchir dans le couloir.',
+  'Le sens est là quelque part. Il joue sûrement à cache-cache.',
+  'Ami vient d’inventer une nouvelle langue. Elle n’a qu’un locuteur : lui.'
+];
+window.VANNES.en.punchlines = [
+  'Ami just lost three brain cells. He had four. It’s fine.',
+  'The dictionary has officially asked for a day off.',
+  'Even autocorrect has handed in its resignation.',
+  'The grammar called its lawyer. This is getting serious.',
+  'Ami checked the sentence twice. It still needs adult supervision.',
+  'The words held an emergency meeting. Nobody knows what happened.',
+  'The verb has left the building. No forwarding address.',
+  'Ami tried to fix it. Now the sentence makes a weird noise.',
+  'The dictionary is buffering. Please do not unplug the owl.',
+  'The sentence took a wrong turn and is now in another country.'
+];

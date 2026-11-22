@@ -1,0 +1,40 @@
+AMI DES MOTS — VERSION 5.44
+Maths de la 6e au bac avec Prof Pi, labo des sciences, serveur PHP sans Supabase, appli Android
+
+MATHS (6e → TERMINALE)
+- 🔢 Coin maths : 7 niveaux, 73 sortes d'exercices rattachées aux programmes de la rentrée 2026
+  (6e programme 2025, 5e nouveau cycle 4, 4e/3e cycle 4 en vigueur, 2nde/1re nouveaux programmes, Tle).
+- Exercices fabriqués par le code : nombres au hasard, correction CALCULÉE (jamais devinée), à l'infini.
+- Chaque mauvaise réponse proposée est une erreur classique (dénominateurs additionnés, oubli du double produit,
+  racine oubliée dans Pythagore, signes des racines…), avec sa vanne de Prof Pi (raton laveur prof de maths) ET l'explication.
+- Ton de Prof Pi : tout doux (petits), taquin, sans pitié (ados). Les vannes visent l'erreur, jamais l'élève.
+- Brevet blanc (3e), épreuve anticipée blanche (1re), bac blanc (Tle), note sur 20.
+- Battles de maths : défi par lien (même niveau, mêmes questions), salon en direct (le chef choisit maths).
+- Veille IA : le serveur lit les programmes et sujets OFFICIELS (education.gouv.fr, Eduscol), propose la carte des
+  chapitres et la liste des sujets (liens vers le ministère) ; rien n'est publié sans validation dans admin/.
+
+SCIENCES
+- 🚀 Labo des sciences : 41 questions (planètes et espace, fusées et astronautes, corps humain, médecine et microbes),
+  un clash par mauvaise réponse + l'explication.
+
+SERVEUR PHP (sans Supabase)
+- serveur-php/ : abonnement Stripe (webhook signé, certificats Plus signés), vannes IA, salon des battles
+  (rafraîchissement ~1 s, marche sur un mutualisé OVH), carte des programmes, veille, coin admin protégé.
+- node outils/configurer.js --serveur … : branche le jeu sur le serveur sans toucher au code.
+
+APPLI
+- 📲 Bouton « Installer l'appli » (Android/PC) ; iPhone : Partager → Sur l'écran d'accueil.
+- Appli Android fabriquée par GitHub Actions (Capacitor) : APK de test, AAB Play Store si la clé est fournie.
+  Voix du téléphone dans l'appli, micro pour « Répète après Ami ».
+- Site sur GitHub Pages par GitHub Actions.
+
+TESTS
+- 102 tests automatiques (dont corrections de maths recalculées autrement, 150 tirages par exercice).
+- Serveur PHP : 33 vérifications sur une vraie base MariaDB (Stripe et Claude simulés).
+- Navigateur : maths et sciences (7), salon à deux navigateurs par le serveur PHP (9) et par Supabase simulé (9).
+
+LIMITES
+- L'APK n'a pas pu être compilé ici (outils Android inaccessibles depuis cet environnement) : la fabrique GitHub
+  est prête, le projet Capacitor a été généré et vérifié, la compilation se fera au premier lancement sur GitHub.
+- Serveur testé sur MariaDB locale, pas encore chez OVH. Veille testée avec des documents simulés.
+- Maths : les cartes des programmes de 5e (nouveau) et de lycée (nouveaux programmes 2026) sont à confirmer par la veille.

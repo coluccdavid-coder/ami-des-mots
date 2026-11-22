@@ -1,0 +1,48 @@
+AMI DES MOTS — VERSION 5.42
+Rire et apprendre en même temps, battles entre potes, salon en ligne, coin admin
+
+POUR RIRE (Coin anglais → 😂 Pour rire)
+- 🦉 Ami se trompe exprès : il dit une bêtise en anglais, à toi de le corriger (il se vexe, il boude…).
+- 👂 Les oreilles d'Ami : 14 paires qui se ressemblent (ship/sheep, beach/…), avec la vanne qui va avec.
+- ✅ Vrai ou faux rigolo : 20 affirmations, réponse et explication en français.
+- 🎄 Calendrier de l'Avent : 24 cases (une par jour en décembre), mot + phrase + vanne, +2 plumes.
+- 📺 Bêtisier : l'émission de tes plus belles confusions de la semaine.
+- 🏠 Maison d'Ami : on achète des objets avec ses plumes en apprenant leur nom anglais.
+- Ami a de nouvelles têtes : vexé, mort de rire, choqué, fier, boudeur, malin, endormi.
+
+BATTLES
+- 🎧 Rap battle (scène, beat boom-bap, foule, applaudimètre) : Ami rappe, tu complètes tes rimes.
+  Paroles 100 % originales ; les vannes visent Ami, jamais une personne.
+- 🏆 Tournoi en famille. 🔗 Défi entre potes : un lien, les mêmes questions, on compare.
+- 🚀 Salon en ligne (Supabase Realtime) : salons privés (code) et publics, réactions, chat privé si un parent
+  l'autorise, filtre, muet. À brancher : voir SALON-EN-LIGNE.md.
+
+AMI APPREND (le juge des vannes)
+- Chaque vanne a un score familial (😂 +2, 🙄 -3) : les mauvaises disparaissent, les bonnes reviennent plus.
+- Le juge refuse les vannes qui visent une personne ou sa famille (« ta mère… »), la violence, les
+  discriminations, les infos personnelles. Les parents ajoutent leurs vannes de famille : le juge dit pourquoi
+  il refuse.
+
+VILLAGE 3D
+- 🏃 Coach Kim : « Ami says » (Jacques a dit en anglais).
+- ☕ Le café (Tom, le serveur) et 🏫 l'école (Mr Brown : « Show me the… ») : on entre vraiment.
+- 🏷️ Étiquettes : on passe près d'une chose, son nom anglais s'affiche (touche pour l'entendre).
+- 🌦️ Météo (soleil, pluie, neige du 1er décembre au 6 janvier) et 📷 mode photo avec légende anglaise
+  (la photo reste sur l'appareil).
+
+MOTS CITY
+- 🏷️ Étiquettes anglaises près des lieux, des palmiers et des véhicules (car, taxi, bus, school bus, ambulance).
+
+COIN ADMIN (admin.html)
+- Choisir ce qui est gratuit et ce qui est dans Plus : thèmes, jeux, coins, joueurs gratuits, prix.
+- Fabrique js/offre.js à remplacer dans le dépôt (voir COIN-ADMIN.md). Ne peut jamais ouvrir Plus.
+
+TESTS
+- 94 tests automatiques (npm run verifier).
+- Navigateur : village v5.42 (13), salon en direct à deux navigateurs sur faux serveur (9), Mots City (43),
+  coin anglais, quêtes, collisions, ruines, Quaternius, accueil 3D, hors ligne : tous OK.
+
+LIMITES
+- Salon testé sur un faux serveur, pas encore sur ton vrai Supabase.
+- Pages 3D : fermées depuis le jeu, mais une adresse tapée à la main y entre encore.
+- Vrai téléphone (fluidité, voix) non testé ici.

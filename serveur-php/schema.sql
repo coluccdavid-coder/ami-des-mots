@@ -1,0 +1,74 @@
+-- Ami des mots — base MySQL / MariaDB (OVH mutualisé, o2switch… : PHP 8.1+, MySQL 5.7+ ou MariaDB 10.3+).
+-- À exécuter une fois (phpMyAdmin → Importer). Aucune donnée sur les enfants : seulement des codes anonymes.
+
+CREATE TABLE IF NOT EXISTS ami_abonnements (
+  code VARCHAR(20) NOT NULL PRIMARY KEY,
+  client VARCHAR(100) NULL,
+  abonnement VARCHAR(100) NULL UNIQUE,
+  statut VARCHAR(30) NOT NULL,
+  fin DATETIME NULL,
+  maj DATETIME NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- Événements Stripe déjà traités (Stripe peut renvoyer le même événement).
+CREATE TABLE IF NOT EXISTS ami_evenements_stripe (
+  event_id VARCHAR(100) NOT NULL PRIMARY KEY,
+  type VARCHAR(80) NOT NULL,
+  traite DATETIME NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- Générateur de vannes : demandes par jour et par code Plus.
+CREATE TABLE IF NOT EXISTS ami_vannes_appels (
+  code VARCHAR(20) NOT NULL,
+  jour DATE NOT NULL,
+  n INT NOT NULL DEFAULT 0,
+  PRIMARY KEY (code, jour)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- Salon des battles : qui est là (oublié après quelques secondes sans nouvelles) et messages récents (2 minutes).
+CREATE TABLE IF NOT EXISTS ami_salon_presence (
+  sujet VARCHAR(80) NOT NULL,
+  cle VARCHAR(40) NOT NULL,
+  meta VARCHAR(1000) NOT NULL DEFAULT '',
+  vu BIGINT NOT NULL,
+  PRIMARY KEY (sujet, cle),
+  KEY vu (vu)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE IF NOT EXISTS ami_salon_messages (
+  id BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  sujet VARCHAR(80) NOT NULL,
+  evenement VARCHAR(30) NOT NULL,
+  charge VARCHAR(2000) NOT NULL,
+  t BIGINT NOT NULL,
+  KEY sujet_id (sujet, id),
+  KEY t (t)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- Limite de requêtes par adresse (empreinte, jamais l'adresse en clair).
+CREATE TABLE IF NOT EXISTS ami_limites (
+  empreinte CHAR(16) NOT NULL,
+  minute BIGINT NOT NULL,
+  n INT NOT NULL DEFAULT 0,
+  PRIMARY KEY (empreinte, minute)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- Veille des programmes et annales : propositions de l'IA, publiées seulement après validation d'un adulte.
+CREATE TABLE IF NOT EXISTS ami_veille (
+  id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  sorte VARCHAR(20) NOT NULL,
+  classe VARCHAR(10) NOT NULL,
+  source VARCHAR(500) NOT NULL,
+  empreinte_source CHAR(64) NOT NULL,
+  proposition MEDIUMTEXT NOT NULL,
+  statut VARCHAR(20) NOT NULL DEFAULT 'a_valider',
+  cree DATETIME NOT NULL,
+  decide DATETIME NULL,
+  KEY statut (statut)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE IF NOT EXISTS ami_publications (
+  cle VARCHAR(40) NOT NULL PRIMARY KEY,
+  contenu MEDIUMTEXT NOT NULL,
+  maj DATETIME NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
