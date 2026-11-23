@@ -1177,7 +1177,8 @@ await test('aucune promesse de santé, aucun traceur ; un seul envoi : le code d
   assert.ok(!/rééduc|thérap|aphasi|AVC|guérir|soigne(?!\s+rien)|Alzheimer/i.test(tout.replace(/il ne soigne rien/g, '')), 'promesse de santé');
   const J = lire('js/jeu.js');
   assert.ok(!/google-analytics|gtag|fbq|matomo|sendBeacon|XMLHttpRequest/.test(J));
-  assert.strictEqual((J.match(/fetch\(/g) || []).length, 3, 'trois fetch : vérification du code, vannes IA (Plus), carte des programmes de maths (serveur configuré)');
+  assert.strictEqual((J.match(/fetch\(/g) || []).length, 4, 'quatre fetch : vérification du code, vannes IA (Plus), vannes en direct (serveur configuré), carte des programmes de maths');
+  assert.match(J, /fetch\(CONFIG\.API_VANNES_DIRECT, /); assert.match(J, /API_VANNES_DIRECT = b \+ 'vannes-direct\.php'/);
   assert.match(J, /fetch\(String\(CONFIG\.SERVEUR\)\.replace\(\/\\\/\?\$\/, '\/'\) \+ 'programme\.php\?quoi=maths'/);
   assert.match(J, /fetch\(CONFIG\.API_ABONNEMENT \+/); assert.match(J, /fetch\(CONFIG\.API_VANNES, /);
   assert.match(lire('index.html'), /connect-src 'self' https:\/\/\*\.supabase\.co wss:\/\/\*\.supabase\.co;/);
@@ -1472,7 +1473,31 @@ await test('v5.64 : vannes qui parlent des deux objets, vraies silhouettes, voix
   const ombres = fs.readdirSync(path.join(__dirname, '..', 'img/ombres'));
   assert.ok(ombres.length >= 110, 'silhouettes : ' + ombres.length);
   const hortense = { name:'Microsoft Hortense - French (France)', lang:'fr-FR', localService:true }, denise = { name:'Microsoft Denise Online (Natural) - French (France)', lang:'fr-FR', localService:false }, google = { name:'Google français', lang:'fr-FR', localService:false };
+  assert.strictEqual(A.sansEmojis('Le soleil ?! Pour voir. 😂 🇬🇧 « Look! » 🔥'), 'Le soleil? Pour voir. Look!', 'la voix ne lit pas les émojis');
   assert.ok(A.noteVoix(denise, 'fr-FR') > A.noteVoix(google, 'fr-FR') && A.noteVoix(google, 'fr-FR') > A.noteVoix(hortense, 'fr-FR'), 'ordre des voix');
+});
+
+await test('v5.66 : vannes écrites en direct par l’IA, jamais deux fois, relues par le juge, repli sans serveur', async () => {
+  const w = page(); const A = w.AmiDesMots;
+  A.base.ui = 'fr'; A.J().langueBlagues = 'fr'; A.J().facile = false; A.J().humour = 3;
+  assert.strictEqual(A.iaPrendre('🏝️', '☀️'), null, 'sans serveur : rien');
+  const envois = []; let n = 0;
+  w.fetch = async (url, o) => { const d = JSON.parse(o.body); envois.push(d); n++;
+    const v = {}; for(const f of d.fausses) v[f] = n === 1 && /soleil/.test(f) ? 'Il a voulu frapper la serviette.' : 'Vanne IA n°' + n + ' sur ' + f + ' 😂';
+    return { ok:true, status:200, json:async () => ({ vannes:v }) }; };
+  A.CONFIG.API_VANNES_DIRECT = 'https://exemple.test/vannes-direct.php';
+  await A.iaPrecharger('mots', 'Quel est le nom ?', { id:'🏝️', texte:'beach (plage)' }, [{ id:'☀️', texte:'sun (soleil)' }, { id:'🌊', texte:'wave (vague)' }], 3, 'fr');
+  const d = envois[0];
+  assert.deepStrictEqual(Object.keys(d).sort(), ['bonne', 'deja', 'fausses', 'langue', 'question', 'sujet', 'ton'], 'rien de personnel envoyé');
+  assert.strictEqual(A.iaPrendre('🏝️', '☀️'), null, 'le juge a jeté la vanne violente');
+  const v = A.blague('🌊', '🏝️');
+  assert.match(v, /Vanne IA n°1 sur wave/, 'la vanne de l’IA est utilisée : ' + v);
+  assert.strictEqual(A.iaPrendre('🏝️', '🌊'), null, 'une vanne IA ne sert qu’une fois');
+  await A.iaPrecharger('mots', 'Quel est le nom ?', { id:'🏝️', texte:'beach (plage)' }, [{ id:'🌊', texte:'wave (vague)' }], 3, 'fr');
+  assert.ok(envois[1].deja.some(x => /n°1 sur wave/.test(x)), 'l’IA reçoit les vannes déjà dites');
+  w.fetch = async () => { throw new Error('hors ligne'); };
+  await A.iaPrecharger('mots', 'q', { id:'🐱', texte:'cat (chat)' }, [{ id:'🐶', texte:'dog (chien)' }], 1, 'fr');
+  assert.ok(A.blague('🐶', '🐱'), 'hors ligne : Ami garde ses vannes à lui');
 });
 
 console.log(`\n${ok} réussi(s), ${ko} échoué(s)`);

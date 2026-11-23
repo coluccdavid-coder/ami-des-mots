@@ -66,6 +66,14 @@ async function certificatValide(jeton, code){ const [charge, sig] = jeton.split(
     for(let i = 0; i < 4; i++) await appel('POST', '/vannes.php', { code:'AMI-AAAA-BBBB-CCCC' });
     r = await appel('POST', '/vannes.php', { code:'AMI-AAAA-BBBB-CCCC' });
     verif('vannes : 6e demande du jour → quota', r.st === 429 && r.j.max === 5, r.j);
+    // Vannes en direct (v5.66) : sans Plus, une vanne par mauvaise réponse, rien de personnel, nettoyées.
+    claude.texte = 'Ok : {"sun (soleil)":"Le soleil ? Tu poses ta serviette dessus ? Ça va chauffer ! 🔥","wave (vague)":"<b>trop</b> https://x.fr","rain (pluie)":"court"}';
+    r = await appel('POST', '/vannes-direct.php', { sujet:'mots', ton:3, langue:'fr', question:'Quel est le nom ?', bonne:'beach (plage)', fausses:['sun (soleil)', 'wave (vague)', 'rain (pluie)'], deja:['Vieille vanne'], prenom:'Léo' });
+    verif('vannes directes : une vanne propre par mauvaise réponse', r.st === 200 && Object.keys(r.j.vannes).join() === 'sun (soleil)' && /serviette/.test(r.j.vannes['sun (soleil)']), r.j);
+    { const m = claude.dernier.corps.messages[0].content[0].text;
+      verif('vannes directes : question, réponses, ton cash et déjà-dites transmis ; pas le prénom', /beach \(plage\)/.test(m) && /battle/.test(m) && /Vieille vanne/.test(m) && /Angle imposé/.test(m) && !/Léo/.test(m), m); }
+    r = await appel('POST', '/vannes-direct.php', { bonne:'x', fausses:[] });
+    verif('vannes directes : question incomplète refusée', r.st === 400, r.j);
     // Fin d'abonnement
     abos.sub_1.status = 'canceled';
     r = await webhook({ id:'evt_4', type:'customer.subscription.deleted', data:{ object:{ id:'sub_1' } } });

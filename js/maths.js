@@ -438,7 +438,7 @@
     return { id, chap:id, enonce:q.enonce, bon:q.bon, regle:q.expl,
       faux:q.faux.map(f => { const vals = Object.assign({ f:f.v }, v);
         // fraiche(memoire) : la vanne est choisie au moment où elle s'affiche, parmi celles pas encore dites.
-        return { en:f.v, cle:f.cle, vanne:vanne(f.cle, ton, vals, r) + expl(f.cle, ton), fraiche:memoire => vanne(f.cle, ton, vals, null, memoire) + expl(f.cle, ton) }; }) };
+        return { en:f.v, cle:f.cle, explication:expl(f.cle, ton), vanne:vanne(f.cle, ton, vals, r) + expl(f.cle, ton), fraiche:memoire => vanne(f.cle, ton, vals, null, memoire) + expl(f.cle, ton) }; }) };
   }
   const chapitresDe = niv => (carte.niveaux[niv] || { chapitres:[] }).chapitres;
   const disponible = id => !!G[id];

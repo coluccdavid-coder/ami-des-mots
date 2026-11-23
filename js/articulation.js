@@ -379,8 +379,12 @@
               const lancer = () => {
                 if(lance || el.paused || el.ended) return;
                 lance = true;
-                const duree = isFinite(el.duration) && el.duration > 0 ? el.duration * 1000 : 0;
-                demarrer(seq, { duree, horloge:() => el.currentTime * 1000 });
+                // v5.65 : les enregistrements commencent et finissent par un petit silence. Sans le retirer,
+                // la bouche bougeait avant le son et continuait après (effet « décalé »).
+                const total = isFinite(el.duration) && el.duration > 0 ? el.duration : 0;
+                const avant = total > .9 ? .22 : total > .5 ? .12 : 0, apres = total > .9 ? .3 : total > .5 ? .15 : 0;
+                const duree = total ? Math.max(250, (total - avant - apres) * 1000) : 0;
+                demarrer(seq, { duree, horloge:() => Math.max(0, el.currentTime - avant) * 1000 });
               };
               el.addEventListener('playing', lancer, { once:true });
               el.addEventListener('loadedmetadata', () => {
