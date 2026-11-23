@@ -1649,3 +1649,70 @@ html[data-facile="1"] .ami-rx,html[data-facile="1"] .ami-rx .ami-rx-objet{animat
   .carte-apprentissage{border-radius:14px;padding:.7rem .8rem}
   .carte-apprentissage span{width:100%}
 }
+
+
+/* v5.58 — finition transversale : cohérence, lisibilité et confort tactile */
+:root{--ami-focus:#78e8ff;--ami-card-border:rgba(255,255,255,.19)}
+html{scroll-behavior:smooth;scroll-padding-top:18px}
+body{text-rendering:optimizeLegibility;-webkit-font-smoothing:antialiased}
+button,a,select,input{touch-action:manipulation}
+button:focus-visible,a:focus-visible,select:focus-visible,input:focus-visible,[tabindex]:focus-visible{outline:3px solid var(--ami-focus)!important;outline-offset:3px!important}
+#app{isolation:isolate}
+#app>main,#app>section{width:min(100%,1000px);margin-left:auto;margin-right:auto}
+#app .verre,#app .jeu-ligne,#app .ligne-carnet,#app .joueur-carte,#app .tuile,#app .carte-anglais{border-color:var(--ami-card-border)}
+#app button:not(.lien):not(.bouton-rond){min-height:44px}
+#app img{max-width:100%;height:auto}
+#app p{text-wrap:pretty}
+#app h1,#app h2,#app h3{text-wrap:balance}
+#app .question,#app .consigne,#app .mot-a-trouver{max-width:900px;margin-left:auto;margin-right:auto}
+#app .choix-mot,#app .piege-opt{min-height:52px}
+@media(min-width:1100px){#app>main{max-width:1000px}#app .grille,#app .cartes-anglais{gap:20px}}
+@media(min-width:1600px){body{font-size:19px}#app>main{max-width:1120px}}
+@media(max-width:600px){body{font-size:16px}#app .actions{gap:9px}#app .actions .moyen{flex:1 1 100%;max-width:none}#app .barre{padding:10px 12px}#app .bouton-rond{width:46px;height:46px}#app .gros{width:min(100%,420px);padding:15px 20px;font-size:1.12rem}}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*{scroll-behavior:auto!important}}
+
+/* =====================================================================
+   v5.60 — ORDINATEUR : tout l'écran est utilisé
+   Les écrans s'élargissent jusqu'à ~1760 px (au-delà, les lignes deviendraient trop longues à lire),
+   les cartes se rangent sur plus de colonnes, les questions occupent la hauteur de l'écran.
+   ===================================================================== */
+.petit-bouton{ font:inherit; font-size:.92rem; font-weight:800; color:inherit; cursor:pointer; padding:7px 13px; border-radius:999px;
+  border:1px solid rgba(255,255,255,.22); background:rgba(255,255,255,.08); transition:background .15s, transform .15s; }
+.petit-bouton:hover{ background:rgba(255,255,255,.16); transform:translateY(-1px); }
+.petit-bouton.actif, .petit-bouton[aria-pressed="true"]{ background:linear-gradient(90deg, #ffd45c, #ffb347); color:#3a2600; border-color:transparent; }
+@media (min-width:1100px){
+  #app > main:not(.accueil), #app > .barre, #app .barre{ max-width:min(1760px, 94vw); }
+  #app > main:not(.accueil){ width:min(1760px, 94vw); }
+  #app .cartes-anglais{ grid-template-columns:repeat(auto-fill, minmax(250px, 1fr)); gap:20px; }
+  #app .carte-anglais{ padding:22px 18px; font-size:1.05rem; }
+  #app .grille{ grid-template-columns:repeat(auto-fill, minmax(220px, 1fr)); }
+  /* Questions : la question à gauche, grande ; les réponses à droite, en grosses touches ; toute la hauteur. */
+  #app .piege-ecran{ min-height:calc(100vh - 120px); grid-template-columns:minmax(0, 1.15fr) minmax(460px, 1fr); gap:28px 48px; padding:clamp(28px, 3vw, 56px); }
+  #app .piege-haut{ padding:clamp(28px, 3vw, 48px); }
+  #app .piege-haut .ami-moyen{ width:clamp(120px, 11vw, 190px); }
+  #app .piege-fr{ font-size:clamp(2rem, 2.6vw, 3.1rem); }
+  #app .piege-options{ gap:18px; }
+  #app .piege-opt{ font-size:clamp(1.2rem, 1.35vw, 1.6rem)!important; padding:24px 28px!important; min-height:92px; }
+  #app .piege-retour{ font-size:1.15rem; }
+  /* Accueil : les grands boutons sur deux colonnes, sans défiler sur un écran 1080p. */
+  #app[data-ecran=accueil] .accueil{ grid-template-columns:1fr 1fr; align-content:center; }
+  #app[data-ecran=accueil] .accueil > .gros{ grid-column:auto; width:100%; max-width:none; margin:0; min-height:84px; }
+  #app[data-ecran=accueil] .accueil > .gros.defi, #app[data-ecran=accueil] .accueil > section, #app[data-ecran=accueil] .accueil > .installer-appli{ grid-column:1 / -1; }
+  /* Coins maths, sciences, anglais : en-tête sur toute la largeur, chapitres en grille large. */
+  #app .coin-maths .onglets-niveaux{ justify-content:center; }
+  #app .coin-maths h3, #app .coin-anglais h3{ text-align:left; font-size:1.25rem; margin-top:26px; }
+  #app .partie{ max-width:min(1760px, 94vw); }
+}
+@media (min-width:1600px){ body{ font-size:20px; } }
+
+/* v5.60 — clashs : public, séries, riposte d'Ami, finale */
+.clash-public{ display:flex; align-items:center; gap:10px; justify-content:center; font-weight:900; margin:6px 0 2px; }
+.clash-public .jauge{ display:inline-block; width:min(260px, 50vw); height:12px; border-radius:99px; background:rgba(255,255,255,.12); overflow:hidden; }
+.clash-public .jauge span{ display:block; height:100%; border-radius:inherit; background:linear-gradient(90deg, #ff6b6b, #ffd45c, #6ee7b7); transition:width .5s; }
+.clash-foule{ font-size:1.35rem; font-weight:950; letter-spacing:.02em; color:#ffd45c; text-shadow:0 4px 18px rgba(255,180,60,.45); animation:clash-pop .45s cubic-bezier(.2,1.6,.3,1); }
+.clash-foule strong{ display:block; font-size:1rem; color:#fff; }
+.clash-riposte{ font-weight:850; font-size:1.1rem; color:#ffe2c4; }
+.clash-riposte small{ color:#cfc9f5; font-weight:600; }
+.battle-ecran.finale{ box-shadow:0 0 0 2px rgba(255,212,92,.55), 0 26px 80px rgba(255,180,60,.18); }
+@keyframes clash-pop{ 0%{ transform:scale(.6); opacity:0 } 70%{ transform:scale(1.12) } 100%{ transform:scale(1); opacity:1 } }
+@media(prefers-reduced-motion:reduce){ .clash-foule{ animation:none } .clash-public .jauge span{ transition:none } }

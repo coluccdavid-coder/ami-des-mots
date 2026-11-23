@@ -1,0 +1,7 @@
+AMI DES MOTS — VERSION 5.58
+
+- Finition transversale de l’interface : confort tactile, focus clavier, lisibilité et adaptation aux grands écrans.
+- Professeur local enrichi avec six leçons supplémentaires : couleurs, division, comparatif anglais, pourcentages, voix passive et discriminant.
+- Les profils, la progression locale, les modules existants et le fonctionnement hors ligne sont conservés.
+
+Limites : cette version n’ajoute pas de pack de modèles 3D photoréalistes ni de carte AAA. Le rendu 4K dépend de l’écran, du navigateur et du GPU. Le professeur reste un tuteur local à contenus vérifiés, pas un modèle génératif connecté. Validation visuelle sur appareils réels encore nécessaire.

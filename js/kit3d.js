@@ -148,12 +148,17 @@ export function fusionner(KIT, liste, ombres = true){
 // Un objet mobile (voiture…) : copie indépendante, roues repérées.
 export function objet(KIT, nom, echelle){
   const o = KIT.objets[nom].clone(true); o.scale.setScalar(echelle);
-  if(/^car_/.test(nom)) o.rotation.y = Math.PI;   // les voitures KayKit regardent vers -z ; nos véhicules avancent vers +z
+  // Conserver l'axe natif des modèles KayKit : leur pivot est déjà orienté
+  // dans le sens de l'avant utilisé par la circulation du monde (+Z).
+  // Ne pas appliquer de demi-tour ici : le parent du véhicule gère le sens
+  // selon sa vitesse (0 pour +Z, PI pour -Z).
   const roues = []; o.traverse(x => { if(x.isMesh){ x.castShadow = true; x.receiveShadow = true; } if(/wheel/i.test(x.name)) roues.push(x); });
   const g = new THREE.Group(); g.add(o); return { g, roues };
 }
 
 // Véhicule Quaternius : remis dans l'axe (avance vers +z, phares devant), posé au sol, à la longueur voulue (m).
+// Avant des modèles sans phares nommés, sur leur grand axe d'origine (vérifié sur les modèles du pack).
+export const AVANT_Q = { Bus:'min', SchoolBus:'min', Ambulance:'max' };
 export const VEHICULES_Q = { NormalCar1:4.4, NormalCar2:4.4, SUV:4.8, Taxi:4.5, SportsCar:4.5, Cop:4.6, Bus:10, SchoolBus:9, Ambulance:6, Bicycle:1.8 };
 export function objetVehicule(KIT, nom, longueur){
   const src = KIT.objets[nom]; if(!src) return null;
@@ -163,6 +168,9 @@ export function objetVehicule(KIT, nom, longueur){
   pivot.updateMatrixWorld(true);
   // Les phares (ou la lumière bleue) indiquent l'avant.
   let avant = null; o.traverse(x => { if(x.isMesh && /Headlight|BlueLight/i.test(x.material.name)){ const b = new THREE.Box3().setFromObject(x); avant = b.getCenter(new THREE.Vector3()).z - new THREE.Box3().setFromObject(pivot).getCenter(new THREE.Vector3()).z; } });
+  // Sans phares nommés (bus, car scolaire, ambulance), l'avant est connu d'après la forme du modèle :
+  // côté « min » ou « max » de son grand axe d'origine (capot plus bas, pare-brise).
+  if(avant === null && AVANT_Q[nom]){ const ax = t.x > t.z ? new THREE.Vector3(1, 0, 0) : new THREE.Vector3(0, 0, 1); if(AVANT_Q[nom] === 'min') ax.negate(); avant = ax.applyEuler(pivot.rotation).z; }
   if(avant !== null && avant < 0) pivot.rotation.y += Math.PI;
   pivot.updateMatrixWorld(true);
   const b2 = new THREE.Box3().setFromObject(pivot), t2 = b2.getSize(new THREE.Vector3()), c2 = b2.getCenter(new THREE.Vector3());
@@ -176,6 +184,19 @@ export function objetVehicule(KIT, nom, longueur){
 // ── Ambiance : ciel réaliste, reflets, lueur des lumières (bloom) ─
 export function ambiance(renderer, scene, camera, { haute = true } = {}){
   const sky = new Sky(); sky.scale.setScalar(450); scene.add(sky);
+  // v5.60 — Ciel affiché : un dégradé franc (bleu profond en haut, clair à l'horizon, halo autour du soleil).
+  // Le ciel physique (Sky) reste calculé pour les reflets, mais à l'écran il paraissait blanc et délavé.
+  const degrade = new THREE.Mesh(new THREE.SphereGeometry(1, 48, 24), new THREE.ShaderMaterial({
+    uniforms:{ haut:{ value:new THREE.Color(0x2f7fe0) }, horizon:{ value:new THREE.Color(0xbfe4ff) }, halo:{ value:new THREE.Color(0xfff0c8) }, dirSoleil:{ value:new THREE.Vector3(0, 1, 0) }, forceHalo:{ value:.55 } },
+    vertexShader:'varying vec3 vDir; void main(){ vDir = normalize(position); gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }',
+    fragmentShader:'uniform vec3 haut; uniform vec3 horizon; uniform vec3 halo; uniform vec3 dirSoleil; uniform float forceHalo; varying vec3 vDir;' +
+      'void main(){ float h = clamp(vDir.y, -0.2, 1.0); vec3 c = mix(horizon, haut, pow(max(h, 0.0), 0.55)); if(h < 0.0) c = horizon * (1.0 + h * 1.5);' +
+      ' float s = max(dot(normalize(vDir), normalize(dirSoleil)), 0.0); c += halo * (pow(s, 64.0) * 1.2 + pow(s, 6.0) * 0.25) * forceHalo; gl_FragColor = vec4(c, 1.0); }',
+    side:THREE.BackSide, depthWrite:false, fog:false, toneMapped:false }));
+  degrade.renderOrder = -1; degrade.frustumCulled = false; scene.add(degrade);
+  degrade.onBeforeRender = () => { degrade.scale.copy(sky.scale).multiplyScalar(.98); };
+  sky.material.colorWrite = false; sky.material.depthWrite = false;
+  const COULEURS_CIEL = { jour:[0x2f7fe0, 0xbfe4ff], couchant:[0x4a5fb8, 0xffb27a], nuit:[0x070b24, 0x1b2550] };
   const U = sky.material.uniforms; U.turbidity.value = 3.2; U.rayleigh.value = 2.4; U.mieCoefficient.value = .004; U.mieDirectionalG.value = .86;
   const soleil = new THREE.Vector3();
   // Étoiles (visibles la nuit)
@@ -192,12 +213,21 @@ export function ambiance(renderer, scene, camera, { haute = true } = {}){
     composer.addPass(new OutputPass());
   }
   return {
-    sky, etoiles,
+    sky, etoiles, degrade,
     // élévation et azimut en degrés ; nuit de 0 à 1
     soleil(elev, azim, nuit){
       soleil.setFromSphericalCoords(1, THREE.MathUtils.degToRad(90 - elev), THREE.MathUtils.degToRad(azim));
       U.sunPosition.value.copy(soleil); U.rayleigh.value = 2.4 + Math.max(0, 1 - elev / 25) * 1.2;
-      sky.visible = elev > -7; etoiles.material.opacity = Math.max(0, nuit - .35) * 1.4;
+      sky.visible = elev > -7;
+      { // Dégradé du ciel selon la hauteur du soleil : jour → couchant → nuit.
+        const D = degrade.material.uniforms, jour = Math.min(1, Math.max(0, (elev - 4) / 16)), nuitK = Math.min(1, Math.max(0, (-elev + 2) / 10));
+        const m = (a, b, k) => new THREE.Color(a).lerp(new THREE.Color(b), k);
+        D.haut.value.copy(m(COULEURS_CIEL.couchant[0], COULEURS_CIEL.jour[0], jour)).lerp(new THREE.Color(COULEURS_CIEL.nuit[0]), nuitK);
+        D.horizon.value.copy(m(COULEURS_CIEL.couchant[1], COULEURS_CIEL.jour[1], jour)).lerp(new THREE.Color(COULEURS_CIEL.nuit[1]), nuitK);
+        D.dirSoleil.value.copy(soleil); D.forceHalo.value = elev > -4 ? .55 + (1 - jour) * .4 : 0;
+        if(scene.fog) scene.fog.color.copy(D.horizon.value);
+        if(scene.background && scene.background.isColor) scene.background.copy(D.horizon.value);
+      } etoiles.material.opacity = Math.max(0, nuit - .35) * 1.4;
       // Seuil > 1 : seules les vraies sources (néons, lampes, phares) brillent, pas le soleil sur les murs.
       if(bloom){ bloom.strength = .15 + nuit * .6; bloom.threshold = 1.05 - nuit * .35; }
       if(haute && Math.abs(elev - derniereElev) > 2.5){

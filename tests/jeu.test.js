@@ -21,7 +21,7 @@ function page(langue, config, avant){
   w.TextEncoder = TextEncoder; w.TextDecoder = TextDecoder;
   w.__fetch = []; w.fetch = async (u) => { w.__fetch.push(String(u)); return { ok:true, json:async () => (w.__reponse || { actif:false }) }; };
   if(avant) avant(w);
-  for(const f of ['js/donnees.js', 'js/voix.js', 'js/textes.js', 'js/articulation.js', 'js/genres.js', 'js/confusions.js', 'js/vannes.js', 'js/pieges.js', 'js/anglais.js', 'js/histoires.js', 'js/blagues-en.js', 'js/parcours.js', 'js/rigolade.js', 'js/salon.js', 'js/juge.js', 'js/maths.js', 'js/sciences.js', 'js/offre.js', 'js/jeu.js']) w.eval(lire(f));
+  for(const f of ['js/donnees.js', 'js/voix.js', 'js/textes.js', 'js/articulation.js', 'js/genres.js', 'js/confusions.js', 'js/vannes.js', 'js/pieges.js', 'js/anglais.js', 'js/clash.js', 'js/histoires.js', 'js/blagues-en.js', 'js/parcours.js', 'js/rigolade.js', 'js/salon.js', 'js/juge.js', 'js/maths.js', 'js/sciences.js', 'js/offre.js', 'js/jeu.js']) w.eval(lire(f));
   return w;
 }
 // Certificats d'abonnement comme les signe le serveur (même format que serveur/functions/ami-abonnement).
@@ -533,7 +533,7 @@ await test('coin anglais : battle, situation et dictée jouables de bout en bout
   // Battle : une mauvaise réplique (vanne, pas de point) puis la bonne
   clic(w, '[data-a="battle"]'); clic(w, '[data-a="battle-go"][data-v="ami"]'); const plumes = A.J().plumes;
   for(let k = 0; k < 3; k++){
-    const txt = d.querySelector('.bulle-ami .piege-fr').textContent, m = E.BATTLE.find(x => txt.includes(x.ami)); assert.ok(m, txt);
+    const txt = d.querySelector('.bulle-ami .piege-fr').textContent, m = E.BATTLE.concat(w.CLASH.MANCHES).find(x => txt.includes(x.ami)); assert.ok(m, txt);
     const opts = [...d.querySelectorAll('.piege-opt')];
     if(k === 0){ const f = opts.find(b => b.textContent !== m.bon.en); f.click(); assert.ok(d.querySelector('#battle-retour').textContent.includes(m.faux.find(x => x.en === f.textContent).vanne)); assert.ok(f.disabled); }
     opts.find(b => b.textContent === m.bon.en).click(); assert.match(d.querySelector('#battle-retour').textContent, /Bien envoyé|Trouvé/);
@@ -1045,7 +1045,7 @@ await test('défi du jour : il puise dans tous les thèmes ouverts', () => {
 });
 await test('abonnement : lien Stripe avec le code anonyme ; un certificat signé ouvre tout ; rien d\'autre n\'est envoyé', async () => {
   const { publique } = await cles();
-  const cfg = { LIEN_PAIEMENT:'https://buy.stripe.com/test_abc', API_ABONNEMENT:'https://x.supabase.co/functions/v1/ami-abonnement', CLE_PUBLIQUE:publique };
+  const cfg = { MODE_PAYANT:true, LIEN_PAIEMENT:'https://buy.stripe.com/test_abc', API_ABONNEMENT:'https://x.supabase.co/functions/v1/ami-abonnement', CLE_PUBLIQUE:publique };
   const w = page(undefined, cfg); const A = w.AmiDesMots, d = w.document;
   await w.AmiDesMotsPret;
   const code = etat(w).abo.code;
@@ -1080,7 +1080,7 @@ await test('triche : modifier le stockage du navigateur ne débloque rien', asyn
   ];
   for(const abo of essais){
     const st = { joueurs:[{ nom:'', couleur:0, plumes:0, etoiles:{}, jours:[], porte:[], mots:{}, trophees:[], defis:[] }], actif:0, abo };
-    const w = page(undefined, { CLE_PUBLIQUE:publique }, x => x.localStorage.setItem('amidesmots:v2', JSON.stringify(st)));
+    const w = page(undefined, { MODE_PAYANT:true, CLE_PUBLIQUE:publique }, x => x.localStorage.setItem('amidesmots:v2', JSON.stringify(st)));
     await w.AmiDesMotsPret;
     assert.strictEqual(w.AmiDesMots.plus(), false, JSON.stringify(abo).slice(0, 60));
   }
@@ -1089,7 +1089,7 @@ await test('abonnement terminé : tout se referme (après 3 jours de grâce hors
   const { publique } = await cles();
   const fin = new Date(Date.now() - 4 * 864e5).toISOString();
   const st = { joueurs:[{ nom:'', couleur:0, plumes:0, etoiles:{}, jours:[], porte:[], mots:{}, trophees:[], defis:[] }], actif:0, abo:{ code:'AMI-AAAA-BBBB-CCCC', jeton:await jeton('AMI-AAAA-BBBB-CCCC', fin) } };
-  const w = page(undefined, { CLE_PUBLIQUE:publique }, x => x.localStorage.setItem('amidesmots:v2', JSON.stringify(st)));
+  const w = page(undefined, { MODE_PAYANT:true, CLE_PUBLIQUE:publique }, x => x.localStorage.setItem('amidesmots:v2', JSON.stringify(st)));
   await w.AmiDesMotsPret;
   assert.strictEqual(w.AmiDesMots.plus(), false);
 });
@@ -1112,7 +1112,7 @@ await test('abonnement résilié : dès que le serveur répond « inactif », le
   const { publique } = await cles();
   const fin = new Date(Date.now() + 20 * 864e5).toISOString();
   const st = { joueurs:[{ nom:'', couleur:0, plumes:0, etoiles:{}, jours:[], porte:[], mots:{}, trophees:[], defis:[] }], actif:0, abo:{ code:'AMI-AAAA-BBBB-CCCC', jeton:await jeton('AMI-AAAA-BBBB-CCCC', fin), verifie:'2000-01-01' } };
-  const w = page(undefined, { CLE_PUBLIQUE:publique, API_ABONNEMENT:'https://x.supabase.co/functions/v1/ami-abonnement' }, x => { x.localStorage.setItem('amidesmots:v2', JSON.stringify(st)); x.__reponse = { actif:false }; });
+  const w = page(undefined, { MODE_PAYANT:true, CLE_PUBLIQUE:publique, API_ABONNEMENT:'https://x.supabase.co/functions/v1/ami-abonnement' }, x => { x.localStorage.setItem('amidesmots:v2', JSON.stringify(st)); x.__reponse = { actif:false }; });
   await w.AmiDesMotsPret;
   assert.strictEqual(w.AmiDesMots.plus(), false);
   assert.strictEqual(etat(w).abo.jeton, '');
@@ -1193,7 +1193,7 @@ await test('aucune promesse de santé, aucun traceur ; un seul envoi : le code d
 });
 await test('vannes proposées par l’IA : Plus seulement, le juge trie, un adulte garde ou jette', async () => {
   const { publique } = await cles(); const fin = new Date(Date.now() + 30 * 864e5).toISOString();
-  const cfg = { API_ABONNEMENT:'https://x.supabase.co/functions/v1/ami-abonnement', API_VANNES:'https://x.supabase.co/functions/v1/ami-vannes', CLE_PUBLIQUE:publique };
+  const cfg = { MODE_PAYANT:true, API_ABONNEMENT:'https://x.supabase.co/functions/v1/ami-abonnement', API_VANNES:'https://x.supabase.co/functions/v1/ami-vannes', CLE_PUBLIQUE:publique };
   const w = page(undefined, cfg), d = w.document, A = w.AmiDesMots; A.base.ui = 'fr'; A.base.cible = 'en';
   await w.AmiDesMotsPret;
   const parents = () => { A.accueil(); clic(w, '[data-a="anglais"]'); clic(w, '[data-a="parents"]'); const [a, b] = d.querySelector('main').textContent.match(/(\d) × (\d)/).slice(1).map(Number); d.querySelector('#porte-parents').value = String(a * b); clic(w, '[data-a="parents-ouvrir"]'); };
@@ -1305,6 +1305,29 @@ await test('salon : la battle peut être de maths (même niveau, mêmes question
   const a = M.questionsSalon(7, 6, '1re'); assert.strictEqual(a.length, 6); assert.ok(a.every(q => q.bon && q.faux.length >= 1 && /Maths 1re/.test(q.consigne)));
   assert.match(lire('js/jeu.js'), /questionsBattle\(d\.graine, d\.n, m\)/);
 });
+console.log('Clashs de la battle');
+await test('clashs : 30 manches, répliques justes et erreurs d’anglais expliquées, rien qui vise le joueur', () => {
+  const w = page(), C = w.CLASH, B = w.ANGLAIS.BATTLE.concat(C.MANCHES);
+  assert.ok(B.length >= 30, B.length);
+  assert.strictEqual(new Set(B.map(m => m.ami)).size, B.length, 'pas deux fois la même vantardise');
+  for(const m of B){ assert.ok(m.ami && m.fr && m.bon.en && m.bon.fr && m.faux.length === 2, m.ami);
+    assert.ok(!m.faux.some(f => f.en === m.bon.en), m.ami);
+    for(const f of m.faux) assert.ok(w.JUGE.juger(f.vanne).ok, f.vanne);
+    assert.ok(w.JUGE.juger(m.bon.fr).ok && !/\b(ta mère|your mom|stupid|idiot|nul)\b/i.test(m.bon.en + m.bon.fr), m.bon.en); }
+  for(const r of C.RIPOSTES) assert.ok(w.JUGE.juger(r.fr).ok && r.en, r.en);
+  assert.deepStrictEqual([C.energie(0), C.energie(1), C.energie(2)], [100, 55, 25]);
+});
+await test('battle : Ami contre-attaque quand on rate, le public s’enflamme et compte les séries', () => {
+  const w = page(), d = w.document, A = w.AmiDesMots; A.base.ui = 'fr'; A.base.cible = 'en'; A.accueil();
+  clic(w, '[data-a="anglais"]'); clic(w, '[data-a="battle"]'); clic(w, '[data-a="battle-go"][data-v="ami"]');
+  const manche = () => { const t = d.querySelector('.piege-fr').textContent; return w.ANGLAIS.BATTLE.concat(w.CLASH.MANCHES).find(m => t.includes(m.ami)); };
+  let m = manche(); assert.ok(m, 'manche connue');
+  [...d.querySelectorAll('.piege-opt')].find(b => b.textContent === m.faux[0].en).click();
+  const r = d.querySelector('#battle-retour').textContent; assert.ok(w.CLASH.RIPOSTES.some(x => r.includes(x.en)), 'riposte d’Ami'); assert.ok(r.includes(m.faux[0].vanne.slice(0, 20)), 'la vanne explique l’erreur');
+  [...d.querySelectorAll('.piege-opt')].find(b => b.textContent === m.bon.en).click(); assert.ok(!/OHHHH|BOOM|Le public|punchline|plumes par terre/.test(d.querySelector('#battle-retour').textContent), 'pas d’ovation au 2e essai');
+  for(let k = 0; k < 2; k++){ clic(w, '[data-a="battle-suivant"]'); m = manche(); [...d.querySelectorAll('.piege-opt')].find(b => b.textContent === m.bon.en).click(); }
+  assert.match(d.querySelector('#battle-retour').textContent, /Série de 2/); assert.ok(d.querySelector('main.finale'), 'la dernière manche est la finale');
+});
 console.log('Coin admin : gratuit ou Plus');
 await test('offre.js ouvre tout l’univers : thèmes, jeux, six joueurs et coins', () => {
   const w = page(undefined, null); const C = w.AmiDesMots.CONFIG;
@@ -1336,15 +1359,16 @@ await test('admin : cocher, décocher, télécharger un offre.js que le jeu reli
   const doc = d.document, M = d.AdminAmi, coche = (sel, v) => { const e = doc.querySelector(sel); assert.ok(e, sel); e.checked = v; e.dispatchEvent(new d.Event('change', { bubbles:true })); };
   assert.ok(doc.querySelector('#telecharger').disabled, 'rien à publier au départ');
   assert.match(doc.querySelector('.resume').textContent, /8\/8 thèmes gratuits.*50\/50 jeux gratuits.*21\/21 coins gratuits/);
-  coche('[data-theme="nature"]', false); coche('[data-jeu="memoire"]', false); coche('[data-coin="rap"]', true); coche('[data-coin="motscity"]', true);
+  coche('[data-theme="nature"]', false); coche('[data-jeu="memoire"]', false); coche('[data-coin="rap"]', false); coche('[data-coin="motscity"]', false);
   assert.match(doc.querySelector('.resume').textContent, /7\/8 thèmes gratuits.*47\/50 jeux gratuits.*19\/21 coins gratuits/);
   assert.ok(!doc.querySelector('#telecharger').disabled);
   assert.match(doc.querySelector('[data-coin="rap"]').closest('label').textContent, /✨ Plus/);
   const texte = M.fichier(M.offre), z = new JSDOM('', { runScripts:'outside-only' }).window; z.eval(texte);
   assert.deepStrictEqual(JSON.parse(JSON.stringify(z.OFFRE_AMI)), JSON.parse(JSON.stringify(M.offre)));
   assert.deepStrictEqual([...z.OFFRE_AMI.COINS_PLUS], ['rap', 'motscity']);
-  for(const id of ['nature', 'memoire']) assert.ok(texte.includes("'" + id + "'"));
-  // Tout décocher : l'admin prévient.
+  assert.ok(!z.OFFRE_AMI.THEMES_GRATUITS.includes('nature') && !z.OFFRE_AMI.JEUX_GRATUITS.includes('memoire'), 'nature et memoire passent dans Plus');
+  // Offre payante activée puis tout décoché : l'admin prévient.
+  coche('#mode', true);
   for(const e of doc.querySelectorAll('[data-theme]')) if(e.checked) coche('[data-theme="' + e.dataset.theme + '"]', false);
   assert.match(doc.querySelector('.alerte').textContent, /Aucun thème gratuit/);
   doc.querySelector('#annuler').click(); assert.ok(doc.querySelector('#telecharger').disabled, 'retour à l’offre en ligne');
@@ -1365,14 +1389,14 @@ await test('coin réservé à Plus : badge ✨, écran Plus au clic, aussi par l
   clic(w, '[data-a="anglais"]'); clic(w, '[data-a="oreilles"]'); assert.ok(!d.querySelector('main.plus'), 'coin gratuit ouvert');
   clic(w, '[data-a="anglais"]'); clic(w, '[data-a="battle"]'); clic(w, '[data-a="rap"]'); assert.ok(d.querySelector('main.plus'), 'rap → Plus');
   assert.strictEqual(d.querySelector('.barre [data-a]').dataset.a, 'battle', 'retour au menu battle');
-  const w2 = page(undefined, { COINS_PLUS:['rap'] }, x => x.history.replaceState(null, '', '/?aller=rap'));
+  const w2 = page(undefined, { MODE_PAYANT:true, COINS_PLUS:['rap'] }, x => x.history.replaceState(null, '', '/?aller=rap'));
   assert.ok(w2.document.querySelector('main.plus'), 'lien ?aller=rap du village 3D → Plus');
-  const w3 = page(undefined, { COINS_PLUS:['salon'] }, x => x.history.replaceState(null, '', '/?salon=ABCDE'));
+  const w3 = page(undefined, { MODE_PAYANT:true, COINS_PLUS:['salon'] }, x => x.history.replaceState(null, '', '/?salon=ABCDE'));
   assert.ok(w3.document.querySelector('main.plus'), 'lien de salon → Plus');
 });
 await test('coin réservé : un vrai abonné Plus y entre ; offre sans paiement : tout est ouvert', async () => {
   const { publique } = await cles(); const fin = new Date(Date.now() + 30 * 864e5).toISOString();
-  const w = page(undefined, { COINS_PLUS:['trompe'], API_ABONNEMENT:'https://x.supabase.co/functions/v1/ami-abonnement', CLE_PUBLIQUE:publique }), d = w.document;
+  const w = page(undefined, { MODE_PAYANT:true, COINS_PLUS:['trompe'], API_ABONNEMENT:'https://x.supabase.co/functions/v1/ami-abonnement', CLE_PUBLIQUE:publique }), d = w.document;
   await w.AmiDesMotsPret;
   w.__reponse = { actif:true, fin, jeton:await jeton('AMI-ABCD-EFGH-JKMN', fin) };
   w.AmiDesMots.ecranPlus(); d.getElementById('code').value = 'AMI-ABCD-EFGH-JKMN'; d.getElementById('form-code').dispatchEvent(new w.Event('submit', { cancelable:true })); await attendre(80);

@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="fr"><head><meta charset="utf-8"><title>Garage — sens des véhicules</title>
+<style>body{margin:0;background:#cfe6f7}canvas{display:block}</style>
+<base href="../../">
+<script type="importmap">{"imports":{"three":"./vendor/three.module.js"}}</script></head>
+<body><script type="module">
+// Page de contrôle : chaque véhicule est posé de profil ; la flèche rouge montre le sens « avant » (+z) utilisé par le jeu.
+// Le capot/pare-brise doit être du côté de la flèche.
+import * as THREE from 'three';
+import { chargerKit, objetVehicule, objet, VEHICULES_Q } from './js/kit3d.js';
+const r = new THREE.WebGLRenderer({ antialias:true }); r.setSize(1200, 700); document.body.appendChild(r.domElement);
+const s = new THREE.Scene(); s.background = new THREE.Color(0xcfe6f7); s.add(new THREE.HemisphereLight(0xffffff, 0x667788, 2.2)); const d = new THREE.DirectionalLight(0xffffff, 1.5); d.position.set(10, 20, 5); s.add(d);
+const cam = new THREE.PerspectiveCamera(30, 1200 / 700, .1, 500);
+const KIT = await chargerKit();
+const noms = Object.keys(VEHICULES_Q).filter(n => n !== 'Bicycle').concat(['car_sedan', 'car_hatchback', 'car_stationwagon']); let x = 0; const liste = [];
+for(const [i, nom] of noms.entries()){ const v = VEHICULES_Q[nom] ? objetVehicule(KIT, nom) : objet(KIT, nom, 4.4); if(!v) continue; const col = i % 4, lig = Math.floor(i / 4);
+  if(!VEHICULES_Q[nom]) v.g.scale.multiplyScalar(1);
+  v.g.rotation.y = Math.PI / 2; v.g.position.set(col * 14 - 21, 0, lig * 14 - 14); s.add(v.g);
+  const fl = new THREE.ArrowHelper(new THREE.Vector3(1, 0, 0), new THREE.Vector3(col * 14 - 21, 4.2, lig * 14 - 14), 3, 0xff2020, .9, .6); s.add(fl); liste.push(nom); }
+cam.position.set(0, 30, 75); cam.lookAt(0, 0, -2); r.render(s, cam); window.__garage = liste;
+</script></body></html>

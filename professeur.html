@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#17113f">
+<title>Le professeur IA — Ami des Mots</title>
+<link rel="stylesheet" href="css/professeur-ia.css">
+</head>
+<body>
+<header class="top"><a href="index.html" class="back">← Retour au jeu</a><div class="brand">🦉 Ami des Mots <span>· Le professeur</span></div><div class="privacy">🔒 Progression conservée sur cet appareil</div></header>
+<main>
+<section class="hero"><div class="hero-art" aria-label="Ami le hibou, ton professeur">
+<div class="orbit orbit-a"></div><div class="orbit orbit-b"></div>
+<div class="owl-stage">
+<svg class="owl-svg" viewBox="0 0 260 270" role="img" aria-label="Hibou professeur souriant">
+<defs>
+ <linearGradient id="feathers" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#f6bd70"/><stop offset=".55" stop-color="#b96c43"/><stop offset="1" stop-color="#70402f"/></linearGradient>
+ <radialGradient id="belly"><stop stop-color="#fff1cf"/><stop offset="1" stop-color="#dfb98a"/></radialGradient>
+ <linearGradient id="wing" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#d88b50"/><stop offset="1" stop-color="#7d4937"/></linearGradient>
+ <filter id="shadow"><feGaussianBlur stdDeviation="7"/></filter>
+</defs>
+<ellipse cx="130" cy="246" rx="75" ry="12" fill="#15143b" opacity=".28" filter="url(#shadow)"/>
+<path d="M65 78 Q36 30 80 48 L104 65 Q130 46 156 65 L184 45 Q220 34 196 88 L204 175 Q196 227 130 232 Q64 227 56 175Z" fill="url(#feathers)" stroke="#693d31" stroke-width="5"/>
+<path d="M58 126 Q22 125 25 187 Q42 213 77 196Z" fill="url(#wing)" stroke="#693d31" stroke-width="4"/>
+<path d="M202 126 Q238 125 235 187 Q218 213 183 196Z" fill="url(#wing)" stroke="#693d31" stroke-width="4"/>
+<path d="M72 155 Q82 102 130 105 Q178 102 188 155 Q180 220 130 221 Q80 220 72 155Z" fill="url(#belly)"/>
+<g fill="#fff8e9" stroke="#70412f" stroke-width="4"><ellipse cx="99" cy="111" rx="35" ry="39"/><ellipse cx="161" cy="111" rx="35" ry="39"/></g>
+<g fill="#25304e"><ellipse cx="105" cy="116" rx="13" ry="18"/><ellipse cx="155" cy="116" rx="13" ry="18"/></g>
+<g fill="#fff"><circle cx="110" cy="108" r="5"/><circle cx="160" cy="108" r="5"/></g>
+<path d="M119 144 L141 144 L130 165Z" fill="#f2a83e" stroke="#9a5b2d" stroke-width="3"/>
+<path d="M104 187 Q130 202 156 187" fill="none" stroke="#c58b5a" stroke-width="4" stroke-linecap="round"/>
+<path d="M91 222 L84 245 L111 245 L119 226 M141 226 L149 245 L176 245 L169 222" fill="#f2a83e" stroke="#a55e2d" stroke-width="4" stroke-linejoin="round"/>
+<path d="M75 61 L69 20 Q98 31 112 57 M185 60 L193 20 Q164 31 148 57" fill="#bd7449" stroke="#70412f" stroke-width="4"/>
+<path d="M182 80 Q215 59 223 96 Q222 122 196 139" fill="#d98d52" stroke="#70412f" stroke-width="4"/>
+<path d="M190 95 Q211 86 215 102" fill="none" stroke="#f7d7a7" stroke-width="5" stroke-linecap="round"/>
+</svg>
+<div class="teacher-badge">PROF À BORD <span>✦</span></div>
+</div>
+<div class="floating-note note-one">A + B = progrès</div><div class="floating-note note-two">Hello ! 👋</div>
+</div><div class="hero-copy"><p class="eyebrow">TON PROFESSEUR PERSONNEL</p><h1>On apprend. On comprend. On progresse.</h1><p>Je m’adapte à ton niveau : patient quand tu découvres, plus exigeant quand tu es prêt.</p><div class="hero-tags"><span>✦ Adapté à ton âge</span><span>✦ À ton rythme</span><span>✦ Sans jugement</span></div></div></section>
+<section class="selectors">
+<label><span class="select-icon">🎓</span> TON NIVEAU<select id="niveau"><option value="primaire">Primaire · 6 à 10 ans</option><option value="college">Collège · 11 à 14 ans</option><option value="lycee">Lycée · 15 à 18 ans</option></select></label>
+<label><span class="select-icon">📚</span> TA MATIÈRE<select id="matiere"><option value="anglais">🇬🇧 Anglais</option><option value="maths">🔢 Mathématiques</option></select></label>
+<button id="start"><span>Commencer la leçon</span><b>→</b></button>
+</section>
+<section class="stats" aria-live="polite"><div class="stat-card stat-attempt"><i>✎</i><strong id="essais">0</strong><span>réponses tentées</span></div><div class="stat-card stat-correct"><i>✦</i><strong id="justes">0</strong><span>bonnes réponses</span></div><div class="stat-card stat-master"><i>♛</i><strong id="maitrisees">0</strong><span>notions maîtrisées</span></div></section>
+<section class="lesson" id="lesson" aria-live="polite">
+<div class="empty"><span>📚</span><h2>Choisis ta matière pour commencer</h2><p>Chaque leçon comprend une explication, un exemple, un exercice et un retour personnalisé.</p></div>
+</section>
+<p class="disclaimer">Version initiale du professeur : parcours adaptatif local avec contenus pédagogiques intégrés et vérifiables. Les nouvelles connaissances ne sont pas inventées automatiquement ; elles devront être ajoutées après validation pédagogique.</p>
+</main>
+<script src="js/professeur-ia.js"></script>
+<script>
+(function(){
+'use strict';
+const $=id=>document.getElementById(id), niveau=$('niveau'), matiere=$('matiere'), zone=$('lesson');
+let cours=null, verrou=false;
+const safe=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+function stats(){const p=AMI_PROFESSEUR.progression();$('essais').textContent=p.essais;$('justes').textContent=p.justes;$('maitrisees').textContent=p.maitrisees}
+function charger(){
+ cours=AMI_PROFESSEUR.choisir(niveau.value,matiere.value);verrou=false;
+ if(!cours){zone.innerHTML='<h2>Cette matière arrive bientôt pour ce niveau.</h2>';return}
+ zone.innerHTML='<div class="lesson-head"><span class="pill">'+safe(AMI_PROFESSEUR.COURS[niveau.value].nom)+'</span><span class="pill">'+(matiere.value==='anglais'?'🇬🇧 Anglais':'🔢 Mathématiques')+'</span></div><h2>'+safe(cours.titre)+'</h2><p class="notion">Notion : '+safe(cours.notion)+'</p><article class="teach"><h3>📖 Comprendre</h3><p>'+safe(cours.lecon)+'</p><div class="example"><b>Exemple</b><p>'+safe(cours.exemple)+'</p></div></article><article class="exercise"><h3>À toi de jouer</h3><p class="question">'+safe(cours.q)+'</p><div class="answers">'+cours.choix.map((v,i)=>'<button class="answer" data-i="'+i+'">'+safe(v)+'</button>').join('')+'</div><div id="feedback"></div></article>';
+ zone.querySelectorAll('.answer').forEach(b=>b.addEventListener('click',()=>repondre(Number(b.dataset.i))));
+}
+function repondre(i){
+ if(verrou)return;verrou=true;
+ const juste=i===cours.bon, result=AMI_PROFESSEUR.enregistrer(niveau.value,matiere.value,cours,juste);
+ zone.querySelectorAll('.answer').forEach((b,j)=>{b.disabled=true;if(j===cours.bon)b.classList.add('correct');else if(j===i)b.classList.add('wrong')});
+ const intro=juste?(result.maitrise>=3?'Excellent ! Cette notion commence à être bien installée.':'Bonne réponse ! Tu avances dans la bonne direction.'):(result.essais===1?'Pas grave : une erreur est une information utile.':'On reprend calmement. Tu vas y arriver.');
+ const feedback=$('feedback');
+ feedback.innerHTML='<div class="feedback '+(juste?'good':'try')+'"><h3>'+(juste?'✅ Bien joué !':'🧭 On reprend ensemble')+'</h3><p>'+intro+'</p><p>'+safe(cours.exp)+'</p>'+(result.maitrise>=3?'<p class="master">⭐ Notion maîtrisée — on pourra passer à la suite.</p>':'')+'<button id="next">'+(juste?'Continuer':'Réessayer une notion proche')+' →</button></div>';
+ $('next').addEventListener('click',charger);stats();
+}
+$('start').addEventListener('click',charger);
+niveau.addEventListener('change',()=>{zone.innerHTML='<div class="empty"><span>📚</span><h2>Niveau modifié</h2><p>Lance une leçon pour découvrir ton parcours.</p></div>'});
+matiere.addEventListener('change',()=>{zone.innerHTML='<div class="empty"><span>📚</span><h2>Matière modifiée</h2><p>Lance une leçon pour découvrir ton parcours.</p></div>'});
+stats();
+})();
+</script>
+</body></html>

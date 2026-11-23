@@ -14,6 +14,8 @@ node outils/tests-navigateur/test-coin-anglais.js # Professor Puzzle, portail, c
 node outils/tests-navigateur/test-ruines-vehicules.js # ruines, chasse au trésor, portails, véhicules (14)
 node outils/tests-navigateur/test-village542.js  # Ami says, étiquettes, café, école, météo, photo (13)
 node outils/tests-navigateur/test-maths-sciences.js # Prof Pi, vannes, examens, labo des sciences (7)
+node outils/tests-navigateur/test-sens-voitures.js # aucune voiture en marche arrière (village + Mots City)
+node outils/tests-navigateur/test-sens-city.js    # Mots City : droite/gauche à pied et en véhicule (5)
 node outils/tests-navigateur/hors-ligne.js       # démarrage sans réseau via le service worker
 ```
 Salon par le serveur PHP : `SERVEUR=http://127.0.0.1:8770/ node outils/tests-navigateur/test-salon-direct.js` (avec `php -S 127.0.0.1:8770 -t serveur-php`).
@@ -26,3 +28,5 @@ node outils/tests-navigateur/test-salon-direct.js  # 2 navigateurs : salon priv�
 ```
 Variables : `CHROME` (chemin de Chrome), `CAPTURES` (dossier des captures).
 Le Chrome sans écran dessine sans carte graphique : le jeu y tourne au ralenti, c'est normal.
+
+Contrôle visuel des véhicules : ouvrir http://localhost:8765/outils/tests-navigateur/garage.html (la flèche rouge = l'avant utilisé par le jeu).
