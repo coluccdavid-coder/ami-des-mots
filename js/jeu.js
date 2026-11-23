@@ -194,7 +194,7 @@
   const COINS = {
     pieges:['pieges', 'pieges-go'], situations:['situations', 'situation-go'], histoires:['histoires', 'histoire-go'],
     dictee:['dictee'], parcours:['parcours'], phrases:['phrases'], battle:['battle', 'battle-go'], rap:['rap'],
-    tournoi:['tournoi', 'tournoi-go', 'tournoi-go-memes', 'potes', 'potes-go', 'potes-joue', 'potes-revanche'], 'defi-pote':['defi-pote', 'defi-pote-go'],
+    tournoi:['tournoi', 'tournoi-go', 'tournoi-go-memes', 'potes', 'potes-go', 'potes-joue', 'potes-revanche', 'potes-trash'], 'defi-pote':['defi-pote', 'defi-pote-go'],
     salon:['salon', 'salon-creer', 'salon-rejoindre', 'salon-public', 'salon-entrer-public'],
     trompe:['trompe'], oreilles:['oreilles'], vraifaux:['vraifaux'], avent:['avent'], betisier:['betisier'], maison:['maison'],
     maths:['maths', 'maths-chap', 'maths-melange', 'maths-examen', 'maths-defi'], sciences:['sciences', 'sciences-theme', 'matieres', 'matiere', 'matiere-niveau', 'matiere-chap', 'matiere-melange', 'matiere-examen', 'examens', 'examen-go', 'examen-suite'],
@@ -2292,6 +2292,7 @@
         return '<button class="moyen' + (ch ? ' plein' : '') + '" data-a="potes-longueur" data-v="' + k + '" aria-pressed="' + ch + '">' + L[2] + ' · ' + (choix === 'melange' ? L[0] : L[1]) + ' questions</button>'; }).join(' ') + '</p>' +
       (window.MATHS ? '<p><label>Niveau de maths : <select id="potes-niveau">' + MATHS.NIVEAUX.map(n => '<option' + (n === niv ? ' selected' : '') + '>' + n + '</option>').join('') + '</select></label></p>' : '') +
       [0, 1, 2, 3].map(i => '<p><label>Joueur ' + (i + 1) + (i > 1 ? ' (facultatif)' : '') + ' : <input class="champ-pseudo" id="pote' + i + '" maxlength="12" value="' + esc(noms[i] || '') + '" placeholder="Pseudo"></label></p>').join('') +
+      (window.TRASH_TALK ? '<p class="choix-longueur"><button class="moyen' + (base.potesTrash ? ' plein' : '') + '" data-a="potes-trash" aria-pressed="' + !!base.potesTrash + '">🥊 Trash talk : ' + (base.potesTrash ? 'ON' : 'OFF') + '</button></p>' : '') +
       '<p><button class="gros" data-a="potes-go">⚔️ Lancer la battle !</button></p><p class="aide" id="potes-msg" role="status"></p>' +
       '<h3>Autres façons de battle</h3><div class="cartes-anglais">' +
       '<button class="carte-anglais" data-a="defi-pote"><span class="ic">📨</span><strong>Défier un pote (anglais)</strong><small>Par lien : mêmes questions, on compare</small></button>' +
@@ -2306,12 +2307,13 @@
     const nv = $('#potes-niveau'), niveau = nv && window.MATHS && MATHS.NIVEAUX.includes(nv.value) ? nv.value : (window.MATHS ? etatMaths().niveau : '6e');
     base.famille = noms; garder();
     const modes = MATIERES_POTES.map(x => x[0]).filter(k => k === 'maths' ? !!window.MATHS : k === 'melange' ? true : k === 'culture' ? !!window.MATIERES : !!A_EN());
-    potes = { noms, scores:[], i:0, mode:modes.includes(base.potesMode) ? base.potesMode : modes[0], niveau, longueur:base.potesLongueur || 'normale', graine:Math.floor(Math.random() * 1e9) };
+    potes = { noms, scores:[], i:0, mode:modes.includes(base.potesMode) ? base.potesMode : modes[0], niveau, longueur:base.potesLongueur || 'normale', graine:Math.floor(Math.random() * 1e9), trash:!!(base.potesTrash && window.TRASH_TALK) };
     potesTour();
   }
   // Ami commente le classement entre deux joueurs (il charrie la course, jamais une personne).
   function commentairePotes(p){
-    const fait = p.noms.slice(0, p.i).map((n, k) => ({ n, s:p.scores[k] })).sort((a, b) => b.s - a.s);
+    const fait = p.noms.slice(0, p.i).map((n, k) => ({ n, s:p.scores[k] })).sort((a, b) => b.s - a.s), TT = window.TRASH_TALK;
+    if(p.trash && TT) return esc(fait.length ? TT.choisir(TT.TOUR, { n:p.noms[p.i], t:fait[0].n, s:fait[0].s, total:p.liste ? p.liste.length : 9 }, memoireVannes()) : TT.choisir(TT.PREMIER, { n:p.noms[p.i] }, memoireVannes()));
     if(!fait.length) return 'Premier à passer : pas de pression… enfin si, un peu. 😏';
     const t = fait[0], total = p.liste ? p.liste.length : 9;
     const l = [esc(t.n) + ' mène avec ' + t.s + ' point' + (t.s > 1 ? 's' : '') + '. Qui va le faire tomber de son trône ? 👑',
@@ -2328,7 +2330,7 @@
       const titres = ['👑 Roi ou reine de la battle', '🥈 Presque sur le trône', '🥉 Sur le podium', '🛟 Revanche obligatoire'];
       return poser(barre('potes') + '<main class="centre potes-fin"><div class="ami-moyen">' + ami('fete') + '</div><h2>' + (ex ? '🤝 Égalité au sommet !' : '👑 ' + esc(cl[0].n) + ' gagne la battle !') + '</h2>' +
         '<ol class="podium">' + cl.map((x, k) => '<li>' + ['🥇', '🥈', '🥉', '🏅'][k] + ' <strong>' + esc(x.n) + '</strong> — ' + x.s + '/' + total + ' <small>' + titres[k > 0 && k === cl.length - 1 ? 3 : Math.min(k, 2)] + '</small></li>').join('') + '</ol>' +
-        '<p>🦉 ' + (ex ? 'Égalité ! Ami exige une revanche, il n’a pas fini son pop-corn.' : 'Bien joué ' + esc(cl[0].n) + ' ! Les autres : Ami a noté toutes vos réponses ratées… pour la revanche. 😏') + '</p>' +
+        '<p>🦉 ' + (p.trash && window.TRASH_TALK ? esc(TRASH_TALK.choisir(ex ? TRASH_TALK.EGALITE : TRASH_TALK.FIN, { g:cl[0].n, d:cl[cl.length - 1].n }, memoireVannes())) : ex ? 'Égalité ! Ami exige une revanche, il n’a pas fini son pop-corn.' : 'Bien joué ' + esc(cl[0].n) + ' ! Les autres : Ami a noté toutes vos réponses ratées… pour la revanche. 😏') + '</p>' +
         '<div class="actions serrees"><button class="moyen plein" data-a="potes-revanche">🔁 Revanche (nouvelles questions)</button><button class="moyen" data-a="potes">⚔️ Changer de battle</button></div></main>');
     }
     const nom = MATIERES_POTES.find(x => x[0] === p.mode) || MATIERES_POTES[0];
@@ -2341,7 +2343,7 @@
     const p = potes; if(!p) return potesMenu();
     // Chaque joueur a ses propres questions (même formule), pour que personne ne profite du tour d'avant.
     const liste = questionsPotes(p.graine + p.i * 7919, p.mode, p.niveau, p.longueur);
-    questionsGo(liste, { titre:'⚔️ ' + p.noms[p.i], retour:'potes', sujet:p.mode === 'maths' ? 'maths' : p.mode === 'vannes' ? 'anglais' : undefined,
+    questionsGo(liste, { titre:'⚔️ ' + p.noms[p.i], retour:'potes', trash:p.trash, sujet:p.mode === 'maths' ? 'maths' : p.mode === 'vannes' ? 'anglais' : undefined,
       bravo:() => { const B = window.CLASH_PLUS ? CLASH_PLUS.BRAVO_POTES : ['Bravo ! 🎉']; return B[Math.floor(Math.random() * B.length)]; },
       fin:z => { p.scores[p.i] = z.bonnes; p.i++; potesTour(); } });
   }
@@ -2584,7 +2586,7 @@
     if(q.ecoute) direEcoute(q.ecoute, 'en');
     if(!q.vanneDe && q.faux && q.faux.length){
       const sujet = z.prof ? 'maths' : z.sujet || (q.lang === 'fr' ? 'sciences' : 'anglais');
-      const tm = J().maths && J().maths.ton, ton = z.prof ? ({ doux:0, taquin:2, sanspitie:3 }[tm] ?? 2) : niveauHumour();
+      const tm = J().maths && J().maths.ton, ton = z.prof ? ({ doux:0, taquin:2, sanspitie:3, trash:3 }[tm] ?? 2) : niveauHumour();
       iaPrecharger(sujet, [q.consigne, q.enonce].filter(Boolean).join(' — '), q.bon, q.faux.map(x => x.en), ton, 'fr');
     }
   }
@@ -2606,13 +2608,20 @@
         // Parmi les variantes de ce niveau, une pas encore dite (sinon la plus ancienne).
         const neuves = niv.filter(l => m.age(l) < 0), l = neuves.length ? neuves[Math.floor(Math.random() * neuves.length)] : niv.slice().sort((a, b) => m.age(b) - m.age(a))[0];
         retenirVanne(l); f.vanne = l + ' ' + f.vanne; } }
+    // v5.77 : 🥊 trash talk — Ami chambre la réponse et se la raconte ; il compte les séries.
+    const TT = window.TRASH_TALK, trash = !!TT && (z.trash || ((z.prof || q.matiere) && (J().maths || {}).ton === 'trash'));
+    z.suite = juste ? Math.max(0, z.suite || 0) + 1 : Math.min(0, z.suite || 0) - 1;
+    let bravoTrash = '';
+    if(trash){ const m = memoireVannes(), k = Math.abs(z.suite);
+      if(juste) bravoTrash = TT.choisir(k >= 3 ? TT.SERIE_OK : TT.BRAVO, { k }, m);
+      else if(f){ f = Object.assign({}, f, { vanne:TT.choisir(k >= 3 ? TT.SERIE_KO : TT.ENTREE, { k }, m) + ' ' + (f.vanne || '') }); } }
     if(f && f.vanne) noterBetisier(f.vanne);
     const az = $('#ami-qz'); if(az && !q.image) az.innerHTML = z.prof ? profPi(juste ? 'fier' : 'mdr') : ami(juste ? (q.humeurJuste || 'fete') : (q.humeurFaux || (niveauHumour() > 1 ? 'mdr' : 'surpris')));
     if(z.onReponse) z.onReponse(juste, q);
     const r = $('#qz-retour');
     const fr_ = (z.lang || q.lang) === 'fr';
     z.derniereVanne = !juste && f && f.vanne ? String(f.vanne).slice(0, 220) : '';
-    if(r) r.innerHTML = (juste ? '<p class="piege-bravo">' + (fr_ ? (z.bravo ? z.bravo() : 'Bravo ! 🎉') : 'Yes! 🎉') + '</p>' : '<p class="piege-vanne">' + (z.prof ? '🦝 ' : '😂 ') + esc(f && f.vanne ? f.vanne : 'Presque !') + '</p>') +
+    if(r) r.innerHTML = (juste ? '<p class="piege-bravo">' + esc(bravoTrash || (fr_ ? (z.bravo ? z.bravo() : 'Bravo ! 🎉') : 'Yes! 🎉')) + '</p>' : '<p class="piege-vanne">' + (z.prof ? '🦝 ' : '😂 ') + esc(f && f.vanne ? f.vanne : 'Presque !') + '</p>') +
       (!juste && f && f.vanne ? '<p class="avis-vanne"><button class="petit-bouton" data-a="qz-avis" data-v="1">😂 ' + (fr_ ? 'Trop drôle' : 'Funny') + '</button> <button class="petit-bouton" data-a="qz-avis" data-v="-1">🙄 ' + (fr_ ? 'Pas drôle' : 'Not funny') + '</button></p>' : '') +
       '<p class="piege-bon" lang="' + (fr_ ? 'fr' : 'en') + '">✅ ' + esc(q.bonTexte || q.bon) + '</p>' + (q.regle ? '<p class="piege-regle">💡 ' + esc(q.regle) + '</p>' : '') +
       '<button class="moyen plein" data-a="qz-suivant">' + (z.i + 1 < z.liste.length ? 'Suivant →' : 'Voir le résultat') + '</button>';
@@ -3037,7 +3046,7 @@
       '<path d="M30 22 L60 10 L90 22 L60 34 Z" fill="#1f1757"/><path d="M84 24 L88 40" stroke="#ffc93c" stroke-width="3"/><circle cx="88" cy="42" r="3" fill="#ffc93c"/>' +
       '<text x="60" y="27" font-size="10" text-anchor="middle" fill="#ffc93c" font-weight="900">π</text></svg>';
   }
-  const TONS_PROF = [['doux', '🧸 Tout doux'], ['taquin', '😏 Taquin'], ['sanspitie', '🔥 Cash (ados)']];
+  const TONS_PROF = [['doux', '🧸 Tout doux'], ['taquin', '😏 Taquin'], ['sanspitie', '🔥 Cash (ados)']].concat(window.TRASH_TALK ? [['trash', '🥊 Trash talk']] : []);
   function etatMaths(){
     const j = J(), o = j.maths && typeof j.maths === 'object' ? j.maths : {}, M = window.MATHS;
     const niveau = M && M.NIVEAUX.includes(o.niveau) ? o.niveau : '6e', ton = TONS_PROF.some(x => x[0] === o.ton) ? o.ton : 'taquin';
@@ -3157,7 +3166,7 @@
     bacmaths1:{ titre:'Maths 1re blanc', niveau:'1re', ic:'🔢', epreuves:[['maths', 'Maths 1re', 15]] },
     bacmathsT:{ titre:'Bac de maths blanc', niveau:'Tle', ic:'🔢', epreuves:[['maths', 'Maths terminale', 20]] }
   };
-  let examen = null;
+  let blanc = null;
   function examensAccueil(){
     qz = null; const e = etatMatieres();
     poser(barre('matieres') + '<main class="coin-anglais matieres-ecran"><h2>📝 Brevet & bac blancs</h2><p class="pieges-intro">Plusieurs épreuves à la suite, comme le jour J. Une note sur 20 par épreuve, puis ta moyenne. Les sujets sont dans l’esprit de l’examen ; les vrais sujets officiels sont sur le site du ministère.</p>' +
@@ -3171,12 +3180,12 @@
     if(cle === 'sciences2') return M.serie('svt', 'examen', niveau, Math.ceil(n / 2), g, ton).concat(M.serie('physique', 'examen', niveau, Math.floor(n / 2), g + 1, ton));
     return M.serie(cle, 'examen', niveau, n, g, ton);
   }
-  function examenGo(k){
+  function blancGo(k){
     const x = EXAMENS_BLANCS[k]; if(!x) return examensAccueil();
-    examen = { k, x, i:0, notes:[] }; examenEpreuve();
+    blanc = { k, x, i:0, notes:[] }; blancEpreuve();
   }
-  function examenEpreuve(){
-    const ex = examen; if(!ex) return examensAccueil();
+  function blancEpreuve(){
+    const ex = blanc; if(!ex) return examensAccueil();
     if(ex.i >= ex.x.epreuves.length){
       const moy = Math.round(ex.notes.reduce((t, n) => t + n, 0) / ex.notes.length * 10) / 10; etatMatieres().notes['blanc-' + ex.k] = moy; J().plumes += Math.round(moy); garder(); bruit('fin');
       const mention = moy >= 16 ? 'Mention très bien 🏆' : moy >= 14 ? 'Mention bien 🥈' : moy >= 12 ? 'Mention assez bien 🥉' : moy >= 10 ? 'Admis ✅' : 'Pas encore… mais tu as vu où ça coince 💪';
@@ -3190,12 +3199,12 @@
       '<p>' + liste.length + ' questions. Prends ton temps : c’est le jour J pour de faux. 📝</p><button class="gros" data-a="examen-suite">C’est parti ▶</button></main>');
     ex.liste = liste;
   }
-  function examenSuite(){
-    const ex = examen; if(!ex || !ex.liste) return examensAccueil();
+  function blancSuite(){
+    const ex = blanc; if(!ex || !ex.liste) return examensAccueil();
     const [cle, nom] = ex.x.epreuves[ex.i];
     questionsGo(ex.liste, { titre:'📝 ' + nom, retour:'examens', lang:'fr', prof:cle === 'maths', sujet:cle === 'maths' ? 'maths' : cle,
       onReponse:(juste, q) => { if(!juste) noterErreur(cle === 'maths' ? 'maths:' + q.chap : 'mat:' + (q.matiere || cle) + ':' + q.chap); },
-      fin:z => { ex.notes.push(noteSur20(z)); ex.i++; examenEpreuve(); } });
+      fin:z => { ex.notes.push(noteSur20(z)); ex.i++; blancEpreuve(); } });
   }
 
   // ── Coin sciences : espace, fusées, corps humain et médecine — avec des clashs quand on se trompe ──
@@ -3376,11 +3385,12 @@
       case 'matiere-examen': { const m = window.MATIERES && MATIERES.trouver(v), e = etatMatieres(), t = m && m.examens && m.examens[e.niveau]; if(!t) return matiereAccueil(v);
         return matiereSerie(v, 'examen', 20, '📝 ' + t, z => { const note = noteSur20(z); etatMatieres().notes[v + '-' + e.niveau] = note; garder(); finMatiere(z, '📝 ' + t, v, note); }); }
       case 'examens': return examensAccueil();
-      case 'examen-go': return examenGo(v);
-      case 'examen-suite': return examenSuite();
+      case 'examen-go': return blancGo(v);
+      case 'examen-suite': return blancSuite();
       case 'potes': return potesMenu();
       case 'potes-matiere': if(MATIERES_POTES.some(x => x[0] === v)){ base.potesMode = v; garder(); } return potesMenu();
       case 'potes-longueur': if(LONGUEURS_POTES[v]){ base.potesLongueur = v; garder(); } return potesMenu();
+      case 'potes-trash': base.potesTrash = !base.potesTrash; garder(); return potesMenu();
       case 'potes-go': return potesGo();
       case 'potes-joue': return potesJoue();
       case 'potes-revanche': if(potes){ potes = Object.assign(potes, { scores:[], i:0, graine:Math.floor(Math.random() * 1e9) }); return potesTour(); } return potesMenu();
