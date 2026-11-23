@@ -1,0 +1,9 @@
+AMI DES MOTS — VERSION 5.74
+Exception : les jeux d'écoute restent
+
+- Les jeux où il faut écouter reviennent, avec leur voix : Écoute, Écoute le mot, la dictée, Répète après Ami,
+  le jeu des oreilles, les questions « qu'a dit Ami ? » des battles. Les boutons 🔊 🐢 🎤 reviennent partout,
+  ainsi que le réglage « La voix d'Ami ».
+- VOIX_COUPEES ne coupe plus que les commentaires d'Ami à voix haute : consignes lues, vannes, répliques
+  automatiques, professeur hibou. Nouveau réglage JEUX_ECOUTE_CACHE:false (true pour cacher les jeux d'écoute).
+- Toujours cachés : 👄 « Comment la bouche fait ce mot », Mots City, le village. Tests : 116/116.
