@@ -21,7 +21,7 @@ function page(langue, config, avant){
   w.TextEncoder = TextEncoder; w.TextDecoder = TextDecoder;
   w.__fetch = []; w.fetch = async (u) => { w.__fetch.push(String(u)); return { ok:true, json:async () => (w.__reponse || { actif:false }) }; };
   if(avant) avant(w);
-  for(const f of ['js/donnees.js', 'js/voix.js', 'js/phrases-enregistrees.js', 'js/textes.js', 'js/articulation.js', 'js/genres.js', 'js/confusions.js', 'js/vannes.js', 'js/pieges.js', 'js/anglais.js', 'js/clash.js', 'js/histoires.js', 'js/blagues-en.js', 'js/parcours.js', 'js/rigolade.js', 'js/clash-plus.js', 'js/salon.js', 'js/juge.js', 'js/maths.js', 'js/sciences.js', 'js/matieres.js', 'js/mat-francais.js', 'js/mat-histoire.js', 'js/mat-svt-pc.js', 'js/vannes-cash.js', 'js/vannes-ironie.js', 'js/vannes-mots.js', 'js/offre.js', 'js/jeu.js']) w.eval(lire(f));
+  for(const f of ['js/donnees.js', 'js/voix.js', 'js/phrases-enregistrees.js', 'js/textes.js', 'js/articulation.js', 'js/genres.js', 'js/confusions.js', 'js/vannes.js', 'js/pieges.js', 'js/anglais.js', 'js/clash.js', 'js/histoires.js', 'js/blagues-en.js', 'js/parcours.js', 'js/rigolade.js', 'js/clash-plus.js', 'js/salon.js', 'js/juge.js', 'js/maths.js', 'js/sciences.js', 'js/trash-talk.js', 'js/matieres.js', 'js/mat-francais.js', 'js/mat-histoire.js', 'js/mat-svt-pc.js', 'js/vannes-cash.js', 'js/vannes-ironie.js', 'js/vannes-mots.js', 'js/offre.js', 'js/jeu.js']) w.eval(lire(f));
   return w;
 }
 // Certificats d'abonnement comme les signe le serveur (même format que serveur/functions/ami-abonnement).
@@ -1670,6 +1670,39 @@ await test('v5.76 : français, histoire-géo-EMC, SVT, physique-chimie — juste
   assert.match($('main').textContent, /Moyenne : [\d,]+ \/ 20/); assert.ok(A.J().matieres.notes['blanc-brevet'] >= 0);
   // Battle Culture G.
   clic('potes'); assert.ok($('[data-a="potes-matiere"][data-v="culture"]'));
+});
+
+await test('v5.77 : 🥊 trash talk — chambre la réponse, jamais la personne ; ton des matières et battle entre potes', async () => {
+  const w = page(), A = w.AmiDesMots, T = w.TRASH_TALK, $ = s => w.document.querySelector(s);
+  const clic = (a, v) => { const b = w.document.createElement('button'); b.dataset.a = a; if(v != null) b.dataset.v = v; w.document.body.appendChild(b); b.click(); b.remove(); };
+  const vars = { n:'Léa', t:'Tom', s:7, total:15, g:'Léa', d:'Tom', k:4 };
+  const toutes = ['ENTREE', 'BRAVO', 'SERIE_OK', 'SERIE_KO', 'PREMIER', 'TOUR', 'FIN', 'EGALITE'].flatMap(k => T[k].map(l => T.remplir(l, vars)));
+  assert.ok(toutes.length >= 100, toutes.length);
+  assert.strictEqual(new Set(toutes).size, toutes.length, 'pas de doublon');
+  for(const l of toutes){ assert.ok(w.JUGE.juger(l).ok, l); assert.ok(!/\{\w+\}/.test(l), 'variable oubliée : ' + l);
+    assert.ok(!/\b(nul|nulle|bête|idiot|débile|stupide|moche|loser|naze|cerveau)\b/i.test(l), 'vise la personne : ' + l); }
+  // Ne se répète pas tant qu'il reste des phrases neuves.
+  const vu = [], mem = { age:x => vu.lastIndexOf(x) < 0 ? -1 : vu.length - vu.lastIndexOf(x), noter:x => vu.push(x) };
+  for(let i = 0; i < T.ENTREE.length; i++) T.choisir(T.ENTREE, {}, mem); assert.strictEqual(new Set(vu).size, T.ENTREE.length);
+  // Ton « Trash talk » dans une matière.
+  A.base.ui = 'fr'; clic('matiere', 'francais'); assert.ok($('[data-a="maths-ton-matiere"][data-v="francais|trash"]'), 'bouton trash talk');
+  clic('maths-ton-matiere', 'francais|trash'); clic('matiere-melange', 'francais');
+  let vanne = '', bravo = ''; for(let k = 0; k < 10 && $('[data-a="qz-rep"]'); k++){ const b = [...w.document.querySelectorAll('[data-a="qz-rep"]')]; b[k % b.length].click();
+    const v = $('.piege-vanne'), br = $('.piege-bravo'); if(v) vanne = vanne || v.textContent; if(br) bravo = bravo || br.textContent; const s = $('[data-a="qz-suivant"]'); if(s) s.click(); }
+  assert.match(vanne, /🥊/, 'vanne trash : ' + vanne); assert.match(bravo, /🥊/, 'bravo trash : ' + bravo);
+  clic('maths-ton-matiere', 'francais|taquin');
+  // Battle entre potes avec l'interrupteur.
+  clic('potes'); assert.match($('[data-a="potes-trash"]').textContent, /OFF/); clic('potes-trash'); assert.match($('[data-a="potes-trash"]').textContent, /ON/);
+  w.document.querySelector('#pote0').value = 'Léa'; w.document.querySelector('#pote1').value = 'Tom'; clic('potes-go');
+  assert.match($('main').textContent, /🥊/, 'Ami chambre avant le 1er tour');
+  for(let j = 0; j < 2; j++){ clic('potes-joue'); while($('[data-a="qz-rep"]')){ $('[data-a="qz-rep"]').click(); const s = $('[data-a="qz-suivant"]'); if(s) s.click(); } }
+  assert.match($('main').textContent, /🥊/, 'trash talk de fin');
+  clic('potes-trash');
+});
+await test('garde-fou : pas deux fonctions du même nom dans jeu.js (l’une écraserait l’autre)', async () => {
+  const src = require('fs').readFileSync(require('path').join(__dirname, '..', 'js', 'jeu.js'), 'utf8'), c = {};
+  for(const m of src.matchAll(/^  function (\w+)\(/gm)) c[m[1]] = (c[m[1]] || 0) + 1;
+  assert.deepStrictEqual(Object.keys(c).filter(k => c[k] > 1), []);
 });
 
 console.log(`\n${ok} réussi(s), ${ko} échoué(s)`);

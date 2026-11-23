@@ -1,0 +1,14 @@
+Ami des mots 5.77.0
+
+🥊 Trash talk
+- Nouveau ton « 🥊 Trash talk » (maths, français, histoire-géo, SVT, physique, brevet & bac blancs) : Ami se la raconte comme un champion de ring
+  (pesée, face-à-face, conférence de presse, ceinture), chambre les mauvaises réponses et fait semblant de ne pas être impressionné par les bonnes.
+- Séries : 3 bonnes réponses d'affilée → Ami panique ; 3 erreurs d'affilée → Ami relance pour le comeback.
+- Battle entre potes : interrupteur « 🥊 Trash talk : ON/OFF » ; Ami chambre avant chaque tour (le score à battre) et à la fin.
+- Règle : on chambre la réponse ou le score, jamais la personne. Perso inventé, aucun vrai combattant imité. Toutes les phrases passent le juge ;
+  un test refuse les mots qui viseraient la personne. Ami ne répète pas ses phrases tant qu'il en a des neuves.
+
+Corrections
+- Le brevet/bac blanc (v5.76) avait une fonction du même nom que l'examen d'anglais : l'une écrasait l'autre. Renommée, et un test empêche que ça revienne.
+
+Tests : 120 tests unitaires OK ; captures Chrome (téléphone) sans erreur.
