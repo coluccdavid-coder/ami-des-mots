@@ -43,3 +43,15 @@ par l'IA, veille des programmes de maths. Il tourne sur un hébergement mutualis
 
 ## Tests (sur ton ordinateur ou le Codespace)
 `outils/tests-serveur/test-serveur-php.js` : 33 vérifications sur une vraie base MariaDB (Stripe et Claude simulés).
+
+## Vannes écrites en direct par l'IA (v5.66)
+
+`vannes-direct.php` : à chaque question, le jeu envoie la question, la bonne réponse, les mauvaises réponses
+possibles et les 30 dernières vannes déjà dites ; Claude répond une vanne neuve par mauvaise réponse, avec un
+« angle » tiré au hasard (flash info, commentaire de match, GPS qui recalcule…) pour ne jamais retomber dans les
+mêmes formules. Rien de personnel n'est envoyé. Le jeu repasse chaque vanne au juge d'Ami et garde ses propres
+vannes si le serveur ne répond pas.
+
+Réglages dans `config-ami.php` : `anthropic_cle` (obligatoire), `vannes_direct` (true/false),
+`vannes_direct_par_jour` (plafond par appareil, 300 par défaut). Coût indicatif : une demande par question,
+modèle rapide (`anthropic_modele`).

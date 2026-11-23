@@ -23,6 +23,9 @@ return [
   'anthropic_cle' => '',
   'anthropic_modele' => 'claude-haiku-5-5',          // vannes : rapide, peu cher
   'anthropic_modele_veille' => 'claude-sonnet-5-5',  // lecture des programmes et annales
+  // Vannes écrites en direct par l'IA à chaque question (vannes-direct.php) : true/false, et plafond par appareil et par jour.
+  'vannes_direct' => true,
+  'vannes_direct_par_jour' => 300,
 
   // Coin admin du serveur (veille) : mot de passe en empreinte. Pour la fabriquer :
   //   php -r "echo password_hash('mon-mot-de-passe', PASSWORD_DEFAULT), PHP_EOL;"

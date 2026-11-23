@@ -54,7 +54,7 @@
   }, offreLue(window.OFFRE_AMI), window.CONFIG_JEU || {});
 
   // Avec le serveur PHP, l'abonnement et les vannes IA passent par lui (sauf adresse donnée à part).
-  if(CONFIG.SERVEUR){ const b = String(CONFIG.SERVEUR).replace(/\/?$/, '/'); if(!CONFIG.API_ABONNEMENT) CONFIG.API_ABONNEMENT = b + 'abonnement.php'; if(!CONFIG.API_VANNES) CONFIG.API_VANNES = b + 'vannes.php'; }
+  if(CONFIG.SERVEUR){ const b = String(CONFIG.SERVEUR).replace(/\/?$/, '/'); if(!CONFIG.API_ABONNEMENT) CONFIG.API_ABONNEMENT = b + 'abonnement.php'; if(!CONFIG.API_VANNES) CONFIG.API_VANNES = b + 'vannes.php'; if(!CONFIG.API_VANNES_DIRECT) CONFIG.API_VANNES_DIRECT = b + 'vannes-direct.php'; }
 
   // js/offre.js (fabriqué par le coin admin) : on ne garde que les réglages connus, au bon format.
   // Il ne peut que dire ce qui est réservé à Plus, jamais ouvrir Plus.
@@ -293,10 +293,17 @@
     return speechSynthesis.getVoices().filter(v => v.lang && v.lang.replace('_', '-').toLowerCase().startsWith(code))
       .map(v => ({ v, p:noteVoix(v, loc) })).sort((a, b) => b.p - a.p).map(x => x.v);
   }
+  function sansEmojis(t){
+    return String(t || '').replace(/[\p{Extended_Pictographic}\u{1F1E6}-\u{1F1FF}\u{1F3FB}-\u{1F3FF}\uFE0F\u200D\u20E3]/gu, '')
+      .replace(/[«»"“”]/g, '').replace(/\s+([!?.,;:])/g, '$1').replace(/([!?])(\s*[!?])+/g, '$1').replace(/\s{2,}/g, ' ').trim();
+  }
   function voixPreferees(){ try{ return JSON.parse(localStorage.getItem('ami-voix') || '{}') || {}; }catch(e){ return {}; } }
   function voixNavigateur(lang, texte, vitesse){
     const loc = LOCALES[lang];
     if(!loc || !window.speechSynthesis) return false;
+    // v5.65 : la voix ne lit jamais les émojis (« visage qui pleure de rire »…) ni les drapeaux.
+    texte = sansEmojis(texte);
+    if(!texte) return true;
     const toutes = speechSynthesis.getVoices();
     const voix = voixClassees(lang), choisie = voixPreferees()[lang];
     const u = new SpeechSynthesisUtterance(texte);
@@ -866,6 +873,7 @@
     // Les vannes écrites par la famille (Espace parents).
     const fam = (Array.isArray(J().vannesFamille) ? J().vannesFamille : []).filter(b => !window.JUGE || (JUGE.juger(b).ok && !JUGE.retiree(J().notesVannes, b)));
     if(fam.length && f && j && Math.random() < .08){ const b = fam[Math.floor(Math.random() * fam.length)]; derniereBlague = b; return remplir(b, { f, j }); }
+    if((type === 'mot' || type === 'ecoute') && mauvaise && bonne){ const ia = iaPrendre(bonne, mauvaise); if(ia){ derniereBlague = ia; return ia; } }
     if(type === 'mot' || type === 'ecoute'){
       if(!f || !j || f === j) pool = V.secours;
       else{
@@ -1004,6 +1012,12 @@
     else if(j === 'chrono' || j === 'grand_quiz'){ const l = mixte(); j = l[Math.floor(Math.random() * l.length)]; }
     partie.courant = j;
     Q[j]();
+    // L'IA prépare déjà une vanne pour chaque mauvaise image possible (en français : « sun (soleil) »).
+    if(partie.bonne && MOTS[partie.bonne] && langueBlagues() === 'fr'){
+      const nom = e => { const c = nomVanne(e, base.cible), f = nomVanne(e, 'fr'); return c && f && c !== f ? c + ' (' + f + ')' : f || c; };
+      const ch = [...document.querySelectorAll('[data-a="repondre"]')].map(b => b.dataset.v).filter(e => MOTS[e] && e !== partie.bonne);
+      if(ch.length) iaPrecharger('mots', 'Quel est le nom de cette image ? (' + LANGUES_APPRENDRE[base.cible] + ')', { id:partie.bonne, texte:nom(partie.bonne) }, ch.map(e => ({ id:e, texte:nom(e) })), niveauHumour(), 'fr');
+    }
   }
   const nbChoix = () => partie.mode === 'theme' && partie.meca !== 'chrono' && partie.meca !== 'grand_quiz' ? partie.N.choix : facile() ? 3 : 4;
   // En lecture facile, la consigne est lue d'abord : le mot attend qu'elle finisse.
@@ -2397,6 +2411,11 @@
       '<div class="piege-options">' + z.options.map((o, i) => '<button class="moyen piege-opt" data-a="qz-rep" data-v="' + i + '" lang="' + (z.lang || q.lang || 'en') + '">' + esc(o) + '</button>').join('') + '</div>' +
       '<div class="piege-retour" id="qz-retour" role="status" aria-live="polite"></div></main>');
     if(q.ecoute) direPhrase(q.ecoute, 'en');
+    if(!q.vanneDe && q.faux && q.faux.length){
+      const sujet = z.prof ? 'maths' : z.sujet || (q.lang === 'fr' ? 'sciences' : 'anglais');
+      const tm = J().maths && J().maths.ton, ton = z.prof ? ({ doux:0, taquin:2, sanspitie:3 }[tm] ?? 2) : niveauHumour();
+      iaPrecharger(sujet, [q.consigne, q.enonce].filter(Boolean).join(' — '), q.bon, q.faux.map(x => x.en), ton, 'fr');
+    }
   }
   function repondreQuestion(i){
     const z = qz; if(!z || z.repondu) return;
@@ -2404,8 +2423,10 @@
     z.repondu = true; const juste = choix === q.bon; if(juste) z.bonnes++;
     if(q.apres) q.apres(juste, choix); garder();
     document.querySelectorAll('.piege-opt').forEach((b, k) => { b.disabled = true; if(z.options[k] === q.bon) b.classList.add('ok'); else if(k === i) b.classList.add('ko'); });
-    const f = !juste && (q.vanneDe ? { vanne:q.vanneDe(choix) } : q.faux.find(x => x.en === choix));
-    if(f && typeof f.fraiche === 'function') f.vanne = f.fraiche(memoireVannes()); // la vanne choisie est retenue par fraiche
+    let f = !juste && (q.vanneDe ? { vanne:q.vanneDe(choix) } : q.faux.find(x => x.en === choix));
+    const ia = f && !q.vanneDe && iaPrendre(q.bon, choix);
+    if(ia) f = Object.assign({}, f, { vanne:ia + (f.explication || ''), fraiche:null });
+    else if(f && typeof f.fraiche === 'function') f.vanne = f.fraiche(memoireVannes()); // la vanne choisie est retenue par fraiche
     else if(f && f.vanne) retenirVanne(f.vanne);
     // Même erreur refaite dans la série : Prof Pi monte en pression (« Mais genre, tu fais exprès ou quoi !!!! »).
     if(f && f.cle && z.prof && window.VANNES_CASH){ z.memesErreurs = z.memesErreurs || {}; const n = z.memesErreurs[f.cle] = (z.memesErreurs[f.cle] || 0) + 1;
@@ -2726,7 +2747,9 @@
       '<h3 class="langue-blagues-titre">🗣️ ' + (base.ui === 'en' ? 'Language of the jokes' : 'Langue des blagues') + '</h3><p class="petit">' + (base.ui === 'en' ? 'Choose the language Ami uses for jokes and spoken feedback.' : 'Choisis la langue utilisée par Ami pour ses blagues et ses commentaires vocaux.') + '</p><div class="choix-humour choix-langue-blagues">' +
       '<button class="moyen' + (langueBlagues() === 'fr' ? ' plein' : '') + '" data-a="langue-blagues" data-v="fr" aria-pressed="' + (langueBlagues() === 'fr') + '">🇫🇷 Français</button>' +
       '<button class="moyen' + (langueBlagues() === 'en' ? ' plein' : '') + '" data-a="langue-blagues" data-v="en" aria-pressed="' + (langueBlagues() === 'en') + '">🇬🇧 English</button>' +
-      '</div></section>' +
+      '</div>' +
+      (CONFIG.API_VANNES_DIRECT ? '<div class="reglage"><span><strong>🤖 ' + (base.ui === 'en' ? 'Jokes written live by AI' : 'Vannes inventées en direct par l’IA') + '</strong><span class="petit">' + (base.ui === 'en' ? 'A brand-new joke for each mistake. Only the question and the answers are sent, nothing personal.' : 'Une vanne toute neuve à chaque erreur. Seules la question et les réponses partent au serveur, rien de personnel.') + '</span></span><button class="moyen' + (J().vannesIA !== false ? ' plein' : '') + '" data-a="vannes-ia" aria-pressed="' + (J().vannesIA !== false) + '">' + esc(J().vannesIA !== false ? t('oui') : t('non')) + '</button></div>' : '') +
+      '</section>' +
       (CONFIG.MODE_PAYANT ? '<h3>✨ ' + esc(t('plus')) + '</h3>' + (plus()
         ? '<p>' + esc(t('abo_actif', droits ? new Date(droits.fin).toLocaleDateString(base.ui) : '')) + '</p>' + (CONFIG.LIEN_GESTION ? '<p><a class="moyen" href="' + esc(CONFIG.LIEN_GESTION) + '" target="_blank" rel="noopener">' + esc(t('gerer_abo')) + '</a></p>' : '')
         : '<p><button class="moyen plein" data-a="plus" data-v="reglages">' + esc(t('decouvrir_plus')) + '</button></p>') +
@@ -2753,6 +2776,41 @@
   // (réponse entre guillemets, {valeurs}, chiffres, espaces) et l'explication 💡.
   const normeVanne = t => String(t).split(' 💡 ')[0].replace(/«[^»]*»/g, '').replace(/\{\w+\}/g, '').replace(/[\d\s\u202F,.−-]/g, '');
   const empreinteVanne = t => { let h = 2166136261; for(const c of normeVanne(t).slice(0, 160)) h = Math.imul(h ^ c.charCodeAt(0), 16777619); return (h >>> 0).toString(36); };
+  // ── v5.66 : vannes écrites en direct par l'IA (serveur-php/vannes-direct.php) ──
+  // Dès qu'une question s'affiche, on demande à l'IA une vanne neuve pour chaque mauvaise réponse possible, en lui
+  // donnant les dernières vannes déjà dites. Si elle ne répond pas à temps (ou sans serveur), Ami garde ses vannes à lui.
+  // Rien de personnel ne part : ni prénom, ni code, ni voix — seulement la question et les réponses.
+  const cacheIA = new Map(), recentes = [];
+  let iaEnPanne = 0;
+  const cleIA = (bonne, fausse) => String(bonne) + '\u0001' + String(fausse);
+  function iaActive(){ return !!CONFIG.API_VANNES_DIRECT && J().vannesIA !== false && Date.now() > iaEnPanne && typeof fetch === 'function'; }
+  function noterRecente(t){ if(!t) return; recentes.push(String(t).slice(0, 170)); if(recentes.length > 30) recentes.shift(); }
+  async function iaPrecharger(sujet, question, bonne, fausses, ton, langue){
+    if(!iaActive() || !bonne || !fausses || !fausses.length) return;
+    // Une réponse = une chaîne, ou { id, texte } (jeux d'images : l'émoji sert de clé, le nom part à l'IA).
+    const items = fausses.map(x => typeof x === 'string' ? { id:x, texte:x } : x).filter(x => x && x.id && x.id !== bonne.id && x.id !== bonne && !cacheIA.has(cleIA(bonne.id || bonne, x.id)));
+    const cleB = bonne.id || bonne, texteB = bonne.texte || bonne;
+    if(!items.length) return;
+    const manquent = items.map(x => x.texte);
+    items.forEach(x => cacheIA.set(cleIA(cleB, x.id), null));
+    const ctl = typeof AbortController === 'function' ? new AbortController() : null, minuteur = setTimeout(() => ctl && ctl.abort(), 9000);
+    try{
+      const r = await fetch(CONFIG.API_VANNES_DIRECT, { method:'POST', cache:'no-store', headers:{ 'Content-Type':'application/json' }, signal:ctl ? ctl.signal : undefined,
+        body:JSON.stringify({ sujet, question:String(question || '').slice(0, 220), bonne:String(texteB).slice(0, 90), fausses:manquent.map(f => String(f).slice(0, 90)), ton, langue:langue || 'fr', deja:recentes.slice(-30) }) });
+      if(r.status === 429 || r.status === 503) iaEnPanne = Date.now() + 10 * 60 * 1000;
+      const d = r.ok ? await r.json() : null, v = d && d.vannes;
+      items.forEach(x => { const t = v && typeof v[x.texte] === 'string' ? v[x.texte].trim() : '';
+        // Le juge d'Ami relit chaque vanne de l'IA ; une vanne déjà dite est jetée.
+        if(t && (!window.JUGE || JUGE.juger(t).ok) && memoireVannes().age(t) < 0) cacheIA.set(cleIA(cleB, x.id), t); else cacheIA.delete(cleIA(cleB, x.id)); });
+    }catch(e){ items.forEach(x => cacheIA.delete(cleIA(cleB, x.id))); iaEnPanne = Date.now() + 60 * 1000; }
+    finally{ clearTimeout(minuteur); if(cacheIA.size > 200) [...cacheIA.keys()].slice(0, cacheIA.size - 200).forEach(k => cacheIA.delete(k)); }
+  }
+  function iaPrendre(bonne, fausse){
+    const k = cleIA(bonne, fausse), t = cacheIA.get(k);
+    if(!t) return null;
+    cacheIA.delete(k); retenirVanne(t); noterRecente(t);
+    return t;
+  }
   function memoireVannes(){
     const l = Array.isArray(J().vannesDites) ? J().vannesDites : [];
     // Une vanne modèle ({f}, {j}) est reconnue même une fois les nombres remplacés : on compare sans les chiffres.
@@ -2916,6 +2974,7 @@
           gag:Math.min(20, Math.max(0, Math.floor(Number(j.gag)) || 0)),
           maths:j.maths && typeof j.maths === 'object' ? j.maths : {},
           vannesVues:Math.min(1e6, Math.max(0, Math.floor(Number(j.vannesVues)) || 0)),
+          vannesIA:j.vannesIA !== false,
           vannesDites:Array.isArray(j.vannesDites) ? j.vannesDites.filter(x => typeof x === 'string' && /^[0-9a-z]{1,8}$/.test(x)).slice(-400) : [],
           trophees:Array.isArray(j.trophees) ? j.trophees.filter(k => TROPHEES.includes(k)) : [], facile:!!j.facile });
         base.joueurs = d.joueurs.map(propre); base.actif = 0;
@@ -3134,6 +3193,7 @@
         if(sel){ const p = voixPreferees(); if(sel.value) p[v] = sel.value; else delete p[v]; try{ localStorage.setItem('ami-voix', JSON.stringify(p)); }catch(e){} }
         return direPhrase(v === 'fr' ? 'Salut ! Moi, c’est Ami. Tu m’entends bien ?' : v === 'en' ? 'Hi! I am Ami. Can you hear me?' : (t('a_ombre') || 'Ami'), v, 1);
       }
+      case 'vannes-ia': J().vannesIA = J().vannesIA === false; garder(); return reglages();
       case 'son': base.son = !base.son; garder(); bruit('juste'); return reglages();
       case 'porter': { const j = J(); j.porte = j.porte.includes(v) ? j.porte.filter(x => x !== v) : j.porte.concat(v); garder(); return vestiaire(); }
       case 'effacer-tout':
@@ -3174,7 +3234,7 @@
   if(retourPaiement) [5000, 15000, 40000].forEach(ms => setTimeout(() => { if(!plus()) rafraichir(true); }, ms));
   if(window.Articulation) try{ Articulation.init(); }catch(e){}
   if('serviceWorker' in navigator && location.protocol === 'https:') navigator.serviceWorker.register('sw.js').catch(() => {});
-  window.AmiDesMots = { base, J, affiche, fnv1a, urlVoix, accueil, themes, choisirJeu, commencer, lettresPossibles, distincts, motsDu, aDire, CATALOGUE, MECAS, disponible, nomJeu, aRevoir, noter, jour, defi, revoir, lecon, astuces, aToi, blague, carnet, noteVoix, vanneObjets, avecArticle, astuce, niveauHumour, fousRires, reglages, CONFIG, COINS, coinOuvert, offreLue, facile, nbMots, restaurer, verifierJeton, plus, ecranPlus, formatCode, rafraichir,
+  window.AmiDesMots = { base, J, affiche, fnv1a, urlVoix, accueil, themes, choisirJeu, commencer, lettresPossibles, distincts, motsDu, aDire, CATALOGUE, MECAS, disponible, nomJeu, aRevoir, noter, jour, defi, revoir, lecon, astuces, aToi, blague, carnet, noteVoix, sansEmojis, iaPrecharger, iaPrendre, vanneObjets, avecArticle, astuce, niveauHumour, fousRires, reglages, CONFIG, COINS, coinOuvert, offreLue, facile, nbMots, restaurer, verifierJeton, plus, ecranPlus, formatCode, rafraichir,
     get etat(){ return J(); } };
   garder();
   if(lienDefi || lienSalon){

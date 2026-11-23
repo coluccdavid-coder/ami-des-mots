@@ -1721,3 +1721,13 @@ button:focus-visible,a:focus-visible,select:focus-visible,input:focus-visible,[t
 /* v5.64 : choix de la voix d'Ami */
 .reglage-voix label{ display:flex; gap:.6em; align-items:center; flex:1; flex-wrap:wrap; }
 .reglage-voix select{ flex:1; min-width:12em; max-width:100%; padding:.5em; border-radius:10px; font:inherit; }
+/* v5.65 : sur PC, l'image d'une question tient toujours dans l'écran (plus de montre géante qui oblige à défiler). */
+@media (min-width:900px){
+  .partie .pic-grande, .partie .pic-moyenne{ width:min(520px, 100%)!important; height:min(38vh, 380px)!important; }
+  .partie .pic-carte{ max-height:min(36vh, 360px)!important; }
+  .partie .carte{ width:min(400px, 44vh)!important; }
+  .partie .cadre-image{ width:min(520px, 100%); max-width:100%; }
+  .partie .cadre-image .pic-grande{ width:100%!important; }
+  .partie{ min-height:0!important; }
+  .scene{ align-content:start!important; }
+}
