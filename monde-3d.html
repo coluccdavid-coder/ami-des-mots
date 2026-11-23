@@ -52,7 +52,15 @@ body.photo-en-cours .panel,body.photo-en-cours #controls,body.photo-en-cours #et
 #controls{gap:7px;filter:drop-shadow(0 8px 18px #09082088)}
 #controls button{border:1px solid #ffffff70;border-radius:17px;background:linear-gradient(145deg,#5d5a9d,#24204f);box-shadow:inset 0 1px 0 #ffffff55,0 5px 0 #0a0925;color:#fff;font-size:23px;transition:transform .08s,filter .12s}
 #controls button:active{transform:translateY(4px) scale(.97);filter:brightness(1.25);box-shadow:inset 0 1px 0 #ffffff55,0 1px 0 #0a0925}
-#top,.panel{backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px)}
+/* v5.71 : seul chaque panneau floute ce qu'il y a derrière (avant, tout le bandeau du haut floutait la scène). */
+.panel{backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px)}#top{backdrop-filter:none;-webkit-backdrop-filter:none}
+#menuBtn{display:none}
+/* Téléphone : bandeau compact, les boutons se rangent derrière ☰. */
+@media(max-width:650px){#brand small,#brand br{display:none}#brand{padding:6px 10px}#brand span{font-size:12px}
+ #mission{font-size:11px;padding:8px 10px;max-width:42vw}#mission strong{font-size:10px;margin-bottom:2px}
+ #menuBtn{display:inline-flex}.top-actions{flex-direction:row;flex-wrap:wrap;max-width:46vw;padding:6px 8px}
+ .top-actions:not(.ouvert)>:not(#feathers):not(#menuBtn){display:none}}
+@media(pointer:coarse){#hint{display:none}}
 @media(max-width:650px){#mapPanel{top:90px;right:8px;width:245px}.top-actions{max-width:68vw;flex-wrap:wrap;justify-content:flex-end}.top-actions #back{font-size:10px}}
 @media(max-width:650px){.top-actions{gap:7px;padding:8px}.top-actions #back{font-size:11px}.top-actions #feathers{font-size:12px}.ui-btn{font-size:11px;padding:6px 8px}#journal{top:90px;right:8px}}
 @media(max-width:650px){#top{left:8px;right:8px;top:8px}#brand{font-size:14px}#brand img{width:32px;height:38px}#mission{font-size:11px;max-width:48vw;padding:9px}#hint{top:72px;font-size:11px}#help{display:none}#controls{left:10px;bottom:12px;transform:scale(.9);transform-origin:bottom left}#interact{bottom:18px;left:auto;right:12px;transform:none;padding:14px 18px}#dialog{bottom:10px}.panel{padding:10px 12px}}
@@ -63,7 +71,7 @@ body.photo-en-cours .panel,body.photo-en-cours #controls,body.photo-en-cours #et
 <div id="top">
  <div class="panel" id="brand"><img src="img/ami-3d.webp" alt=""> <span>AMI DES MOTS<br><small style="font-size:11px;color:#c9c0ff;font-weight:700">Le quartier des découvertes · aventure 3D</small></span></div>
  <div class="panel" id="mission"><strong>🎯 Ta première mission</strong><span id="missionText">Va parler à Léa, la marchande du marché.</span><div id="progress"><span id="progressBar"></span></div></div>
- <div class="panel top-actions"><span id="feathers">🪶 0</span><button id="journalBtn" class="ui-btn">📖 Quêtes</button><button id="meteoBtn" class="ui-btn" aria-label="Changer la météo">🌦️</button><button id="photoBtn" class="ui-btn" aria-label="Prendre une photo">📷</button><button id="mapBtn" class="ui-btn">🗺️ Carte</button><button id="skyBtn" class="ui-btn">🌅 Ambiance</button><button id="qualityBtn" class="ui-btn" title="Choisir la qualité graphique">🎮 Qualité : Auto</button><a id="back" href="index.html?aller=classique" title="Revenir à la version classique (2D)">🏠 Version classique</a></div>
+ <div class="panel top-actions"><span id="feathers">🪶 0</span><button id="menuBtn" class="ui-btn" aria-expanded="false" aria-label="Menu">☰</button><button id="journalBtn" class="ui-btn">📖 Quêtes</button><button id="meteoBtn" class="ui-btn" aria-label="Changer la météo">🌦️</button><button id="photoBtn" class="ui-btn" aria-label="Prendre une photo">📷</button><button id="mapBtn" class="ui-btn">🗺️ Carte</button><button id="skyBtn" class="ui-btn">🌅 Ambiance</button><button id="qualityBtn" class="ui-btn" title="Choisir la qualité graphique">🎮 Qualité : Auto</button><a id="back" href="index.html?aller=classique" title="Revenir à la version classique (2D)">🏠 Version classique</a></div>
 </div>
 <div id="hint">ZQSD / WASD ou flèches : marcher · E : parler, jouer ou caresser · Maj : courir</div>
 <div id="toast"></div>
@@ -329,6 +337,7 @@ let skyMode=0;
 const skyModes=[{name:'☀️ Journée',bg:0x8cc9f2,fog:0x8cc9f2,hemi:2.0,sun:3.2,lamps:0,rain:false},{name:'🌇 Crépuscule',bg:0xf09a83,fog:0xd98b8a,hemi:1.1,sun:1.4,lamps:.45,rain:false},{name:'🌙 Nuit magique',bg:0x101638,fog:0x182044,hemi:.42,sun:.25,lamps:2.2,rain:false},{name:'🌧️ Averse',bg:0x566d89,fog:0x566d89,hemi:.8,sun:.35,lamps:1.4,rain:true}];
 function setSky(){const s=skyModes[skyMode];scene.background.setHex(s.bg);scene.fog.color.setHex(s.fog);scene.children.forEach(o=>{if(o.isHemisphereLight)o.intensity=s.hemi;if(o===sun)o.intensity=s.sun});lamps.forEach(l=>l.intensity=s.lamps);glowMat.emissiveIntensity=s.lamps>0?1.6:.15;if(KIT){scene.children.forEach(o=>{if(o.isHemisphereLight)o.intensity=s.hemi*.55;if(o===sun)o.intensity=s.sun*.85})}rain.visible=!!s.rain;fireflies.forEach(f=>f.m.visible=skyMode===2);sunOrb.visible=skyMode===0||skyMode===1;moonOrb.visible=skyMode===2;stars.visible=skyMode===2;if(amb.haute||KIT){const e=[[50,0],[4,.45],[-12,1],[22,.15]][skyMode]||[50,0];amb.soleil(e[0],210,e[1]);amb.degrade.visible=!s.rain;if(s.rain){amb.sky.visible=false;scene.background.setHex(s.bg);scene.fog.color.setHex(s.fog)}sunOrb.visible=sunOrb.visible&&!amb.sky.visible;stars.visible=stars.visible&&!amb.etoiles.material.opacity}document.querySelector('#skyBtn').textContent=s.name;toast('Ambiance : '+s.name.replace(/[^\p{L} ]/gu,''))}
 document.querySelector('#skyBtn').onclick=()=>{skyMode=(skyMode+1)%skyModes.length;setSky()};
+document.querySelector('#menuBtn').onclick=()=>{const t=document.querySelector('.top-actions'),o=t.classList.toggle('ouvert');document.querySelector('#menuBtn').setAttribute('aria-expanded',String(o));document.querySelector('#menuBtn').textContent=o?'✕':'☰'};
 
 renderer.domElement.addEventListener('pointerdown',e=>{drag=true;lastX=e.clientX});addEventListener('pointerup',()=>drag=false);addEventListener('pointermove',e=>{if(drag){yaw-=(e.clientX-lastX)*.006;lastX=e.clientX}});
 addEventListener('wheel',e=>{cameraDistance=THREE.MathUtils.clamp(cameraDistance+e.deltaY*.008,4.5,11)},{passive:true});

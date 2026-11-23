@@ -1,0 +1,13 @@
+AMI DES MOTS — VERSION 5.70
+Le professeur hibou s'anime comme un dessin animé
+
+- Ami le prof (professeur.html) est maintenant un dessin articulé (js/prof-anime.js) : corps, tête, ailes,
+  aigrettes, paupières, pupilles, sourcils, bec.
+- Au repos : il respire, cligne des yeux (parfois deux fois), suit la souris du regard, remue les aigrettes.
+- Il parle : une bulle affiche la phrase et le bec bouge avec la voix (mot par mot). Bouton « 🦉 Ami m'explique »
+  dans chaque leçon : il lit la leçon et l'exemple. Bouton 🔊 Voix / 🔇 Muet (gardé sur l'appareil).
+- Réactions : il salue en arrivant ; aile au menton et « ? » quand tu réfléchis ; bonne réponse = saut avec
+  écrasement, ailes qui battent, yeux rieurs, étoiles ; erreur = il secoue la tête, lève un sourcil et se tape
+  le front de l'aile ; chatouilles quand on le touche.
+- Un petit hibou identique suit la leçon dans le coin de l'écran quand le grand n'est plus visible.
+- Respecte « moins d'animations » du système ; rien n'est envoyé. Tests : 113/113.
