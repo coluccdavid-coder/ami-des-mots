@@ -21,7 +21,7 @@ function page(langue, config, avant){
   w.TextEncoder = TextEncoder; w.TextDecoder = TextDecoder;
   w.__fetch = []; w.fetch = async (u) => { w.__fetch.push(String(u)); return { ok:true, json:async () => (w.__reponse || { actif:false }) }; };
   if(avant) avant(w);
-  for(const f of ['js/donnees.js', 'js/voix.js', 'js/phrases-enregistrees.js', 'js/textes.js', 'js/articulation.js', 'js/genres.js', 'js/confusions.js', 'js/vannes.js', 'js/pieges.js', 'js/anglais.js', 'js/clash.js', 'js/histoires.js', 'js/blagues-en.js', 'js/parcours.js', 'js/rigolade.js', 'js/clash-plus.js', 'js/salon.js', 'js/juge.js', 'js/maths.js', 'js/sciences.js', 'js/trash-talk.js', 'js/matieres.js', 'js/mat-francais.js', 'js/mat-histoire.js', 'js/mat-svt-pc.js', 'js/vannes-cash.js', 'js/vannes-ironie.js', 'js/vannes-mots.js', 'js/offre.js', 'js/jeu.js']) w.eval(lire(f));
+  for(const f of ['js/donnees.js', 'js/voix.js', 'js/phrases-enregistrees.js', 'js/textes.js', 'js/articulation.js', 'js/genres.js', 'js/confusions.js', 'js/vannes.js', 'js/pieges.js', 'js/anglais.js', 'js/clash.js', 'js/histoires.js', 'js/blagues-en.js', 'js/parcours.js', 'js/rigolade.js', 'js/clash-plus.js', 'js/salon.js', 'js/juge.js', 'js/maths.js', 'js/sciences.js', 'js/trash-talk.js', 'js/epreuves.js', 'js/epreuves-spe.js', 'js/epreuves-plus.js', 'js/epreuves-oraux.js', 'js/matieres.js', 'js/mat-francais.js', 'js/mat-histoire.js', 'js/mat-svt-pc.js', 'js/mat-sup.js', 'js/vannes-cash.js', 'js/vannes-ironie.js', 'js/vannes-mots.js', 'js/offre.js', 'js/jeu.js']) w.eval(lire(f));
   return w;
 }
 // Certificats d'abonnement comme les signe le serveur (même format que serveur/functions/ami-abonnement).
@@ -1488,7 +1488,9 @@ await test('v5.66 : vannes écrites en direct par l’IA, jamais deux fois, relu
   A.CONFIG.API_VANNES_DIRECT = 'https://exemple.test/vannes-direct.php';
   await A.iaPrecharger('mots', 'Quel est le nom ?', { id:'🏝️', texte:'beach (plage)' }, [{ id:'☀️', texte:'sun (soleil)' }, { id:'🌊', texte:'wave (vague)' }], 3, 'fr');
   const d = envois[0];
-  assert.deepStrictEqual(Object.keys(d).sort(), ['bonne', 'deja', 'fausses', 'langue', 'question', 'sujet', 'ton'], 'rien de personnel envoyé');
+  assert.deepStrictEqual(Object.keys(d).sort(), ['aimees', 'bonne', 'deja', 'fausses', 'langue', 'pasdrole', 'question', 'style', 'sujet', 'ton'], 'rien de personnel envoyé');
+  // v5.78 : seules des vannes notées 😂/🙄 partent pour adapter l'humour — jamais un pseudo ni un nom.
+  assert.ok(Array.isArray(d.aimees) && Array.isArray(d.pasdrole) && d.aimees.concat(d.pasdrole).every(t => typeof t === 'string' && t.length <= 170));
   assert.strictEqual(A.iaPrendre('🏝️', '☀️'), null, 'le juge a jeté la vanne violente');
   const v = A.blague('🌊', '🏝️');
   assert.match(v, /Vanne IA n°1 sur wave/, 'la vanne de l’IA est utilisée : ' + v);
@@ -1645,7 +1647,7 @@ await test('v5.75 : accueil en 4 portes, résumé de la semaine, avis sur les va
 await test('v5.76 : français, histoire-géo-EMC, SVT, physique-chimie — justes, vannés, et brevet / bac blancs', async () => {
   const w = page(), A = w.AmiDesMots, M = w.MATIERES, $ = s => w.document.querySelector(s), $$ = s => [...w.document.querySelectorAll(s)];
   const clic = (a, v) => { const b = w.document.createElement('button'); b.dataset.a = a; if(v != null) b.dataset.v = v; w.document.body.appendChild(b); b.click(); b.remove(); };
-  assert.strictEqual(M.LISTE.map(m => m.id).join(','), 'francais,histoire,svt,physique');
+  assert.ok(M.LISTE.map(m => m.id).join(',').startsWith('francais,histoire,svt,physique'));
   // Conjugaison : tableaux vérifiés sur des formes connues.
   const F = M._francais, f = (v, t, i) => F.pron(i, F.forme(v, t, i)) + F.forme(v, t, i);
   assert.deepStrictEqual([f('aller', 'futur', 0), f('être', 'imparfait', 0), f('finir', 'présent', 3), f('voir', 'conditionnel', 5), f('venir', 'passé simple', 2), f('aller', 'passé composé', 5), f('aimer', 'présent', 0), f('faire', 'présent', 4)],
@@ -1666,7 +1668,7 @@ await test('v5.76 : français, histoire-géo-EMC, SVT, physique-chimie — juste
   assert.strictEqual(k, 10, '10 questions'); assert.ok(A.J().journal && Object.values(A.J().journal).some(x => x['francais+'] || x['francais-']), 'le journal des parents compte le français');
   // Brevet blanc : 4 épreuves, une note chacune, puis la moyenne.
   clic('examens'); clic('examen-go', 'brevet');
-  for(let e = 0; e < 4; e++){ assert.match($('main').textContent, /épreuve \d\/4/); clic('examen-suite'); let j = 0; while($('[data-a="qz-rep"]:not([disabled])') && j < 30){ $('[data-a="qz-rep"]:not([disabled])').click(); j++; const s = $('[data-a="qz-suivant"]'); if(s) s.click(); } assert.ok(j >= 8, 'épreuve ' + e + ' : ' + j); }
+  for(let e = 0; e < 6; e++){ assert.match($('main').textContent, /épreuve \d\/6/); clic('examen-suite'); let j = 0; while($('[data-a="qz-rep"]:not([disabled])') && j < 40){ $('[data-a="qz-rep"]:not([disabled])').click(); j++; const s = $('[data-a="qz-suivant"]'); if(s) s.click(); } assert.ok(j >= 3, 'épreuve ' + e + ' : ' + j); }
   assert.match($('main').textContent, /Moyenne : [\d,]+ \/ 20/); assert.ok(A.J().matieres.notes['blanc-brevet'] >= 0);
   // Battle Culture G.
   clic('potes'); assert.ok($('[data-a="potes-matiere"][data-v="culture"]'));
@@ -1676,7 +1678,7 @@ await test('v5.77 : 🥊 trash talk — chambre la réponse, jamais la personne 
   const w = page(), A = w.AmiDesMots, T = w.TRASH_TALK, $ = s => w.document.querySelector(s);
   const clic = (a, v) => { const b = w.document.createElement('button'); b.dataset.a = a; if(v != null) b.dataset.v = v; w.document.body.appendChild(b); b.click(); b.remove(); };
   const vars = { n:'Léa', t:'Tom', s:7, total:15, g:'Léa', d:'Tom', k:4 };
-  const toutes = ['ENTREE', 'BRAVO', 'SERIE_OK', 'SERIE_KO', 'PREMIER', 'TOUR', 'FIN', 'EGALITE'].flatMap(k => T[k].map(l => T.remplir(l, vars)));
+  const toutes = ['IMAGEES', 'TCHATCHE', 'ENTREE', 'BRAVO', 'SERIE_OK', 'SERIE_KO', 'PREMIER', 'TOUR', 'FIN', 'EGALITE'].flatMap(k => T[k].map(l => T.remplir(l, vars)));
   assert.ok(toutes.length >= 100, toutes.length);
   assert.strictEqual(new Set(toutes).size, toutes.length, 'pas de doublon');
   for(const l of toutes){ assert.ok(w.JUGE.juger(l).ok, l); assert.ok(!/\{\w+\}/.test(l), 'variable oubliée : ' + l);
@@ -1686,9 +1688,9 @@ await test('v5.77 : 🥊 trash talk — chambre la réponse, jamais la personne 
   for(let i = 0; i < T.ENTREE.length; i++) T.choisir(T.ENTREE, {}, mem); assert.strictEqual(new Set(vu).size, T.ENTREE.length);
   // Ton « Trash talk » dans une matière.
   A.base.ui = 'fr'; clic('matiere', 'francais'); assert.ok($('[data-a="maths-ton-matiere"][data-v="francais|trash"]'), 'bouton trash talk');
-  clic('maths-ton-matiere', 'francais|trash'); clic('matiere-melange', 'francais');
-  let vanne = '', bravo = ''; for(let k = 0; k < 10 && $('[data-a="qz-rep"]'); k++){ const b = [...w.document.querySelectorAll('[data-a="qz-rep"]')]; b[k % b.length].click();
-    const v = $('.piege-vanne'), br = $('.piege-bravo'); if(v) vanne = vanne || v.textContent; if(br) bravo = bravo || br.textContent; const s = $('[data-a="qz-suivant"]'); if(s) s.click(); }
+  clic('maths-ton-matiere', 'francais|trash');
+  let vanne = '', bravo = ''; for(let serie = 0; serie < 8 && !(vanne && bravo); serie++){ clic('matiere-melange', 'francais'); for(let k = 0; k < 10 && $('[data-a="qz-rep"]'); k++){ const b = [...w.document.querySelectorAll('[data-a="qz-rep"]')]; b[k % b.length].click();
+    const v = $('.piege-vanne'), br = $('.piege-bravo'); if(v) vanne = vanne || v.textContent; if(br) bravo = bravo || br.textContent; const s = $('[data-a="qz-suivant"]'); if(s) s.click(); } }
   assert.match(vanne, /🥊/, 'vanne trash : ' + vanne); assert.match(bravo, /🥊/, 'bravo trash : ' + bravo);
   clic('maths-ton-matiere', 'francais|taquin');
   // Battle entre potes avec l'interrupteur.
@@ -1703,6 +1705,129 @@ await test('garde-fou : pas deux fonctions du même nom dans jeu.js (l’une éc
   const src = require('fs').readFileSync(require('path').join(__dirname, '..', 'js', 'jeu.js'), 'utf8'), c = {};
   for(const m of src.matchAll(/^  function (\w+)\(/gm)) c[m[1]] = (c[m[1]] || 0) + 1;
   assert.deepStrictEqual(Object.keys(c).filter(k => c[k] > 1), []);
+});
+
+await test('v5.78 : brevet & bac blancs et annales construits comme les sujets 2026 — calculs justes, barème, coefficients', async () => {
+  const w = page(), A = w.AmiDesMots, E = w.EPREUVES, $ = s => w.document.querySelector(s), $$ = s => [...w.document.querySelectorAll(s)];
+  const clic = (a, v) => { const b = w.document.createElement('button'); b.dataset.a = a; if(v != null) b.dataset.v = v; w.document.body.appendChild(b); b.click(); b.remove(); };
+  // Construction officielle : DNB maths 6 + 14 points, français 60 points notés (+ 40 de rédaction sur papier), HG 40, EMC 20, sciences 10 + 10 ; maths 1re 6 + 14.
+  const tot = id => E.construire(id, 3).total;
+  assert.strictEqual(tot('dnb-maths'), 6 + 12, 'maths : 6 pts d’automatismes + 12 pts d’exercices (2 pts de rédaction non notés)');
+  assert.strictEqual(tot('dnb-francais'), 60); assert.strictEqual(tot('dnb-histoire'), 40); assert.strictEqual(tot('dnb-emc'), 20); assert.strictEqual(tot('dnb-sciences'), 20);
+  assert.strictEqual(tot('eam-spe'), 20); assert.strictEqual(tot('eam-commun'), 20);
+  assert.strictEqual(E.construire('eam-spe', 9).liste.filter(q => /Automatismes/.test(q.consigne)).length, 8, '8 automatismes en QCM comme le sujet officiel');
+  assert.strictEqual(E.BLANCS.brevet.epreuves.map(p => p[1]).join(','), '2,2,1.5,0.5,2,2', 'coefficients officiels du DNB 2026 (HG 1,5 et EMC 0,5 séparés, oral 2)');
+  assert.strictEqual(E.moyenne([10, 20], [2, 2]), 15);
+  // Des milliers de sujets : jamais de réponse vide, de doublon, de NaN, et toutes les vannes passent le juge.
+  for(let g = 1; g < 120; g++) for(const id of Object.keys(E.EPREUVES)) for(const q of E.construire(id, g).liste){
+    assert.ok(q.bon && q.faux.length && !q.faux.some(f => f.en === q.bon), q.enonce);
+    assert.ok(!/NaN|undefined|Infinity/.test(q.enonce + q.bon + q.faux.map(f => f.en).join() + q.regle + q.contexte), q.enonce);
+    for(const f of q.faux) assert.ok(w.JUGE.juger(f.vanne).ok, f.vanne); }
+  // Quelques calculs vérifiés à la main sur les générateurs.
+  const G = E._test, r = E.hasard(42);
+  for(let k = 0; k < 50; k++){ const ex = G.gens[0](E.hasard(k)), [AT, MT, AE, MB] = ex.contexte.match(/[\d,]+(?= m)/g).map(x => +x.replace(',', '.')), AM = MT - AT, AB = Math.sqrt(MB * MB - AM * AM);
+    assert.strictEqual(ex.questions[0].bon, String(Math.round(AM * 100) / 100).replace('.', ',') + ' m'); assert.strictEqual(ex.questions[1].bon, String(Math.round(AB * 100) / 100).replace('.', ',') + ' m');
+    assert.ok(Math.abs(AT / AM - AE / AB) < 1e-9, 'Thalès vérifié'); }
+  for(let k = 0; k < 50; k++){ const ex = G.gens[2](E.hasard(k)), [p, s, q, F] = ex.contexte.match(/\d+(?:,\d+)?(?= €)/g).map(x => +x.replace(',', '.')), n1 = +ex.questions[3].bon, n2 = +ex.questions[4].bon;
+    assert.ok(s + q * n1 < p * n1 && !(s + q * (n1 - 1) < p * (n1 - 1)), 'seuil B/A'); assert.ok(F < s + q * n2 && !(F < s + q * (n2 - 1)), 'seuil C/B'); }
+  // Annales : chaque jumeau a son lien officiel sur education.gouv.fr.
+  for(const a of E.ANNALES){ assert.match(a.url, /^https:\/\/www\.education\.gouv\.fr\/sites\/default\/files\/document\/.+\.pdf$/); assert.ok(E.annale(a.id, 5).liste.length >= 5, a.id); }
+  // Écrans : onglets, brevet blanc complet (5 épreuves), annale, lien officiel.
+  A.base.ui = 'fr'; clic('matieres'); assert.ok($('[data-a="annales"]'), 'onglet Annales');
+  clic('annales'); assert.ok($$('[data-a="annale-go"]').length >= 8); assert.ok($$('a.lien-officiel[target="_blank"][rel="noopener"]').length >= 8);
+  clic('annale-go', 'dnb26-maths-ag'); assert.match($('main').textContent, /26GENMATAG1/); clic('annale-suite');
+  assert.ok($('.contexte-exo') || /Automatismes/.test($('.piege-consigne').textContent), 'énoncé ou automatismes'); let k = 0;
+  while($('[data-a="qz-rep"]:not([disabled])') && k < 40){ const b = $$('[data-a="qz-rep"]'); b[k % b.length].click(); k++; const s = $('[data-a="qz-suivant"]'); if(s) s.click(); }
+  assert.match($('main').textContent, /[\d,]+ \/ 20/); assert.ok(A.J().matieres.notes['annale-dnb26-maths-ag'] >= 0);
+  clic('examens'); clic('examen-go', 'bac-maths-spe'); assert.match($('main').textContent, /Automatismes \(QCM\) 6 pts/); clic('examen-suite');
+  while($('[data-a="qz-rep"]:not([disabled])')){ $('[data-a="qz-rep"]').click(); const s = $('[data-a="qz-suivant"]'); if(s) s.click(); }
+  assert.match($('main').textContent, /[\d,]+ \/ 20/);
+});
+
+await test('v5.79 : spécialités de terminale + philo — construites comme 2026, calculs justes, bac blanc à 2 spés', async () => {
+  const w = page(), A = w.AmiDesMots, E = w.EPREUVES, S = E._test.spe, $ = s => w.document.querySelector(s), $$ = s => [...w.document.querySelectorAll(s)];
+  const clic = (a, v) => { const b = w.document.createElement('button'); b.dataset.a = a; if(v != null) b.dataset.v = v; w.document.body.appendChild(b); b.click(); b.remove(); };
+  assert.ok(E.SPES.join(',').startsWith('spe-maths,spe-pc,spe-svt,spe-ses,spe-hggsp,spe-hlp,spe-nsi,spe-si,spe-llcer'));
+  assert.strictEqual(E.construire('spe-maths', 1).total, 20, 'maths : 5 + 5 + 4 + 6');
+  assert.strictEqual(E.construire('spe-pc', 1).total, 20, 'physique-chimie : 11 + 5 + 4');
+  assert.strictEqual(E.construire('spe-ses', 1).total, 20, 'SES épreuve composée : 4 + 6 + 10');
+  assert.strictEqual(E.construire('spe-nsi', 1).total, 20, 'NSI : 6 + 6 + 8');
+  assert.strictEqual(E.bacTerminale('spe-maths', 'spe-ses').epreuves.map(p => p[1]).join(','), '16,16,8,8', 'coefficients officiels (spés 16, philo 8, Grand oral 8)');
+  for(let g = 1; g < 150; g++) for(const id of E.SPES.concat('philo')) for(const q of E.construire(id, g).liste){
+    assert.ok(q.bon && q.faux.length && !q.faux.some(f => f.en === q.bon), id + ' ' + q.enonce);
+    assert.ok(!/NaN|undefined|Infinity/.test(q.enonce + q.bon + q.faux.map(f => f.en).join() + q.regle + q.contexte), id + ' ' + q.enonce);
+    for(const f of q.faux) assert.ok(w.JUGE.juger(f.vanne).ok, f.vanne); }
+  // Calculs vérifiés indépendamment.
+  for(let g = 0; g < 40; g++){ const ex = S.speProba(E.hasard(g)), n = +ex.contexte.match(/prélève ensuite (\d+)/)[1], k = +ex.questions[4].q.match(/X = (\d+)/)[1], p = +ex.questions[3].bon.match(/; ([\d,]+)\)/)[1].replace(',', '.');
+    assert.strictEqual(ex.questions[4].bon, String(Math.round(S.C(n, k) * p ** k * (1 - p) ** (n - k) * 1000) / 1000).replace('.', ','), 'binomiale'); }
+  for(let g = 0; g < 40; g++){ const ex = S.pcNickel(E.hasard(g)), m = +ex.questions[0].bon.match(/\d+/)[0], I = +ex.contexte.match(/I = (\d+) A/)[1];
+    assert.strictEqual(ex.questions[3].bon, String(Math.round(m / 58.7 * 2 * 96500 / I / 3600 * 10) / 10).replace('.', ',') + ' h', 'électrolyse'); }
+  for(let g = 0; g < 40; g++){ const ex = S.siCatamaran(E.hasard(g)), [v] = ex.contexte.match(/v = (\d+)/).slice(1).map(Number), F = +ex.contexte.match(/F = (\d+)/)[1];
+    assert.strictEqual(ex.questions[0].bon, (F * v) + ' W', 'P = F × v'); }
+  for(const a of E.ANNALES.filter(a => a.tle)) assert.match(a.url, /^https:\/\/www\.education\.gouv\.fr\/sites\/default\/files\/document\/baccalaureat-general-2026-.+\.pdf$/);
+  // Écrans : section terminale, choix des 2 spés, épreuves enchaînées avec la philo.
+  A.base.ui = 'fr'; clic('examens'); assert.ok($('[data-a="bac-tle"]')); assert.ok($$('[data-a="examen-go"][data-v^="tle-"]').length >= 10);
+  A.base.speChoix = []; clic('bac-tle'); assert.ok($('[data-a="bac-tle-go"]').disabled, 'il faut 2 spés');
+  clic('bac-tle-spe', 'spe-maths'); clic('bac-tle-spe', 'spe-ses'); assert.ok(!$('[data-a="bac-tle-go"]').disabled); clic('bac-tle-go');
+  for(let e = 0; e < 4; e++){ assert.match($('main').textContent, /épreuve \d\/4/); clic('examen-suite'); let j = 0; while($('[data-a="qz-rep"]:not([disabled])') && j < 60){ $('[data-a="qz-rep"]:not([disabled])').click(); j++; const s = $('[data-a="qz-suivant"]'); if(s) s.click(); } }
+  assert.match($('main').textContent, /Moyenne : [\d,]+ \/ 20/); assert.ok(A.J().matieres.notes['blanc-bac-tle'] >= 0);
+  clic('annales'); assert.ok($$('[data-a="annale-go"][data-v^="bac26-"]').length >= 10);
+});
+
+await test('v5.80 : expressions imagées (« pas la lumière à tous les étages ») — visent la réponse ou Ami, jamais le joueur', async () => {
+  const w = page(), T = w.TRASH_TALK;
+  assert.ok(T.IMAGEES.length >= 60, 'expressions : ' + T.IMAGEES.length); assert.strictEqual(new Set(T.IMAGEES).size, T.IMAGEES.length, 'pas de doublon');
+  for(const l of T.IMAGEES){ assert.ok(w.JUGE.juger(l).ok, l); assert.ok(/réponse|Ami|Celle-là|Elle |Là, |Ça, c’est/.test(l), 'cible la réponse ou Ami : ' + l);
+    assert.ok(!/(?<![\p{L}’])(tu|t’|te|toi|ton|ta|tes|vous)(?![\p{L}])/iu.test(l), 'ne vise pas le joueur : ' + l); }
+});
+
+await test('v5.82 : toutes les spécialités (arts, LLCA, LLCER, bio-éco, EPPCS), bac techno par série, médecine-droit-astrophysique', async () => {
+  const w = page(), A = w.AmiDesMots, E = w.EPREUVES, M = w.MATIERES, $ = s => w.document.querySelector(s), $$ = s => [...w.document.querySelectorAll(s)];
+  const clic = (a, v) => { const b = w.document.createElement('button'); b.dataset.a = a; if(v != null) b.dataset.v = v; w.document.body.appendChild(b); b.click(); b.remove(); };
+  for(const id of ['spe-arts-hda', 'spe-arts-cinema', 'spe-arts-musique', 'spe-arts-theatre', 'spe-arts-plastiques', 'spe-arts-danse', 'spe-bioeco', 'spe-eppcs', 'spe-latin', 'spe-grec', 'spe-espagnol', 'spe-allemand', 'spe-italien', 'spe-portugais', 'spe-amc'])
+    assert.ok(E.SPES.includes(id) && E.BLANCS['tle-' + id], id);
+  assert.strictEqual(Object.keys(E.SERIES_TECHNO).join(','), 'stmg,sti2d,st2s,stl,std2a,sthr,s2tmd', 'les 7 séries technologiques');
+  assert.strictEqual(E.BLANCS['techno-stmg'].epreuves.map(p => p[1]).join(','), '16,16,4', 'STMG : 2 spécialités coef. 16 + philo');
+  for(let g = 1; g < 80; g++) for(const id of Object.keys(E.EPREUVES)) for(const q of E.construire(id, g).liste){
+    assert.ok(q.bon && q.faux.length && !q.faux.some(f => f.en === q.bon), id + ' ' + q.enonce);
+    assert.ok(!/NaN|undefined|Infinity/.test(q.enonce + q.bon + q.faux.map(f => f.en).join() + q.regle + q.contexte), id + ' ' + q.enonce);
+    for(const f of q.faux) assert.ok(w.JUGE.juger(f.vanne).ok, f.vanne); }
+  // Calculs vérifiés : seuil de rentabilité, Kepler, Wien, Hubble.
+  for(let g = 0; g < 40; g++){ const ex = E._test.plus.stmgGestion(E.hasard(g)), [pa] = ex.contexte.match(/(\d+) € HT/).slice(1).map(Number), coef = +ex.contexte.match(/multiplicateur de ([\d,]+)/)[1].replace(',', '.'), cf = +ex.contexte.match(/annuelles : (\d+)/)[1];
+    assert.strictEqual(ex.questions[3].bon, Math.ceil(cf / (pa * coef - pa)) + ' articles'); }
+  const S = M._sup; for(let g = 1; g < 60; g++){ const q = S.ASTRO_GEN[3](M.hasard(g)), a = +q.enonce.match(/a = (\d+) UA/)[1]; assert.strictEqual(q.bon, Math.pow(a, 1.5) + ' ans', 'Kepler');
+    const h = S.ASTRO_GEN[4](M.hasard(g)), d = +h.enonce.match(/à (\d+) Mpc/)[1]; assert.strictEqual(h.bon, (70 * d) + ' km/s', 'Hubble'); }
+  for(const id of ['medecine', 'droit', 'astro']) for(const c of M.trouver(id).chapitres) for(let g = 1; g < 40; g++) for(const q of M.serie(id, c.id, 'Sup', 6, g, 'taquin')){
+    assert.ok(q.bon && !q.faux.some(f => f.en === q.bon), q.enonce); for(const f of q.faux) assert.ok(w.JUGE.juger(f.vanne).ok, f.vanne); }
+  // Écrans : section « Après le bac », la matière s'ouvre au niveau Sup ; section bac techno.
+  A.base.ui = 'fr'; clic('matieres'); assert.ok($('[data-a="matiere"][data-v="astro"]') && $('[data-a="matiere"][data-v="medecine"]') && $('[data-a="matiere"][data-v="droit"]'));
+  clic('matiere', 'astro'); assert.ok($('[data-a="matiere-chap"][data-v="astro|calculs"]'), 'chapitres visibles directement');
+  clic('matiere-chap', 'astro|calculs'); let k = 0; while($('[data-a="qz-rep"]:not([disabled])') && k < 15){ $('[data-a="qz-rep"]').click(); k++; const n = $('[data-a="qz-suivant"]'); if(n) n.click(); }
+  assert.strictEqual(k, 10);
+  clic('examens'); assert.ok($$('[data-a="examen-go"][data-v^="techno-"]').length === 7, '7 séries technologiques');
+  clic('examen-go', 'techno-sthr'); clic('examen-suite'); assert.ok($('.contexte-exo'), 'énoncé STHR');
+});
+
+await test('v5.82 : une vanne trop courte (« Non. ») est relevée par une expression drôle', async () => {
+  const w = page(), A = w.AmiDesMots, M = w.MATIERES, $ = s => w.document.querySelector(s);
+  const clic = (a, v) => { const b = w.document.createElement('button'); b.dataset.a = a; if(v != null) b.dataset.v = v; w.document.body.appendChild(b); b.click(); b.remove(); };
+  A.base.ui = 'fr'; let vu = 0;
+  for(let s = 0; s < 6 && vu < 3; s++){ clic('matiere-chap', 'droit|bases'); for(let k = 0; k < 10 && $('[data-a="qz-rep"]'); k++){ const b = [...w.document.querySelectorAll('[data-a="qz-rep"]')];
+    b[k % b.length].click(); const t = $('.piege-vanne'); if(t){ vu++; assert.ok(t.textContent.length > 45, 'vanne relevée : ' + t.textContent); assert.ok(!/ Non\.$/.test(t.textContent.trim()), t.textContent); }
+    const n = $('[data-a="qz-suivant"]'); if(n) n.click(); } }
+  assert.ok(vu >= 1);
+});
+
+await test('v5.83 : oraux (brevet, français, Grand oral), espace Officiel (programmes + annales) et référence du programme dans chaque matière', async () => {
+  const w = page(), A = w.AmiDesMots, E = w.EPREUVES, $ = s => w.document.querySelector(s), $$ = s => [...w.document.querySelectorAll(s)];
+  const clic = (a, v) => { const b = w.document.createElement('button'); b.dataset.a = a; if(v != null) b.dataset.v = v; w.document.body.appendChild(b); b.click(); b.remove(); };
+  for(const id of ['dnb-oral', 'eaf-oral', 'grand-oral']) for(let g = 1; g < 30; g++) for(const q of E.construire(id, g).liste){ assert.ok(q.bon && !q.faux.some(f => f.en === q.bon)); for(const f of q.faux) assert.ok(w.JUGE.juger(f.vanne).ok, f.vanne); }
+  assert.ok(E.OFFICIEL.programmes.length >= 8 && E.OFFICIEL.annales.length >= 7);
+  for(const [, u] of E.OFFICIEL.programmes.concat(E.OFFICIEL.annales)) assert.match(u, /^https:\/\/(eduscol\.education\.gouv\.fr|www\.education\.gouv\.fr)\//, u);
+  A.base.ui = 'fr'; clic('matieres'); clic('officiel'); assert.ok($$('a.lien-carte[target="_blank"][rel="noopener"]').length >= 15);
+  clic('examens'); assert.ok($('[data-a="examen-go"][data-v="grand-oral"]') && $('[data-a="examen-go"][data-v="oral-dnb"]') && $('[data-a="examen-go"][data-v="oral-eaf"]'));
+  clic('matiere', 'histoire'); clic('matiere-niveau', 'histoire|3e'); assert.match($('.ref-programme').textContent, /BO n° 31 du 30 juillet 2020/);
+  clic('matiere-niveau', 'histoire|6e'); assert.match($('.ref-programme').textContent, /cycle 3/);
 });
 
 console.log(`\n${ok} réussi(s), ${ko} échoué(s)`);

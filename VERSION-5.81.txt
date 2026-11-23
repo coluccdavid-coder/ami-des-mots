@@ -1,0 +1,9 @@
+Ami des mots 5.81.0
+
+😂 Expressions imagées : 36 de plus (66 au total)
+- Après recherche des expressions françaises, belges et québécoises les plus connues :
+  « ne pas être une lumière », « ne pas avoir inventé le fil à couper le beurre », « pédaler dans la choucroute », « sauter du coq à l'âne »,
+  « se mettre le doigt dans l'œil », « raconter des salades », « en faire tout un fromage », « c'est la fin des haricots »,
+  « parler à travers son chapeau » et « avoir de la broue dans le toupet » (Québec), « carabistouille » (Belgique), « partir à Pétaouchnok »…
+- Toujours retournées sur la RÉPONSE ou sur Ami, jamais sur le joueur ; expressions grossières écartées. Tests : juge, pas de doublon, cible.
+Tests : 123 tests unitaires OK.

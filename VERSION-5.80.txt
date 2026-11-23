@@ -1,0 +1,11 @@
+Ami des mots 5.80.0
+
+😂 Expressions imagées
+- 30 nouvelles vannes avec des expressions françaises détournées : « cette réponse n'a pas la lumière à tous les étages »,
+  « elle pédale dans la semoule », « elle est complètement à l'ouest », « elle a une araignée au plafond », « elle cherche midi à quatorze heures »…
+- Elles visent toujours la RÉPONSE (ou Ami lui-même, en autodérision), jamais le joueur : un test le vérifie.
+- Où : en ton Trash talk (mélangées aux phrases de champion et à la tchatche), et de temps en temps en ton Taquin ou Cash
+  dans les maths, les matières et les examens blancs.
+- L'IA (quand le serveur sera en ligne) a aussi ce style dans sa boîte à outils.
+
+Tests : 123 tests unitaires OK.

@@ -1,0 +1,22 @@
+Ami des mots 5.82.0
+
+🎒 Toutes les spécialités du bac général
+- Ajoutées : arts (histoire des arts, cinéma-audiovisuel, musique, théâtre, arts plastiques, danse), biologie-écologie, EPPCS (sport),
+  LLCA latin et grec, LLCER espagnol, allemand, italien, portugais et anglais monde contemporain (les langues qui ont une épreuve écrite de spécialité).
+- Elles rejoignent maths, physique-chimie, SVT, SES, HGGSP, HLP, NSI, SI, LLCER anglais : 24 épreuves de spécialité, toutes disponibles
+  dans le bac blanc de terminale (2 spécialités au choix + philo).
+
+🛠️ Bac technologique (7 séries)
+- STMG (gestion : coût, TVA, marge, seuil de rentabilité ; droit et économie), STI2D, ST2S, STL (dilutions), STD2A, STHR (coût matière, ratio), S2TMD.
+- Un bac techno blanc par série : spécialités coefficient 16 + philosophie.
+
+🎓 Après le bac : Médecine, Droit, Astrophysique
+- Nouvelles matières (niveau « Sup ») dans la porte Matières :
+  médecine (anatomie, physiologie, essais cliniques, études de santé PASS/L.AS), droit (institutions, bases du droit, métiers),
+  astrophysique (étoiles, galaxies, Univers + calculs : vitesse de la lumière, années-lumière, loi de Wien, 3e loi de Kepler, loi de Hubble, parallaxe).
+
+😂 Vannes : une vanne trop courte (« Non. ») est maintenant toujours relevée par une expression imagée ou de la tchatche.
+
+Limites : les parties créatives ou rédigées (dissertations, synthèses, pratique artistique ou sportive) restent sur papier ;
+pas de LLCER en arabe, chinois, russe ou langues régionales tant qu'un locuteur ne peut pas relire.
+Tests : 125 tests unitaires OK ; captures Chrome (téléphone) sans erreur.

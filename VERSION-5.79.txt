@@ -1,0 +1,18 @@
+Ami des mots 5.79.0
+
+🎓 Bac de terminale : toutes les spécialités de la voie générale + philosophie
+- 9 spécialités construites comme les sujets 2026 :
+  maths (4 exercices : probabilités et loi binomiale, vrai/faux justifié, géométrie dans l'espace, fonction + intégrale),
+  physique-chimie (diffraction, solaire, circuit RC, électrolyse, titrage), SVT (connaissances pour la synthèse + datation isotopique),
+  SES (épreuve composée : connaissances, étude de document chiffrée, raisonnement), HGGSP, HLP, NSI (SQL, Python, réseaux RIP/OSPF, chiffrement, objets),
+  sciences de l'ingénieur (catamaran électrique + sciences physiques), LLCER anglais (traduction, faux amis, méthode de synthèse).
+- Philosophie : notions, auteurs, méthode ; sujets 2026 proposés sur papier.
+- Bac blanc de terminale : l'élève choisit ses 2 spécialités, la philo s'ajoute ; coefficients officiels 16 + 16 + 8.
+- Annales : 10 jumeaux de sujets de terminale 2026 avec le lien vers le PDF officiel.
+- Les parties rédigées (dissertations, synthèses, essais) sont proposées à faire sur papier ; l'appli entraîne et note ce qui se corrige automatiquement.
+- Les données « de dossier » (SES…) sont inventées pour l'entraînement et indiquées comme telles.
+- Calculs vérifiés par les tests (loi binomiale, électrolyse, puissance…), toutes les vannes passent le juge.
+
+À relire par un prof : docs/a-relire/epreuves.csv (contient maintenant les spécialités).
+Pas encore couvert : arts, LLCA (latin, grec), biologie-écologie, EPPCS, autres langues en LLCER.
+Tests : 122 tests unitaires OK ; captures Chrome (téléphone) sans erreur.
