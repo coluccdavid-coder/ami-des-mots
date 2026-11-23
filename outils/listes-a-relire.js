@@ -8,7 +8,7 @@
 const fs = require('fs'), path = require('path');
 const ICI = path.join(__dirname, '..'), w = {};
 global.window = w;
-for(const f of ['js/juge.js', 'js/maths.js', 'js/vannes-cash.js', 'js/vannes-ironie.js', 'js/sciences.js', 'js/pieges.js', 'js/anglais.js', 'js/clash.js', 'js/histoires.js', 'js/parcours.js', 'js/rigolade.js', 'js/clash-plus.js', 'js/matieres.js', 'js/mat-francais.js', 'js/mat-histoire.js', 'js/mat-svt-pc.js'])
+for(const f of ['js/juge.js', 'js/maths.js', 'js/vannes-cash.js', 'js/vannes-ironie.js', 'js/sciences.js', 'js/pieges.js', 'js/anglais.js', 'js/clash.js', 'js/histoires.js', 'js/parcours.js', 'js/rigolade.js', 'js/clash-plus.js', 'js/matieres.js', 'js/mat-francais.js', 'js/mat-histoire.js', 'js/mat-svt-pc.js', 'js/mat-sup.js', 'js/epreuves.js', 'js/epreuves-spe.js', 'js/epreuves-plus.js', 'js/epreuves-oraux.js'])
   new Function('window', fs.readFileSync(path.join(ICI, f), 'utf8'))(w);
 // Même empreinte que le jeu (js/jeu.js, fnv1a) : c'est le nom du MP3 sur le serveur des voix.
 const fnv1a = s => { let h = 0x811c9dc5; for(let i = 0; i < s.length; i++){ h ^= s.charCodeAt(i); h = Math.imul(h, 0x01000193); } return (h >>> 0).toString(36); };
@@ -40,6 +40,10 @@ for(const m of w.MATIERES.LISTE){
     lignes.push([nv, c.dom, c.nom, q.enonce, q.bon, q.faux.map(f => f.en + ' → ' + f.vanne).join(' | '), q.regle || '', '', '']);
   bilan.push(m.id + ' : ' + ecrire('docs/a-relire/' + m.id + '.csv', ['niveau', 'domaine', 'chapitre', 'énoncé', 'bonne réponse', 'mauvaises réponses → vanne', 'explication', 'OK ? (oui/non)', 'remarque du prof'], lignes) + ' questions');
 }
+// Examens blancs et annales (v5.78) : un sujet de chaque, pour relecture par un prof.
+{ const E = w.EPREUVES, lignes = [];
+  for(const id of Object.keys(E.EPREUVES)){ const e = E.construire(id, 2026); for(const q of e.liste) lignes.push([e.titre, q.consigne, q.contexte, q.enonce, q.bon, q.faux.map(f => f.en + ' → ' + f.vanne).join(' | '), q.regle || '', '', '']); }
+  bilan.push('épreuves : ' + ecrire('docs/a-relire/epreuves.csv', ['épreuve', 'partie', 'énoncé de l’exercice', 'question', 'bonne réponse', 'mauvaises réponses → vanne', 'explication', 'OK ? (oui/non)', 'remarque du prof'], lignes) + ' questions'); }
 // Phrases anglaises des jeux d'écoute.
 const A = w.ANGLAIS, R = w.RIGOLADE, vu = new Map();
 const ajouter = (jeu, en, fr) => { en = String(en || '').trim(); if(!en || vu.has(en)) return; vu.set(en, [jeu, en, fr || '', 'en/' + fnv1a(en) + '.mp3', '']); };

@@ -1,0 +1,15 @@
+Ami des mots 5.83.0
+
+🏛️ Espace « Officiel » (nouvel onglet dans Matières)
+- Liens directs vers tous les programmes officiels : cycle 3, cycle 4, lycée général et technologique, spécialités, maths, langues, SVT, séries technologiques.
+- Liens directs vers toutes les annales officielles : brevet depuis 2018, bac général et technologique depuis 2021, tous les sujets 2026,
+  définitions officielles des épreuves (brevet, bac général, bac technologique, Grand oral).
+
+📜 Dans chaque matière : la référence du programme officiel du niveau (BO) et le lien éduscol.
+
+🎤 Les oraux
+- Oral du brevet (15 min, noté sur 20), oral de français (20 min), Grand oral (20 min) : déroulé, attendus et méthode, avec Ami qui vanne.
+- Le brevet blanc inclut maintenant l'oral (coefficient 2), comme le vrai DNB ; le bac blanc de terminale inclut le Grand oral (coefficient 8 à partir de 2027).
+
+Limites : l'appli ne peut pas noter une prise de parole ni recopier les sujets officiels (droits du ministère) : elle renvoie vers eux et propose des sujets jumeaux.
+Tests : 126 tests unitaires OK ; captures Chrome (téléphone) sans erreur.

@@ -197,7 +197,7 @@
     tournoi:['tournoi', 'tournoi-go', 'tournoi-go-memes', 'potes', 'potes-go', 'potes-joue', 'potes-revanche', 'potes-trash'], 'defi-pote':['defi-pote', 'defi-pote-go'],
     salon:['salon', 'salon-creer', 'salon-rejoindre', 'salon-public', 'salon-entrer-public'],
     trompe:['trompe'], oreilles:['oreilles'], vraifaux:['vraifaux'], avent:['avent'], betisier:['betisier'], maison:['maison'],
-    maths:['maths', 'maths-chap', 'maths-melange', 'maths-examen', 'maths-defi'], sciences:['sciences', 'sciences-theme', 'matieres', 'matiere', 'matiere-niveau', 'matiere-chap', 'matiere-melange', 'matiere-examen', 'examens', 'examen-go', 'examen-suite'],
+    maths:['maths', 'maths-chap', 'maths-melange', 'maths-examen', 'maths-defi'], sciences:['sciences', 'sciences-theme', 'matieres', 'matiere', 'matiere-niveau', 'matiere-chap', 'matiere-melange', 'matiere-examen', 'examens', 'examen-go', 'examen-suite', 'annales', 'annale-go', 'annale-suite', 'bac-tle', 'bac-tle-spe', 'bac-tle-go', 'officiel'],
     village3d:['accueil-3d'], motscity:[]
   };
   const COIN_DE = {}; for(const c in COINS) for(const a of COINS[c]) COIN_DE[a] = c;
@@ -2579,6 +2579,7 @@
     if(z.i >= z.liste.length) return z.fin(z);
     const q = z.liste[z.i]; z.repondu = false; z.options = A_EN().melanger([q.bon].concat(q.faux.map(f => f.en)));
     poser(barre(z.retour || 'anglais') + '<main class="piege-ecran"><p class="piege-cat">' + esc(z.titre) + ' · ' + (z.i + 1) + '/' + z.liste.length + '</p>' +
+      (q.contexte ? '<details class="contexte-exo" open><summary>📄 Énoncé de l’exercice</summary><p>' + esc(q.contexte).replace(/\n/g, '<br>') + '</p></details>' : '') +
       '<div class="piege-haut"><div class="ami-moyen" id="ami-qz">' + (q.image ? image(q.image, 'pic-moyenne') : z.prof ? profPi('content') : ami('content')) + '</div>' +
       '<div><p class="piege-consigne">' + esc(q.consigne) + '</p><p class="piege-fr">' + esc(q.enonce || '') + (q.ecoute ? ' <button class="bouton-rond" data-a="qz-ecouter" aria-label="Écouter">🔊</button>' + (q.lent ? ' <button class="bouton-rond" data-a="qz-lent" aria-label="Écouter lentement">🐢</button>' : '') : '') + '</p>' + (q.trad ? traduire(q.trad) : '') + '</div></div>' +
       '<div class="piege-options">' + z.options.map((o, i) => '<button class="moyen piege-opt" data-a="qz-rep" data-v="' + i + '" lang="' + (z.lang || q.lang || 'en') + '">' + esc(o) + '</button>').join('') + '</div>' +
@@ -2586,7 +2587,7 @@
     if(q.ecoute) direEcoute(q.ecoute, 'en');
     if(!q.vanneDe && q.faux && q.faux.length){
       const sujet = z.prof ? 'maths' : z.sujet || (q.lang === 'fr' ? 'sciences' : 'anglais');
-      const tm = J().maths && J().maths.ton, ton = z.prof ? ({ doux:0, taquin:2, sanspitie:3, trash:3 }[tm] ?? 2) : niveauHumour();
+      const tm = J().maths && J().maths.ton, ton = (z.prof || q.matiere) ? ({ doux:0, taquin:2, sanspitie:3, trash:3 }[tm] ?? 2) : z.trash ? 3 : niveauHumour();
       iaPrecharger(sujet, [q.consigne, q.enonce].filter(Boolean).join(' — '), q.bon, q.faux.map(x => x.en), ton, 'fr');
     }
   }
@@ -2614,7 +2615,12 @@
     let bravoTrash = '';
     if(trash){ const m = memoireVannes(), k = Math.abs(z.suite);
       if(juste) bravoTrash = TT.choisir(k >= 3 ? TT.SERIE_OK : TT.BRAVO, { k }, m);
-      else if(f){ f = Object.assign({}, f, { vanne:TT.choisir(k >= 3 ? TT.SERIE_KO : TT.ENTREE, { k }, m) + ' ' + (f.vanne || '') }); } }
+      else if(f){ const x = Math.random(), pool = k >= 3 ? TT.SERIE_KO : x < 0.3 && TT.TCHATCHE ? TT.TCHATCHE : x < 0.55 && TT.IMAGEES ? TT.IMAGEES : TT.ENTREE; f = Object.assign({}, f, { vanne:(pool === TT.IMAGEES ? '🥊 ' : '') + TT.choisir(pool, { k }, m) + ' ' + (f.vanne || '') }); } }
+    // v5.80 : en ton taquin ou cash, une expression imagée de temps en temps (sur la réponse, jamais sur le joueur).
+    // v5.82 : une vanne trop courte (« Non. ») est toujours relevée par une expression imagée ou de la tchatche ; sinon, une fois sur quatre.
+    else if(TT && TT.IMAGEES && f && f.vanne && (z.prof || q.matiere) && (J().maths || {}).ton !== 'doux' && (String(f.vanne).length < 45 || (['taquin', 'sanspitie'].includes((J().maths || {}).ton || 'taquin') && Math.random() < 0.25))){
+      const court = /^(Non\.?|Non :.*)$/.test(String(f.vanne).trim()), drole = TT.choisir(Math.random() < 0.7 ? TT.IMAGEES : TT.TCHATCHE.map(x => x.replace(/^🥊 /, '')), {}, memoireVannes());
+      f = Object.assign({}, f, { vanne:drole + (court && /^Non\.?$/.test(String(f.vanne).trim()) ? '' : ' ' + f.vanne) }); }
     if(f && f.vanne) noterBetisier(f.vanne);
     const az = $('#ami-qz'); if(az && !q.image) az.innerHTML = z.prof ? profPi(juste ? 'fier' : 'mdr') : ami(juste ? (q.humeurJuste || 'fete') : (q.humeurFaux || (niveauHumour() > 1 ? 'mdr' : 'surpris')));
     if(z.onReponse) z.onReponse(juste, q);
@@ -2814,6 +2820,7 @@
     if(t === 'mot'){ const [m, b] = x.split('>'); if(MOTS[m] && MOTS[b]) return 'Confond ' + b + ' « ' + nomMot(b) + ' » avec ' + m + ' « ' + nomMot(m) + ' »'; }
     if(t === 'piege' && window.PIEGES){ const p = PIEGES.liste.find(y => y.id === x); if(p) return 'Piège : « ' + p.fr + ' » → ' + p.bon; }
     if(t === 'maths' && window.MATHS){ for(const n of MATHS.NIVEAUX){ const c = MATHS.chapitresDe(n).find(y => y[0] === x); if(c) return 'Maths ' + n + ' : ' + c[2]; } }
+    if(t === 'epr' && window.EPREUVES){ const a = EPREUVES.ANNALES.find(y => y.ref === x); return 'Examens blancs : ' + (a ? a.titre : x); }
     if(t === 'mat' && window.MATIERES){ const [id, c] = x.split(':'), m = MATIERES.trouver(id), ch = m && m.chapitres.find(y => y.id === c); if(ch) return m.nom + ' : ' + ch.nom; }
     if(t === 'sciences' && window.SCIENCES){ const q = SCIENCES.parId(x); if(q) return 'Sciences : ' + q.q; }
     if(t === 'dictee'){ const [e, a] = x.split('>'); return 'Dictée : écrit « ' + e + ' » au lieu de « ' + a + ' »'; }
@@ -2825,7 +2832,7 @@
     const jr = J().journal || {}, jours = []; for(let k = 6; k >= 0; k--) jours.push(jour(-k));
     const somme = cle => jours.reduce((t, d) => t + ((jr[d] || {})[cle] || 0), 0);
     const actifs = jours.filter(d => jr[d] && Object.keys(jr[d]).length).length, min = somme('min');
-    const mat = [['mots', '🖼️', 'Mots'], ['anglais', '🇬🇧', 'Anglais'], ['maths', '🔢', 'Maths'], ['francais', '📝', 'Français'], ['histoire', '🏛️', 'Histoire-géo'], ['svt', '🧬', 'SVT'], ['physique', '⚗️', 'Physique-chimie'], ['sciences', '🚀', 'Sciences']].map(([k, ic, nom]) => {
+    const mat = [['mots', '🖼️', 'Mots'], ['anglais', '🇬🇧', 'Anglais'], ['maths', '🔢', 'Maths'], ['francais', '📝', 'Français'], ['histoire', '🏛️', 'Histoire-géo'], ['svt', '🧬', 'SVT'], ['physique', '⚗️', 'Physique-chimie'], ['medecine', '🩺', 'Médecine'], ['droit', '⚖️', 'Droit'], ['astro', '🔭', 'Astrophysique'], ['sciences', '🚀', 'Sciences']].map(([k, ic, nom]) => {
       const b = somme(k + '+'), e = somme(k + '-'), n = b + e; return n ? '<li><span>' + ic + ' ' + nom + '</span><strong>' + b + '/' + n + ' (' + Math.round(b / n * 100) + ' %)</strong></li>' : ''; }).join('');
     const barres = jours.map(d => { const x = jr[d] || {}, n = Object.keys(x).filter(k => /[+-]$/.test(k)).reduce((t, k) => t + x[k], 0);
       return '<span class="jour-barre" title="' + d + ' : ' + n + ' réponses"><i style="height:' + Math.min(100, n * 3) + '%"></i><small>' + ['D', 'L', 'M', 'M', 'J', 'V', 'S'][new Date(d + 'T12:00').getDay()] + '</small></span>'; }).join('');
@@ -2997,6 +3004,12 @@
   const cleIA = (bonne, fausse) => String(bonne) + '\u0001' + String(fausse);
   function iaActive(){ return !!CONFIG.API_VANNES_DIRECT && J().vannesIA !== false && Date.now() > iaEnPanne && typeof fetch === 'function'; }
   function noterRecente(t){ if(!t) return; recentes.push(String(t).slice(0, 170)); if(recentes.length > 30) recentes.shift(); }
+  // v5.78 : l'IA s'adapte toute seule à la famille — elle reçoit les vannes notées 😂 (le style qui fait rire ici) et 🙄 (à éviter),
+  // et le style « trash talk » si ce ton est choisi. Rien d'autre ne part : ni nom, ni pseudo.
+  function goutsHumour(){
+    const av = Array.isArray(J().avisVannes) ? J().avisVannes : [], pris = v => av.filter(x => x.v === v).slice(-8).map(x => String(x.t).slice(0, 170));
+    return { aimees:pris(1), pasdrole:pris(-1), style:((J().maths || {}).ton === 'trash' || (qz && qz.trash)) ? 'trash' : '' };
+  }
   async function iaPrecharger(sujet, question, bonne, fausses, ton, langue){
     if(!iaActive() || !bonne || !fausses || !fausses.length) return;
     // Une réponse = une chaîne, ou { id, texte } (jeux d'images : l'émoji sert de clé, le nom part à l'IA).
@@ -3008,7 +3021,7 @@
     const ctl = typeof AbortController === 'function' ? new AbortController() : null, minuteur = setTimeout(() => ctl && ctl.abort(), 9000);
     try{
       const r = await fetch(CONFIG.API_VANNES_DIRECT, { method:'POST', cache:'no-store', headers:{ 'Content-Type':'application/json' }, signal:ctl ? ctl.signal : undefined,
-        body:JSON.stringify({ sujet, question:String(question || '').slice(0, 220), bonne:String(texteB).slice(0, 90), fausses:manquent.map(f => String(f).slice(0, 90)), ton, langue:langue || 'fr', deja:recentes.slice(-30) }) });
+        body:JSON.stringify({ sujet, question:String(question || '').slice(0, 220), bonne:String(texteB).slice(0, 90), fausses:manquent.map(f => String(f).slice(0, 90)), ton, langue:langue || 'fr', deja:recentes.slice(-30), ...goutsHumour() }) });
       if(r.status === 429 || r.status === 503) iaEnPanne = Date.now() + 10 * 60 * 1000;
       const d = r.ok ? await r.json() : null, v = d && d.vannes;
       items.forEach(x => { const t = v && typeof v[x.texte] === 'string' ? v[x.texte].trim() : '';
@@ -3117,7 +3130,7 @@
     qz = null; const M = window.MATIERES; if(!M) return accueil();
     const c = (a, v, ic, t1, t2) => '<button class="carte-anglais" data-a="' + a + '"' + (v ? ' data-v="' + v + '"' : '') + '><span class="ic">' + ic + '</span><strong>' + t1 + '</strong><small>' + t2 + '</small></button>';
     poser(barre('accueil') + '<main class="coin-anglais matieres-ecran"><h2>📚 Matières</h2><p class="pieges-intro">Le programme de la 6e au bac, avec Ami qui vanne les erreurs (jamais toi) et t’explique la bonne réponse.</p>' +
-      '<div class="onglets-matieres" role="tablist"><button class="onglet actif" role="tab" aria-selected="true">📖 Réviser</button><button class="onglet" role="tab" aria-selected="false" data-a="examens">📝 Brevet & bac blancs</button></div>' +
+      (window.EPREUVES ? ongletsExamens('matieres') : '') +
       '<div class="cartes-anglais">' +
         c('matiere', 'francais', '📝', 'Français', 'Conjugaison, orthographe, grammaire, figures de style, littérature') +
         (window.MATHS ? c('maths', '', '🔢', 'Maths', 'De la 6e au bac, avec Prof Pi') : '') +
@@ -3125,15 +3138,23 @@
         c('matiere', 'svt', '🧬', 'SVT', 'Le vivant, le corps humain, la Terre, la génétique') +
         c('matiere', 'physique', '⚗️', 'Physique-chimie', 'Matière, électricité, vitesse, énergie') +
         (window.SCIENCES ? c('sciences', '', '🚀', 'Sciences rigolotes', 'Planètes, fusées, médecine… avec des clashs') : '') +
-      '</div></main>');
+      '</div>' + (M.trouver('medecine') ? '<section class="domaine"><h3>🎓 Après le bac</h3><div class="cartes-anglais">' +
+        c('matiere', 'medecine', '🩺', 'Médecine', 'Anatomie, physiologie, études de santé') + c('matiere', 'droit', '⚖️', 'Droit', 'Institutions, bases du droit, métiers') +
+        c('matiere', 'astro', '🔭', 'Astrophysique', 'Étoiles, galaxies, calculs d’astrophysicien') + '</div></section>' : '') + '</main>');
   }
   function matiereAccueil(id){
     qz = null; const M = window.MATIERES, m = M && M.trouver(id); if(!m) return matieresAccueil();
-    const e = etatMatieres(), niveaux = M.NIVEAUX, chs = M.chapitres(id, e.niveau), ton = etatMaths().ton, doms = []; e.derniere = id;
+    const e = etatMatieres(); e.derniere = id;
+    // v5.82 : une matière sans chapitre à ce niveau (médecine, droit… niveau « Sup ») s'ouvre directement à son niveau.
+    if(!M.chapitres(id, e.niveau).length && M.niveauxDe(id).length) e.niveau = M.niveauxDe(id).slice(-1)[0];
+    const niveaux = M.NIVEAUX, chs = M.chapitres(id, e.niveau), ton = etatMaths().ton, doms = [];
     for(const c of chs){ let d = doms.find(x => x.d === c.dom); if(!d) doms.push(d = { d:c.dom, l:[] }); d.l.push(c); }
     const etoiles = cid => { const s = e.chap[id + ':' + cid]; if(!s || !s.n) return ''; const p = s.ok / s.n; return s.n >= 10 && p >= .9 ? '⭐⭐⭐' : p >= .7 ? '⭐⭐' : '⭐'; };
     const ex = m.examens && m.examens[e.niveau];
+    // v5.83 : la référence du programme officiel du niveau, avec le lien vers éduscol.
+    const O = window.EPREUVES && EPREUVES.OFFICIEL, ref = O && ({ '6e':0, '5e':1, '4e':1, '3e':1, '2nde':2, '1re':2, 'Tle':2 })[e.niveau], pr = O && ref != null ? O.programmes[ref] : null;
     poser(barre('matieres') + '<main class="coin-anglais coin-maths matiere-ecran"><h2>' + m.ic + ' ' + esc(m.nom) + '</h2>' +
+      (pr ? '<p class="petit ref-programme">📜 Programme officiel (' + esc(pr[0]) + ') : ' + esc(pr[2]) + ' · <a href="' + esc(pr[1]) + '" target="_blank" rel="noopener">voir sur éduscol</a></p>' : '') +
       '<div class="onglets-niveaux" role="tablist">' + niveaux.map(n => { const vide = !M.chapitres(id, n).length;
         return '<button role="tab" aria-selected="' + (n === e.niveau) + '" class="onglet' + (n === e.niveau ? ' actif' : '') + (vide ? ' vide' : '') + '" data-a="matiere-niveau" data-v="' + id + '|' + n + '">' + n + '</button>'; }).join('') + '</div>' +
       '<p class="ton-prof">Ton d’Ami : ' + TONS_PROF.map(([k, l]) => '<button class="petit-bouton' + (k === ton ? ' actif' : '') + '" data-a="maths-ton-matiere" data-v="' + id + '|' + k + '" aria-pressed="' + (k === ton) + '">' + l + '</button>').join(' ') + '</p>' +
@@ -3159,52 +3180,94 @@
       (note != null ? '<p class="note-examen">' + String(note).replace('.', ',') + ' / 20</p>' : '<p class="score">' + z.bonnes + ' / ' + z.liste.length + '</p>') + '<p>' + mot + '</p>' +
       '<div class="actions serrees"><button class="moyen plein" data-a="matiere-melange" data-v="' + esc(id) + '">🔁 Encore</button><button class="moyen" data-a="matiere" data-v="' + esc(id) + '">📚 ' + esc((window.MATIERES.trouver(id) || {}).nom || '') + '</button></div></main>');
   }
-  // ── Brevet & bac blancs : plusieurs épreuves à la suite, une note par épreuve, puis la moyenne ──
-  const EXAMENS_BLANCS = {
-    brevet:{ titre:'Brevet blanc', niveau:'3e', ic:'🎓', epreuves:[['francais', 'Français', 10], ['maths', 'Maths', 10], ['histoire', 'Histoire-géo & EMC', 10], ['sciences2', 'Sciences (SVT + physique-chimie)', 10]] },
-    bacfr:{ titre:'Bac de français blanc', niveau:'1re', ic:'📝', epreuves:[['francais', 'Français (1re)', 20]] },
-    bacmaths1:{ titre:'Maths 1re blanc', niveau:'1re', ic:'🔢', epreuves:[['maths', 'Maths 1re', 15]] },
-    bacmathsT:{ titre:'Bac de maths blanc', niveau:'Tle', ic:'🔢', epreuves:[['maths', 'Maths terminale', 20]] }
-  };
+  // ── v5.78 : Brevet & bac blancs et annales, construits comme les vrais sujets 2026 (js/epreuves.js) ──
   let blanc = null;
+  const ongletsExamens = actif => '<div class="onglets-matieres" role="tablist">' + [['matieres', '📖 Réviser'], ['examens', '📝 Blancs'], ['annales', '🗂️ Annales'], ['officiel', '🏛️ Officiel']].map(([a, l]) =>
+    '<button class="onglet' + (a === actif ? ' actif' : '') + '" role="tab" aria-selected="' + (a === actif) + '"' + (a === actif ? '' : ' data-a="' + a + '"') + '>' + l + '</button>').join('') + '</div>';
+  const virg = n => String(n).replace('.', ',');
+  const mentionDe = m => m >= 16 ? 'Mention très bien 🏆' : m >= 14 ? 'Mention bien 🥈' : m >= 12 ? 'Mention assez bien 🥉' : m >= 10 ? 'Admis ✅' : 'Pas encore… mais tu sais maintenant où ça coince 💪';
+  const verdictAmi = m => m >= 16 ? 'Ami range ses vannes au placard : il n’en a pas eu besoin. Respect. 🫡' : m >= 12 ? 'Solide ! Ami a cherché la petite bête… il a trouvé une fourmi, pas plus.' : m >= 8 ? 'Ça se joue à pas grand-chose. Ami a ri, mais il a aussi pris des notes pour t’aider.' : 'Ami a vidé son stock de vannes. Bonne nouvelle : il ne reste que des progrès à faire. 💪';
   function examensAccueil(){
-    qz = null; const e = etatMatieres();
-    poser(barre('matieres') + '<main class="coin-anglais matieres-ecran"><h2>📝 Brevet & bac blancs</h2><p class="pieges-intro">Plusieurs épreuves à la suite, comme le jour J. Une note sur 20 par épreuve, puis ta moyenne. Les sujets sont dans l’esprit de l’examen ; les vrais sujets officiels sont sur le site du ministère.</p>' +
-      '<div class="onglets-matieres" role="tablist"><button class="onglet" role="tab" aria-selected="false" data-a="matieres">📖 Réviser</button><button class="onglet actif" role="tab" aria-selected="true">📝 Brevet & bac blancs</button></div>' +
-      '<div class="cartes-anglais">' + Object.entries(EXAMENS_BLANCS).map(([k, x]) => '<button class="carte-anglais" data-a="examen-go" data-v="' + k + '"><span class="ic">' + x.ic + '</span><strong>' + esc(x.titre) + '</strong><small>' + esc(x.niveau) + ' · ' + x.epreuves.map(p => p[1]).join(', ') +
-        (e.notes['blanc-' + k] != null ? ' · dernière moyenne : ' + String(e.notes['blanc-' + k]).replace('.', ',') + '/20' : '') + '</small></button>').join('') + '</div></main>');
+    qz = null; blanc = null; const E = window.EPREUVES, e = etatMatieres(); if(!E) return matieresAccueil();
+    poser(barre('matieres') + '<main class="coin-anglais matieres-ecran"><h2>📝 Brevet & bac blancs</h2><p class="pieges-intro">Construits comme les vrais sujets 2026 : mêmes parties, mêmes types d’exercices, même barème. Une note sur 20 par épreuve, puis la moyenne avec les coefficients officiels. Et Ami qui vanne chaque erreur. 😏</p>' +
+      ongletsExamens('examens') + '<div class="cartes-anglais">' + Object.entries(E.BLANCS).filter(([k, x]) => !x.tle && !x.techno && !/^(oral-dnb|oral-eaf|grand-oral)$/.test(k)).map(([k, x]) => '<button class="carte-anglais" data-a="examen-go" data-v="' + k + '"><span class="ic">' + x.ic + '</span><strong>' + esc(x.titre) + '</strong><small>' + esc(x.niveau) + ' · ' +
+        x.epreuves.map(p => esc(E.EPREUVES[p[0]].titre)).join(', ') + (e.notes['blanc-' + k] != null ? ' · dernière note : ' + virg(e.notes['blanc-' + k]) + '/20' : '') + '</small></button>').join('') + '</div>' +
+      (E.SPES ? '<section class="domaine"><h3>🎒 Terminale : spécialités et philosophie</h3><div class="cartes-anglais"><button class="carte-anglais" data-a="bac-tle"><span class="ic">🎓</span><strong>Bac blanc de terminale</strong><small>2 spécialités au choix + philosophie, coefficients officiels' +
+        (e.notes['blanc-bac-tle'] != null ? ' · dernière note : ' + virg(e.notes['blanc-bac-tle']) + '/20' : '') + '</small></button>' +
+        Object.entries(E.BLANCS).filter(([, x]) => x.tle).map(([k, x]) => '<button class="carte-anglais" data-a="examen-go" data-v="' + k + '"><span class="ic">' + x.ic + '</span><strong>' + esc(x.titre) + '</strong><small>' + esc(E.EPREUVES[x.epreuves[0][0]].officiel) +
+          (e.notes['blanc-' + k] != null ? ' · ' + virg(e.notes['blanc-' + k]) + '/20' : '') + '</small></button>').join('') + '</div></section>' : '') +
+      (E.BLANCS['grand-oral'] ? '<section class="domaine"><h3>🎤 Les oraux</h3><div class="cartes-anglais">' + ['oral-dnb', 'oral-eaf', 'grand-oral'].map(k => { const x = E.BLANCS[k], ep = E.EPREUVES[x.epreuves[0][0]];
+        return '<button class="carte-anglais" data-a="examen-go" data-v="' + k + '"><span class="ic">🎤</span><strong>' + esc(x.titre) + '</strong><small>' + esc(x.niveau) + ' · ' + esc(ep.duree) + '</small></button>'; }).join('') + '</div></section>' : '') +
+      (E.SERIES_TECHNO ? '<section class="domaine"><h3>🛠️ Bac technologique</h3><div class="cartes-anglais">' + Object.entries(E.BLANCS).filter(([, x]) => x.techno).map(([k, x]) => '<button class="carte-anglais" data-a="examen-go" data-v="' + k + '"><span class="ic">' + x.ic + '</span><strong>' + esc(x.titre) + '</strong><small>' +
+        x.epreuves.map(p => esc(E.EPREUVES[p[0]].titre)).join(' + ') + (e.notes['blanc-' + k] != null ? ' · ' + virg(e.notes['blanc-' + k]) + '/20' : '') + '</small></button>').join('') + '</div></section>' : '') + '</main>');
   }
-  function questionsEpreuve(cle, niveau, n){
-    const g = Math.floor(Math.random() * 1e9), ton = etatMaths().ton, M = window.MATIERES;
-    if(cle === 'maths') return window.MATHS ? MATHS.questionsSalon(g, n, niveau) : [];
-    if(cle === 'sciences2') return M.serie('svt', 'examen', niveau, Math.ceil(n / 2), g, ton).concat(M.serie('physique', 'examen', niveau, Math.floor(n / 2), g + 1, ton));
-    return M.serie(cle, 'examen', niveau, n, g, ton);
+  // Bac blanc de terminale : l'élève choisit ses 2 spécialités, la philosophie est ajoutée.
+  function bacTerminale(){
+    const E = window.EPREUVES; if(!E || !E.SPES) return examensAccueil();
+    const choix = (Array.isArray(base.speChoix) ? base.speChoix : []).filter(x => E.SPES.includes(x)).slice(0, 2);
+    poser(barre('examens') + '<main class="coin-anglais matieres-ecran"><h2>🎓 Bac blanc de terminale</h2><p class="pieges-intro">Choisis tes 2 spécialités (' + choix.length + '/2). La philosophie s’ajoute automatiquement. Coefficients officiels : 16 par spécialité, 8 pour la philo.</p>' +
+      '<div class="cartes-anglais choix-matiere">' + E.SPES.map(id => { const ch = choix.includes(id); return '<button class="carte-anglais' + (ch ? ' choisie' : '') + '" data-a="bac-tle-spe" data-v="' + id + '" aria-pressed="' + ch + '"><span class="ic">' + (ch ? '✅' : '📘') + '</span><strong>' + esc(E.EPREUVES[id].titre.replace('Spécialité ', '')) + '</strong><small>' + esc(E.EPREUVES[id].duree) + '</small></button>'; }).join('') + '</div>' +
+      '<p><button class="gros" data-a="bac-tle-go"' + (choix.length === 2 ? '' : ' disabled') + '>▶ Commencer le bac blanc</button></p></main>');
   }
-  function blancGo(k){
-    const x = EXAMENS_BLANCS[k]; if(!x) return examensAccueil();
-    blanc = { k, x, i:0, notes:[] }; blancEpreuve();
+  // v5.83 : espace « Officiel » — liens vers tous les programmes et toutes les annales du ministère.
+  function officielAccueil(){
+    qz = null; const E = window.EPREUVES; if(!E || !E.OFFICIEL) return matieresAccueil();
+    const liste = l => '<div class="cartes-anglais">' + l.map(([t, u, d]) => '<a class="carte-anglais lien-carte" href="' + esc(u) + '" target="_blank" rel="noopener"><span class="ic">🔗</span><strong>' + esc(t) + '</strong><small>' + esc(d) + '</small></a>').join('') + '</div>';
+    poser(barre('matieres') + '<main class="coin-anglais matieres-ecran"><h2>🏛️ Programmes et annales officiels</h2><p class="pieges-intro">Les textes officiels et tous les vrais sujets, directement sur les sites du ministère (éduscol et education.gouv.fr). Les sujets jumeaux d’Ami sont dans les onglets Blancs et Annales.</p>' +
+      ongletsExamens('officiel') + '<section class="domaine"><h3>📚 Programmes scolaires</h3>' + liste(E.OFFICIEL.programmes) + '</section><section class="domaine"><h3>🗂️ Toutes les annales officielles</h3>' + liste(E.OFFICIEL.annales) + '</section></main>');
+  }
+  function annalesAccueil(){
+    qz = null; blanc = null; const E = window.EPREUVES, e = etatMatieres(); if(!E) return matieresAccueil();
+    const groupe = (t, l) => '<section class="domaine"><h3>' + t + '</h3><div class="cartes-anglais">' + l.map(a => '<div class="carte-annale"><button class="carte-anglais" data-a="annale-go" data-v="' + a.id + '"><span class="ic">🗂️</span><strong>' + esc(a.titre) + '</strong><small>Jumeau du sujet ' + esc(a.ref) +
+      (e.notes['annale-' + a.id] != null ? ' · ta note : ' + virg(e.notes['annale-' + a.id]) + '/20' : '') + '</small></button><a class="lien-officiel" href="' + esc(a.url) + '" target="_blank" rel="noopener">📄 Sujet officiel (PDF)</a></div>').join('') + '</div></section>';
+    poser(barre('matieres') + '<main class="coin-anglais matieres-ecran"><h2>🗂️ Annales 2026</h2><p class="pieges-intro">Pour chaque vrai sujet 2026 : un sujet jumeau construit pareil, avec d’autres nombres et d’autres textes. Le vrai sujet officiel est à côté, sur le site du ministère.</p>' +
+      ongletsExamens('annales') + '<div class="domaines">' + groupe('🎓 Brevet 2026', E.ANNALES.filter(a => /^dnb/.test(a.id))) + groupe('🎒 Bac 2026 · épreuves anticipées de 1re', E.ANNALES.filter(a => !/^dnb/.test(a.id) && !a.tle)) + groupe('🎓 Bac 2026 · terminale : spécialités et philo', E.ANNALES.filter(a => a.tle)) + '</div></main>');
+  }
+  // Une épreuve (ou une annale) se joue avec le moteur de questions ; chaque question rapporte ses points.
+  function jouerEpreuve(ep, retour, fin){
+    ep.gagnes = 0;
+    questionsGo(ep.liste, { titre:'📝 ' + ep.titre, retour, lang:'fr', prof:ep.matiere === 'maths', sujet:ep.matiere,
+      onReponse:(juste, q) => { if(juste) ep.gagnes += q.pts; else noterErreur('epr:' + (ep.ref || ep.id)); },
+      fin:() => fin(window.EPREUVES.note20(ep.gagnes, ep.total)) });
+  }
+  function blancGo(k, perso){
+    const E = window.EPREUVES, x = perso || (E && E.BLANCS[k]); if(!x) return examensAccueil();
+    blanc = { k, x, i:0, notes:[], graine:Math.floor(Math.random() * 1e9) }; blancEpreuve();
   }
   function blancEpreuve(){
-    const ex = blanc; if(!ex) return examensAccueil();
+    const ex = blanc, E = window.EPREUVES; if(!ex || !E) return examensAccueil();
     if(ex.i >= ex.x.epreuves.length){
-      const moy = Math.round(ex.notes.reduce((t, n) => t + n, 0) / ex.notes.length * 10) / 10; etatMatieres().notes['blanc-' + ex.k] = moy; J().plumes += Math.round(moy); garder(); bruit('fin');
-      const mention = moy >= 16 ? 'Mention très bien 🏆' : moy >= 14 ? 'Mention bien 🥈' : moy >= 12 ? 'Mention assez bien 🥉' : moy >= 10 ? 'Admis ✅' : 'Pas encore… mais tu as vu où ça coince 💪';
-      return poser(barre('matieres') + '<main class="centre examen-fin"><div class="ami-moyen">' + ami(moy >= 10 ? 'fete' : 'malin') + '</div><h2>' + ex.x.ic + ' ' + esc(ex.x.titre) + '</h2>' +
-        '<ul class="pieges-cats">' + ex.x.epreuves.map((p, i) => '<li><span>' + esc(p[1]) + '</span><strong>' + String(ex.notes[i]).replace('.', ',') + '/20</strong></li>').join('') + '</ul>' +
-        '<p class="note-examen">Moyenne : ' + String(moy).replace('.', ',') + ' / 20</p><p><strong>' + mention + '</strong></p>' +
-        '<div class="actions serrees"><button class="moyen plein" data-a="examen-go" data-v="' + ex.k + '">🔁 Un autre sujet</button><button class="moyen" data-a="examens">📝 Les examens</button></div></main>');
+      const coefs = ex.x.epreuves.map(p => p[1]), moy = E.moyenne(ex.notes, coefs); etatMatieres().notes['blanc-' + ex.k] = moy; J().plumes += Math.round(moy); garder(); bruit('fin');
+      const nonNotes = ex.x.epreuves.map(p => E.EPREUVES[p[0]].nonNote).filter(Boolean);
+      return poser(barre('examens') + '<main class="centre examen-fin"><div class="ami-moyen">' + ami(moy >= 10 ? 'fete' : 'malin') + '</div><h2>' + ex.x.ic + ' ' + esc(ex.x.titre) + '</h2>' +
+        '<ul class="pieges-cats">' + ex.x.epreuves.map((p, i) => '<li><span>' + esc(E.EPREUVES[p[0]].titre) + (ex.x.epreuves.length > 1 ? ' <small>coef. ' + virg(p[1]) + '</small>' : '') + '</span><strong>' + virg(ex.notes[i]) + '/20</strong></li>').join('') + '</ul>' +
+        '<p class="note-examen">' + (ex.x.epreuves.length > 1 ? 'Moyenne : ' : '') + virg(moy) + ' / 20</p><p><strong>' + mentionDe(moy) + '</strong></p><p>🦉 ' + verdictAmi(moy) + '</p>' +
+        (ex.x.bilan ? '<p class="petit">' + esc(ex.x.bilan) + '</p>' : '') + nonNotes.map(t => '<p class="petit">✍️ ' + esc(t).replace(/\n/g, '<br>') + '</p>').join('') +
+        '<div class="actions serrees"><button class="moyen plein" data-a="examen-go" data-v="' + ex.k + '">🔁 Un autre sujet</button><button class="moyen" data-a="annales">🗂️ Les annales</button></div></main>');
     }
-    const [cle, nom, n] = ex.x.epreuves[ex.i], liste = questionsEpreuve(cle, ex.x.niveau, n);
-    poser(barre('matieres') + '<main class="centre"><div class="ami-moyen">' + ami('malin') + '</div><p class="piege-cat">' + esc(ex.x.titre) + ' · épreuve ' + (ex.i + 1) + '/' + ex.x.epreuves.length + '</p><h2>' + esc(nom) + '</h2>' +
-      '<p>' + liste.length + ' questions. Prends ton temps : c’est le jour J pour de faux. 📝</p><button class="gros" data-a="examen-suite">C’est parti ▶</button></main>');
-    ex.liste = liste;
+    const [id] = ex.x.epreuves[ex.i], ep = E.construire(id, ex.graine + ex.i * 7919); ex.ep = ep;
+    poser(barre('examens') + '<main class="centre"><div class="ami-moyen">' + ami('malin') + '</div><p class="piege-cat">' + esc(ex.x.titre) + ' · épreuve ' + (ex.i + 1) + '/' + ex.x.epreuves.length + '</p><h2>' + esc(ep.titre) + '</h2>' +
+      '<p>⏱️ Au vrai examen : ' + esc(ep.duree) + '<br>📋 Barème officiel : ' + esc(ep.officiel) + '</p><p>' + ep.liste.length + ' questions dans l’appli. Prends ton temps : c’est le jour J pour de faux. 📝</p>' +
+      (ep.nonNote ? '<p class="petit">✍️ ' + esc(ep.nonNote).replace(/\n/g, '<br>') + '</p>' : '') + '<button class="gros" data-a="examen-suite">C’est parti ▶</button></main>');
   }
   function blancSuite(){
-    const ex = blanc; if(!ex || !ex.liste) return examensAccueil();
-    const [cle, nom] = ex.x.epreuves[ex.i];
-    questionsGo(ex.liste, { titre:'📝 ' + nom, retour:'examens', lang:'fr', prof:cle === 'maths', sujet:cle === 'maths' ? 'maths' : cle,
-      onReponse:(juste, q) => { if(!juste) noterErreur(cle === 'maths' ? 'maths:' + q.chap : 'mat:' + (q.matiere || cle) + ':' + q.chap); },
-      fin:z => { ex.notes.push(noteSur20(z)); ex.i++; blancEpreuve(); } });
+    const ex = blanc; if(!ex || !ex.ep) return examensAccueil();
+    jouerEpreuve(ex.ep, 'examens', note => { ex.notes.push(note); ex.i++; ex.ep = null; blancEpreuve(); });
+  }
+  let annaleEnCours = null;
+  function annaleGo(id){
+    const E = window.EPREUVES, a = E && E.annale(id, Math.floor(Math.random() * 1e9)); if(!a) return annalesAccueil();
+    annaleEnCours = a;
+    poser(barre('annales') + '<main class="centre"><div class="ami-moyen">' + ami('malin') + '</div><p class="piege-cat">🗂️ Annales · jumeau du sujet ' + esc(a.ref) + '</p><h2>' + esc(a.titre) + '</h2>' +
+      '<p>Même construction que le vrai sujet, avec d’autres nombres et d’autres textes. ' + a.liste.length + ' questions, notées sur 20.</p><p><a class="lien-officiel" href="' + esc(a.url) + '" target="_blank" rel="noopener">📄 Voir le sujet officiel (PDF)</a></p>' +
+      '<button class="gros" data-a="annale-suite">C’est parti ▶</button></main>');
+  }
+  function annaleSuite(){
+    const a = annaleEnCours; if(!a) return annalesAccueil();
+    jouerEpreuve(a, 'annales', note => { etatMatieres().notes['annale-' + a.id] = note; J().plumes += Math.round(note); garder(); bruit('fin');
+      poser(barre('annales') + '<main class="centre examen-fin"><div class="ami-moyen">' + ami(note >= 10 ? 'fete' : 'malin') + '</div><h2>🗂️ ' + esc(a.titre) + '</h2><p class="note-examen">' + virg(note) + ' / 20</p><p><strong>' + mentionDe(note) + '</strong></p><p>🦉 ' + verdictAmi(note) + '</p>' +
+        '<p><a class="lien-officiel" href="' + esc(a.url) + '" target="_blank" rel="noopener">📄 Maintenant, attaque le vrai sujet officiel (PDF)</a></p>' +
+        '<div class="actions serrees"><button class="moyen plein" data-a="annale-go" data-v="' + esc(a.id) + '">🔁 Un autre jumeau</button><button class="moyen" data-a="annales">🗂️ Les annales</button></div></main>'); });
   }
 
   // ── Coin sciences : espace, fusées, corps humain et médecine — avec des clashs quand on se trompe ──
@@ -3293,7 +3356,7 @@
           matieres:j.matieres && typeof j.matieres === 'object' ? j.matieres : {},
           vannesVues:Math.min(1e6, Math.max(0, Math.floor(Number(j.vannesVues)) || 0)),
           vannesIA:j.vannesIA !== false,
-          journal:(() => { const o = {}; if(j.journal && typeof j.journal === 'object') for(const [d, x] of Object.entries(j.journal).slice(-21)) if(/^\d{4}-\d\d-\d\d$/.test(d) && x && typeof x === 'object'){ o[d] = {}; for(const [k, n] of Object.entries(x)) if(/^(mots|anglais|maths|sciences|francais|histoire|svt|physique)[+-]$|^min$/.test(k)) o[d][k] = Math.max(0, Math.min(1e5, Math.floor(Number(n) || 0))); } return o; })(),
+          journal:(() => { const o = {}; if(j.journal && typeof j.journal === 'object') for(const [d, x] of Object.entries(j.journal).slice(-21)) if(/^\d{4}-\d\d-\d\d$/.test(d) && x && typeof x === 'object'){ o[d] = {}; for(const [k, n] of Object.entries(x)) if(/^(mots|anglais|maths|sciences|francais|histoire|svt|physique|medecine|droit|astro)[+-]$|^min$/.test(k)) o[d][k] = Math.max(0, Math.min(1e5, Math.floor(Number(n) || 0))); } return o; })(),
           avisVannes:Array.isArray(j.avisVannes) ? j.avisVannes.filter(x => x && typeof x.t === 'string').slice(-150).map(x => ({ t:x.t.slice(0, 220), v:x.v === 1 ? 1 : -1, d:String(x.d || '').slice(0, 10) })) : [],
           vannesDites:Array.isArray(j.vannesDites) ? j.vannesDites.filter(x => typeof x === 'string' && /^[0-9a-z]{1,8}$/.test(x)).slice(-400) : [],
           trophees:Array.isArray(j.trophees) ? j.trophees.filter(k => TROPHEES.includes(k)) : [], facile:!!j.facile });
@@ -3387,6 +3450,14 @@
       case 'examens': return examensAccueil();
       case 'examen-go': return blancGo(v);
       case 'examen-suite': return blancSuite();
+      case 'annales': return annalesAccueil();
+      case 'officiel': return officielAccueil();
+      case 'bac-tle': return bacTerminale();
+      case 'bac-tle-spe': { const E = window.EPREUVES; if(E && E.SPES && E.SPES.includes(v)){ let l = (Array.isArray(base.speChoix) ? base.speChoix : []).filter(x => E.SPES.includes(x));
+        l = l.includes(v) ? l.filter(x => x !== v) : l.concat(v).slice(-2); base.speChoix = l; garder(); } return bacTerminale(); }
+      case 'bac-tle-go': { const E = window.EPREUVES, l = (Array.isArray(base.speChoix) ? base.speChoix : []).filter(x => E && E.SPES && E.SPES.includes(x)); if(l.length !== 2) return bacTerminale(); return blancGo('bac-tle', E.bacTerminale(l[0], l[1])); }
+      case 'annale-go': return annaleGo(v);
+      case 'annale-suite': return annaleSuite();
       case 'potes': return potesMenu();
       case 'potes-matiere': if(MATIERES_POTES.some(x => x[0] === v)){ base.potesMode = v; garder(); } return potesMenu();
       case 'potes-longueur': if(LONGUEURS_POTES[v]){ base.potesLongueur = v; garder(); } return potesMenu();

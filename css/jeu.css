@@ -1799,3 +1799,20 @@ html.gfx-ultra main h2 .emoji-titre{ -webkit-text-fill-color:initial; }
 .onglets-matieres .onglet.actif{ background:#ffd36b; color:#2a2156; border-color:#ffd36b; }
 .onglet.vide{ opacity:.45; }
 .note-examen{ font-size:clamp(2rem, 6vw, 3.2rem); font-weight:1000; margin:8px 0; background:linear-gradient(90deg, #ffd36b, #2BE0B0); -webkit-background-clip:text; background-clip:text; color:transparent; }
+/* v5.78 : énoncés d'exercices (examens blancs, annales) */
+.contexte-exo{ text-align:left; background:rgba(255,255,255,.07); border:1px solid rgba(255,255,255,.15); border-radius:14px; padding:10px 14px; margin:6px 0 12px; line-height:1.5; font-size:.95rem; }
+.contexte-exo summary{ cursor:pointer; font-weight:900; }
+.contexte-exo p{ margin:8px 0 0; }
+.carte-annale{ display:flex; flex-direction:column; gap:6px; }
+.lien-officiel{ color:#ffd36b; font-weight:800; font-size:.9rem; text-align:center; }
+/* v5.78 : l'énoncé d'un exercice passe AVANT la question ; les longs titres d'annales vont à la ligne au lieu de déborder. */
+.piege-ecran .contexte-exo{ grid-area:ctx; }
+.piege-ecran:has(.contexte-exo){ grid-template-areas:"cat cat" "ctx ctx" "head opts" "retour retour"; }
+#app .piege-ecran{ grid-template-columns:minmax(0, 1.15fr) minmax(0, 1fr); }
+.piege-cat{ white-space:normal; }
+@media (max-width: 760px){
+  .piege-ecran, #app .piege-ecran{ grid-template-columns:minmax(0, 1fr); }
+  .piege-ecran:has(.contexte-exo){ grid-template-areas:"cat" "ctx" "head" "opts" "retour"; }
+}
+/* v5.83 : liens officiels en cartes */
+a.lien-carte{ text-decoration:none; color:inherit; }

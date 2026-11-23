@@ -1,0 +1,28 @@
+Ami des mots 5.78.0
+
+📝 Brevet & bac blancs construits comme les vrais sujets 2026
+- Brevet blanc en 5 épreuves, avec les coefficients officiels du DNB 2026 : français (2), maths (2), histoire-géographie (1,5), EMC (0,5, note séparée), sciences (2).
+  Une note sur 20 par épreuve, puis la moyenne et la mention.
+- Maths du brevet : partie 1 « automatismes » (6 pts, QCM et réponses directes), puis exercices de résolution de problèmes (14 pts) :
+  géométrie (Pythagore, trigonométrie, Thalès, homothétie), programme de calcul et Scratch, tarifs et tableur, fonctions, statistiques et écriture scientifique, programmation.
+- Français du brevet : compréhension et grammaire sur un texte (50 pts), dictée (10 pts) ; la rédaction (40 pts) est proposée, à faire sur papier.
+- Histoire-géo : documents de géographie, développement construit, repères ; EMC : situation pratique.
+- Sciences : physique-chimie (10 pts) + SVT (10 pts), comme la session 2026.
+- Bac : épreuve anticipée de maths de 1re (nouvelle en 2026), 8 automatismes en QCM (6 pts) + exercices (14 pts), versions avec et sans spécialité ;
+  bac de français : œuvres au programme 2026-2027, méthode du commentaire et de la dissertation, question de grammaire de l'oral.
+- Toutes les valeurs sont tirées au hasard : un nouveau sujet à chaque fois, avec des calculs justes (vérifiés par les tests).
+
+🗂️ Annales 2026
+- Nouvel onglet : pour 8 vrais sujets 2026 (brevet maths ×2, français, histoire-géo-EMC, sciences ; bac maths spé et sans spé, français),
+  un sujet jumeau construit pareil, avec le lien vers le sujet officiel sur education.gouv.fr.
+- Les textes et les nombres sont différents des sujets officiels : les sujets du ministère ne peuvent pas être repris dans une appli payante sans licence.
+
+😂 Vannes
+- L'IA s'adapte toute seule à la famille : elle reçoit les vannes notées 😂 (le style qui fait rire) et 🙄 (à éviter).
+- Nouvelles techniques d'humour pour l'IA : stand-up, roast, règle de trois, pince-sans-rire, tchatche, chambrage de copains, conférence de presse et commentaire de combat.
+  Ce sont des techniques : l'IA n'imite aucun humoriste ni aucun sportif réel et ne reprend aucun sketch.
+- Trash talk : 16 nouvelles phrases « tchatche » (débit rapide, autodérision, jeux de mots).
+
+Correction : l'énoncé de l'exercice s'affiche avant la question ; les longs titres ne débordent plus sur téléphone.
+À relire par un prof : docs/a-relire/epreuves.csv.
+Tests : 121 tests unitaires OK ; maths-sciences 7/7 et hors ligne OK dans Chrome.
