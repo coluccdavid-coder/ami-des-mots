@@ -182,7 +182,11 @@
   // générales jamais dites, et seulement ensuite la plus ancienne.
   function choisir(pool, r, memoire){
     if(!memoire) return C(r, pool);
-    const neuves = pool.filter(l => memoire.age(l) < 0); if(neuves.length) return C(r, neuves);
+    const neuves = pool.filter(l => memoire.age(l) < 0);
+    // v5.71 : d'abord les vannes qui font rire (ironie, question piquante), ensuite les plus sages.
+    const droles = neuves.filter(l => /[?!]|^Ah, |^Bravo|^Magnifique|^Superbe/.test(l));
+    if(droles.length) return C(r, droles);
+    if(neuves.length) return C(r, neuves);
     return null;
   }
   function vanne(cle, ton, valeurs, r, memoire){

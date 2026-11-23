@@ -21,7 +21,7 @@ function page(langue, config, avant){
   w.TextEncoder = TextEncoder; w.TextDecoder = TextDecoder;
   w.__fetch = []; w.fetch = async (u) => { w.__fetch.push(String(u)); return { ok:true, json:async () => (w.__reponse || { actif:false }) }; };
   if(avant) avant(w);
-  for(const f of ['js/donnees.js', 'js/voix.js', 'js/textes.js', 'js/articulation.js', 'js/genres.js', 'js/confusions.js', 'js/vannes.js', 'js/pieges.js', 'js/anglais.js', 'js/clash.js', 'js/histoires.js', 'js/blagues-en.js', 'js/parcours.js', 'js/rigolade.js', 'js/clash-plus.js', 'js/salon.js', 'js/juge.js', 'js/maths.js', 'js/sciences.js', 'js/vannes-cash.js', 'js/vannes-mots.js', 'js/offre.js', 'js/jeu.js']) w.eval(lire(f));
+  for(const f of ['js/donnees.js', 'js/voix.js', 'js/textes.js', 'js/articulation.js', 'js/genres.js', 'js/confusions.js', 'js/vannes.js', 'js/pieges.js', 'js/anglais.js', 'js/clash.js', 'js/histoires.js', 'js/blagues-en.js', 'js/parcours.js', 'js/rigolade.js', 'js/clash-plus.js', 'js/salon.js', 'js/juge.js', 'js/maths.js', 'js/sciences.js', 'js/vannes-cash.js', 'js/vannes-ironie.js', 'js/vannes-mots.js', 'js/offre.js', 'js/jeu.js']) w.eval(lire(f));
   return w;
 }
 // Certificats d'abonnement comme les signe le serveur (même format que serveur/functions/ami-abonnement).
@@ -1554,6 +1554,38 @@ await test('v5.69 : battles plus longues et plus drôles (71 clashs, 50 vrai ou 
     let k = 0; while($('[data-a="qz-rep"]:not([disabled])') && k < 40){ $('[data-a="qz-rep"]:not([disabled])').click(); k++; const s = $('[data-a="qz-suivant"]'); if(s) s.click(); }
     assert.strictEqual(k, n, lg + ' : ' + k + ' questions'); clic('potes');
   }
+});
+
+await test('v5.70 : le professeur hibou s’anime (salue, parle, réfléchit, bravo, erreur) et réagit aux réponses', async () => {
+  const html = lire('professeur.html');
+  const d = new JSDOM(html.replace(/<script[\s\S]*?<\/script>/g, ''), { url:'https://jeu.example/professeur.html', runScripts:'outside-only', pretendToBeVisual:true }).window;
+  d.matchMedia = () => ({ matches:false }); d.speechSynthesis = undefined;
+  d.eval(lire('js/professeur-ia.js')); d.eval(lire('js/prof-anime.js'));
+  d.eval(html.match(/<script>([\s\S]*?)<\/script>/)[1]);
+  const $ = s => d.document.querySelector(s), svg = $('#hibou-grand svg');
+  for(const c of ['.h-tete', '.h-paupiere', '.h-pupilles', '.h-bec-bas', '.h-sourcil-g', '.h-salut', '.h-aile-g', '.h-rieurs']) assert.ok(svg.querySelector(c), 'pièce du hibou ' + c);
+  assert.ok($('#hibou-mini svg'), 'petit hibou dans le coin');
+  await new Promise(r => setTimeout(r, 600)); assert.ok(svg.classList.contains('h-salue'), 'il salue en arrivant');
+  $('#start').click(); assert.ok($('.bouton-ecouter'), 'bouton « Ami m’explique »');
+  assert.match($('#hibou-grand .bulle-hibou').textContent, /Aujourd|programme|Leçon du jour/);
+  const c = d.AMI_PROFESSEUR; d.document.querySelectorAll('.answer')[0].click();
+  assert.ok(svg.classList.contains('h-bravo') || svg.classList.contains('h-erreur'), 'il réagit à la réponse');
+  $('#bouton-voix').click(); assert.match($('#bouton-voix').textContent, /Muet/); $('#bouton-voix').click();
+  assert.match(lire('css/professeur-ia.css'), /prefers-reduced-motion:reduce\)\{\.hibou-anime/);
+  assert.ok(!/fetch\(|XMLHttpRequest/.test(lire('js/prof-anime.js')), 'rien n’est envoyé');
+});
+
+await test('v5.71 : Prof Pi ironise sur chaque erreur classique de maths, et la nuit Ultra reste lisible', () => {
+  const w = page(), E = w.MATHS.ERREURS, I = w.VANNES_IRONIE;
+  assert.ok(Object.keys(I).length >= 95, 'clés : ' + Object.keys(I).length);
+  for(const k in E) assert.ok(E[k].t.some(l => /[?!]/.test(l)), 'une vanne qui pique pour ' + k);
+  for(const k in I) for(const l of I[k]) assert.ok(w.JUGE.juger(l.replace(/\{f\}/g, '12').replace(/\{j\}/g, '13')).ok, l);
+  // La première vanne de la médiane est une vraie vanne (plus seulement une explication).
+  const vue = new Set(), mem = { age:l => vue.has(l) ? 1 : -1, noter:l => vue.add(l) };
+  const v = w.MATHS.vanne('mediane-moyenne', 'taquin', { f:'10,6', j:'13' }, Math.random, mem);
+  assert.match(v, /[?!]|^Ah, |^Bravo/, v);
+  const K = lire('js/kit3d.js'); assert.ok(!/\(c - \.45\) \* 1\.1/.test(K), 'plus de contraste qui écrase la nuit en noir');
+  const M = lire('monde-3d.html'); assert.match(M, /#top\{backdrop-filter:none/); assert.match(M, /id="menuBtn"/);
 });
 
 console.log(`\n${ok} réussi(s), ${ko} échoué(s)`);

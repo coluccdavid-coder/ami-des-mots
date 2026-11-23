@@ -210,12 +210,17 @@ const ShaderCinema = {
         c += vec3(1., .86, .62) * acc / 48. * forceRayons * bord * 2.2;
       }
       // Étalonnage : un peu plus de contraste et de couleur, hautes lumières chaudes, ombres légèrement bleutées.
-      float l = lum(c); c = mix(vec3(l), c, 1.24 - nuit * .12);
+      // (v5.71) Avant : un contraste à pivot fixe en lumière linéaire mettait toutes les valeurs sombres
+      // à zéro : la nuit devenait noire. Maintenant le contraste est relatif (il multiplie, il ne soustrait jamais),
+      // et la nuit reçoit un léger relevé des ombres pour rester lisible.
+      float l = lum(c); c = mix(vec3(l), c, 1.22 - nuit * .1);
       c = mix(c, c * vec3(1.05, 1.0, .93), smoothstep(.4, 1.2, l) * (1. - nuit));
-      c = mix(c, c * vec3(.94, .98, 1.08), smoothstep(.35, 0., l));
-      c = (c - .45) * 1.1 + .45;
-      c *= 1. - vignette * smoothstep(.45, 1.15, r);
-      c += (hasard(vUv * 512.) - .5) * grain;
+      c = mix(c, c * vec3(.95, .99, 1.07), smoothstep(.35, 0., l));
+      float k = 1. + .12 * (l - .18) / (l + .18) * (1. - nuit);
+      c *= k;
+      c += vec3(.010, .012, .022) * nuit * (1. - smoothstep(0., .12, l));
+      c *= 1. - vignette * (1. - nuit * .5) * smoothstep(.45, 1.15, r);
+      c += (hasard(vUv * 512.) - .5) * grain * (.25 + l);
       gl_FragColor = vec4(max(c, 0.), 1.);
     }`
 };
@@ -296,6 +301,7 @@ export function ambiance(renderer, scene, camera, { haute = true } = {}){
       } etoiles.material.opacity = Math.max(0, nuit - .35) * 1.4;
       // Seuil > 1 : seules les vraies sources (néons, lampes, phares) brillent, pas le soleil sur les murs.
       nuitCourante = nuit; elevCourante = elev;
+      if(ao) ao.blendIntensity = 1.15 - nuit * .65;
       if(bloom){ bloom.strength = (ultra ? .28 : .15) + nuit * .6; bloom.threshold = (ultra ? .95 : 1.05) - nuit * .35; bloom.radius = ultra ? .6 : .45; }
       matP.uniforms.couleur.value.set(nuit > .5 ? 0xbfe8ff : 0xffd98c);
       if((composer || ultra) && Math.abs(elev - derniereElev) > 2.5){
