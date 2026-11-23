@@ -1,0 +1,16 @@
+Ami des mots 5.76.0
+
+Nouvelles matières du programme (6e → bac), avec vannes et explications :
+- 📝 Français : conjugaison (tableaux vérifiés), homophones, accords, nature des mots, figures de style, vocabulaire, littérature.
+- 🏛️ Histoire-géo & EMC : repères de l'Antiquité au XXe siècle, géographie, citoyenneté.
+- 🧬 SVT : le vivant, le corps humain, la Terre, la génétique.
+- ⚗️ Physique-chimie : matière, électricité (loi d'Ohm et puissance calculées), vitesse, poids, énergie, masse volumique.
+- Accueil : la porte « Sciences » devient « 📚 Matières » (les sciences rigolotes sont dedans).
+- Onglet « 📝 Brevet & bac blancs » : brevet blanc en 4 épreuves (français, maths, histoire-géo, sciences) avec une note /20 chacune et la moyenne + mention ; bac de français blanc (1re) ; maths 1re et terminale.
+- Examen blanc par matière quand il existe pour le niveau (note /20 gardée).
+- Battle entre potes : nouveau mode « 📚 Culture G ».
+- Espace parents : le résumé de la semaine compte les nouvelles matières ; erreurs fréquentes lisibles.
+- docs/a-relire/francais.csv, histoire.csv, svt.csv, physique.csv : à faire relire par un prof.
+
+À savoir : le lycée est encore léger (français en terminale et physique-chimie en 1re/Tle arrivent plus tard).
+Tests : 118 tests unitaires OK, maths-sciences 7/7 et hors ligne OK dans Chrome.

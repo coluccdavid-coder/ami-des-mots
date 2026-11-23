@@ -21,7 +21,7 @@ function page(langue, config, avant){
   w.TextEncoder = TextEncoder; w.TextDecoder = TextDecoder;
   w.__fetch = []; w.fetch = async (u) => { w.__fetch.push(String(u)); return { ok:true, json:async () => (w.__reponse || { actif:false }) }; };
   if(avant) avant(w);
-  for(const f of ['js/donnees.js', 'js/voix.js', 'js/phrases-enregistrees.js', 'js/textes.js', 'js/articulation.js', 'js/genres.js', 'js/confusions.js', 'js/vannes.js', 'js/pieges.js', 'js/anglais.js', 'js/clash.js', 'js/histoires.js', 'js/blagues-en.js', 'js/parcours.js', 'js/rigolade.js', 'js/clash-plus.js', 'js/salon.js', 'js/juge.js', 'js/maths.js', 'js/sciences.js', 'js/vannes-cash.js', 'js/vannes-ironie.js', 'js/vannes-mots.js', 'js/offre.js', 'js/jeu.js']) w.eval(lire(f));
+  for(const f of ['js/donnees.js', 'js/voix.js', 'js/phrases-enregistrees.js', 'js/textes.js', 'js/articulation.js', 'js/genres.js', 'js/confusions.js', 'js/vannes.js', 'js/pieges.js', 'js/anglais.js', 'js/clash.js', 'js/histoires.js', 'js/blagues-en.js', 'js/parcours.js', 'js/rigolade.js', 'js/clash-plus.js', 'js/salon.js', 'js/juge.js', 'js/maths.js', 'js/sciences.js', 'js/matieres.js', 'js/mat-francais.js', 'js/mat-histoire.js', 'js/mat-svt-pc.js', 'js/vannes-cash.js', 'js/vannes-ironie.js', 'js/vannes-mots.js', 'js/offre.js', 'js/jeu.js']) w.eval(lire(f));
   return w;
 }
 // Certificats d'abonnement comme les signe le serveur (même format que serveur/functions/ami-abonnement).
@@ -1523,7 +1523,7 @@ await test('v5.68 : Battle entre potes depuis l’accueil — maths, anglais et 
   A.base.ui = 'fr'; A.base.cible = 'en'; A.accueil();
   assert.ok($('[data-a="potes"]'), 'bouton sur l’accueil'); assert.match($('[data-a="potes"]').textContent, /maths, anglais et vannes/);
   clic('potes'); assert.ok($('.potes'), 'écran de la battle');
-  assert.strictEqual(w.document.querySelectorAll('[data-a="potes-matiere"]').length, 4, 'mélange, maths, anglais, vannes');
+  assert.strictEqual(w.document.querySelectorAll('[data-a="potes-matiere"]').length, 5, 'mélange, culture G, maths, anglais, vannes');
   clic('potes-go'); assert.match($('#potes-msg').textContent, /2 joueurs/, 'il faut 2 joueurs');
   $('#pote0').value = 'Léo'; $('#pote1').value = 'Inès'; $('#potes-niveau').value = '4e'; clic('potes-go');
   assert.match($('main').textContent, /Passe le téléphone à Léo/);
@@ -1619,7 +1619,7 @@ await test('v5.75 : accueil en 4 portes, résumé de la semaine, avis sur les va
   const clic = (a, v) => { const b = w.document.createElement('button'); b.dataset.a = a; if(v != null) b.dataset.v = v; w.document.body.appendChild(b); b.click(); b.remove(); };
   assert.match(lire('js/config-site.js'), /ACCUEIL_SIMPLE:true/);
   Object.assign(A.CONFIG, { ACCUEIL_SIMPLE:true, VILLAGE_CACHE:true, MOTS_CITY_CACHE:true }); A.base.ui = 'fr'; A.base.cible = 'en'; A.accueil();
-  assert.deepStrictEqual($$('.porte').map(b => b.dataset.a), ['porte-mots', 'maths', 'sciences', 'potes'], '4 portes');
+  assert.deepStrictEqual($$('.porte').map(b => b.dataset.a), ['porte-mots', 'maths', 'matieres', 'potes'], '4 portes');
   assert.ok($('[data-a="defi"]') && $('[data-a="lecon"]'), 'défi et 5 mots restent visibles');
   assert.ok($('.mot-jour') && $('nav.raccourcis [data-a="reglages"]') && $('nav.raccourcis [data-a="carnet"]') && $('nav.raccourcis [data-a="parents"]'), 'mot du jour, carnet, réglages, parents');
   assert.ok(!$('nav.raccourcis [data-a="vestiaire"]') && !$('nav.raccourcis [data-a="trophees"]') && !$('nav.raccourcis [data-a="astuces"]') && !$('.carte-jour:not(.mot-jour)'), 'ce qui ne sert pas pour l’instant est rangé');
@@ -1640,6 +1640,36 @@ await test('v5.75 : accueil en 4 portes, résumé de la semaine, avis sur les va
   let mp3 = ''; w.Audio = function(u){ mp3 = u; return { play(){ return Promise.resolve(); }, pause(){}, addEventListener(){} }; };
   w.PHRASES_ENREGISTREES = { en:[A.fnv1a('I can see the sea.')] }; A.direEcoute('I can see the sea.', 'en');
   assert.match(mp3, /\/en\/[0-9a-z]+\.mp3$/, 'enregistrement joué : ' + mp3);
+});
+
+await test('v5.76 : français, histoire-géo-EMC, SVT, physique-chimie — justes, vannés, et brevet / bac blancs', async () => {
+  const w = page(), A = w.AmiDesMots, M = w.MATIERES, $ = s => w.document.querySelector(s), $$ = s => [...w.document.querySelectorAll(s)];
+  const clic = (a, v) => { const b = w.document.createElement('button'); b.dataset.a = a; if(v != null) b.dataset.v = v; w.document.body.appendChild(b); b.click(); b.remove(); };
+  assert.strictEqual(M.LISTE.map(m => m.id).join(','), 'francais,histoire,svt,physique');
+  // Conjugaison : tableaux vérifiés sur des formes connues.
+  const F = M._francais, f = (v, t, i) => F.pron(i, F.forme(v, t, i)) + F.forme(v, t, i);
+  assert.deepStrictEqual([f('aller', 'futur', 0), f('être', 'imparfait', 0), f('finir', 'présent', 3), f('voir', 'conditionnel', 5), f('venir', 'passé simple', 2), f('aller', 'passé composé', 5), f('aimer', 'présent', 0), f('faire', 'présent', 4)],
+    ['j’irai', 'j’étais', 'nous finissons', 'ils verraient', 'il vint', 'ils sont allés', 'j’aime', 'vous faites']);
+  // Toutes les questions : une bonne réponse, des mauvaises différentes, des vannes acceptées par le juge, une explication.
+  let n = 0; for(const m of M.LISTE) for(const c of m.chapitres) for(const nv of c.niv) for(const q of M.serie(m.id, c.id, nv, 6, 11, 'taquin')){ n++;
+    assert.ok(q.bon && q.faux.length >= 1 && !q.faux.some(x => x.en === q.bon) && new Set(q.faux.map(x => x.en)).size === q.faux.length, q.enonce);
+    for(const x of q.faux) assert.ok(w.JUGE.juger(x.vanne).ok, x.vanne); assert.ok(q.regle, 'explication : ' + q.enonce); }
+  assert.ok(n > 300, 'questions vérifiées : ' + n);
+  // Physique : le calcul est juste (U = R × I).
+  for(const q of M.serie('physique', 'elec', '3e', 30, 5, 'taquin').filter(q => /résistance de/.test(q.enonce))){ const [, R, I] = q.enonce.match(/de (\d+) Ω .* de ([\d,]+) A/); assert.strictEqual(parseFloat(q.bon.replace(',', '.')), Math.round(R * parseFloat(I.replace(',', '.')) * 1000) / 1000, q.enonce); }
+  // Écrans.
+  A.base.ui = 'fr'; Object.assign(A.CONFIG, { ACCUEIL_SIMPLE:true }); A.accueil(); assert.ok($('.porte[data-a="matieres"]'), 'porte Matières');
+  clic('matieres'); for(const id of ['francais', 'histoire', 'svt', 'physique']) assert.ok($('[data-a="matiere"][data-v="' + id + '"]'), id); assert.ok($('[data-a="examens"]'), 'onglet Brevet & bac blancs');
+  clic('matiere', 'francais'); clic('matiere-niveau', 'francais|3e'); assert.ok($('[data-a="matiere-examen"]'), 'brevet blanc de français en 3e');
+  assert.ok($$('.domaine').length >= 3, 'chapitres rangés par domaine');
+  clic('matiere-melange', 'francais'); let k = 0; while($('[data-a="qz-rep"]:not([disabled])') && k < 20){ $('[data-a="qz-rep"]:not([disabled])').click(); k++; const s = $('[data-a="qz-suivant"]'); if(s) s.click(); }
+  assert.strictEqual(k, 10, '10 questions'); assert.ok(A.J().journal && Object.values(A.J().journal).some(x => x['francais+'] || x['francais-']), 'le journal des parents compte le français');
+  // Brevet blanc : 4 épreuves, une note chacune, puis la moyenne.
+  clic('examens'); clic('examen-go', 'brevet');
+  for(let e = 0; e < 4; e++){ assert.match($('main').textContent, /épreuve \d\/4/); clic('examen-suite'); let j = 0; while($('[data-a="qz-rep"]:not([disabled])') && j < 30){ $('[data-a="qz-rep"]:not([disabled])').click(); j++; const s = $('[data-a="qz-suivant"]'); if(s) s.click(); } assert.ok(j >= 8, 'épreuve ' + e + ' : ' + j); }
+  assert.match($('main').textContent, /Moyenne : [\d,]+ \/ 20/); assert.ok(A.J().matieres.notes['blanc-brevet'] >= 0);
+  // Battle Culture G.
+  clic('potes'); assert.ok($('[data-a="potes-matiere"][data-v="culture"]'));
 });
 
 console.log(`\n${ok} réussi(s), ${ko} échoué(s)`);
