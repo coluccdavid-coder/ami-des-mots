@@ -1,0 +1,13 @@
+AMI DES MOTS — VERSION 5.68
+⚔️ Battle entre potes, directement sur l'accueil
+
+- Nouveau bouton d'accueil « Battle entre potes — maths, anglais et vannes ».
+- 2 à 4 joueurs sur le même téléphone, chacun son tour. Au choix : Le grand mélange (3 maths, 3 anglais,
+  3 vannes, à tour de rôle), Maths (au niveau choisi, de la 6e à la terminale), Anglais (pièges, oreille,
+  vrai ou faux), Vannes (Ami clashe : trouve la meilleure punchline anglaise).
+- Entre deux joueurs, Ami commente la course (« Score à battre : 6/9. Ami a déjà sorti le pop-corn. »).
+  Podium à la fin avec titres rigolos, et revanche avec de nouvelles questions. Les mauvaises réponses
+  sont vannées comme d'habitude (vannes de l'IA si un serveur est branché).
+- Le même écran regroupe les autres battles : défi par lien (anglais ou maths), salon en direct, contre Ami.
+- Vannes : la remarque « même initiale » ou « ça rime » repasse avant la vanne sur les objets (plus rare, plus maligne).
+- Tests : 111/111.

@@ -92,6 +92,7 @@ body.photo-en-cours .panel,body.photo-en-cours #controls,body.photo-en-cours #et
  <h2 id="dialogTitle">Bonjour !</h2><p id="dialogText"></p><div class="answers" id="answers"></div>
  <button class="close" id="closeDialog" style="margin-top:9px;width:100%">Fermer</button>
 </div>
+<script src="js/graphismes.js"></script>
 <script src="js/capacitor-voix.js"></script>
 <script src="js/donnees.js"></script>
 <script src="js/metiers.js"></script>
@@ -475,7 +476,9 @@ function animerVie(dt,t){
  for(let i=eclats.length-1;i>=0;i--){const e=eclats[i];e.t-=dt;const p=e.m.geometry.attributes.position;for(let k=0;k<e.vit.length;k++){e.vit[k][1]-=6*dt;p.array[k*3]+=e.vit[k][0]*dt;p.array[k*3+1]+=e.vit[k][1]*dt;p.array[k*3+2]+=e.vit[k][2]*dt}p.needsUpdate=true;e.m.material.opacity=Math.max(0,e.t);if(e.t<=0){scene.remove(e.m);e.m.geometry.dispose();eclats.splice(i,1)}}
 }
 // Profils graphiques : Auto protège les appareils modestes, Ultra exploite les écrans haute définition.
-let qualite=(()=>{try{return localStorage.getItem('ami3d_qualite')||'auto'}catch(e){return'auto'}})(),mesureQ={n:0,t:0,fini:false};
+// v5.67 : le réglage « Graphismes » du jeu décide d'abord (Ultra / Normal) ; en Auto, Ultra sur les appareils puissants.
+const GFX=window.GRAPHISMES;
+let qualite=(()=>{const g=GFX?GFX.choix():'auto';if(g==='ultra')return'ultra';let l=null;try{l=localStorage.getItem('ami3d_qualite')}catch(e){}if(g==='normal')return l==='basse'?'basse':'auto';return l||(GFX&&GFX.estUltra()?'ultra':'auto')})(),mesureQ={n:0,t:0,fini:false};
 const qualityBtn=document.querySelector('#qualityBtn');
 function appliquerQualite(mode,memoriser=true){
   qualite=mode;mesureQ={n:0,t:0,fini:mode!=='auto'};
@@ -485,11 +488,13 @@ function appliquerQualite(mode,memoriser=true){
   sun.shadow.mapSize.set(mode==='ultra'&&!mobile?Math.min(4096,capaciteGPU.maxTex):2048,mode==='ultra'&&!mobile?Math.min(4096,capaciteGPU.maxTex):2048);
   sun.shadow.map?.dispose();sun.shadow.map=null;
   feuilles.visible=mode!=='basse';for(const b of oiseaux)b.o.visible=mode!=='basse';
+  amb.niveau(mode==='ultra'?'ultra':'normal');
   if(qualityBtn)qualityBtn.textContent='🎮 Qualité : '+({auto:'Auto',ultra:'Ultra',basse:'Éco'}[mode]||'Auto');
   if(memoriser)try{localStorage.setItem('ami3d_qualite',mode)}catch(e){}
 }
 appliquerQualite(['auto','ultra','basse'].includes(qualite)?qualite:'auto',false);
-qualityBtn?.addEventListener('click',()=>appliquerQualite(({auto:'ultra',ultra:'basse',basse:'auto'})[qualite]||'auto'));
+qualityBtn?.addEventListener('click',()=>{const m=({auto:'ultra',ultra:'basse',basse:'auto'})[qualite]||'auto';try{GFX&&GFX.choix()!=='auto'&&localStorage.setItem('ami-graphismes',m==='ultra'?'ultra':'normal')}catch(e){}appliquerQualite(m)});
+amb.surAllege(n=>toast(n===1?'Ultra allégé : ombres douces retirées pour rester fluide':'Ultra allégé : rayons de soleil retirés pour rester fluide'));
 function alleger(){appliquerQualite('basse')}
 function mesurerQualite(dtBrut){if(mesureQ.fini||qualite!=='auto')return;mesureQ.n++;if(mesureQ.n<30)return;mesureQ.t+=dtBrut;if(mesureQ.n>=150){mesureQ.fini=true;if(mesureQ.t/120>.04)alleger()}}
 

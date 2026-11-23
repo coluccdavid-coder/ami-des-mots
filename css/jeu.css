@@ -1731,3 +1731,12 @@ button:focus-visible,a:focus-visible,select:focus-visible,input:focus-visible,[t
   .partie{ min-height:0!important; }
   .scene{ align-content:start!important; }
 }
+/* v5.67 : choix des graphismes */
+.choix-graphismes{ display:flex; gap:8px; flex-wrap:wrap; }
+.reglage-graphismes .reglage{ flex-wrap:wrap; gap:10px; }
+/* v5.68 : Battle entre potes */
+.potes-accueil{ background:linear-gradient(135deg, #ff4e6a, #ff9f43 55%, #ffd23f)!important; color:#2a0a12!important; }
+.potes .choix-matiere .choisie{ outline:3px solid #ffd23f; box-shadow:0 0 0 6px rgba(255,210,63,.25), 0 0 30px rgba(255,159,67,.45); }
+.potes-fin .podium small{ display:block; font-size:.8rem; opacity:.8; }
+.potes select{ font:inherit; font-weight:800; padding:8px 30px 8px 12px; border-radius:12px; border:1px solid var(--bord); background:rgba(255,255,255,.12); color:#fff; }
+.potes select option{ color:var(--encre); background:#fff; }

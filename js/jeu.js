@@ -185,7 +185,7 @@
   const COINS = {
     pieges:['pieges', 'pieges-go'], situations:['situations', 'situation-go'], histoires:['histoires', 'histoire-go'],
     dictee:['dictee'], parcours:['parcours'], phrases:['phrases'], battle:['battle', 'battle-go'], rap:['rap'],
-    tournoi:['tournoi', 'tournoi-go', 'tournoi-go-memes'], 'defi-pote':['defi-pote', 'defi-pote-go'],
+    tournoi:['tournoi', 'tournoi-go', 'tournoi-go-memes', 'potes', 'potes-go', 'potes-joue', 'potes-revanche'], 'defi-pote':['defi-pote', 'defi-pote-go'],
     salon:['salon', 'salon-creer', 'salon-rejoindre', 'salon-public', 'salon-entrer-public'],
     trompe:['trompe'], oreilles:['oreilles'], vraifaux:['vraifaux'], avent:['avent'], betisier:['betisier'], maison:['maison'],
     maths:['maths', 'maths-chap', 'maths-melange', 'maths-examen', 'maths-defi'], sciences:['sciences', 'sciences-theme'],
@@ -503,6 +503,7 @@
         (window.MATHS ? '<button class="gros monde-3d-accueil maths-accueil" data-a="maths">🔢 Maths de la 6e au bac — Prof Pi te vanne <span>🦝</span></button>' : '') +
         '<a class="gros monde-3d-accueil professeur-ia-accueil" href="professeur.html">🧑‍🏫 Le professeur IA — Anglais & maths <span>✨</span></a>' +
         (window.SCIENCES ? '<button class="gros monde-3d-accueil sciences-accueil" data-a="sciences">🚀 Sciences : planètes, fusées, corps humain <span>🔬</span></button>' : '') +
+        (window.MATHS || A_EN() ? '<button class="gros monde-3d-accueil potes-accueil" data-a="potes">⚔️ ' + (base.ui === 'en' ? 'Battle with friends — maths, English, comebacks' : 'Battle entre potes — maths, anglais et vannes') + ' <span>🔥</span></button>' : '') +
         '<div class="actions serrees">' +
           '<button class="moyen" data-a="themes">▶ ' + esc(t('jouer')) + '</button>' +
           '<button class="moyen" data-a="revoir">🔁 ' + esc(t('revoir')) + (rev ? ' <span class="pastille">' + rev + '</span>' : '') + '</button>' +
@@ -885,6 +886,9 @@
         else if(deja && hasard() < .6) pool = V.encore;
         else if(type === 'ecoute' && hasard() < .5) pool = V.ecoute;
         // Un personnage du village passe dans la vanne (Paco, Mina, Professor Puzzle).
+        // Même initiale ou rime : la remarque est rare et maligne, elle passe avant la vanne objets.
+        else if(initialeDe(f) && initialeDe(f) === initialeDe(j) && hasard() < .25) pool = V.initiale;
+        else if(riment(f, j) && hasard() < .3) pool = V.rime;
         // v5.64 : la vanne « cash » parle vraiment des deux objets (js/vannes-mots.js).
         else if(langue === 'fr' && vanneObjets(mauvaise, bonne, art, niveau)){ const b = vanneObjets(mauvaise, bonne, art, niveau, true); if(b){ derniereBlague = b; return b; } pool = V.general; }
         else if(V.cameos && !facile() && hasard() < .12){ const b = tirerVanne(V.cameos); derniereBlague = b; return remplir(b, { f, j }); }
@@ -2175,6 +2179,101 @@
     questionsGo(window.SALON.questionsMixtes(t.graine + t.i * 7919, 6), { titre:'👨‍👩‍👧 ' + t.noms[t.i], retour:'battle', fin:z => { t.scores[t.i] = z.bonnes; t.i++; tournoiTour(); } });
   }
 
+  // ── v5.68 : Battle entre potes (accueil) — maths, anglais et vannes, 2 à 4 joueurs sur le même appareil ──
+  // Chaque joueur répond à la même formule (mêmes types, mêmes niveaux) ; Ami commente entre les tours et
+  // charrie les réponses, jamais les joueurs. Liens vers le défi par lien, le salon en direct et la battle contre Ami.
+  let potes = null;
+  const MATIERES_POTES = [['melange', '🎲', 'Le grand mélange', 'Maths, anglais ET vannes'], ['maths', '🔢', 'Maths', 'Calcul, fractions, équations…'], ['anglais', '🇬🇧', 'Anglais', 'Pièges, oreille, vrai ou faux'], ['vannes', '🎤', 'Vannes', 'Ami clashe : trouve la meilleure punchline']];
+  // Questions d'une battle : graine → toujours les mêmes pour une graine (revanche équitable).
+  // Longueur : nombre de questions par joueur (mélange ; une seule matière : un peu moins).
+  const LONGUEURS_POTES = { courte:[9, 6, '⚡ Courte'], normale:[15, 10, '🔥 Normale'], marathon:[24, 16, '🏃 Marathon'] };
+  function questionsPotes(graine, mode, niveau, longueur){
+    const L = LONGUEURS_POTES[longueur] || LONGUEURS_POTES.normale, N = mode === 'melange' ? L[0] : L[1], k = Math.ceil(N / 3);
+    const CP = window.CLASH_PLUS, intro = i => CP ? CP.INTROS_POTES[(graine + i * 3) % CP.INTROS_POTES.length] : '';
+    const R = window.RIGOLADE, rnd = R ? R.hasardGraine(graine) : Math.random, A = A_EN();
+    // Maths : une petite phrase d'Ami avant l'énoncé, pour mettre la pression (pour rire).
+    const maths = n => window.MATHS ? MATHS.questionsSalon(graine, n, niveau).map((q, i) => Object.assign(q, { consigne:q.consigne + (intro(i) ? ' · ' + intro(i) : '') })) : [];
+    const anglais = n => window.SALON && A ? SALON.questionsMixtes(graine + 17, n * 3).filter(q => !/^b:/.test(q.id)).slice(0, n) : [];
+    const vannes = n => {
+      if(!A) return [];
+      const toutes = A.BATTLE.concat(window.CLASH ? CLASH.MANCHES : []), l = A.melanger(toutes, rnd).slice(0, n);
+      return l.map(m => ({ id:'c:' + m.ami, consigne:'🎤 Ami te clashe : renvoie-lui la meilleure punchline !', enonce:'« ' + m.ami + ' »', ecoute:m.ami, trad:m.fr,
+        bon:m.bon.en, faux:m.faux.slice(0, 3), regle:'🇫🇷 ' + m.bon.fr, dire:m.bon.en }));
+    };
+    if(mode === 'maths') return maths(N);
+    if(mode === 'anglais') return anglais(N);
+    if(mode === 'vannes') return vannes(N);
+    // Mélange : maths, anglais, vannes, à tour de rôle (ce qui manque est remplacé par ce qui existe).
+    const m = maths(k), a = anglais(k), v = vannes(k), out = [];
+    for(let i = 0; i < k; i++) for(const l of [m, a, v]) if(l[i] && out.length < N) out.push(l[i]);
+    return out.length ? out : maths(N);
+  }
+  function potesMenu(){
+    potes = null;
+    const noms = Array.isArray(base.famille) ? base.famille : [], A = A_EN(), niv = window.MATHS ? etatMaths().niveau : '6e';
+    const dispo = MATIERES_POTES.filter(([k]) => k === 'maths' ? !!window.MATHS : k === 'melange' ? !!(window.MATHS || A) : !!A);
+    const choix = dispo.some(x => x[0] === base.potesMode) ? base.potesMode : dispo[0][0];
+    poser(barre('accueil') + '<main class="coin-anglais potes"><h2>⚔️ Battle entre potes</h2>' +
+      '<p class="pieges-intro">2 à 4 joueurs sur ce téléphone, chacun son tour. Ami pose les questions, compte les points… et charrie les mauvaises réponses. 😏</p>' +
+      '<div class="cartes-anglais choix-matiere">' + dispo.map(([k, ic, nom, txt]) => '<button class="carte-anglais' + (k === choix ? ' choisie' : '') + '" data-a="potes-matiere" data-v="' + k + '" aria-pressed="' + (k === choix) + '"><span class="ic">' + ic + '</span><strong>' + nom + '</strong><small>' + txt + '</small></button>').join('') + '</div>' +
+      '<p class="choix-longueur">' + Object.keys(LONGUEURS_POTES).map(k => { const L = LONGUEURS_POTES[k], ch = (base.potesLongueur || 'normale') === k;
+        return '<button class="moyen' + (ch ? ' plein' : '') + '" data-a="potes-longueur" data-v="' + k + '" aria-pressed="' + ch + '">' + L[2] + ' · ' + (choix === 'melange' ? L[0] : L[1]) + ' questions</button>'; }).join(' ') + '</p>' +
+      (window.MATHS ? '<p><label>Niveau de maths : <select id="potes-niveau">' + MATHS.NIVEAUX.map(n => '<option' + (n === niv ? ' selected' : '') + '>' + n + '</option>').join('') + '</select></label></p>' : '') +
+      [0, 1, 2, 3].map(i => '<p><label>Joueur ' + (i + 1) + (i > 1 ? ' (facultatif)' : '') + ' : <input class="champ-pseudo" id="pote' + i + '" maxlength="12" value="' + esc(noms[i] || '') + '" placeholder="Pseudo"></label></p>').join('') +
+      '<p><button class="gros" data-a="potes-go">⚔️ Lancer la battle !</button></p><p class="aide" id="potes-msg" role="status"></p>' +
+      '<h3>Autres façons de battle</h3><div class="cartes-anglais">' +
+      '<button class="carte-anglais" data-a="defi-pote"><span class="ic">📨</span><strong>Défier un pote (anglais)</strong><small>Par lien : mêmes questions, on compare</small></button>' +
+      (window.MATHS ? '<button class="carte-anglais" data-a="maths-defi"><span class="ic">🔗</span><strong>Défier un pote (maths)</strong><small>Par lien, à ton niveau</small></button>' : '') +
+      '<button class="carte-anglais" data-a="salon"><span class="ic">🛸</span><strong>Salon en direct</strong><small>Chacun sur son téléphone, en même temps</small></button>' +
+      (A ? '<button class="carte-anglais" data-a="battle-go" data-v="ami"><span class="ic">🦉</span><strong>Contre Ami</strong><small>3 manches de vannes en anglais</small></button>' : '') +
+      '</div></main>');
+  }
+  function potesGo(){
+    const noms = [0, 1, 2, 3].map(i => RG().nettoiePseudo(($('#pote' + i) || {}).value)).filter(Boolean);
+    if(noms.length < 2){ const m = $('#potes-msg'); if(m) m.textContent = 'Il faut au moins 2 joueurs ! 👥'; return; }
+    const nv = $('#potes-niveau'), niveau = nv && window.MATHS && MATHS.NIVEAUX.includes(nv.value) ? nv.value : (window.MATHS ? etatMaths().niveau : '6e');
+    base.famille = noms; garder();
+    const modes = MATIERES_POTES.map(x => x[0]).filter(k => k === 'maths' ? !!window.MATHS : k === 'melange' ? true : !!A_EN());
+    potes = { noms, scores:[], i:0, mode:modes.includes(base.potesMode) ? base.potesMode : modes[0], niveau, longueur:base.potesLongueur || 'normale', graine:Math.floor(Math.random() * 1e9) };
+    potesTour();
+  }
+  // Ami commente le classement entre deux joueurs (il charrie la course, jamais une personne).
+  function commentairePotes(p){
+    const fait = p.noms.slice(0, p.i).map((n, k) => ({ n, s:p.scores[k] })).sort((a, b) => b.s - a.s);
+    if(!fait.length) return 'Premier à passer : pas de pression… enfin si, un peu. 😏';
+    const t = fait[0], total = p.liste ? p.liste.length : 9;
+    const l = [esc(t.n) + ' mène avec ' + t.s + ' point' + (t.s > 1 ? 's' : '') + '. Qui va le faire tomber de son trône ? 👑',
+      'Score à battre : ' + t.s + '/' + total + '. Ami a déjà sorti le pop-corn. 🍿',
+      t.s === total ? esc(t.n) + ' a fait un sans-faute. Il faudra un miracle… ou un sans-faute. 😱' : 'Le record est à ' + t.s + '. Franchement, c’est jouable. 🔥'];
+    return l[(p.i + p.graine) % l.length];
+  }
+  function potesTour(){
+    const p = potes; if(!p) return potesMenu();
+    p.liste = questionsPotes(p.graine, p.mode, p.niveau, p.longueur);
+    if(p.i >= p.noms.length){
+      const cl = p.noms.map((n, k) => ({ n, s:p.scores[k] })).sort((a, b) => b.s - a.s), ex = cl.filter(x => x.s === cl[0].s).length > 1, total = p.liste.length;
+      J().plumes += 3; garder(); bruit('fin');
+      const titres = ['👑 Roi ou reine de la battle', '🥈 Presque sur le trône', '🥉 Sur le podium', '🛟 Revanche obligatoire'];
+      return poser(barre('potes') + '<main class="centre potes-fin"><div class="ami-moyen">' + ami('fete') + '</div><h2>' + (ex ? '🤝 Égalité au sommet !' : '👑 ' + esc(cl[0].n) + ' gagne la battle !') + '</h2>' +
+        '<ol class="podium">' + cl.map((x, k) => '<li>' + ['🥇', '🥈', '🥉', '🏅'][k] + ' <strong>' + esc(x.n) + '</strong> — ' + x.s + '/' + total + ' <small>' + titres[k > 0 && k === cl.length - 1 ? 3 : Math.min(k, 2)] + '</small></li>').join('') + '</ol>' +
+        '<p>🦉 ' + (ex ? 'Égalité ! Ami exige une revanche, il n’a pas fini son pop-corn.' : 'Bien joué ' + esc(cl[0].n) + ' ! Les autres : Ami a noté toutes vos réponses ratées… pour la revanche. 😏') + '</p>' +
+        '<div class="actions serrees"><button class="moyen plein" data-a="potes-revanche">🔁 Revanche (nouvelles questions)</button><button class="moyen" data-a="potes">⚔️ Changer de battle</button></div></main>');
+    }
+    const nom = MATIERES_POTES.find(x => x[0] === p.mode) || MATIERES_POTES[0];
+    poser(barre('potes') + '<main class="centre potes-tour"><div class="ami-moyen">' + ami('malin') + '</div>' +
+      '<p class="piege-cat">' + nom[1] + ' ' + nom[2] + (p.mode === 'melange' || p.mode === 'maths' ? ' · maths ' + esc(p.niveau) : '') + ' · joueur ' + (p.i + 1) + '/' + p.noms.length + '</p>' +
+      '<h2>📱 Passe le téléphone à ' + esc(p.noms[p.i]) + ' !</h2><p>' + commentairePotes(p) + '</p><p class="petit">' + p.liste.length + ' questions. Les autres : pas de souffle ! 🤫</p>' +
+      '<button class="gros" data-a="potes-joue">C’est moi, ' + esc(p.noms[p.i]) + ' ! ▶</button></main>');
+  }
+  function potesJoue(){
+    const p = potes; if(!p) return potesMenu();
+    // Chaque joueur a ses propres questions (même formule), pour que personne ne profite du tour d'avant.
+    const liste = questionsPotes(p.graine + p.i * 7919, p.mode, p.niveau, p.longueur);
+    questionsGo(liste, { titre:'⚔️ ' + p.noms[p.i], retour:'potes', sujet:p.mode === 'maths' ? 'maths' : p.mode === 'vannes' ? 'anglais' : undefined,
+      bravo:() => { const B = window.CLASH_PLUS ? CLASH_PLUS.BRAVO_POTES : ['Bravo ! 🎉']; return B[Math.floor(Math.random() * B.length)]; },
+      fin:z => { p.scores[p.i] = z.bonnes; p.i++; potesTour(); } });
+  }
+
   // ── Défi entre potes par lien (sans serveur) ──
   let defiRecu = null, defiCree = null;
   function defiPote(){
@@ -2722,6 +2821,18 @@
                  : '<span class="seuil">🔒 ' + esc(t('a_partir', n)) + '</span>') + '</div>';
       }).join('') + '</div></main>');
   }
+  // v5.67 : graphismes Auto / Normal / Ultra (gardé sur l'appareil, partagé avec le village 3D et Mots City).
+  function reglageGraphismes(){
+    const G = window.GRAPHISMES; if(!G) return '';
+    const en = base.ui === 'en', c = G.choix(), puissant = G.puissant();
+    const noms = { auto:'Auto', normal:'Normal', ultra:'💎 Ultra' };
+    return '<section class="reglage-graphismes"><h3>🎨 ' + (en ? 'Graphics' : 'Graphismes') + '</h3><div class="reglage"><span><span class="petit">' +
+      (en ? 'Ultra: animated nebula, sparkle explosions, 3D tilt; in the 3D worlds, sun rays, soft shadows and a cinema look. '
+        : 'Ultra : fond animé, explosions d’étincelles, images en relief ; dans les mondes 3D, rayons de soleil, ombres douces et rendu cinéma. ') +
+      (c === 'auto' ? (en ? (puissant ? 'This device is powerful: Ultra is on.' : 'This device is modest: Normal is used.') : (puissant ? 'Cet appareil est puissant : Ultra est activé.' : 'Cet appareil est modeste : Normal est utilisé.')) : '') +
+      (G.mouvementReduit() ? (en ? ' Your system asks for fewer animations: effects stay off.' : ' Ton système demande moins d’animations : les effets restent coupés.') : '') +
+      '</span></span><span class="choix-graphismes">' + G.CHOIX.map(k => '<button class="moyen' + (k === c ? ' plein' : '') + '" data-a="graphismes" data-v="' + k + '" aria-pressed="' + (k === c) + '">' + esc(noms[k]) + '</button>').join('') + '</span></div></section>';
+  }
   function reglageVoix(){
     const en = base.ui === 'en', langues = [base.ui].concat(base.cible !== base.ui ? [base.cible] : []).filter(l => LOCALES[l]);
     const pref = voixPreferees();
@@ -2748,13 +2859,13 @@
       '<button class="moyen' + (langueBlagues() === 'fr' ? ' plein' : '') + '" data-a="langue-blagues" data-v="fr" aria-pressed="' + (langueBlagues() === 'fr') + '">🇫🇷 Français</button>' +
       '<button class="moyen' + (langueBlagues() === 'en' ? ' plein' : '') + '" data-a="langue-blagues" data-v="en" aria-pressed="' + (langueBlagues() === 'en') + '">🇬🇧 English</button>' +
       '</div>' +
-      (CONFIG.API_VANNES_DIRECT ? '<div class="reglage"><span><strong>🤖 ' + (base.ui === 'en' ? 'Jokes written live by AI' : 'Vannes inventées en direct par l’IA') + '</strong><span class="petit">' + (base.ui === 'en' ? 'A brand-new joke for each mistake. Only the question and the answers are sent, nothing personal.' : 'Une vanne toute neuve à chaque erreur. Seules la question et les réponses partent au serveur, rien de personnel.') + '</span></span><button class="moyen' + (J().vannesIA !== false ? ' plein' : '') + '" data-a="vannes-ia" aria-pressed="' + (J().vannesIA !== false) + '">' + esc(J().vannesIA !== false ? t('oui') : t('non')) + '</button></div>' : '') +
+      (CONFIG.API_VANNES_DIRECT ? '<div class="reglage"><span><strong>🤖 ' + (base.ui === 'en' ? 'Jokes written live by AI' : 'Vannes inventées en direct par l’IA') + '</strong><span class="petit">' + (base.ui === 'en' ? 'A brand-new joke for each mistake. Only the question and the answers are sent, nothing personal.' : 'Une vanne toute neuve à chaque erreur. Seules la question et les réponses partent au serveur, rien de personnel.') + '</span></span><button class="moyen' + (J().vannesIA !== false ? ' plein' : '') + '" data-a="vannes-ia-direct" aria-pressed="' + (J().vannesIA !== false) + '">' + esc(J().vannesIA !== false ? t('oui') : t('non')) + '</button></div>' : '') +
       '</section>' +
       (CONFIG.MODE_PAYANT ? '<h3>✨ ' + esc(t('plus')) + '</h3>' + (plus()
         ? '<p>' + esc(t('abo_actif', droits ? new Date(droits.fin).toLocaleDateString(base.ui) : '')) + '</p>' + (CONFIG.LIEN_GESTION ? '<p><a class="moyen" href="' + esc(CONFIG.LIEN_GESTION) + '" target="_blank" rel="noopener">' + esc(t('gerer_abo')) + '</a></p>' : '')
         : '<p><button class="moyen plein" data-a="plus" data-v="reglages">' + esc(t('decouvrir_plus')) + '</button></p>') +
         '<p class="petit">' + esc(t('code_abo')) + '<br><code>' + esc(base.abo.code) + '</code><br>' + esc(t('code_aide')) + '</p>' : '') +
-      reglageVoix() +
+      reglageGraphismes() + reglageVoix() +
       '<h3>' + esc(t('joueurs')) + '</h3><div class="liste-joueurs">' + base.joueurs.map((j, i) =>
         '<button class="ligne-carnet" data-a="modifier-joueur" data-v="' + i + '"><span class="ami-icone">' + ami('content', { couleur:j.couleur, porte:j.porte, immobile:true }) + '</span><span class="txt"><strong>' + esc(j.nom || '—') + (i === base.actif ? ' ✓' : '') + '</strong><span>🪶 ' + j.plumes + '</span></span><span aria-hidden="true">✏️</span></button>').join('') + '</div>' +
       (base.joueurs.length < MAX_JOUEURS ? '<p><button class="moyen" data-a="nouveau-joueur">＋ ' + esc(t('ajouter_joueur')) + (plus() ? '' : ' ✨') + '</button></p>' : '') +
@@ -3055,6 +3166,12 @@
       case 'maison-ranger': { const m = etatMaison(); delete m.places[v]; garder(); maisonMsg = '📦 Rangé dans le carton.'; return maison(); }
       case 'betisier': return betisier();
       case 'best-suivant': if(best){ best.i++; } return afficherBest();
+      case 'potes': return potesMenu();
+      case 'potes-matiere': if(MATIERES_POTES.some(x => x[0] === v)){ base.potesMode = v; garder(); } return potesMenu();
+      case 'potes-longueur': if(LONGUEURS_POTES[v]){ base.potesLongueur = v; garder(); } return potesMenu();
+      case 'potes-go': return potesGo();
+      case 'potes-joue': return potesJoue();
+      case 'potes-revanche': if(potes){ potes = Object.assign(potes, { scores:[], i:0, graine:Math.floor(Math.random() * 1e9) }); return potesTour(); } return potesMenu();
       case 'tournoi': return tournoiMenu();
       case 'tournoi-go': return tournoiGo();
       case 'tournoi-go-memes': if(tournoi){ tournoi = { noms:tournoi.noms, scores:[], i:0, graine:Math.floor(Math.random() * 1e9) }; return tournoiTour(); } return tournoiMenu();
@@ -3193,7 +3310,8 @@
         if(sel){ const p = voixPreferees(); if(sel.value) p[v] = sel.value; else delete p[v]; try{ localStorage.setItem('ami-voix', JSON.stringify(p)); }catch(e){} }
         return direPhrase(v === 'fr' ? 'Salut ! Moi, c’est Ami. Tu m’entends bien ?' : v === 'en' ? 'Hi! I am Ami. Can you hear me?' : (t('a_ombre') || 'Ami'), v, 1);
       }
-      case 'vannes-ia': J().vannesIA = J().vannesIA === false; garder(); return reglages();
+      case 'vannes-ia-direct': J().vannesIA = J().vannesIA === false; garder(); return reglages();
+      case 'graphismes': if(window.GRAPHISMES) GRAPHISMES.definir(v); return reglages();
       case 'son': base.son = !base.son; garder(); bruit('juste'); return reglages();
       case 'porter': { const j = J(); j.porte = j.porte.includes(v) ? j.porte.filter(x => x !== v) : j.porte.concat(v); garder(); return vestiaire(); }
       case 'effacer-tout':
