@@ -110,6 +110,7 @@ button{font:inherit;color:inherit;cursor:pointer}
 
 <div id="panneau" role="dialog" aria-modal="true"><div class="boite verre" id="panneau-contenu"></div></div>
 
+<script src="js/graphismes.js"></script>
 <script src="js/capacitor-voix.js"></script>
 <script src="js/donnees.js"></script>
 <script src="js/mots-city.js"></script>
@@ -144,10 +145,17 @@ scene.fog = new THREE.Fog(0xffc9a0, 80, 230);
 const camera = new THREE.PerspectiveCamera(60, innerWidth / innerHeight, .1, 500);
 const hemi = new THREE.HemisphereLight(0xcfe3ff, 0x7a5a40, 1.6); scene.add(hemi);
 // Graphismes : « haute » sur ordinateur (lueur des néons, reflets du ciel), « rapide » sur téléphone. Modifiable dans le téléphone.
-let qualiteHaute = localStorage.getItem('motscity_qualite') ? localStorage.getItem('motscity_qualite') === 'haute' : !tactile;
+// v5.67 : trois niveaux — Rapide, Haute, Ultra (occlusion, rayons de soleil, étalonnage cinéma, poussières dorées).
+// Le réglage « Graphismes » du jeu décide d'abord ; en Auto, Ultra sur les appareils puissants.
+const GFX = window.GRAPHISMES;
+let qualiteCity = (() => { const g = GFX ? GFX.choix() : 'auto'; let l = null; try{ l = localStorage.getItem('motscity_qualite'); }catch(e){}
+  if(g === 'ultra') return 'ultra'; if(g === 'normal') return l === 'rapide' ? 'rapide' : (l === 'haute' ? 'haute' : (tactile ? 'rapide' : 'haute'));
+  return ['rapide', 'haute', 'ultra'].includes(l) ? l : (GFX && GFX.estUltra() ? 'ultra' : (tactile ? 'rapide' : 'haute')); })();
+let qualiteHaute = qualiteCity !== 'rapide';
 const amb = ambiance(renderer, scene, camera, { haute:qualiteHaute });
+if(qualiteCity === 'ultra'){ amb.niveau('ultra'); renderer.setPixelRatio(Math.min(devicePixelRatio, tactile ? 1.75 : 2.25)); }
 const soleil = new THREE.DirectionalLight(0xffe2bf, 2.6);
-soleil.castShadow = true; soleil.shadow.mapSize.set(2048, 2048);
+soleil.castShadow = true; soleil.shadow.mapSize.set(qualiteCity === 'ultra' && !tactile ? 4096 : 2048, qualiteCity === 'ultra' && !tactile ? 4096 : 2048);
 Object.assign(soleil.shadow.camera, { left:-60, right:60, top:60, bottom:-60, near:10, far:260 });
 soleil.shadow.bias = -0.0004; scene.add(soleil); scene.add(soleil.target);
 
@@ -857,7 +865,7 @@ function ouvrirTelephone(){
     '<p>✨ Plumes dorées : ' + save.dorees.length + '/' + dorees.length + ' · 📚 Mots appris : ' + save.appris.length + '</p>' +
     (mission ? '<button class="carte-mission" data-m="abandon"><span class="ico">🏳️</span><span><b>Abandonner la mission en cours</b>Tu gardes tes plumes.</span></button>' : '') +
     '<button class="carte-mission" data-m="titre"><span class="ico">🧑</span><span><b>Changer de personnage</b></span></button>' +
-    '<button class="carte-mission" data-m="qualite"><span class="ico">' + (qualiteHaute ? '✨' : '⚡') + '</span><span><b>Graphismes : ' + (qualiteHaute ? 'Haute qualité' : 'Rapide') + '</b>Touche pour passer en ' + (qualiteHaute ? 'Rapide (téléphones modestes)' : 'Haute qualité (lueurs, reflets)') + '. La page se recharge.</span></button>' +
+    '<button class="carte-mission" data-m="qualite"><span class="ico">' + ({ ultra:'💎', haute:'✨', rapide:'⚡' }[qualiteCity]) + '</span><span><b>Graphismes : ' + ({ ultra:'Ultra', haute:'Haute qualité', rapide:'Rapide' }[qualiteCity]) + '</b>Touche pour passer en ' + ({ rapide:'Haute qualité (lueurs, reflets)', haute:'Ultra (rayons de soleil, ombres douces, effet cinéma)', ultra:'Rapide (téléphones modestes)' }[qualiteCity]) + '. La page se recharge.</span></button>' +
     '<button class="fermer" data-m="fermer">Fermer</button>');
 }
 function aide(){
@@ -872,7 +880,8 @@ $('#panneau').addEventListener('click', ev => {
   const m = b.dataset.m;
   if(m === 'fermer'){ fermerPanneau(); audioPret(); }
   else if(m === 'titre') ecranTitre();
-  else if(m === 'qualite'){ try{ localStorage.setItem('motscity_qualite', qualiteHaute ? 'rapide' : 'haute'); }catch(e){} C.garder(save); location.reload(); }
+  else if(m === 'qualite'){ const suiv = { rapide:'haute', haute:'ultra', ultra:'rapide' }[qualiteCity];
+    try{ localStorage.setItem('motscity_qualite', suiv); if(GFX && GFX.choix() !== 'auto') localStorage.setItem('ami-graphismes', suiv === 'ultra' ? 'ultra' : 'normal'); }catch(e){} C.garder(save); location.reload(); }
   else if(m === 'abandon'){ mission = null; nettoyer(); majMission(); fermerPanneau(); }
   else if(m) lancer(m);
 });

@@ -11,6 +11,9 @@ import { EffectComposer } from '../vendor/jsm/postprocessing/EffectComposer.js';
 import { RenderPass } from '../vendor/jsm/postprocessing/RenderPass.js';
 import { UnrealBloomPass } from '../vendor/jsm/postprocessing/UnrealBloomPass.js';
 import { OutputPass } from '../vendor/jsm/postprocessing/OutputPass.js';
+import { ShaderPass } from '../vendor/jsm/postprocessing/ShaderPass.js';
+import { GTAOPass } from '../vendor/jsm/postprocessing/GTAOPass.js';
+import { SMAAPass } from '../vendor/jsm/postprocessing/SMAAPass.js';
 import { Sky } from '../vendor/jsm/objects/Sky.js';
 import { MeshoptDecoder } from '../vendor/jsm/libs/meshopt_decoder.module.js';
 
@@ -182,6 +185,41 @@ export function objetVehicule(KIT, nom, longueur){
 }
 
 // ── Ambiance : ciel réaliste, reflets, lueur des lumières (bloom) ─
+// v5.67 — Mode ULTRA : occlusion ambiante (GTAO : les coins et le dessous des objets s'assombrissent), rayons de
+// soleil à travers les arbres et les bâtiments, étalonnage cinéma (contraste, couleurs chaudes, vignette, grain léger),
+// anticrénelage SMAA, poussières dorées qui flottent dans la lumière. Activé par amb.niveau('ultra').
+const ShaderCinema = {
+  uniforms:{ tDiffuse:{ value:null }, soleilEcran:{ value:new THREE.Vector2(.5, .8) }, forceRayons:{ value:.0 }, aspect:{ value:1 },
+    temps:{ value:0 }, nuit:{ value:0 }, vignette:{ value:.32 }, grain:{ value:.025 } },
+  vertexShader:'varying vec2 vUv; void main(){ vUv = uv; gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }',
+  fragmentShader:`
+    uniform sampler2D tDiffuse; uniform vec2 soleilEcran; uniform float forceRayons, aspect, temps, nuit, vignette, grain; varying vec2 vUv;
+    float lum(vec3 c){ return dot(c, vec3(.2126, .7152, .0722)); }
+    float hasard(vec2 p){ return fract(sin(dot(p, vec2(12.9898, 78.233)) + temps) * 43758.5453); }
+    void main(){
+      vec2 d = vUv - .5; float r = length(d * vec2(aspect, 1.));
+      // Légère aberration chromatique sur les bords (comme un vrai objectif).
+      vec2 ab = d * .0025 * r;
+      vec3 c = vec3(texture2D(tDiffuse, vUv + ab).r, texture2D(tDiffuse, vUv).g, texture2D(tDiffuse, vUv - ab).b);
+      // Rayons de soleil : on marche de chaque pixel vers le soleil ; les zones très lumineuses (ciel, halo)
+      // laissent passer la lumière, les toits et les arbres la coupent.
+      if(forceRayons > .001){
+        vec2 pas = (vUv - soleilEcran) / 48. * .9; vec2 p = vUv; float decroit = 1., acc = 0.;
+        for(int i = 0; i < 48; i++){ p -= pas; vec3 e = texture2D(tDiffuse, clamp(p, .001, .999)).rgb; acc += smoothstep(.9, 1.7, lum(e)) * decroit; decroit *= .955; }
+        float bord = smoothstep(1.3, .2, length((vUv - soleilEcran) * vec2(aspect, 1.)));
+        c += vec3(1., .86, .62) * acc / 48. * forceRayons * bord * 2.2;
+      }
+      // Étalonnage : un peu plus de contraste et de couleur, hautes lumières chaudes, ombres légèrement bleutées.
+      float l = lum(c); c = mix(vec3(l), c, 1.24 - nuit * .12);
+      c = mix(c, c * vec3(1.05, 1.0, .93), smoothstep(.4, 1.2, l) * (1. - nuit));
+      c = mix(c, c * vec3(.94, .98, 1.08), smoothstep(.35, 0., l));
+      c = (c - .45) * 1.1 + .45;
+      c *= 1. - vignette * smoothstep(.45, 1.15, r);
+      c += (hasard(vUv * 512.) - .5) * grain;
+      gl_FragColor = vec4(max(c, 0.), 1.);
+    }`
+};
+
 export function ambiance(renderer, scene, camera, { haute = true } = {}){
   const sky = new Sky(); sky.scale.setScalar(450); scene.add(sky);
   // v5.60 — Ciel affiché : un dégradé franc (bleu profond en haut, clair à l'horizon, halo autour du soleil).
@@ -206,12 +244,40 @@ export function ambiance(renderer, scene, camera, { haute = true } = {}){
   const pmrem = new THREE.PMREMGenerator(renderer), envScene = new THREE.Scene(), skyEnv = new Sky(); skyEnv.scale.setScalar(450); envScene.add(skyEnv);
   Object.assign(skyEnv.material.uniforms.turbidity, { value:5 });
   let env = null, derniereElev = 999;
-  let composer = null, bloom = null;
-  if(haute){
+  let composer = null, bloom = null, ao = null, cinema = null, smaa = null, ultra = false, nuitCourante = 0, elevCourante = 50;
+  const taille = () => renderer.getDrawingBufferSize(new THREE.Vector2());
+  function construire(){
+    if(composer) return;
     composer = new EffectComposer(renderer); composer.addPass(new RenderPass(scene, camera));
+    const t = taille();
+    ao = new GTAOPass(scene, camera, t.x, t.y); ao.enabled = false;
+    ao.updateGtaoMaterial({ radius:.55, distanceExponent:1.6, thickness:.8, scale:1, samples:12 });
+    ao.updatePdMaterial({ lumaPhi:10, depthPhi:2, normalPhi:3, radius:6, rings:2, samples:12 });
+    ao.blendIntensity = 1.15; composer.addPass(ao);
     bloom = new UnrealBloomPass(new THREE.Vector2(innerWidth / 2, innerHeight / 2), .3, .45, 1.05); composer.addPass(bloom);
+    cinema = new ShaderPass(ShaderCinema); cinema.enabled = false; composer.addPass(cinema);
     composer.addPass(new OutputPass());
+    smaa = new SMAAPass(t.x, t.y); smaa.enabled = false; composer.addPass(smaa);
   }
+  if(haute) construire();
+  // Poussières dorées qui flottent autour de la caméra et brillent dans le soleil (Ultra seulement).
+  const NP = 700, posP = new Float32Array(NP * 3), graineP = new Float32Array(NP);
+  for(let i = 0; i < NP; i++){ posP[i * 3] = (Math.random() - .5) * 60; posP[i * 3 + 1] = Math.random() * 14; posP[i * 3 + 2] = (Math.random() - .5) * 60; graineP[i] = Math.random() * 100; }
+  const geoP = new THREE.BufferGeometry(); geoP.setAttribute('position', new THREE.BufferAttribute(posP, 3)); geoP.setAttribute('graine', new THREE.BufferAttribute(graineP, 1));
+  const matP = new THREE.ShaderMaterial({ transparent:true, depthWrite:false, blending:THREE.AdditiveBlending, fog:false,
+    uniforms:{ temps:{ value:0 }, centre:{ value:new THREE.Vector3() }, couleur:{ value:new THREE.Color(1, .85, .55) }, force:{ value:1 }, echelleP:{ value:1 } },
+    vertexShader:`attribute float graine; uniform float temps, echelleP; uniform vec3 centre; varying float vA;
+      void main(){ vec3 p = position; p.x += sin(temps * .21 + graine) * 1.6; p.y += sin(temps * .13 + graine * 1.7) * .9 + mod(temps * .25 + graine, 14.); p.z += cos(temps * .17 + graine) * 1.6;
+        p.y = mod(p.y, 14.); p.x = centre.x + mod(p.x - centre.x + 30., 60.) - 30.; p.z = centre.z + mod(p.z - centre.z + 30., 60.) - 30.;
+        vec4 mv = modelViewMatrix * vec4(p, 1.); gl_Position = projectionMatrix * mv;
+        vA = (.45 + .55 * sin(temps * 1.7 + graine * 3.)) * smoothstep(40., 6., -mv.z);
+        gl_PointSize = (2.2 + fract(graine) * 2.6) * echelleP * 40. / max(1., -mv.z); }`,
+    fragmentShader:`uniform vec3 couleur; uniform float force; varying float vA;
+      void main(){ float d = length(gl_PointCoord - .5); if(d > .5) discard; gl_FragColor = vec4(couleur, smoothstep(.5, 0., d) * vA * force * .55); }` });
+  const poussieres = new THREE.Points(geoP, matP); poussieres.frustumCulled = false; poussieres.visible = false; scene.add(poussieres);
+  // Garde-fou : si l'Ultra rame (plus de 45 ms par image en moyenne), on retire d'abord l'occlusion puis les rayons.
+  let mes = { n:0, t:0, avant:0 }, alleges = 0, surAllege = null;
+  const horloge = new THREE.Clock();
   return {
     sky, etoiles, degrade,
     // élévation et azimut en degrés ; nuit de 0 à 1
@@ -229,8 +295,10 @@ export function ambiance(renderer, scene, camera, { haute = true } = {}){
         if(scene.background && scene.background.isColor) scene.background.copy(D.horizon.value);
       } etoiles.material.opacity = Math.max(0, nuit - .35) * 1.4;
       // Seuil > 1 : seules les vraies sources (néons, lampes, phares) brillent, pas le soleil sur les murs.
-      if(bloom){ bloom.strength = .15 + nuit * .6; bloom.threshold = 1.05 - nuit * .35; }
-      if(haute && Math.abs(elev - derniereElev) > 2.5){
+      nuitCourante = nuit; elevCourante = elev;
+      if(bloom){ bloom.strength = (ultra ? .28 : .15) + nuit * .6; bloom.threshold = (ultra ? .95 : 1.05) - nuit * .35; bloom.radius = ultra ? .6 : .45; }
+      matP.uniforms.couleur.value.set(nuit > .5 ? 0xbfe8ff : 0xffd98c);
+      if((composer || ultra) && Math.abs(elev - derniereElev) > 2.5){
         derniereElev = elev; skyEnv.material.uniforms.sunPosition.value.copy(soleil); Object.assign(skyEnv.material.uniforms.rayleigh, { value:U.rayleigh.value });
         if(env) env.dispose();
         env = elev > -5 ? pmrem.fromScene(envScene, .04).texture : null;
@@ -241,9 +309,38 @@ export function ambiance(renderer, scene, camera, { haute = true } = {}){
       }
       return soleil;
     },
-    rendre(){ if(composer) composer.render(); else renderer.render(scene, camera); },
-    redim(w, h){ if(composer){ composer.setSize(w, h); bloom.resolution.set(w / 2, h / 2); } },
-    haute
+    rendre(){
+      if(ultra){
+        const t = horloge.getElapsedTime(), U2 = cinema.uniforms;
+        matP.uniforms.temps.value = t; matP.uniforms.centre.value.copy(camera.position); matP.uniforms.echelleP.value = renderer.getPixelRatio();
+        matP.uniforms.force.value = nuitCourante > .5 ? .7 : Math.max(.15, Math.min(1, elevCourante / 30));
+        // Position du soleil à l'écran, pour les rayons (atténués s'il est derrière la caméra ou couché).
+        const ps = camera.position.clone().addScaledVector(soleil, 400).project(camera);
+        const devant = ps.z < 1 && elevCourante > -2, dist = Math.hypot(ps.x, ps.y);
+        U2.soleilEcran.value.set(ps.x * .5 + .5, ps.y * .5 + .5); U2.aspect.value = camera.aspect || 1; U2.temps.value = t % 100; U2.nuit.value = nuitCourante;
+        U2.forceRayons.value = devant && nuitCourante < .6 ? Math.max(0, 1 - Math.max(0, dist - 1) * .8) * (1 - nuitCourante) * .9 : 0;
+        // Garde-fou de fluidité.
+        const now = performance.now(); if(mes.avant){ mes.n++; if(mes.n > 30) mes.t += now - mes.avant; } mes.avant = now;
+        if(mes.n >= 150){ const moy = mes.t / 120; mes = { n:0, t:0, avant:now };
+          if(moy > 45 && alleges < 2){ alleges++; if(alleges === 1) ao.enabled = false; else { U2.forceRayons.value = 0; cinema.enabled = false; } if(surAllege) surAllege(alleges); } }
+      }
+      if(composer) composer.render(); else renderer.render(scene, camera);
+    },
+    redim(w, h){ if(composer){ composer.setSize(w, h); bloom.resolution.set(w / 2, h / 2); const t = taille(); if(ao) ao.setSize(t.x, t.y); if(smaa) smaa.setSize(t.x, t.y); } },
+    // 'ultra' ou 'normal' : tout se règle à chaud, sans recharger la page.
+    niveau(n){
+      ultra = n === 'ultra';
+      derniereElev = 999;
+      if(ultra) construire();
+      if(composer){ ao.enabled = ultra && alleges < 1; cinema.enabled = ultra && alleges < 2; smaa.enabled = ultra; }
+      poussieres.visible = ultra;
+      mes = { n:0, t:0, avant:0 };
+      if(composer){ const t = taille(); composer.setSize(innerWidth, innerHeight); ao.setSize(t.x, t.y); smaa.setSize(t.x, t.y); }
+      return ultra;
+    },
+    surAllege(f){ surAllege = f; },
+    get ultra(){ return ultra; },
+    get haute(){ return !!composer; }
   };
 }
 

@@ -21,7 +21,7 @@ function page(langue, config, avant){
   w.TextEncoder = TextEncoder; w.TextDecoder = TextDecoder;
   w.__fetch = []; w.fetch = async (u) => { w.__fetch.push(String(u)); return { ok:true, json:async () => (w.__reponse || { actif:false }) }; };
   if(avant) avant(w);
-  for(const f of ['js/donnees.js', 'js/voix.js', 'js/textes.js', 'js/articulation.js', 'js/genres.js', 'js/confusions.js', 'js/vannes.js', 'js/pieges.js', 'js/anglais.js', 'js/clash.js', 'js/histoires.js', 'js/blagues-en.js', 'js/parcours.js', 'js/rigolade.js', 'js/salon.js', 'js/juge.js', 'js/maths.js', 'js/sciences.js', 'js/vannes-cash.js', 'js/vannes-mots.js', 'js/offre.js', 'js/jeu.js']) w.eval(lire(f));
+  for(const f of ['js/donnees.js', 'js/voix.js', 'js/textes.js', 'js/articulation.js', 'js/genres.js', 'js/confusions.js', 'js/vannes.js', 'js/pieges.js', 'js/anglais.js', 'js/clash.js', 'js/histoires.js', 'js/blagues-en.js', 'js/parcours.js', 'js/rigolade.js', 'js/clash-plus.js', 'js/salon.js', 'js/juge.js', 'js/maths.js', 'js/sciences.js', 'js/vannes-cash.js', 'js/vannes-mots.js', 'js/offre.js', 'js/jeu.js']) w.eval(lire(f));
   return w;
 }
 // Certificats d'abonnement comme les signe le serveur (même format que serveur/functions/ami-abonnement).
@@ -1498,6 +1498,62 @@ await test('v5.66 : vannes écrites en direct par l’IA, jamais deux fois, relu
   w.fetch = async () => { throw new Error('hors ligne'); };
   await A.iaPrecharger('mots', 'q', { id:'🐱', texte:'cat (chat)' }, [{ id:'🐶', texte:'dog (chien)' }], 1, 'fr');
   assert.ok(A.blague('🐶', '🐱'), 'hors ligne : Ami garde ses vannes à lui');
+});
+
+await test('v5.67 : réglage Graphismes, boutons d’action uniques, effets Ultra chargés et sobres', () => {
+  const fs = require('fs'), path = require('path'), J = lire('js/jeu.js');
+  // Chaque action du jeu n'a qu'un seul « case » (sinon le second ne marche jamais).
+  const cas = [...J.matchAll(/case '([a-z0-9-]+)':/g)].map(m => m[1]), vus = {}, doublons = [];
+  for(const c of cas){ if(vus[c]) doublons.push(c); vus[c] = 1; }
+  assert.deepStrictEqual(doublons.filter(c => !['juste', 'faux'].includes(c)), [], 'actions en double : ' + doublons.join(', '));
+  const I = lire('index.html');
+  assert.match(I, /css\/ultra\.css/); assert.match(I, /js\/graphismes\.js/); assert.match(I, /js\/ultra-ecrans\.js/);
+  const U = lire('css/ultra.css'); assert.ok(U.split('\n').filter(l => /^[^@/ ]/.test(l) && !/^#|^@|^html\.gfx-ultra|^\}/.test(l)).length === 0, 'tout le CSS Ultra est sous html.gfx-ultra');
+  assert.match(U, /prefers-reduced-motion/);
+  const G = lire('js/graphismes.js'); assert.match(G, /prefers-reduced-motion/); assert.ok(!/fetch\(|XMLHttpRequest|sendBeacon/.test(G + lire('js/ultra-ecrans.js')), 'rien n’est envoyé');
+  const w = page(); w.GRAPHISMES = { choix:() => 'ultra', puissant:() => true, mouvementReduit:() => false, CHOIX:['auto', 'normal', 'ultra'], definir(v){ this.v = v; } };
+  w.AmiDesMots.reglages(); const h = w.document.querySelector('main').innerHTML;
+  assert.match(h, /data-a="graphismes" data-v="ultra"/); assert.match(h, /data-a="vannes-ia-direct"|reglage-graphismes/);
+  for(const f of ['vendor/jsm/postprocessing/GTAOPass.js', 'vendor/jsm/postprocessing/SMAAPass.js', 'vendor/jsm/math/SimplexNoise.js']) assert.ok(fs.existsSync(path.join(__dirname, '..', f)), f);
+  assert.match(lire('vendor/jsm/postprocessing/GTAOPass.js'), /sansAO/, 'étiquettes et vitres exclues de l’occlusion');
+});
+
+await test('v5.68 : Battle entre potes depuis l’accueil — maths, anglais et vannes, 2 à 4 joueurs', async () => {
+  const w = page(); const A = w.AmiDesMots, $ = s => w.document.querySelector(s), clic = (a, v) => { const b = w.document.createElement('button'); b.dataset.a = a; if(v) b.dataset.v = v; w.document.body.appendChild(b); b.click(); b.remove(); };
+  A.base.ui = 'fr'; A.base.cible = 'en'; A.accueil();
+  assert.ok($('[data-a="potes"]'), 'bouton sur l’accueil'); assert.match($('[data-a="potes"]').textContent, /maths, anglais et vannes/);
+  clic('potes'); assert.ok($('.potes'), 'écran de la battle');
+  assert.strictEqual(w.document.querySelectorAll('[data-a="potes-matiere"]').length, 4, 'mélange, maths, anglais, vannes');
+  clic('potes-go'); assert.match($('#potes-msg').textContent, /2 joueurs/, 'il faut 2 joueurs');
+  $('#pote0').value = 'Léo'; $('#pote1').value = 'Inès'; $('#potes-niveau').value = '4e'; clic('potes-go');
+  assert.match($('main').textContent, /Passe le téléphone à Léo/);
+  for(let j = 0; j < 2; j++){
+    clic('potes-joue');
+    let n = 0, sujets = new Set();
+    while($('[data-a="qz-rep"]:not([disabled])') && n < 20){
+      const cons = ($('main').textContent || ''); if(/Maths 4e/.test(cons)) sujets.add('maths'); if(/punchline/.test(cons)) sujets.add('vannes'); if(/anglais|True or false|Écoute/.test(cons)) sujets.add('anglais');
+      const b = $('[data-a="qz-rep"]:not([disabled])'); b.click(); n++;
+      const s = $('[data-a="qz-suivant"]'); if(s) s.click();
+    }
+    assert.ok(n >= 6, 'questions jouées : ' + n);
+    if(j === 0) assert.deepStrictEqual([...sujets].sort(), ['anglais', 'maths', 'vannes'], 'le mélange contient les trois');
+    if(j === 0) assert.match($('main').textContent, /Inès/, 'au tour d’Inès');
+  }
+  assert.match($('main').textContent, /gagne la battle|Égalité/, 'podium');
+  assert.ok($('[data-a="potes-revanche"]'));
+});
+
+await test('v5.69 : battles plus longues et plus drôles (71 clashs, 50 vrai ou faux, longueur au choix)', () => {
+  const w = page(), A = w.AmiDesMots, $ = s => w.document.querySelector(s), clic = (a, v) => { const b = w.document.createElement('button'); b.dataset.a = a; if(v) b.dataset.v = v; w.document.body.appendChild(b); b.click(); b.remove(); };
+  assert.ok(w.CLASH.MANCHES.length + w.ANGLAIS.BATTLE.length >= 80, 'clashs : ' + (w.CLASH.MANCHES.length + w.ANGLAIS.BATTLE.length));
+  assert.ok(w.RIGOLADE.VRAI_FAUX.length >= 45, 'vrai ou faux : ' + w.RIGOLADE.VRAI_FAUX.length);
+  A.base.ui = 'fr'; A.base.cible = 'en'; clic('potes');
+  assert.strictEqual(w.document.querySelectorAll('[data-a="potes-longueur"]').length, 3);
+  for(const [lg, n] of [['courte', 9], ['normale', 15], ['marathon', 24]]){
+    clic('potes-longueur', lg); $('#pote0').value = 'A'; $('#pote1').value = 'B'; clic('potes-go'); clic('potes-joue');
+    let k = 0; while($('[data-a="qz-rep"]:not([disabled])') && k < 40){ $('[data-a="qz-rep"]:not([disabled])').click(); k++; const s = $('[data-a="qz-suivant"]'); if(s) s.click(); }
+    assert.strictEqual(k, n, lg + ' : ' + k + ' questions'); clic('potes');
+  }
 });
 
 console.log(`\n${ok} réussi(s), ${ko} échoué(s)`);
