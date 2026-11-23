@@ -474,6 +474,7 @@
         '<a class="gros monde-3d-accueil mots-city-accueil" href="mots-city.html">🛵 Mots City — l’anglais en rigolant <span>😂</span></a>' +
         (installation ? '<button class="moyen plein installer-appli" data-a="installer">📲 Installer l’appli sur cet appareil</button>' : '') +
         (window.MATHS ? '<button class="gros monde-3d-accueil maths-accueil" data-a="maths">🔢 Maths de la 6e au bac — Prof Pi te vanne <span>🦝</span></button>' : '') +
+        '<a class="gros monde-3d-accueil professeur-ia-accueil" href="professeur.html">🧑‍🏫 Le professeur IA — Anglais & maths <span>✨</span></a>' +
         (window.SCIENCES ? '<button class="gros monde-3d-accueil sciences-accueil" data-a="sciences">🚀 Sciences : planètes, fusées, corps humain <span>🔬</span></button>' : '') +
         '<div class="actions serrees">' +
           '<button class="moyen" data-a="themes">▶ ' + esc(t('jouer')) + '</button>' +
@@ -1751,7 +1752,9 @@
   function battleGo(mode){
     if(!piegesDispo() || !A_EN()) return pieges();
     const fam = mode === 'famille';
-    battle = { manches:A_EN().melanger(A_EN().BATTLE).slice(0, fam ? 4 : 3), i:0, toi:0, ami:0, essai:0, fini:false, fam, eq:[0, 0] };
+    // 30 manches (anglais.js + clash.js) : on en tire 3 (4 en famille), jamais deux fois la même dans une battle.
+    const toutes = A_EN().BATTLE.concat(window.CLASH ? CLASH.MANCHES : []);
+    battle = { manches:A_EN().melanger(toutes).slice(0, fam ? 4 : 3), i:0, toi:0, ami:0, essai:0, fini:false, fam, eq:[0, 0], serie:0, foule:[] };
     afficherBattle();
   }
   function afficherBattle(){
@@ -1776,9 +1779,11 @@
     }
     const m = b.manches[b.i]; b.essai = 0; b.fini = false;
     b.options = A_EN().melanger([m.bon.en].concat(m.faux.map(f => f.en)));
-    poser(barre('battle') + '<main class="battle-ecran"><p class="piege-cat">🎤 Manche ' + (b.i + 1) + '/' + b.manches.length + ' · ' + (b.fam ? '🦊 ' + b.eq[0] + ' – ' + b.eq[1] + ' 🐼 · <strong>À l’équipe ' + ['🦊', '🐼'][b.i % 2] + ' !</strong>' : 'Toi ' + b.toi + ' – ' + b.ami + ' Ami') + '</p>' +
+    const finale = b.i === b.manches.length - 1, moy = b.foule.length ? Math.round(b.foule.reduce((x, y) => x + y, 0) / b.foule.length) : 0;
+    poser(barre('battle') + '<main class="battle-ecran' + (finale ? ' finale' : '') + '"><p class="piege-cat">' + (finale ? '🏆 FINALE · ' : '') + '🎤 Manche ' + (b.i + 1) + '/' + b.manches.length + ' · ' + (b.fam ? '🦊 ' + b.eq[0] + ' – ' + b.eq[1] + ' 🐼 · <strong>À l’équipe ' + ['🦊', '🐼'][b.i % 2] + ' !</strong>' : 'Toi ' + b.toi + ' – ' + b.ami + ' Ami') + '</p>' +
       '<div class="piege-haut"><div class="ami-moyen" id="ami-battle">' + ami('content') + '</div>' +
       '<div class="bulle-ami"><p class="piege-fr" lang="en">« ' + esc(m.ami) + ' » <button class="bouton-rond" data-a="battle-ecouter" aria-label="Réécouter Ami">🔊</button></p>' + traduire(m.fr) + '</div></div>' +
+      (b.foule.length ? '<div class="clash-public" aria-label="Énergie du public">📣 Public <span class="jauge"><span style="width:' + moy + '%"></span></span>' + (b.serie > 1 ? ' <strong>🔥 x' + b.serie + '</strong>' : '') + '</div>' : '') +
       '<p class="piege-consigne">Ta réplique (juste ET drôle) :</p>' +
       '<div class="piege-options">' + b.options.map((o, i) => '<button class="moyen piege-opt" data-a="battle-rep" data-v="' + i + '" lang="en">' + esc(o) + '</button>').join('') + '</div>' +
       '<div class="piege-retour" id="battle-retour" role="status" aria-live="polite"></div></main>');
@@ -1791,18 +1796,26 @@
     if(choix === m.bon.en){
       b.fini = true; if(b.fam){ if(b.essai === 0) b.eq[b.i % 2]++; } else if(b.essai === 0){ b.toi++; J().plumes += 2; } else b.ami++;
       garder(); bouton.classList.add('ok'); document.querySelectorAll('.piege-opt').forEach(x => { x.disabled = true; });
-      const aie = A_EN().AIE[Math.floor(Math.random() * A_EN().AIE.length)];
-      if(a) a.innerHTML = ami('surpris');
+      const aie = A_EN().AIE[Math.floor(Math.random() * A_EN().AIE.length)], C = window.CLASH;
+      // Public et séries : la foule s'enflamme pour les punchlines du premier coup.
+      if(C) b.foule.push(C.energie(b.essai));
+      b.serie = b.essai === 0 ? b.serie + 1 : 0;
+      const ovation = C && b.essai === 0 ? '<p class="clash-foule">' + esc(C.FOULE[Math.floor(Math.random() * C.FOULE.length)]) + (C.SERIE[Math.min(4, b.serie)] && !b.fam ? ' <strong>' + esc(C.SERIE[Math.min(4, b.serie)]) + '</strong>' : '') + '</p>' : '';
+      if(a) a.innerHTML = ami(b.serie >= 3 ? 'choque' : 'surpris');
       if(r) r.innerHTML = '<p class="piege-bravo">🎤 ' + (b.essai === 0 ? (b.fam ? 'Bien envoyé ! Point pour l’équipe ' + ['🦊', '🐼'][b.i % 2] + '.' : 'Bien envoyé ! Point pour toi.') : (b.fam ? 'Trouvé ! Mais pas de point cette fois.' : 'Trouvé ! Mais le point va à Ami cette fois.')) + '</p>' +
         '<p class="piege-bon" lang="en">« ' + esc(m.bon.en) + ' »</p><p class="petit">🇫🇷 ' + esc(m.bon.fr) + '</p>' +
-        '<p lang="en">🦉 « ' + esc(aie.en) + ' » <small>(' + esc(aie.fr) + ')</small></p>' +
+        ovation + '<p lang="en">🦉 « ' + esc(aie.en) + ' » <small>(' + esc(aie.fr) + ')</small></p>' +
         '<button class="moyen plein" data-a="battle-suivant">' + (b.i + 1 < b.manches.length ? 'Manche suivante →' : 'Résultat') + '</button>';
       bruit('juste'); direPhrase(m.bon.en, 'en');
     } else {
       b.essai++; bouton.disabled = true; bouton.classList.add('ko');
       const f = m.faux.find(x => x.en === choix);
       if(a) a.innerHTML = ami('fete');
-      if(r) r.innerHTML = '<p class="piege-vanne">😂 ' + esc(vannePiquante(f ? f.vanne : 'Presque !')) + '</p><p class="petit">Essaie une autre réplique !</p>';
+      const C = window.CLASH, rip = C ? C.RIPOSTES[(b.i * 3 + b.essai) % C.RIPOSTES.length] : null; b.serie = 0;
+      // Ami contre-attaque (sur la réplique ratée), puis la vanne explique l'erreur d'anglais.
+      if(r) r.innerHTML = (rip ? '<p class="clash-riposte" lang="en">🦉 « ' + esc(rip.en) + ' » <small lang="fr">(' + esc(rip.fr) + ')</small></p>' : '') +
+        '<p class="piege-vanne">😂 ' + esc(vannePiquante(f ? f.vanne : 'Presque !')) + '</p><p class="petit">Essaie une autre réplique !</p>';
+      if(rip && niveauHumour() > 0) direPhrase(rip.en, 'en');
       bruit('faux');
     }
   }
@@ -2741,7 +2754,7 @@
   // ── Coin sciences : espace, fusées, corps humain et médecine — avec des clashs quand on se trompe ──
   function sciencesAccueil(){
     qz = null; const SC = window.SCIENCES; if(!SC) return accueil();
-    poser(barre('accueil') + '<main class="coin-anglais coin-sciences"><h2>🚀 Le labo des sciences</h2><p class="pieges-intro">Planètes, fusées, corps humain, médecine. Trompe-toi et le labo te clashe (gentiment… enfin presque).</p>' +
+    poser(barre('accueil') + '<main class="coin-anglais coin-sciences"><h2>🚀 Le labo des sciences</h2><p class="pieges-intro">Planètes, fusées, corps humain, médecine. Ici, les mauvaises réponses se font démonter… mais les explications restent sérieuses.</p>' +
       '<div class="cartes-anglais">' + SC.THEMES.map(t => '<button class="carte-anglais" data-a="sciences-theme" data-v="' + t.id + '"><strong>' + t.e + ' ' + esc(t.titre) + '</strong><span>' + esc(t.sous) + '</span></button>').join('') +
       '<button class="carte-anglais" data-a="sciences-theme" data-v="tout"><strong>🎲 Tout mélangé</strong><span>10 questions</span></button></div></main>', 'sciences');
   }

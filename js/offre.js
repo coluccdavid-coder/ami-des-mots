@@ -8,7 +8,7 @@ window.OFFRE_AMI = {
   MODE_PAYANT:false,
   PRIX:'5,99 €',
   // Thèmes de mots gratuits (les autres sont dans Plus).
-  THEMES_GRATUITS:['animaux', 'manger', 'maison', 'ville', 'nature', 'corps', 'ecole', 'transports'],
+  THEMES_GRATUITS:['animaux', 'manger', 'maison', 'habits', 'nature', 'ville', 'musique', 'atelier'],
   // Sortes de jeux gratuites, à tous leurs niveaux.
   JEUX_GRATUITS:['decouvrir', 'ecoute', 'quel_mot', 'traduction', 'vrai_faux', 'ombre', 'devinette', 'intrus', 'panier', 'ecoute_mot', 'traduction_inverse', 'premiere_lettre', 'lettre_manquante', 'lettres', 'memoire', 'memoire_trad', 'relier', 'chrono', 'grand_quiz'],
   // Nombre de joueurs gratuits (6 au plus avec Plus).

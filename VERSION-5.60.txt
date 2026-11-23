@@ -1,0 +1,34 @@
+AMI DES MOTS — VERSION 5.60
+Graphisme, voitures dans le bon sens, clashs plus forts, plein écran sur ordinateur
+
+VOITURES
+- Vérifié une par une (page de contrôle outils/tests-navigateur/garage.html) : chaque véhicule a son avant du côté
+  où il roule. Les bus, le car scolaire et l'ambulance n'avaient pas de phares nommés : leur avant est maintenant
+  donné par leur forme (AVANT_Q dans js/kit3d.js).
+- Nouveau test test-sens-voitures.js : dans le village et dans Mots City, aucun véhicule ne roule en marche arrière
+  (3 relevés par monde).
+- Bus, car scolaire, ambulance, vélo, feux et cônes avaient perdu leurs couleurs (tout gris, vitres « en triangles ») :
+  couleurs d'origine du pack rétablies et découpe des faces corrigée (outils/preparer-nature.mjs).
+
+GRAPHISME
+- Ciel en dégradé franc (bleu profond en haut, clair à l'horizon, halo du soleil, couchant et nuit) dans le village
+  et Mots City, au lieu d'un ciel blanc délavé. La pluie garde son ciel gris.
+- Village : la caméra se place directement derrière le joueur au départ (avant, elle partait de la fontaine) et suit
+  à la même vitesse sur tous les ordinateurs.
+- Portails du village : icônes au-dessus des noms, libellé « Le coin anglais » raccourci (plus de chevauchement).
+
+ORDINATEUR
+- Les écrans utilisent toute la largeur (jusqu'à ~1760 px) au lieu d'une colonne de 1000 px au milieu.
+- Coin anglais, maths, sciences : cartes en grille large. Questions : grande question à gauche, grosses touches de
+  réponse à droite, sur toute la hauteur. Accueil : grands boutons sur deux colonnes.
+- Boutons de choix (ton de Prof Pi…) enfin lisibles. Rien ne change sur téléphone.
+
+CLASHS
+- 30 manches de battle au lieu de 9 (21 nouvelles, originales) : chaque mauvaise réplique cache une vraie erreur
+  d'anglais que la vanne explique.
+- Ami contre-attaque quand tu rates ta réplique (sur la réplique ratée, jamais sur toi).
+- Le public : jauge d'énergie, ovations quand tu réussis du premier coup, séries (« Série de 3 : Ami est KO
+  debout ! »), dernière manche en FINALE.
+
+TESTS : 104 + 22 réussis ; navigateur : voitures (8), sens Mots City (5), village 5.42 (13), collisions (9),
+quêtes (9), maths et sciences (7), Mots City, coin anglais, accueil 3D, hors ligne : OK.

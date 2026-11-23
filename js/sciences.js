@@ -56,7 +56,11 @@
   const GENERIQUES = ['Le labo a explosé de rire. 💥', 'Même la souris du labo connaissait la réponse. 🐭', 'Prof Pi dit que ce n’est pas des maths, mais il rigole quand même. 🦝'];
   function hasard(g){ let a = (g >>> 0) || 1; return () => { a |= 0; a = a + 0x6D2B79F5 | 0; let t = Math.imul(a ^ a >>> 15, 1 | a); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
   const enQuestion = (x, ton) => ({ id:x[0], q:x[2], consigne:THEMES.find(t => t.id === x[1]).e + ' Sciences', enonce:x[2], bon:x[3], regle:x[5], lang:'fr',
-    faux:x[4].map(([v, clash]) => ({ en:v, vanne:ton === 'doux' ? 'Presque ! ' + x[5] : clash })) });
+    faux:x[4].map(([v, clash]) => ({ en:v, vanne:ton === 'doux'
+      ? 'Presque ! ' + x[5]
+      : ton === 'sanspitie'
+        ? 'Aïe. ' + clash.replace(/[.!?]$/, '') + ' Là, même le télescope refuse de regarder ça. 🔭'
+        : 'Ouille ! ' + clash.replace(/[.!?]$/, '') + ' Le labo vient de déposer un arrêt maladie. 🧪' })) });
   function serie(theme, n, graine, ton){
     const r = hasard(graine), l = Q.filter(x => theme === 'tout' || x[1] === theme).slice();
     for(let i = l.length - 1; i > 0; i--){ const k = Math.floor(r() * (i + 1)); [l[i], l[k]] = [l[k], l[i]]; }

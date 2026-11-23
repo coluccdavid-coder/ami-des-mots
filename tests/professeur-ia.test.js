@@ -1,0 +1,18 @@
+const assert = require('node:assert/strict');
+const vm = require('node:vm');
+const fs = require('node:fs');
+const source = fs.readFileSync('js/professeur-ia.js','utf8');
+const store = new Map();
+const context = { window:{}, localStorage:{getItem:k=>store.get(k)||null,setItem:(k,v)=>store.set(k,v)}, Date };
+vm.runInNewContext(source,context);
+const P=context.window.AMI_PROFESSEUR;
+assert.ok(P);
+assert.equal(P.choisir('primaire','anglais').id,'en-vocab');
+const c=P.choisir('primaire','anglais');
+let x=P.enregistrer('primaire','anglais',c,true);
+assert.equal(x.essais,1);assert.equal(x.maitrise,1);
+P.enregistrer('primaire','anglais',c,false);
+assert.equal(P.progression().essais,2);
+assert.equal(P.progression().justes,1);
+assert.equal(P.progression().notions,1);
+console.log('Professeur IA : 7 assertions réussies');

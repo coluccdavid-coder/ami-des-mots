@@ -1,0 +1,15 @@
+AMI DES MOTS — VERSION 5.59
+Remise en ordre après la consolidation 5.58
+
+- Mots City est de retour : dans la 5.58, mots-city.html avait été remplacé par une copie du village 3D
+  (plus de conduite, de missions, de radio, d'étiquettes ni de véhicules Quaternius). Le vrai Mots City est restauré.
+- Direction vérifiée dans un vrai Chrome : flèche droite = le héros (à pied ET en véhicule) tourne vers la droite de
+  l'écran, gauche vers la gauche (nouveau test outils/tests-navigateur/test-sens-city.js).
+- Phase « tout gratuit » conservée. Liste des thèmes gratuits corrigée : elle citait des thèmes qui n'existent pas
+  (corps, école, transports) et oubliait habits, musique et atelier.
+- Tests de l'abonnement Plus : ils activent maintenant eux-mêmes le mode payant, pour continuer à vérifier la
+  protection (certificat signé, triche impossible) même pendant la phase gratuite. Test du coin admin corrigé
+  (une case de coin cochée = gratuit).
+
+Tests : 102 + 22 (moteur adaptatif, tuteur, professeur) réussis ; navigateur : Mots City, sens de direction
+(village et Mots City), village 5.42, collisions, quêtes, maths et sciences, coin anglais, hors ligne : OK.
