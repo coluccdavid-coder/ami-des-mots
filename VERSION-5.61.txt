@@ -1,0 +1,12 @@
+AMI DES MOTS — VERSION 5.61
+Vannes plus drôles et plus cash
+
+- 110 nouvelles vannes pour Prof Pi (maths), réparties sur les erreurs les plus fréquentes de la 6e à la Terminale,
+  plus des vannes générales quand l'erreur n'est pas classée. Exemples :
+  « Plus long ≠ plus grand. Sinon le mot « anticonstitutionnellement » serait milliardaire. »
+  « Additionner les dénominateurs ? Avec ta méthode, deux moitiés de pizza font… moins d'une pizza. »
+- Le ton « Sans pitié » s'appelle maintenant « 🔥 Cash (ados) ».
+- Labo des sciences en ton Cash : le clash de chaque mauvaise réponse est suivi d'une punchline qui change.
+- Règle inchangée et testée : on démonte la RÉPONSE, jamais la personne ni sa famille ; chaque vanne passe le juge d'Ami.
+
+Tests : 105 + 22 réussis ; maths et sciences dans Chrome : OK.

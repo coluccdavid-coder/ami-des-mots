@@ -244,8 +244,10 @@ main > h2{ font-size:1.7rem; margin:10px 0 16px; }
 .cadre-image{ display:inline-block; overflow:hidden; }
 .partie .cadre-image .pic-grande{ background:none; padding:0; box-shadow:none; border-radius:0; display:block; }
 .mot-source,.mot-vf{ font-size:2.3rem; font-weight:1000; margin:16px 0 2px; color:#fff; text-shadow:0 0 24px color-mix(in srgb, var(--th) 70%, transparent); }
-.ombre{ filter:grayscale(1) brightness(.55) contrast(30); transition:filter .5s; }
-.ombre.pleine{ filter:brightness(0); }
+.ombre{ transition:filter .5s, opacity .3s; background:radial-gradient(circle at 50% 45%, #fff8e6 0%, #e9e2ff 70%); border-radius:12px; }
+/* Photo sans fond blanc : « lampe torche », la scène sort de la nuit petit à petit. */
+.ombre.nuit{ background:none; animation:nuit var(--duree, 10s) ease-in forwards; }
+@keyframes nuit{ 0%{ filter:brightness(.12) saturate(.2); } 100%{ filter:brightness(.85) saturate(.8); } }
 .flou{ animation:deflou var(--duree, 10s) linear forwards; }
 @keyframes deflou{ from{ filter:blur(26px); } to{ filter:blur(0); } }
 .ombre.revele,.flou.revele{ filter:none; animation:none; }
@@ -1716,3 +1718,6 @@ button:focus-visible,a:focus-visible,select:focus-visible,input:focus-visible,[t
 .battle-ecran.finale{ box-shadow:0 0 0 2px rgba(255,212,92,.55), 0 26px 80px rgba(255,180,60,.18); }
 @keyframes clash-pop{ 0%{ transform:scale(.6); opacity:0 } 70%{ transform:scale(1.12) } 100%{ transform:scale(1); opacity:1 } }
 @media(prefers-reduced-motion:reduce){ .clash-foule{ animation:none } .clash-public .jauge span{ transition:none } }
+/* v5.64 : choix de la voix d'Ami */
+.reglage-voix label{ display:flex; gap:.6em; align-items:center; flex:1; flex-wrap:wrap; }
+.reglage-voix select{ flex:1; min-width:12em; max-width:100%; padding:.5em; border-radius:10px; font:inherit; }

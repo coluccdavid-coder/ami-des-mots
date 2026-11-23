@@ -273,17 +273,37 @@
   }
   const urlVoix = (lang, texte) => CONFIG.AUDIO_BASE + (lang === 'kab' ? 'kab/' + kabSlug(texte) : lang + '/' + fnv1a(texte)) + '.mp3';
   let lecteur = null;
+  // v5.64 : on classe les voix du téléphone / PC. Les voix « Natural / Online » (Edge), « Google », « Premium /
+  // Enhanced » (iPhone, Mac) passent devant ; les vieilles voix robot (eSpeak, Hortense, Zira…) en dernier.
+  // Le joueur peut aussi choisir sa voix dans les réglages (gardé sur cet appareil seulement).
+  function noteVoix(v, loc){
+    const n = (v.name || '') + ' ' + (v.voiceURI || ''), l = (v.lang || '').replace('_', '-').toLowerCase();
+    let p = 0;
+    if(/natural|online|neural|wavenet|studio/i.test(n)) p += 100;
+    if(/premium|enhanced|améliorée|amelioree|siri/i.test(n)) p += 80;
+    if(/google/i.test(n)) p += 60;
+    if(v.localService === false) p += 10;
+    if(l === String(loc || '').toLowerCase()) p += 20;
+    if(/espeak|compact|hortense|julie|paul|zira|david|mark|hazel|george|susan|pico|robot|novelty|bad news|bells|boing|bubbles|cellos|whisper|zarvox|trinoids|albert|jester|organ|superstar|wobble/i.test(n)) p -= 60;
+    return p;
+  }
+  function voixClassees(lang){
+    const loc = LOCALES[lang]; if(!loc || !window.speechSynthesis || !speechSynthesis.getVoices) return [];
+    const code = loc.slice(0, 2).toLowerCase();
+    return speechSynthesis.getVoices().filter(v => v.lang && v.lang.replace('_', '-').toLowerCase().startsWith(code))
+      .map(v => ({ v, p:noteVoix(v, loc) })).sort((a, b) => b.p - a.p).map(x => x.v);
+  }
+  function voixPreferees(){ try{ return JSON.parse(localStorage.getItem('ami-voix') || '{}') || {}; }catch(e){ return {}; } }
   function voixNavigateur(lang, texte, vitesse){
     const loc = LOCALES[lang];
     if(!loc || !window.speechSynthesis) return false;
     const toutes = speechSynthesis.getVoices();
-    const code = loc.slice(0, 2).toLowerCase();
-    const voix = toutes.filter(v => v.lang && v.lang.replace('_', '-').toLowerCase().startsWith(code));
+    const voix = voixClassees(lang), choisie = voixPreferees()[lang];
     const u = new SpeechSynthesisUtterance(texte);
-    u.lang = loc; u.rate = vitesse || .9;
-    // Privilégier une voix de la bonne langue ; si Android n'a pas encore
+    u.lang = loc; u.rate = vitesse || .95;
+    // La voix choisie dans les réglages, sinon la mieux notée ; si Android n'a pas encore
     // chargé sa liste, garder la voix système plutôt que de ne rien dire.
-    const v = voix.find(x => /natural|neural|premium|enhanced|google/i.test(x.name)) || voix[0] || toutes.find(x => x.default) || toutes[0];
+    const v = (choisie && voix.find(x => x.name === choisie)) || voix[0] || toutes.find(x => x.default) || toutes[0];
     if(v) u.voice = v;
     let lance = false;
     const parler = () => {
@@ -857,6 +877,8 @@
         else if(deja && hasard() < .6) pool = V.encore;
         else if(type === 'ecoute' && hasard() < .5) pool = V.ecoute;
         // Un personnage du village passe dans la vanne (Paco, Mina, Professor Puzzle).
+        // v5.64 : la vanne « cash » parle vraiment des deux objets (js/vannes-mots.js).
+        else if(langue === 'fr' && vanneObjets(mauvaise, bonne, art, niveau)){ const b = vanneObjets(mauvaise, bonne, art, niveau, true); if(b){ derniereBlague = b; return b; } pool = V.general; }
         else if(V.cameos && !facile() && hasard() < .12){ const b = tirerVanne(V.cameos); derniereBlague = b; return remplir(b, { f, j }); }
         // Scène absurde : ce qui arrive avec le mauvais mot (+ la bonne phrase anglaise).
         else if(V.scenes && V.scenes[theme] && V.scenes[theme].some(x => x.t !== derniereBlague) && !facile() && (langue !== 'fr' || (art[0] && art[1])) && hasard() < .4){
@@ -889,6 +911,25 @@
     const choix = tirerVanne(liste);
     derniereBlague = choix;
     return remplir(choix, valeurs);
+  }
+  // Sans « controle », dit seulement si une vanne objets est possible ; sinon la fabrique (sans répétition).
+  // Sans « fabriquer », dit seulement si une vanne objets est possible ; sinon la fabrique (sans répétition).
+  function vanneObjets(mauvaise, bonne, art, niveau, fabriquer){
+    const VM = window.VANNES_MOTS, a = VM && VM.mots[mauvaise], b = VM && VM.mots[bonne];
+    // Lecture facile : on garde les vannes courtes d'avant.
+    if(!a || !b || !art[0] || !art[1] || mauvaise === bonne || facile()) return false;
+    if(!fabriquer && Math.random() >= .8) return false;
+    const val = { Fc:majuscule(art[0].F), F:art[0].F, J:art[1].F, Jc:majuscule(art[1].F), tf:a.t, Tf:majuscule(a.t), tj:b.t, aj:b.a.replace('{X}', art[0].F) };
+    const l = VM.modeles[Math.max(0, Math.min(3, niveau))] || VM.modeles[0];
+    // Le juge d'Ami écarte les drôles d'images (« mettre le couteau sur ta tête »…).
+    const essais = l.map(m => remplir(m, val).replace(/ à le /g, ' au ').replace(/ de le /g, ' du ')).filter(x => !window.JUGE || JUGE.juger(x).ok);
+    if(!essais.length) return false;
+    if(!fabriquer) return true;
+    const mem = memoireVannes(), neuves = essais.filter(x => mem.age(x) < 0);
+    // Toutes déjà dites pour ce duo : la plus ancienne (jamais celle d'il y a un instant).
+    const choix = neuves.length ? neuves[Math.floor(Math.random() * neuves.length)] : essais.slice().sort((x, y) => mem.age(y) - mem.age(x))[0];
+    mem.noter(choix);
+    return choix;
   }
   function correctionDansLangue(mot){
     const l = langueBlagues();
@@ -1040,15 +1081,16 @@
     if(partie.i === 0) setTimeout(() => lireConsigne(t('a_' + m)), 220);
   };
   // Ombre : image détourée → silhouette pleine ; image sur fond blanc → filtre à seuil.
+  // v5.64 : la silhouette est découpée à l'avance (img/ombres, outils/fabriquer-ombres.py) : une vraie ombre
+  // chinoise lisible. Les photos sans fond blanc (plage, piano…) passent en « lampe torche » : la scène s'éclaire peu à peu.
   Q.ombre = () => {
     Q.quel_mot('ombre');
     const img = document.querySelector('img.ombre');
-    const tester = () => { try{
-      const c = document.createElement('canvas'); c.width = c.height = 8;
-      const x = c.getContext('2d'); x.drawImage(img, 0, 0, 8, 8);
-      if(x.getImageData(0, 0, 1, 1).data[3] < 20 && x.getImageData(7, 7, 1, 1).data[3] < 20) img.classList.add('pleine');
-    }catch(e){} };
-    if(img){ if(img.complete) tester(); else img.addEventListener('load', tester, { once:true }); }
+    if(!img) return;
+    const vrai = img.getAttribute('src');
+    img.dataset.vrai = vrai;
+    img.addEventListener('error', () => { img.classList.add('nuit'); img.src = vrai; }, { once:true });
+    img.src = vrai.replace('img/pictos/', 'img/ombres/');
   };
   Q.devinette = () => Q.quel_mot('devinette');
   Q.traduction = function(){
@@ -1154,7 +1196,7 @@
     if(juste){
       partie.verrou = true;
       btn.classList.add('juste'); bruit('juste');
-      document.querySelectorAll('.ombre, .flou').forEach(i => i.classList.add('revele'));
+      document.querySelectorAll('.ombre, .flou').forEach(i => { if(i.dataset.vrai && i.getAttribute('src') !== i.dataset.vrai) i.src = i.dataset.vrai; i.classList.add('revele'); });
       const tr = /quel_mot|ombre|devinette|ecoute_mot|vrai_faux|ecoute|lettre/.test(partie.courant) ? traduction(partie.bonne) : '';
       amiDit(melanger(t('bravo'))[0] + (tr ? ' — ' + tr : ''), 'fete');
       dire(partie.bonne);
@@ -2363,6 +2405,14 @@
     if(q.apres) q.apres(juste, choix); garder();
     document.querySelectorAll('.piege-opt').forEach((b, k) => { b.disabled = true; if(z.options[k] === q.bon) b.classList.add('ok'); else if(k === i) b.classList.add('ko'); });
     const f = !juste && (q.vanneDe ? { vanne:q.vanneDe(choix) } : q.faux.find(x => x.en === choix));
+    if(f && typeof f.fraiche === 'function') f.vanne = f.fraiche(memoireVannes()); // la vanne choisie est retenue par fraiche
+    else if(f && f.vanne) retenirVanne(f.vanne);
+    // Même erreur refaite dans la série : Prof Pi monte en pression (« Mais genre, tu fais exprès ou quoi !!!! »).
+    if(f && f.cle && z.prof && window.VANNES_CASH){ z.memesErreurs = z.memesErreurs || {}; const n = z.memesErreurs[f.cle] = (z.memesErreurs[f.cle] || 0) + 1;
+      if(n >= 2){ const E = VANNES_CASH.ESCALADE[etatMaths().ton] || VANNES_CASH.ESCALADE.taquin, niv = E[Math.min(n, 4) - 2], m = memoireVannes();
+        // Parmi les variantes de ce niveau, une pas encore dite (sinon la plus ancienne).
+        const neuves = niv.filter(l => m.age(l) < 0), l = neuves.length ? neuves[Math.floor(Math.random() * neuves.length)] : niv.slice().sort((a, b) => m.age(b) - m.age(a))[0];
+        retenirVanne(l); f.vanne = l + ' ' + f.vanne; } }
     if(f && f.vanne) noterBetisier(f.vanne);
     const az = $('#ami-qz'); if(az && !q.image) az.innerHTML = z.prof ? profPi(juste ? 'fier' : 'mdr') : ami(juste ? (q.humeurJuste || 'fete') : (q.humeurFaux || (niveauHumour() > 1 ? 'mdr' : 'surpris')));
     if(z.onReponse) z.onReponse(juste, q);
@@ -2651,6 +2701,20 @@
                  : '<span class="seuil">🔒 ' + esc(t('a_partir', n)) + '</span>') + '</div>';
       }).join('') + '</div></main>');
   }
+  function reglageVoix(){
+    const en = base.ui === 'en', langues = [base.ui].concat(base.cible !== base.ui ? [base.cible] : []).filter(l => LOCALES[l]);
+    const pref = voixPreferees();
+    const blocs = langues.map(l => {
+      const liste = voixClassees(l);
+      const opts = liste.length ? liste.map((v, i) => '<option value="' + esc(v.name) + '"' + ((pref[l] ? pref[l] === v.name : i === 0) ? ' selected' : '') + '>' + esc(v.name) + (i === 0 ? (en ? ' ★ best' : ' ★ la meilleure') : '') + '</option>').join('')
+        : '<option value="">' + (en ? 'Phone voice (default)' : 'Voix du téléphone (par défaut)') + '</option>';
+      return '<div class="reglage reglage-voix"><label><span>' + esc(LANGUES_APPRENDRE[l] || l) + '</span> <select data-voix="' + esc(l) + '">' + opts + '</select></label>' +
+        '<button class="moyen" data-a="essai-voix" data-v="' + esc(l) + '">🔊 ' + (en ? 'Try' : 'Essayer') + '</button></div>';
+    }).join('');
+    return '<section class="reglage-voix-bloc"><h3>🗣️ ' + (en ? 'Ami’s voice' : 'La voix d’Ami') + '</h3>' + blocs +
+      '<p class="petit">' + (en ? 'Robot voice? On a PC, open the app in Microsoft Edge (natural voices) or Chrome (Google voices). On Android: Settings › Text-to-speech › Google engine, then install the high-quality voice.'
+        : 'Voix de robot ? Sur PC, ouvre l’appli dans Microsoft Edge (voix « Natural ») ou Chrome (voix Google). Sur Android : Paramètres › Synthèse vocale › moteur Google, puis installe la voix « haute qualité ». Les mots anglais, eux, sont de vrais enregistrements.') + '</p></section>';
+  }
   function reglages(){
     poser(barre('accueil') + '<main class="texte"><h2>⚙️ ' + esc(t('reglages')) + '</h2>' +
       '<div class="reglage reglage-facile"><span><strong>📖 ' + esc(t('facile')) + '</strong><span class="petit">' + esc(t('facile_aide')) + '</span></span><button class="moyen' + (facile() ? ' plein' : '') + '" data-a="facile" aria-pressed="' + facile() + '">' + esc(facile() ? t('oui') : t('non')) + '</button></div>' +
@@ -2667,6 +2731,7 @@
         ? '<p>' + esc(t('abo_actif', droits ? new Date(droits.fin).toLocaleDateString(base.ui) : '')) + '</p>' + (CONFIG.LIEN_GESTION ? '<p><a class="moyen" href="' + esc(CONFIG.LIEN_GESTION) + '" target="_blank" rel="noopener">' + esc(t('gerer_abo')) + '</a></p>' : '')
         : '<p><button class="moyen plein" data-a="plus" data-v="reglages">' + esc(t('decouvrir_plus')) + '</button></p>') +
         '<p class="petit">' + esc(t('code_abo')) + '<br><code>' + esc(base.abo.code) + '</code><br>' + esc(t('code_aide')) + '</p>' : '') +
+      reglageVoix() +
       '<h3>' + esc(t('joueurs')) + '</h3><div class="liste-joueurs">' + base.joueurs.map((j, i) =>
         '<button class="ligne-carnet" data-a="modifier-joueur" data-v="' + i + '"><span class="ami-icone">' + ami('content', { couleur:j.couleur, porte:j.porte, immobile:true }) + '</span><span class="txt"><strong>' + esc(j.nom || '—') + (i === base.actif ? ' ✓' : '') + '</strong><span>🪶 ' + j.plumes + '</span></span><span aria-hidden="true">✏️</span></button>').join('') + '</div>' +
       (base.joueurs.length < MAX_JOUEURS ? '<p><button class="moyen" data-a="nouveau-joueur">＋ ' + esc(t('ajouter_joueur')) + (plus() ? '' : ' ✨') + '</button></p>' : '') +
@@ -2683,6 +2748,22 @@
   window.addEventListener('beforeinstallprompt', ev => { ev.preventDefault(); installation = ev; if($('#app') && $('#app').dataset.ecran === 'accueil') accueil(); });
   window.addEventListener('appinstalled', () => { installation = null; });
 
+  // ── Mémoire des vannes déjà dites (par joueur, 400 dernières) : Prof Pi et le labo ne se répètent pas ──
+  // Même empreinte pour la vanne modèle (« {f} ») et la vanne affichée (« 5,23 ») : on retire ce qui change
+  // (réponse entre guillemets, {valeurs}, chiffres, espaces) et l'explication 💡.
+  const normeVanne = t => String(t).split(' 💡 ')[0].replace(/«[^»]*»/g, '').replace(/\{\w+\}/g, '').replace(/[\d\s\u202F,.−-]/g, '');
+  const empreinteVanne = t => { let h = 2166136261; for(const c of normeVanne(t).slice(0, 160)) h = Math.imul(h ^ c.charCodeAt(0), 16777619); return (h >>> 0).toString(36); };
+  function memoireVannes(){
+    const l = Array.isArray(J().vannesDites) ? J().vannesDites : [];
+    // Une vanne modèle ({f}, {j}) est reconnue même une fois les nombres remplacés : on compare sans les chiffres.
+    return { age:t => { const i = l.lastIndexOf(empreinteVanne(t)); return i < 0 ? -1 : l.length - i; }, noter:retenirVanne };
+  }
+  function retenirVanne(t){
+    const j = J(); if(!Array.isArray(j.vannesDites)) j.vannesDites = [];
+    // On retient la vanne sans ce qui change d'une fois à l'autre (nombres, réponse) ni l'explication 💡.
+    j.vannesDites.push(empreinteVanne(t)); if(j.vannesDites.length > 400) j.vannesDites.splice(0, j.vannesDites.length - 400); garder();
+  }
+
   // ── Coin maths (6e → Terminale) : Prof Pi, le raton laveur prof de maths, vanne à chaque erreur ──
   // Exercices fabriqués par js/maths.js (correction calculée), programmes validés par la veille si un serveur est branché.
   function profPi(humeur){
@@ -2695,7 +2776,7 @@
       '<path d="M30 22 L60 10 L90 22 L60 34 Z" fill="#1f1757"/><path d="M84 24 L88 40" stroke="#ffc93c" stroke-width="3"/><circle cx="88" cy="42" r="3" fill="#ffc93c"/>' +
       '<text x="60" y="27" font-size="10" text-anchor="middle" fill="#ffc93c" font-weight="900">π</text></svg>';
   }
-  const TONS_PROF = [['doux', '🧸 Tout doux'], ['taquin', '😏 Taquin'], ['sanspitie', '🔥 Sans pitié (ados)']];
+  const TONS_PROF = [['doux', '🧸 Tout doux'], ['taquin', '😏 Taquin'], ['sanspitie', '🔥 Cash (ados)']];
   function etatMaths(){
     const j = J(), o = j.maths && typeof j.maths === 'object' ? j.maths : {}, M = window.MATHS;
     const niveau = M && M.NIVEAUX.includes(o.niveau) ? o.niveau : '6e', ton = TONS_PROF.some(x => x[0] === o.ton) ? o.ton : 'taquin';
@@ -2835,6 +2916,7 @@
           gag:Math.min(20, Math.max(0, Math.floor(Number(j.gag)) || 0)),
           maths:j.maths && typeof j.maths === 'object' ? j.maths : {},
           vannesVues:Math.min(1e6, Math.max(0, Math.floor(Number(j.vannesVues)) || 0)),
+          vannesDites:Array.isArray(j.vannesDites) ? j.vannesDites.filter(x => typeof x === 'string' && /^[0-9a-z]{1,8}$/.test(x)).slice(-400) : [],
           trophees:Array.isArray(j.trophees) ? j.trophees.filter(k => TROPHEES.includes(k)) : [], facile:!!j.facile });
         base.joueurs = d.joueurs.map(propre); base.actif = 0;
         if(UI.includes(d.ui)) base.ui = d.ui;
@@ -2851,6 +2933,15 @@
     lu.readAsText(fichier);
   }
   document.addEventListener('change', ev => { if(ev.target.id === 'fichier-sauvegarde' && ev.target.files[0]) restaurer(ev.target.files[0]); });
+  // Choix de la voix : gardé sur cet appareil ; la liste des voix arrive parfois en retard (Android, Chrome).
+  document.addEventListener('change', ev => {
+    const l = ev.target && ev.target.dataset && ev.target.dataset.voix; if(!l) return;
+    const p = voixPreferees(); if(ev.target.value) p[l] = ev.target.value; else delete p[l];
+    try{ localStorage.setItem('ami-voix', JSON.stringify(p)); }catch(e){}
+  });
+  try{ if(window.speechSynthesis && speechSynthesis.addEventListener) speechSynthesis.addEventListener('voiceschanged', () => {
+    const b = document.querySelector('.reglage-voix-bloc'); if(b) b.outerHTML = reglageVoix();
+  }); }catch(e){}
 
   // ── Un seul écouteur pour toute l'application ─────────────────────
   document.addEventListener('click', ev => {
@@ -3038,6 +3129,11 @@
         partie.i++; return question();
       case 'sauvegarder': return sauvegarder();
       case 'restaurer': return $('#fichier-sauvegarde').click();
+      case 'essai-voix': {
+        const sel = document.querySelector('select[data-voix="' + v + '"]');
+        if(sel){ const p = voixPreferees(); if(sel.value) p[v] = sel.value; else delete p[v]; try{ localStorage.setItem('ami-voix', JSON.stringify(p)); }catch(e){} }
+        return direPhrase(v === 'fr' ? 'Salut ! Moi, c’est Ami. Tu m’entends bien ?' : v === 'en' ? 'Hi! I am Ami. Can you hear me?' : (t('a_ombre') || 'Ami'), v, 1);
+      }
       case 'son': base.son = !base.son; garder(); bruit('juste'); return reglages();
       case 'porter': { const j = J(); j.porte = j.porte.includes(v) ? j.porte.filter(x => x !== v) : j.porte.concat(v); garder(); return vestiaire(); }
       case 'effacer-tout':
@@ -3078,7 +3174,7 @@
   if(retourPaiement) [5000, 15000, 40000].forEach(ms => setTimeout(() => { if(!plus()) rafraichir(true); }, ms));
   if(window.Articulation) try{ Articulation.init(); }catch(e){}
   if('serviceWorker' in navigator && location.protocol === 'https:') navigator.serviceWorker.register('sw.js').catch(() => {});
-  window.AmiDesMots = { base, J, affiche, fnv1a, urlVoix, accueil, themes, choisirJeu, commencer, lettresPossibles, distincts, motsDu, aDire, CATALOGUE, MECAS, disponible, nomJeu, aRevoir, noter, jour, defi, revoir, lecon, astuces, aToi, blague, carnet, avecArticle, astuce, niveauHumour, fousRires, reglages, CONFIG, COINS, coinOuvert, offreLue, facile, nbMots, restaurer, verifierJeton, plus, ecranPlus, formatCode, rafraichir,
+  window.AmiDesMots = { base, J, affiche, fnv1a, urlVoix, accueil, themes, choisirJeu, commencer, lettresPossibles, distincts, motsDu, aDire, CATALOGUE, MECAS, disponible, nomJeu, aRevoir, noter, jour, defi, revoir, lecon, astuces, aToi, blague, carnet, noteVoix, vanneObjets, avecArticle, astuce, niveauHumour, fousRires, reglages, CONFIG, COINS, coinOuvert, offreLue, facile, nbMots, restaurer, verifierJeton, plus, ecranPlus, formatCode, rafraichir,
     get etat(){ return J(); } };
   garder();
   if(lienDefi || lienSalon){
