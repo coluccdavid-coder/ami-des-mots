@@ -496,8 +496,8 @@
         '<button class="gros apprendre" data-a="lecon">📚 ' + esc(t('apprendre')) + '</button>' +
         '<button class="gros phrases-accueil" data-a="phrases">💬 ' + (base.ui === 'en' ? 'Build your first sentences' : 'Atelier des phrases') + ' <span>✨</span></button>' +
         (piegesDispo() ? '<button class="gros pieges-accueil" data-a="' + (A_EN() ? 'anglais' : 'pieges') + '">🇬🇧 Le coin anglais <span>🪤🎤✍️</span></button>' : '') +
-        '<button class="gros village-accueil" data-a="village">🗺️ ' + {"fr": "Explorer le village", "en": "Explore the word village", "es": "Explorar el pueblo", "it": "Esplora il villaggio", "pt": "Explorar a aldeia", "de": "Das Wörterdorf erkunden", "ar": "استكشف قرية الكلمات", "tr": "Kelime köyünü keşfet", "pl": "Odkryj wioskę słów", "ja": "ことばの村を探検", "uk": "Дослідити селище слів", "ko": "단어 마을 탐험하기", "dz": "اكتشف قرية الكلمات", "ma": "اكتشف قرية الكلمات", "tn": "اكتشف قرية الكلمات", "kab": "Snirem tamdint n wawalen"}[base.ui] + '</button>' +
-        '<button class="gros monde-3d-accueil" data-a="accueil-3d">🌍 ' + (base.ui === 'en' ? 'Play in the 3D village' : base.ui === 'fr' ? 'Jouer dans le village 3D' : '3D') + ' <span>🚀</span></button>' +
+        (CONFIG.VILLAGE_CACHE ? '' : '<button class="gros village-accueil" data-a="village">🗺️ ' + {"fr": "Explorer le village", "en": "Explore the word village", "es": "Explorar el pueblo", "it": "Esplora il villaggio", "pt": "Explorar a aldeia", "de": "Das Wörterdorf erkunden", "ar": "استكشف قرية الكلمات", "tr": "Kelime köyünü keşfet", "pl": "Odkryj wioskę słów", "ja": "ことばの村を探検", "uk": "Дослідити селище слів", "ko": "단어 마을 탐험하기", "dz": "اكتشف قرية الكلمات", "ma": "اكتشف قرية الكلمات", "tn": "اكتشف قرية الكلمات", "kab": "Snirem tamdint n wawalen"}[base.ui] + '</button>' +
+        '<button class="gros monde-3d-accueil" data-a="accueil-3d">🌍 ' + (base.ui === 'en' ? 'Play in the 3D village' : base.ui === 'fr' ? 'Jouer dans le village 3D' : '3D') + ' <span>🚀</span></button>') +
         '<a class="gros monde-3d-accueil mots-city-accueil" href="mots-city.html">🛵 Mots City — l’anglais en rigolant <span>😂</span></a>' +
         (installation ? '<button class="moyen plein installer-appli" data-a="installer">📲 Installer l’appli sur cet appareil</button>' : '') +
         (window.MATHS ? '<button class="gros monde-3d-accueil maths-accueil" data-a="maths">🔢 Maths de la 6e au bac — Prof Pi te vanne <span>🦝</span></button>' : '') +
@@ -3121,7 +3121,7 @@
     if(b.tagName === 'A' && b.dataset.a === 'plus') ev.preventDefault();
     switch(b.dataset.a){
       case 'accueil': return depuis3D() ? retour3D() : accueil();
-      case 'accueil-3d': try{ localStorage.setItem('ami_accueil3d', '1'); }catch(e){} location.href = 'monde-3d.html'; return;
+      case 'accueil-3d': if(CONFIG.VILLAGE_CACHE) return accueil(); try{ localStorage.setItem('ami_accueil3d', '1'); }catch(e){} location.href = 'monde-3d.html'; return;
       case 'themes': return depuis3D() ? retour3D() : themes();
       case 'theme': return choisirJeu(v);
       case 'theme-retour': return choisirJeu(theme);
@@ -3369,6 +3369,6 @@
     if(lienAller === 'classique'){ try{ sessionStorage.removeItem('ami_depuis3d'); localStorage.setItem('ami_accueil3d', '0'); }catch(e){} accueil(); }
     else{ try{ sessionStorage.setItem('ami_depuis3d', '1'); }catch(e){} ouvrirDepuis3D(lienAller); }
   }
-  else if(!location.search && accueil3DAuto() && coinOuvert('village3d')) location.replace('monde-3d.html');
+  else if(!location.search && !CONFIG.VILLAGE_CACHE && accueil3DAuto() && coinOuvert('village3d')) location.replace('monde-3d.html');
   else accueil();
 })();

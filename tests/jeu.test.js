@@ -1588,6 +1588,17 @@ await test('v5.71 : Prof Pi ironise sur chaque erreur classique de maths, et la 
   const M = lire('monde-3d.html'); assert.match(M, /#top\{backdrop-filter:none/); assert.match(M, /id="menuBtn"/);
 });
 
+await test('v5.72 : village caché pour l’instant (réglage VILLAGE_CACHE), rien n’est supprimé', () => {
+  const w = page(), A = w.AmiDesMots, $ = s => w.document.querySelector(s);
+  assert.match(lire('js/config-site.js'), /VILLAGE_CACHE:true/);
+  A.CONFIG.VILLAGE_CACHE = true; A.base.ui = 'fr'; A.accueil();
+  assert.ok(!$('[data-a="village"]') && !$('[data-a="accueil-3d"]'), 'pas de bouton village sur l’accueil');
+  assert.ok($('[data-a="potes"]') && $('.mots-city-accueil'), 'le reste est là');
+  A.CONFIG.VILLAGE_CACHE = false; A.accueil();
+  assert.ok($('[data-a="village"]') && $('[data-a="accueil-3d"]'), 'il revient en mettant false');
+  assert.match(lire('monde-3d.html'), /CONFIG_JEU\.VILLAGE_CACHE/); assert.ok(require('fs').existsSync(require('path').join(__dirname, '..', 'monde-3d.html')));
+});
+
 console.log(`\n${ok} réussi(s), ${ko} échoué(s)`);
 process.exit(ko ? 1 : 0);
 })();

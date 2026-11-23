@@ -3,6 +3,8 @@
 window.CONFIG_JEU = Object.assign({
   // Phase de lancement : aucun contenu payant ni verrouillage.
   MODE_PAYANT:false,
+  // Village (2D et 3D) caché pour l'instant : true = caché, false = visible. Rien n'est supprimé.
+  VILLAGE_CACHE:true,
   SERVEUR:'',
   CLE_PUBLIQUE:null,
   LIEN_PAIEMENT:'',
