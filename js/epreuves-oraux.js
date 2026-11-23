@@ -18,14 +18,14 @@
     ['L’oral de français dure :', '20 minutes, après 30 minutes de préparation', [['2 heures', 'Ce serait une conférence. Le jury s’endormirait.'], ['5 minutes', 'Bien plus : 20 minutes.']], 'Coefficient 5.'],
     ['La première partie de l’oral de français comprend :', 'L’explication linéaire d’un extrait étudié et une question de grammaire', [['Une dictée', 'Pas de dictée au lycée.'], ['Un QCM', 'Non : c’est une explication orale.']], 'Partie 1 sur 12 points.'],
     ['La question de grammaire porte :', 'Sur un passage de l’extrait expliqué', [['Sur tout le programme de seconde au hasard', 'Elle porte sur l’extrait.'], ['Sur l’orthographe de son nom', 'Ami rit, mais non.']], 'Analyse syntaxique : négation, interrogation, subordonnées…'],
-    ['La deuxième partie de l’oral de français, c’est :', 'La présentation d’une œuvre choisie puis un entretien avec l’examinateur', [['Une deuxième explication de texte', 'Non : c’est un entretien sur une œuvre.'], ['Un exposé sur sa vie', 'Non.']], 'Partie 2 sur 8 points.'],
+    ['La deuxième partie de l’oral de français, c’est :', 'La présentation d’une œuvre choisie puis un entretien avec l’examinateur', [['Une deuxième explication de texte', 'Non : c’est un entretien sur une œuvre.'], ['Un exposé sur sa vie', 'Cette réponse est partie faire un tour et elle a oublié de revenir.']], 'Partie 2 sur 8 points.'],
     ['Une explication linéaire suit :', 'L’ordre du texte, mouvement par mouvement', [['L’ordre alphabétique des mots', 'Créatif, mais faux.'], ['Seulement la fin du texte', 'Il faut tout le passage, dans l’ordre.']], 'Introduction, lecture, mouvements, conclusion.']
   ];
   const GRAND_ORAL = [
-    ['Le Grand oral dure :', '20 minutes, après 20 minutes de préparation', [['1 heure', 'Non.'], ['10 minutes', 'Plus que ça : 20 minutes.']], 'Présentation, échange, projet d’orientation.'],
+    ['Le Grand oral dure :', '20 minutes, après 20 minutes de préparation', [['1 heure', 'Ami a vérifié trois fois : c’est toujours non. Mais c’était audacieux.'], ['10 minutes', 'Plus que ça : 20 minutes.']], 'Présentation, échange, projet d’orientation.'],
     ['Sur quoi portent les questions du Grand oral ?', 'Sur une ou deux spécialités suivies en terminale', [['Sur la philosophie uniquement', 'Non : sur les spécialités.'], ['Sur n’importe quel sujet du jour', 'Le candidat prépare deux questions à l’avance.']], 'Le jury choisit l’une des deux questions.'],
-    ['Pendant la présentation de la question, le candidat :', 'Parle sans notes, debout en général', [['Lit sa copie', 'Pas de lecture : on parle à l’oral, vraiment.'], ['Montre un film', 'Non.']], 'Environ 5 minutes.'],
-    ['La dernière partie du Grand oral porte sur :', 'Le lien entre la question et le projet d’orientation', [['Ses vacances', 'Non.'], ['La météo', 'Non.']], 'Environ 5 minutes.'],
+    ['Pendant la présentation de la question, le candidat :', 'Parle sans notes, debout en général', [['Lit sa copie', 'Pas de lecture : on parle à l’oral, vraiment.'], ['Montre un film', 'Celle-là, même un GPS en panne ne l’aurait pas choisie.']], 'Environ 5 minutes.'],
+    ['La dernière partie du Grand oral porte sur :', 'Le lien entre la question et le projet d’orientation', [['Ses vacances', 'Bien tenté ! Ami donne 10 pour le courage et 0 pour le résultat.'], ['La météo', 'Ami a failli tomber de sa branche. Il s’est rattrapé de justesse.']], 'Environ 5 minutes.'],
     ['Coefficient du Grand oral en voie générale à partir de la session 2027 :', '8', [['10', '10, c’était jusqu’à la session 2026 incluse.'], ['16', '16, c’est une spécialité.']], 'Et 12 en voie technologique (14 jusqu’en 2026).']
   ];
   Object.assign(E.EPREUVES, {

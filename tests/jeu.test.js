@@ -21,7 +21,7 @@ function page(langue, config, avant){
   w.TextEncoder = TextEncoder; w.TextDecoder = TextDecoder;
   w.__fetch = []; w.fetch = async (u) => { w.__fetch.push(String(u)); return { ok:true, json:async () => (w.__reponse || { actif:false }) }; };
   if(avant) avant(w);
-  for(const f of ['js/donnees.js', 'js/voix.js', 'js/phrases-enregistrees.js', 'js/textes.js', 'js/articulation.js', 'js/genres.js', 'js/confusions.js', 'js/vannes.js', 'js/pieges.js', 'js/anglais.js', 'js/clash.js', 'js/histoires.js', 'js/blagues-en.js', 'js/parcours.js', 'js/rigolade.js', 'js/clash-plus.js', 'js/salon.js', 'js/juge.js', 'js/maths.js', 'js/sciences.js', 'js/trash-talk.js', 'js/epreuves.js', 'js/epreuves-spe.js', 'js/epreuves-plus.js', 'js/epreuves-oraux.js', 'js/matieres.js', 'js/mat-francais.js', 'js/mat-histoire.js', 'js/mat-svt-pc.js', 'js/mat-sup.js', 'js/vannes-cash.js', 'js/vannes-ironie.js', 'js/vannes-mots.js', 'js/offre.js', 'js/jeu.js']) w.eval(lire(f));
+  for(const f of ['js/donnees.js', 'js/voix.js', 'js/phrases-enregistrees.js', 'js/textes.js', 'js/articulation.js', 'js/genres.js', 'js/confusions.js', 'js/vannes.js', 'js/pieges.js', 'js/anglais.js', 'js/clash.js', 'js/histoires.js', 'js/blagues-en.js', 'js/parcours.js', 'js/rigolade.js', 'js/clash-plus.js', 'js/salon.js', 'js/juge.js', 'js/maths.js', 'js/sciences.js', 'js/trash-talk.js', 'js/epreuves.js', 'js/epreuves-spe.js', 'js/epreuves-plus.js', 'js/epreuves-oraux.js', 'js/epreuves-pro.js', 'js/matieres.js', 'js/mat-francais.js', 'js/mat-histoire.js', 'js/mat-svt-pc.js', 'js/mat-sup.js', 'js/vannes-cash.js', 'js/vannes-ironie.js', 'js/vannes-mots.js', 'js/offre.js', 'js/jeu.js']) w.eval(lire(f));
   return w;
 }
 // Certificats d'abonnement comme les signe le serveur (même format que serveur/functions/ami-abonnement).
@@ -1177,7 +1177,8 @@ await test('aucune promesse de santé, aucun traceur ; un seul envoi : le code d
   assert.ok(!/rééduc|thérap|aphasi|AVC|guérir|soigne(?!\s+rien)|Alzheimer/i.test(tout.replace(/il ne soigne rien/g, '')), 'promesse de santé');
   const J = lire('js/jeu.js');
   assert.ok(!/google-analytics|gtag|fbq|matomo|sendBeacon|XMLHttpRequest/.test(J));
-  assert.strictEqual((J.match(/fetch\(/g) || []).length, 4, 'quatre fetch : vérification du code, vannes IA (Plus), vannes en direct (serveur configuré), carte des programmes de maths');
+  assert.strictEqual((J.match(/fetch\(/g) || []).length, 5, 'cinq fetch : vérification du code, vannes IA (Plus), vannes en direct (serveur configuré), carte des programmes de maths, offre signée (rien n’est envoyé)');
+  assert.match(J, /fetch\(String\(CONFIG\.SERVEUR\)\.replace\(\/\\\/\?\$\/, '\/'\) \+ 'offre\.php', \{ cache:'no-cache' \}\)/);
   assert.match(J, /fetch\(CONFIG\.API_VANNES_DIRECT, /); assert.match(J, /API_VANNES_DIRECT = b \+ 'vannes-direct\.php'/);
   assert.match(J, /fetch\(String\(CONFIG\.SERVEUR\)\.replace\(\/\\\/\?\$\/, '\/'\) \+ 'programme\.php\?quoi=maths'/);
   assert.match(J, /fetch\(CONFIG\.API_ABONNEMENT \+/); assert.match(J, /fetch\(CONFIG\.API_VANNES, /);
@@ -1450,6 +1451,37 @@ await test('coin réservé : un vrai abonné Plus y entre ; offre sans paiement 
   clic(w, '[data-a="anglais"]'); assert.ok(!d.querySelector('[data-a="trompe"] .badge-plus')); clic(w, '[data-a="trompe"]'); assert.ok(!d.querySelector('main.plus'), 'abonné : coin ouvert');
   const w2 = page(undefined, { MODE_PAYANT:false, COINS_PLUS:['trompe'] });
   clic(w2, '[data-a="anglais"]'); clic(w2, '[data-a="trompe"]'); assert.ok(!w2.document.querySelector('main.plus'), 'sans offre payante : ouvert');
+});
+await test('v5.85 : offre réglée dans l’admin du serveur, signée ; jamais de Plus gratuit', async () => {
+  const { prive, publique } = await cles();
+  const signe = async t => b64u(new Uint8Array(await webcrypto.subtle.sign({ name:'ECDSA', hash:'SHA-256' }, prive, Buffer.from('offre|' + t))));
+  const texte = JSON.stringify({ MODE_PAYANT:true, PRIX:'4,99 €', COINS_PLUS:['trompe'], LIEN_PAIEMENT:'https://buy.stripe.com/test_ok', LIEN_GESTION:'https://pirate.example/x', THEMES_GRATUITS:['animaux'] });
+  const sig = await signe(texte);
+  // Le serveur répond avec l'offre signée : le payant s'allume malgré config-site.js (MODE_PAYANT:false).
+  const w = page(undefined, { MODE_PAYANT:false, SERVEUR:'https://ami.example/serveur', CLE_PUBLIQUE:publique }, x => { x.__reponse = { offre:texte, sig, actif:false }; });
+  await w.AmiDesMotsPret; const A = w.AmiDesMots;
+  assert.ok(w.__fetch.some(u => u === 'https://ami.example/serveur/offre.php'), 'offre demandée au serveur');
+  assert.strictEqual(A.CONFIG.MODE_PAYANT, true); assert.strictEqual(A.CONFIG.PRIX, '4,99 €');
+  assert.deepStrictEqual([...A.CONFIG.COINS_PLUS], ['trompe']); assert.strictEqual(A.CONFIG.LIEN_PAIEMENT, 'https://buy.stripe.com/test_ok');
+  assert.notStrictEqual(A.CONFIG.LIEN_GESTION, 'https://pirate.example/x', 'lien non Stripe refusé');
+  assert.ok(!A.plus(), 'l’offre ne donne jamais Plus');
+  clic(w, '[data-a="anglais"]'); assert.ok(w.document.querySelector('[data-a="trompe"] .badge-plus'), 'coin marqué Plus');
+  // Copie gardée trafiquée (payant coupé à la main) : refusée.
+  assert.strictEqual(await A.verifierOffre(texte.replace('true', 'false'), sig), null);
+  assert.strictEqual(await A.verifierOffre(texte, sig.slice(0, -2) + 'AA'), null);
+  // Hors ligne : la copie signée gardée est réappliquée au lancement.
+  const g = w.localStorage.getItem(A.CLE_OFFRE); assert.ok(g);
+  const w2 = page(undefined, { MODE_PAYANT:false, CLE_PUBLIQUE:publique }, x => x.localStorage.setItem('amidesmots:offre', g));
+  await w2.AmiDesMotsPret; assert.strictEqual(w2.AmiDesMots.CONFIG.MODE_PAYANT, true);
+  const w3 = page(undefined, { MODE_PAYANT:false, CLE_PUBLIQUE:publique }, x => x.localStorage.setItem('amidesmots:offre', g.replace('true', 'false').replace('4,99', '0,01')));
+  await w3.AmiDesMotsPret; assert.strictEqual(w3.AmiDesMots.CONFIG.MODE_PAYANT, false, 'copie trafiquée ignorée');
+  // Côté serveur : mot de passe + jeton anti-falsification avant d'enregistrer ; seules les valeurs du catalogue.
+  const P = lire('serveur-php/admin/index.php'), O = lire('serveur-php/offre.php');
+  assert.ok(P.indexOf("hash_equals($_SESSION['jeton']") < P.indexOf("if ($a === 'offre')"), 'jeton vérifié avant');
+  assert.match(P, /array_intersect\(\$connus/); assert.match(O, /ami_signer_texte\('offre\|' \. \$r\['contenu'\]\)/);
+  assert.ok(!/mdp|password|cle_privee/i.test(O.replace(/^\/\/.*$/gm, '')), 'aucun secret renvoyé');
+  const C = JSON.parse(lire('serveur-php/admin/catalogue.json'));
+  assert.deepStrictEqual(C.coins.flatMap(g => g[1].map(c => c[0])).sort(), Object.keys(A.COINS).sort());
 });
 await test('hors connexion : le service worker garde le jeu et toutes ses images', () => {
   const S = lire('sw.js');
@@ -1823,11 +1855,24 @@ await test('v5.83 : oraux (brevet, français, Grand oral), espace Officiel (prog
   const clic = (a, v) => { const b = w.document.createElement('button'); b.dataset.a = a; if(v != null) b.dataset.v = v; w.document.body.appendChild(b); b.click(); b.remove(); };
   for(const id of ['dnb-oral', 'eaf-oral', 'grand-oral']) for(let g = 1; g < 30; g++) for(const q of E.construire(id, g).liste){ assert.ok(q.bon && !q.faux.some(f => f.en === q.bon)); for(const f of q.faux) assert.ok(w.JUGE.juger(f.vanne).ok, f.vanne); }
   assert.ok(E.OFFICIEL.programmes.length >= 8 && E.OFFICIEL.annales.length >= 7);
-  for(const [, u] of E.OFFICIEL.programmes.concat(E.OFFICIEL.annales)) assert.match(u, /^https:\/\/(eduscol\.education\.gouv\.fr|www\.education\.gouv\.fr)\//, u);
+  for(const [, u] of E.OFFICIEL.programmes.concat(E.OFFICIEL.annales)) assert.match(u, /^https:\/\/(eduscol\.education\.gouv\.fr|www\.education\.gouv\.fr|bnseep\.eduscol\.education\.fr)\//, u);
   A.base.ui = 'fr'; clic('matieres'); clic('officiel'); assert.ok($$('a.lien-carte[target="_blank"][rel="noopener"]').length >= 15);
   clic('examens'); assert.ok($('[data-a="examen-go"][data-v="grand-oral"]') && $('[data-a="examen-go"][data-v="oral-dnb"]') && $('[data-a="examen-go"][data-v="oral-eaf"]'));
   clic('matiere', 'histoire'); clic('matiere-niveau', 'histoire|3e'); assert.match($('.ref-programme').textContent, /BO n° 31 du 30 juillet 2020/);
   clic('matiere-niveau', 'histoire|6e'); assert.match($('.ref-programme').textContent, /cycle 3/);
+});
+
+await test('v5.84 : voie professionnelle (bac pro, CAP) et plus aucune vanne plate « Non. »', async () => {
+  const w = page(), A = w.AmiDesMots, E = w.EPREUVES, M = w.MATIERES, $ = s => w.document.querySelector(s);
+  const clic = (a, v) => { const b = w.document.createElement('button'); b.dataset.a = a; if(v != null) b.dataset.v = v; w.document.body.appendChild(b); b.click(); b.remove(); };
+  for(const id of ['bp-francais', 'bp-hgemc', 'bp-maths', 'bp-pse', 'bp-ecodroit', 'bp-lv', 'cap-frhg', 'cap-maths', 'cap-pse']) for(let g = 1; g < 40; g++) for(const q of E.construire(id, g).liste){
+    assert.ok(q.bon && !q.faux.some(f => f.en === q.bon), q.enonce); assert.ok(!/NaN|undefined/.test(q.enonce + q.bon + q.faux.map(f => f.en).join()), q.enonce);
+    for(const f of q.faux) assert.ok(w.JUGE.juger(f.vanne).ok, f.vanne); }
+  // Aucune vanne réduite à « Non. », dans toutes les épreuves et toutes les matières « Après le bac ».
+  for(let g = 1; g < 20; g++) for(const id of Object.keys(E.EPREUVES)) for(const q of E.construire(id, g).liste) for(const f of q.faux) assert.ok(!/^Non\.?$/.test(f.vanne.trim()), id + ' : ' + q.enonce);
+  for(const id of ['medecine', 'droit', 'astro']) for(const c of M.trouver(id).chapitres) for(const q of M.serie(id, c.id, 'Sup', 8, 3, 'taquin')) for(const f of q.faux) assert.ok(!/^Non\.?$/.test(f.vanne.trim()), q.enonce);
+  A.base.ui = 'fr'; clic('examens'); assert.ok($('[data-a="examen-go"][data-v="bac-pro"]') && $('[data-a="examen-go"][data-v="cap"]'));
+  clic('examen-go', 'cap'); assert.match($('main').textContent, /épreuve 1\/3/);
 });
 
 console.log(`\n${ok} réussi(s), ${ko} échoué(s)`);

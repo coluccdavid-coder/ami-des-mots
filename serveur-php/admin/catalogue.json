@@ -1,0 +1,265 @@
+{
+ "themes": [
+  [
+   "animaux",
+   "Animaux"
+  ],
+  [
+   "manger",
+   "À table"
+  ],
+  [
+   "maison",
+   "La maison"
+  ],
+  [
+   "habits",
+   "Habits"
+  ],
+  [
+   "nature",
+   "Nature"
+  ],
+  [
+   "ville",
+   "En ville"
+  ],
+  [
+   "musique",
+   "Musique et fête"
+  ],
+  [
+   "atelier",
+   "Atelier et sciences"
+  ]
+ ],
+ "jeux": [
+  [
+   "decouvrir",
+   "📖",
+   "Découvrir"
+  ],
+  [
+   "quel_mot",
+   "🖼️",
+   "Quel mot ?"
+  ],
+  [
+   "vrai_faux",
+   "✅",
+   "Vrai ou faux ?"
+  ],
+  [
+   "ombre",
+   "🌑",
+   "Ombres"
+  ],
+  [
+   "devinette",
+   "🌫️",
+   "Image floue"
+  ],
+  [
+   "intrus",
+   "🧐",
+   "L'intrus"
+  ],
+  [
+   "panier",
+   "🧺",
+   "Le bon panier"
+  ],
+  [
+   "ecoute",
+   "👂",
+   "Je t'écoute…"
+  ],
+  [
+   "ecoute_mot",
+   "🎧",
+   "Écoute et lis"
+  ],
+  [
+   "traduction",
+   "🌍",
+   "Traduction"
+  ],
+  [
+   "traduction_inverse",
+   "🔁",
+   "Que veut dire ce mot ?"
+  ],
+  [
+   "premiere_lettre",
+   "🅰️",
+   "Première lettre"
+  ],
+  [
+   "lettre_manquante",
+   "✏️",
+   "Lettre manquante"
+  ],
+  [
+   "lettres",
+   "🔤",
+   "Lettres en vrac"
+  ],
+  [
+   "memoire",
+   "🧠",
+   "Mémoire"
+  ],
+  [
+   "memoire_trad",
+   "🃏",
+   "Mémoire des traductions"
+  ],
+  [
+   "relier",
+   "🔗",
+   "Relier"
+  ],
+  [
+   "chrono",
+   "⏱️",
+   "Contre la montre"
+  ],
+  [
+   "grand_quiz",
+   "🏁",
+   "Grand quiz"
+  ]
+ ],
+ "coins": [
+  [
+   "Coin anglais",
+   [
+    [
+     "pieges",
+     "🪤",
+     "Pièges des francophones"
+    ],
+    [
+     "situations",
+     "☕",
+     "Situations de la vie"
+    ],
+    [
+     "histoires",
+     "📚",
+     "Histoires"
+    ],
+    [
+     "dictee",
+     "✍️",
+     "Dictée rigolote"
+    ],
+    [
+     "parcours",
+     "🗺️",
+     "Parcours"
+    ],
+    [
+     "phrases",
+     "🧩",
+     "Atelier des phrases"
+    ]
+   ]
+  ],
+  [
+   "Battles",
+   [
+    [
+     "battle",
+     "🎤",
+     "Battle de vannes"
+    ],
+    [
+     "rap",
+     "🎧",
+     "Rap battle (scène 8 temps)"
+    ],
+    [
+     "tournoi",
+     "🏆",
+     "Tournoi en famille"
+    ],
+    [
+     "defi-pote",
+     "🔗",
+     "Défi entre potes (lien)"
+    ],
+    [
+     "salon",
+     "🚀",
+     "Salon en ligne (battles à distance)"
+    ]
+   ]
+  ],
+  [
+   "Pour rire",
+   [
+    [
+     "trompe",
+     "🦉",
+     "Ami se trompe exprès"
+    ],
+    [
+     "oreilles",
+     "👂",
+     "Les oreilles d’Ami"
+    ],
+    [
+     "vraifaux",
+     "✅",
+     "Vrai ou faux rigolo"
+    ],
+    [
+     "avent",
+     "🎄",
+     "Calendrier de l’Avent"
+    ],
+    [
+     "betisier",
+     "📺",
+     "Bêtisier"
+    ],
+    [
+     "maison",
+     "🏠",
+     "Maison d’Ami"
+    ]
+   ]
+  ],
+  [
+   "Maths et sciences",
+   [
+    [
+     "maths",
+     "🔢",
+     "Coin maths (6e → Terminale)"
+    ],
+    [
+     "sciences",
+     "🚀",
+     "Labo des sciences"
+    ]
+   ]
+  ],
+  [
+   "Mondes 3D",
+   [
+    [
+     "village3d",
+     "🌍",
+     "Village 3D"
+    ],
+    [
+     "motscity",
+     "🛵",
+     "Mots City"
+    ]
+   ]
+  ]
+ ]
+}

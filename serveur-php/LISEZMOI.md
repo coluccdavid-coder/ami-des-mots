@@ -32,7 +32,8 @@ par l'IA, veille des programmes de maths. Il tourne sur un hébergement mutualis
 | `salon.php` | Salon des battles : présence + messages, rafraîchis environ chaque seconde ; rien n'est gardé |
 | `programme.php` | Carte des programmes de maths et sujets officiels **validés** |
 | `veille.php` | Lit les documents officiels (`veille-sources.php`) et propose ; rien n'est publié sans validation |
-| `admin/` | Validation des propositions de la veille (mot de passe) |
+| `admin/` | Compte admin (mot de passe) : 💰 offre et paiement (payant, prix, liens Stripe, ce qui est Plus) + validation de la veille |
+| `offre.php` | Donne au jeu l'offre réglée dans l'admin, signée (rien de secret) |
 
 ## Sécurité
 - Aucun secret dans le dépôt ni dans le navigateur : clés Stripe, Claude et clé privée restent dans `config-ami.php` et le `.pem`, hors du site.
