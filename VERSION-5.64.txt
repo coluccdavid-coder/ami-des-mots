@@ -1,0 +1,11 @@
+AMI DES MOTS — VERSION 5.64
+Ombres lisibles, voix moins robot, vannes qui parlent vraiment des objets
+
+- Jeu « Ombres » : l'ancien filtre transformait les photos en bouillie noire. Chaque image a maintenant une vraie
+  silhouette découpée à l'avance (img/ombres, 117 images, outils/fabriquer-ombres.py). Les 5 photos sans fond blanc
+  (plage, piano, tableau, puzzle, fenêtre) passent en « lampe torche » : la scène sort de la nuit petit à petit.
+- Voix : les voix du téléphone/PC sont classées (Natural/Online, Google, Premium d'abord ; Hortense, Zira, eSpeak
+  en dernier). Nouveau réglage « La voix d'Ami » : choisir sa voix et l'essayer, avec l'astuce Edge/Chrome/Android.
+- Vannes françaises : js/vannes-mots.js décrit les 122 objets (ce que c'est, ce qu'on en fait). Ami fabrique des
+  vannes sur LES DEUX mots confondus : « Le soleil ?! Essaie de poser ta serviette sur le soleil, pour voir. 😂 ».
+  4 niveaux, passées au juge, sans répétition. La lecture facile garde les vannes courtes.

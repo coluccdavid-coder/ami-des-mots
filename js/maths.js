@@ -177,12 +177,27 @@
   const DOUX = ['Pas grave, on apprend en se trompant !', 'Presque ! On regarde ensemble ?', 'Bonne tentative ! Voici l’astuce :'];
 
   // Vanne de Prof Pi pour une erreur, selon le ton : 'doux' (5-8 ans), 'taquin', 'sanspitie' (ados).
-  function vanne(cle, ton, valeurs, r){
+  // memoire (facultative) : { age(ligne) → -1 si jamais dite, sinon ancienneté (plus grand = plus ancien) }.
+  // Avec elle, Prof Pi ne répète pas une vanne : d'abord celles jamais dites pour cette erreur, puis les vannes
+  // générales jamais dites, et seulement ensuite la plus ancienne.
+  function choisir(pool, r, memoire){
+    if(!memoire) return C(r, pool);
+    const neuves = pool.filter(l => memoire.age(l) < 0); if(neuves.length) return C(r, neuves);
+    return null;
+  }
+  function vanne(cle, ton, valeurs, r, memoire){
     r = r || Math.random; const e = ERREURS[cle] || null, rempl = s => s.replace(/\{(\w+)\}/g, (m, k) => valeurs && valeurs[k] != null ? valeurs[k] : m);
     if(ton === 'doux') return rempl(C(r, DOUX) + ' ' + (e ? e.e : ''));
-    const pool = (e && e[ton === 'sanspitie' ? 's' : 't']) || GENERIQUES[ton === 'sanspitie' ? 's' : 't'];
-    return rempl(C(r, pool));
+    const k = ton === 'sanspitie' ? 's' : 't', pool = (e && e[k]) || GENERIQUES[k];
+    let l = choisir(pool, r, memoire) || choisir(GENERIQUES[k].concat(GENERIQUES[k === 's' ? 't' : 's']), r, memoire);
+    // Toutes les vannes écrites sont sorties : la fabrique à vannes en invente une nouvelle, jamais dite.
+    const fab = window.MATHS && window.MATHS.fabrique;
+    for(let essai = 0; !l && fab && essai < 40; essai++){ const x = fab(); if(memoire.age(x) < 0) l = x; }
+    if(!l) l = pool.slice().sort((a, b) => memoire.age(b) - memoire.age(a))[0];
+    if(memoire && memoire.noter) memoire.noter(l); // on retient le modèle, pas la phrase avec les nombres
+    return rempl(l);
   }
+  const expl = (cle, ton) => ton === 'doux' ? '' : ' 💡 ' + ((ERREURS[cle] || {}).e || '');
 
   // ── Générateurs, niveau par niveau ────────────────────────────────
   // Chaque générateur (r) → Q(...). Les mauvaises réponses portent la clé de l'erreur qu'elles représentent.
@@ -421,7 +436,9 @@
     const g = G[id]; if(!g) return null;
     const q = g(r), v = Object.assign({ j:q.bon }, q.valeurs || {});
     return { id, chap:id, enonce:q.enonce, bon:q.bon, regle:q.expl,
-      faux:q.faux.map(f => ({ en:f.v, cle:f.cle, vanne:vanne(f.cle, ton, Object.assign({ f:f.v }, v), r) + (ton === 'doux' ? '' : ' 💡 ' + ((ERREURS[f.cle] || {}).e || '')) })) };
+      faux:q.faux.map(f => { const vals = Object.assign({ f:f.v }, v);
+        // fraiche(memoire) : la vanne est choisie au moment où elle s'affiche, parmi celles pas encore dites.
+        return { en:f.v, cle:f.cle, vanne:vanne(f.cle, ton, vals, r) + expl(f.cle, ton), fraiche:memoire => vanne(f.cle, ton, vals, null, memoire) + expl(f.cle, ton) }; }) };
   }
   const chapitresDe = niv => (carte.niveaux[niv] || { chapitres:[] }).chapitres;
   const disponible = id => !!G[id];

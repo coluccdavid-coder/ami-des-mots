@@ -21,7 +21,7 @@ function page(langue, config, avant){
   w.TextEncoder = TextEncoder; w.TextDecoder = TextDecoder;
   w.__fetch = []; w.fetch = async (u) => { w.__fetch.push(String(u)); return { ok:true, json:async () => (w.__reponse || { actif:false }) }; };
   if(avant) avant(w);
-  for(const f of ['js/donnees.js', 'js/voix.js', 'js/textes.js', 'js/articulation.js', 'js/genres.js', 'js/confusions.js', 'js/vannes.js', 'js/pieges.js', 'js/anglais.js', 'js/clash.js', 'js/histoires.js', 'js/blagues-en.js', 'js/parcours.js', 'js/rigolade.js', 'js/salon.js', 'js/juge.js', 'js/maths.js', 'js/sciences.js', 'js/offre.js', 'js/jeu.js']) w.eval(lire(f));
+  for(const f of ['js/donnees.js', 'js/voix.js', 'js/textes.js', 'js/articulation.js', 'js/genres.js', 'js/confusions.js', 'js/vannes.js', 'js/pieges.js', 'js/anglais.js', 'js/clash.js', 'js/histoires.js', 'js/blagues-en.js', 'js/parcours.js', 'js/rigolade.js', 'js/salon.js', 'js/juge.js', 'js/maths.js', 'js/sciences.js', 'js/vannes-cash.js', 'js/vannes-mots.js', 'js/offre.js', 'js/jeu.js']) w.eval(lire(f));
   return w;
 }
 // Certificats d'abonnement comme les signe le serveur (même format que serveur/functions/ami-abonnement).
@@ -1305,6 +1305,51 @@ await test('salon : la battle peut être de maths (même niveau, mêmes question
   const a = M.questionsSalon(7, 6, '1re'); assert.strictEqual(a.length, 6); assert.ok(a.every(q => q.bon && q.faux.length >= 1 && /Maths 1re/.test(q.consigne)));
   assert.match(lire('js/jeu.js'), /questionsBattle\(d\.graine, d\.n, m\)/);
 });
+await test('vannes cash : plus de vannes par erreur, toujours sur la réponse, jamais sur la personne', () => {
+  const w = page(), M = w.MATHS, C = w.VANNES_CASH;
+  let n = 0; for(const [k, v] of Object.entries(C.MATHS)){ assert.ok(M.ERREURS[k], k); for(const l of v.s) assert.ok(M.ERREURS[k].s.includes(l), k); n += v.t.length + v.s.length; }
+  assert.ok(n >= 100, n);
+  for(const l of [...Object.values(C.MATHS).flatMap(v => [...v.t, ...v.s]), ...C.GENERIQUES.t, ...C.GENERIQUES.s, ...C.SCIENCES]){
+    assert.ok(w.JUGE.juger(l.replace(/\{\w+\}/g, '12')).ok, l);
+    assert.ok(!/\b(t’es|tu es|t'es)\s+(nul|bête|idiot|con)|ta mère|ton père|ta famille/i.test(l), l);
+  }
+  const q = w.SCIENCES.serie('espace', 3, 5, 'sanspitie'); assert.ok(q.every(x => x.faux.every(f => /🔥/.test(f.vanne))), 'sciences : ton cash');
+  assert.ok(!w.SCIENCES.serie('espace', 3, 5, 'taquin').some(x => x.faux.some(f => /🔥 /.test(f.vanne) && C.SCIENCES.some(c => f.vanne.includes(c)))), 'taquin : sans ajout cash');
+});
+await test('Prof Pi ne répète pas ses vannes, et s’énerve si on refait la même erreur', () => {
+  const w = page(), d = w.document, A = w.AmiDesMots; A.accueil();
+  clic(w, '[data-a="maths"]'); clic(w, '[data-a="maths-ton"][data-v="sanspitie"]');
+  const vues = [];
+  // On rejoue 3 séries « comparer des décimaux » en se trompant toujours de la même façon (le nombre le plus long).
+  for(let serie = 0; serie < 3; serie++){
+    A.accueil(); clic(w, '[data-a="maths"]'); clic(w, '[data-a="maths-chap"][data-v="6-decimaux"]');
+    for(let i = 0; i < 10; i++){
+      const t = d.querySelector('.piege-fr').textContent, m = t.match(/: (.+) ou (.+) \?/);
+      const long = [...d.querySelectorAll('.piege-opt')].find(b => b.textContent === m[2]); long.click();
+      vues.push(d.querySelector('#qz-retour .piege-vanne').textContent);
+      clic(w, '[data-a="qz-suivant"]');
+    }
+  }
+  const E = w.VANNES_CASH.ESCALADE.sanspitie;
+  assert.ok(E[0].some(l => vues[1].includes(l)), 'dès la 2e même erreur, gros clash : ' + vues[1]);
+  assert.ok(E[1].some(l => vues[2].includes(l)), '3e fois : « Sérieux, tu vas à l’école toi ??? » ou une variante : ' + vues[2]);
+  assert.ok(vues.slice(1, 4).some(v => /tu fais exprès ou quoi !!!!|Sérieux, tu vas à l’école toi \?\?\?/.test(v)) || vues.some(v => /tu fais exprès ou quoi !!!!/.test(v)), 'les répliques demandées sortent');
+  // Sans l'énervement et sans les nombres, les 5 premières vannes « décimaux » du ton cash sont toutes différentes.
+  const tete = Object.values(w.VANNES_CASH.ESCALADE).flat(2);
+  const coeur = v => { let x = v.replace(/^🦝\s*/, ''); for(const l of tete) if(x.startsWith(l)) x = x.slice(l.length).trim(); return x.split(' 💡 ')[0].replace(/[\d,]+/g, '#'); };
+  const premieres = vues.slice(0, 5).map(coeur); assert.strictEqual(new Set(premieres).size, 5, premieres.join(' | '));
+  assert.ok(A.etat.vannesDites.length >= 30, 'la mémoire est gardée sur l’appareil');
+  for(const l of Object.values(w.VANNES_CASH.ESCALADE).flat(2)) assert.ok(w.JUGE.juger(l).ok, l);
+});
+await test('fabrique à vannes : 300 erreurs de suite, 300 vannes différentes (et toutes passent le juge)', () => {
+  const w = page(), M = w.MATHS, dites = [];
+  const memoire = { age:l => { const i = dites.lastIndexOf(l); return i < 0 ? -1 : dites.length - i; }, noter:l => dites.push(l) };
+  const sorties = []; for(let i = 0; i < 300; i++) sorties.push(M.vanne('decimal-longueur', 'sanspitie', { f:'5,23', j:'5,5' }, null, memoire));
+  assert.strictEqual(new Set(sorties).size, 300, 'aucune répétition');
+  for(const t of sorties) assert.ok(w.JUGE.juger(t).ok, t);
+  const F = w.VANNES_CASH.FABRIQUE; assert.ok(F.amorces.length * F.sujets.length * F.actions.length * F.chutes.length > 50000);
+  for(let i = 0; i < 400; i++){ const t = w.VANNES_CASH.fabriquer(); assert.ok(!/\{e\}|\{lui\}|\*/.test(t), t); assert.ok(!/\{e\}|\{il\}/.test(t) && !/Même (la|ma|une) [^.]*?(tombé |mis à|caché |parti |sur lui-même|enfui\.|qu’il )/.test(t), 'accord : ' + t); }
+});
 console.log('Clashs de la battle');
 await test('clashs : 30 manches, répliques justes et erreurs d’anglais expliquées, rien qui vise le joueur', () => {
   const w = page(), C = w.CLASH, B = w.ANGLAIS.BATTLE.concat(C.MANCHES);
@@ -1409,6 +1454,25 @@ await test('hors connexion : le service worker garde le jeu et toutes ses images
   const S = lire('sw.js');
   for(const f of fs.readdirSync(path.join(ICI, 'img/pictos'))) assert.ok(S.includes('img/pictos/' + f), f);
   for(const f of ['index.html', 'js/jeu.js', 'js/donnees.js', 'css/jeu.css']) assert.ok(S.includes('"' + f + '"'), f);
+});
+
+await test('v5.64 : vannes qui parlent des deux objets, vraies silhouettes, voix la moins robot', () => {
+  const w = page(); const A = w.AmiDesMots, VM = w.VANNES_MOTS, fs = require('fs'), path = require('path');
+  const avec = Object.keys(w.MOTS).filter(e => w.MOTS[e].img);
+  for(const e of avec){ const m = VM.mots[e]; assert.ok(m && m.t && /\{X\}/.test(m.a), 'vanne objet pour ' + e); assert.ok(!/ (à|de) \{X\}/.test(m.a), 'pas de « à le » : ' + m.a); }
+  A.base.ui = 'fr'; A.J().langueBlagues = 'fr'; A.J().facile = false;
+  const vues = new Set();
+  for(let n = 0; n <= 3; n++) for(let k = 0; k < 120; k++){
+    const a = avec[k % avec.length], b = avec[(k * 7 + 3) % avec.length]; if(a === b) continue;
+    const v = A.vanneObjets(a, b, [A.avecArticle(a), A.avecArticle(b)], n, true);
+    if(!v) continue; vues.add(v);
+    assert.ok(!/\{|\}|undefined| à le | de le /.test(v), v); assert.ok(w.JUGE.juger(v).ok, 'juge : ' + v);
+  }
+  assert.ok(vues.size > 300, 'des centaines de vannes différentes : ' + vues.size);
+  const ombres = fs.readdirSync(path.join(__dirname, '..', 'img/ombres'));
+  assert.ok(ombres.length >= 110, 'silhouettes : ' + ombres.length);
+  const hortense = { name:'Microsoft Hortense - French (France)', lang:'fr-FR', localService:true }, denise = { name:'Microsoft Denise Online (Natural) - French (France)', lang:'fr-FR', localService:false }, google = { name:'Google français', lang:'fr-FR', localService:false };
+  assert.ok(A.noteVoix(denise, 'fr-FR') > A.noteVoix(google, 'fr-FR') && A.noteVoix(google, 'fr-FR') > A.noteVoix(hortense, 'fr-FR'), 'ordre des voix');
 });
 
 console.log(`\n${ok} réussi(s), ${ko} échoué(s)`);
