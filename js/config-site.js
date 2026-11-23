@@ -10,6 +10,7 @@ window.CONFIG_JEU = Object.assign({
   JEUX_ECOUTE_CACHE:false, // exception : les jeux d'écoute et les boutons 🔊 🐢 🎤 restent
   BOUCHE_CACHE:true,       // « Comment la bouche fait ce mot » (👄)
   MOTS_CITY_CACHE:true,    // Mots City
+  ACCUEIL_SIMPLE:true,     // accueil en 4 grandes portes (false = l'ancien accueil avec tous les boutons)
   SERVEUR:'',
   CLE_PUBLIQUE:null,
   LIEN_PAIEMENT:'',

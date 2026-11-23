@@ -347,6 +347,11 @@
     direEcoute(texte, langue, vitesse);
   }
   function direEcoute(texte, langue, vitesse){
+    // v5.75 : une phrase qui a un vrai enregistrement (js/phrases-enregistrees.js) est jouée en MP3.
+    const PE = window.PHRASES_ENREGISTREES;
+    if(texte && PE && Array.isArray(PE[langue]) && PE[langue].includes(fnv1a(String(texte).trim()))){
+      window.speak(String(texte).trim(), langue); if(vitesse && vitesse < .9 && lecteur) try{ lecteur.playbackRate = .7; }catch(e){} return;
+    }
     try{ if(lecteur){ lecteur.pause(); lecteur = null; } }catch(e){}
     if(texte && !voixNavigateur(langue, texte, vitesse)) silence();
   }
@@ -463,6 +468,9 @@
     if(typeof fermerFenetre === 'function') fermerFenetre();
     const r = $('#app');
     r.innerHTML = html;
+    // v5.75 : l'émoji au début d'un titre en dégradé devenait un carré blanc ; on le sort du dégradé.
+    try{ r.querySelectorAll('h2').forEach(h => { const n = h.firstChild; if(!n || n.nodeType !== 3) return; const m = n.data.match(/^\s*((?:\p{Extended_Pictographic}|\p{Regional_Indicator})[\uFE0F\u200D\p{Extended_Pictographic}\p{Regional_Indicator}]*)\s*/u);
+      if(!m) return; const sp = document.createElement('span'); sp.className = 'emoji-titre'; sp.setAttribute('aria-hidden', 'true'); sp.textContent = m[1]; n.data = ' ' + n.data.slice(m[0].length); h.insertBefore(sp, n); }); }catch(e){}
     r.dataset.ecran = ecran || '';
     r.classList.remove('entree'); if(!sobre()){ void r.offsetWidth; r.classList.add('entree'); }
     document.documentElement.lang = base.ui;
@@ -488,6 +496,32 @@
     document.body.appendChild(d); setTimeout(() => d.remove(), 3200);
   }
 
+  // Les 4 portes de l'accueil simplifié.
+  function portesAccueil(){
+    const en = base.ui === 'en', porte = (a, ic, titre, sous, cls) => '<button class="porte ' + cls + '" data-a="' + a + '"><span class="porte-ic" aria-hidden="true">' + ic + '</span><strong>' + titre + '</strong><small>' + sous + '</small></button>';
+    return '<div class="portes">' +
+      porte('porte-mots', '🇬🇧', en ? 'Words & English' : 'Mots & anglais', en ? 'Games, sentences, traps, teacher' : 'Jeux, phrases, pièges, professeur', 'porte-mots') +
+      (window.MATHS ? porte('maths', '🔢', 'Maths', en ? 'Year 6 to final exam · Prof Pi teases' : 'De la 6e au bac · Prof Pi te vanne', 'porte-maths') : '') +
+      (window.SCIENCES ? porte('sciences', '🚀', 'Sciences', en ? 'Planets, rockets, human body' : 'Planètes, fusées, corps humain', 'porte-sciences') : '') +
+      (window.MATHS || A_EN() ? porte('potes', '⚔️', 'Battle', en ? 'With friends: maths, English, comebacks' : 'Entre potes : maths, anglais, vannes', 'porte-battle') : '') +
+      '</div>';
+  }
+  // Derrière la porte « Mots & anglais » : tout ce qui était sur l'accueil, rien n'est supprimé.
+  function porteMots(){
+    const en = base.ui === 'en', rev = aRevoir().length, c = (a, ic, t1, t2, href) => href
+      ? '<a class="carte-anglais" href="' + href + '"><span class="ic">' + ic + '</span><strong>' + t1 + '</strong><small>' + t2 + '</small></a>'
+      : '<button class="carte-anglais" data-a="' + a + '"><span class="ic">' + ic + '</span><strong>' + t1 + '</strong><small>' + t2 + '</small></button>';
+    poser(barre('accueil') + '<main class="coin-anglais porte-mots-ecran"><h2><span class="emoji-titre" aria-hidden="true">🇬🇧</span> ' + (en ? 'Words & English' : 'Mots & anglais') + '</h2><div class="cartes-anglais">' +
+      c('lecon', '📚', esc(t('apprendre')), en ? '5 new words with pictures' : '5 nouveaux mots en images') +
+      c('themes', '▶️', esc(t('jouer')), en ? 'All the word games' : 'Tous les jeux de mots') +
+      c('revoir', '🔁', esc(t('revoir')) + (rev ? ' (' + rev + ')' : ''), en ? 'Words to practise again' : 'Les mots à retravailler') +
+      c('phrases', '💬', en ? 'Sentence workshop' : 'Atelier des phrases', en ? 'Build your first sentences' : 'Construis tes premières phrases') +
+      (piegesDispo() ? c(A_EN() ? 'anglais' : 'pieges', '🪤', 'Le coin anglais', en ? 'Traps, situations, dictation, battles' : 'Pièges, situations, dictée, battles') : '') +
+      c('', '🧑‍🏫', en ? 'AI teacher' : 'Le professeur', en ? 'Lessons that adapt to you' : 'Des leçons qui s’adaptent à toi', 'professeur.html') +
+      (CONFIG.VILLAGE_CACHE ? '' : c('village', '🗺️', en ? 'Word village' : 'Le village', en ? 'Explore by places' : 'Explorer par lieux') + c('accueil-3d', '🌍', en ? '3D village' : 'Village 3D', en ? 'Walk around and play' : 'Se promener et jouer')) +
+      (CONFIG.MOTS_CITY_CACHE ? '' : c('', '🛵', 'Mots City', en ? 'English while having fun' : 'L’anglais en rigolant', 'mots-city.html')) +
+      '</div></main>');
+  }
   function accueil(){
     if(typeof arreterBeat === 'function'){ arreterBeat(); quitterSalon(); }
     if(base.joueurs.length > 1 && !accueil.choisi) return quiJoue();
@@ -508,6 +542,8 @@
         (function(){ const b = bilanAdaptatif(); return b.total ? '<section class="carte-apprentissage" aria-label="Progression adaptative"><strong>🧠 Ton apprentissage</strong><span>' + b.aRevoir + ' notion(s) à revoir · ' + b.maitrisees + ' maîtrisée(s) · ' + b.total + ' suivie(s)</span></section>' : ''; })() +
         '<button class="gros defi' + (defiFait ? ' fait' : '') + '" data-a="defi">' + (defiFait ? '✓ ' : '⚡ ') + esc(t('defi')) + '</button>' +
         '<button class="gros apprendre" data-a="lecon">📚 ' + esc(t('apprendre')) + '</button>' +
+        // v5.75 : accueil simplifié — 4 grandes portes ; tout le reste est rangé derrière (ACCUEIL_SIMPLE dans config-site.js).
+        (CONFIG.ACCUEIL_SIMPLE ? portesAccueil() : '' +
         '<button class="gros phrases-accueil" data-a="phrases">💬 ' + (base.ui === 'en' ? 'Build your first sentences' : 'Atelier des phrases') + ' <span>✨</span></button>' +
         (piegesDispo() ? '<button class="gros pieges-accueil" data-a="' + (A_EN() ? 'anglais' : 'pieges') + '">🇬🇧 Le coin anglais <span>🪤🎤✍️</span></button>' : '') +
         (CONFIG.VILLAGE_CACHE ? '' : '<button class="gros village-accueil" data-a="village">🗺️ ' + {"fr": "Explorer le village", "en": "Explore the word village", "es": "Explorar el pueblo", "it": "Esplora il villaggio", "pt": "Explorar a aldeia", "de": "Das Wörterdorf erkunden", "ar": "استكشف قرية الكلمات", "tr": "Kelime köyünü keşfet", "pl": "Odkryj wioskę słów", "ja": "ことばの村を探検", "uk": "Дослідити селище слів", "ko": "단어 마을 탐험하기", "dz": "اكتشف قرية الكلمات", "ma": "اكتشف قرية الكلمات", "tn": "اكتشف قرية الكلمات", "kab": "Snirem tamdint n wawalen"}[base.ui] + '</button>' +
@@ -517,20 +553,25 @@
         (window.MATHS ? '<button class="gros monde-3d-accueil maths-accueil" data-a="maths">🔢 Maths de la 6e au bac — Prof Pi te vanne <span>🦝</span></button>' : '') +
         '<a class="gros monde-3d-accueil professeur-ia-accueil" href="professeur.html">🧑‍🏫 Le professeur IA — Anglais & maths <span>✨</span></a>' +
         (window.SCIENCES ? '<button class="gros monde-3d-accueil sciences-accueil" data-a="sciences">🚀 Sciences : planètes, fusées, corps humain <span>🔬</span></button>' : '') +
-        (window.MATHS || A_EN() ? '<button class="gros monde-3d-accueil potes-accueil" data-a="potes">⚔️ ' + (base.ui === 'en' ? 'Battle with friends — maths, English, comebacks' : 'Battle entre potes — maths, anglais et vannes') + ' <span>🔥</span></button>' : '') +
+        (window.MATHS || A_EN() ? '<button class="gros monde-3d-accueil potes-accueil" data-a="potes">⚔️ ' + (base.ui === 'en' ? 'Battle with friends — maths, English, comebacks' : 'Battle entre potes — maths, anglais et vannes') + ' <span>🔥</span></button>' : '')) +
+        (CONFIG.ACCUEIL_SIMPLE && installation ? '<button class="moyen plein installer-appli" data-a="installer">📲 Installer l’appli sur cet appareil</button>' : '') +
+        (CONFIG.ACCUEIL_SIMPLE ? (rev ? '<div class="actions serrees"><button class="moyen" data-a="revoir">🔁 ' + esc(t('revoir')) + ' <span class="pastille">' + rev + '</span></button></div>' : '') :
         '<div class="actions serrees">' +
           '<button class="moyen" data-a="themes">▶ ' + esc(t('jouer')) + '</button>' +
           '<button class="moyen" data-a="revoir">🔁 ' + esc(t('revoir')) + (rev ? ' <span class="pastille">' + rev + '</span>' : '') + '</button>' +
-        '</div>' +
+        '</div>') +
         '<p class="objectif"><span>' + esc(fait ? t('objectif_fait') : t('objectif')) + '</span>' + (s ? '<span class="serie">🔥 ' + esc(t('serie', s)) + '</span>' : '') + '</p>' +
-        motDuJour() + astuceDuJour() +
+        // Accueil simple : on garde le mot du jour ; l'astuce, les trophées, le vestiaire et les astuces attendent.
+        motDuJour() + (CONFIG.ACCUEIL_SIMPLE ? '' : astuceDuJour()) +
         (CONFIG.MODE_PAYANT && !plus() ? '<button class="bandeau-plus" data-a="plus">✨ <strong>' + esc(t('plus')) + '</strong> · ' + esc(t('plus_court')) + '</button>' : '') +
         '<nav class="raccourcis">' +
           '<button data-a="carnet"><span aria-hidden="true">📒</span>' + esc(t('carnet')) + '</button>' +
+          (CONFIG.ACCUEIL_SIMPLE ? '' :
           '<button data-a="trophees"><span aria-hidden="true">🏆</span>' + esc(t('trophees')) + '</button>' +
           '<button data-a="vestiaire"><span aria-hidden="true">👗</span>' + esc(t('vestiaire')) + '</button>' +
-          '<button data-a="astuces"><span aria-hidden="true">💡</span>' + esc(t('astuces')) + '</button>' +
+          '<button data-a="astuces"><span aria-hidden="true">💡</span>' + esc(t('astuces')) + '</button>') +
           '<button data-a="reglages"><span aria-hidden="true">⚙️</span>' + esc(t('reglages')) + '</button>' +
+          '<button data-a="parents"><span aria-hidden="true">👪</span>' + (base.ui === 'en' ? 'Parents' : 'Parents') + '</button>' +
         '</nav>' +
       '</main>', 'accueil');
     $('#ui').addEventListener('change', ev => { base.ui = ev.target.value; garder(); accueil(); });
@@ -749,7 +790,7 @@
     const th = partie.mode === 'theme' ? theme : MOTS[motI()] && MOTS[motI()].theme;
     poser(barre(retourPartie()) + '<main class="partie" style="--th:' + couleurDe(th) + '">' +
       '<div class="tete"><div class="ami-petit" id="ami-partie">' + ami('content') + '</div><span class="combo' + ((partie.combo || 0) >= 2 ? ' vu' : '') + '" id="combo" aria-hidden="true">' + ((partie.combo || 0) >= 2 ? '🔥 ×' + partie.combo : '') + '</span><div><h2>' + esc(titre) + '</h2><p class="aide"><span id="consigne">' + esc(aide) + '</span> <button class="lire-consigne" data-a="consigne" aria-label="' + esc(t('lire_consigne')) + '">🔊</button></p></div></div>' +
-      chrono + prog + '<div class="scene">' + corps + '</div>' + '<p class="bulle" id="bulle" role="status" aria-live="polite"></p><button class="moyen continuer-erreur" id="continuer-erreur" data-a="continuer-erreur" hidden>✓ ' + (base.ui === 'en' ? 'I understand — next' : 'J’ai compris — continuer') + '</button><button class="petit-bouton garder-vanne" id="garder-vanne" data-a="garder-vanne" hidden>😂</button><button class="petit-bouton pas-drole" id="pas-drole" data-a="pas-drole" hidden>🙄</button><p class="note" id="note-voix" aria-live="polite"></p></main>');
+      chrono + prog + '<div class="scene">' + corps + '</div>' + '<p class="bulle" id="bulle" role="status" aria-live="polite"></p><div class="apres-erreur"><button class="moyen continuer-erreur" id="continuer-erreur" data-a="continuer-erreur" hidden>✓ ' + (base.ui === 'en' ? 'I understand — next' : 'J’ai compris — continuer') + '</button><button class="petit-bouton garder-vanne" id="garder-vanne" data-a="garder-vanne" hidden>😂</button><button class="petit-bouton pas-drole" id="pas-drole" data-a="pas-drole" hidden>🙄</button></div><p class="note" id="note-voix" aria-live="polite"></p></main>');
     if(facile() && partie.i === 0 && !partie.consigneLue){ partie.consigneLue = true; setTimeout(() => lireConsigne(aide), 250); }
   }
   // Humour réglable : les plaisanteries visent Ami, le mot ou la situation,
@@ -962,8 +1003,9 @@
     const l = langueBlagues();
     return l === 'en' ? 'The correct answer was: ' + mot : l === 'fr' ? "C'était : " + mot : t('c_etait', mot);
   }
+  // v5.75 : avant, seule l'humeur « surpris » affichait la bulle d'erreur ; les autres la cachaient.
   function amiDit(txt, humeur){
-    const b = $('#bulle'); if(b){ b.textContent = txt; b.className = 'bulle ' + (humeur === 'fete' ? 'ok' : humeur === 'surpris' ? 'ko' : ''); }
+    const b = $('#bulle'); if(b){ b.textContent = txt; b.className = 'bulle ' + (humeur === 'fete' ? 'ok' : ['surpris', 'mdr', 'choque', 'malin', 'triste', 'vexe'].includes(humeur) ? 'ko' : ''); }
     const a = $('#ami-partie'); if(a) a.innerHTML = ami(humeur || 'content');
   }
   // mode : 'theme' (un thème, un jeu), 'defi' (8 mots de partout), 'revoir' (les mots dus).
@@ -1219,8 +1261,19 @@
     if(c === 'ecoute' || c === 'ecoute_mot') return { type:'ecoute', serie };
     return { type:'mot', serie };
   }
+  // ── v5.75 : journal de la semaine (sur l'appareil) pour le résumé des parents ──
+  // Par jour : bonnes réponses / erreurs par matière, minutes de jeu. 21 jours gardés au plus.
+  function noterJournal(matiere, ok){
+    try{ const j = J(), d = jour(); j.journal = j.journal && typeof j.journal === 'object' ? j.journal : {};
+      const e = j.journal[d] = j.journal[d] || {}; const k = matiere + (ok ? '+' : '-'); e[k] = (e[k] || 0) + 1;
+      const jours = Object.keys(j.journal).sort(); while(jours.length > 21) delete j.journal[jours.shift()];
+    }catch(e){}
+  }
+  setInterval(() => { try{ if(document.hidden || !document.querySelector('main') || document.querySelector('main.accueil')) return;
+    const j = J(), d = jour(); j.journal = j.journal || {}; const e = j.journal[d] = j.journal[d] || {}; e.min = (e.min || 0) + 1; garder(); }catch(e){} }, 60000);
   // Juste / faux, commun à tous les jeux à choix.
   function juger(btn, juste, reessai){
+    if(!partie.deja) noterJournal('mots', juste);
     const serieAvant = partie.combo || 0;
     if(!partie.deja){ noter(partie.bonne, juste); if(juste) partie.bonnes++; }
     if(juste && !partie.deja) serieUp(); else if(!juste) partie.combo = 0;
@@ -2536,6 +2589,7 @@
     const z = qz; if(!z || z.repondu) return;
     const q = z.liste[z.i], choix = z.options[i]; if(choix == null) return;
     z.repondu = true; const juste = choix === q.bon; if(juste) z.bonnes++;
+    noterJournal(z.prof || q.chap ? 'maths' : window.SCIENCES && SCIENCES.Q.some(x => x[0] === q.id) ? 'sciences' : 'anglais', juste);
     if(q.apres) q.apres(juste, choix); garder();
     document.querySelectorAll('.piege-opt').forEach((b, k) => { b.disabled = true; if(z.options[k] === q.bon) b.classList.add('ok'); else if(k === i) b.classList.add('ko'); });
     let f = !juste && (q.vanneDe ? { vanne:q.vanneDe(choix) } : q.faux.find(x => x.en === choix));
@@ -2554,7 +2608,9 @@
     if(z.onReponse) z.onReponse(juste, q);
     const r = $('#qz-retour');
     const fr_ = (z.lang || q.lang) === 'fr';
+    z.derniereVanne = !juste && f && f.vanne ? String(f.vanne).slice(0, 220) : '';
     if(r) r.innerHTML = (juste ? '<p class="piege-bravo">' + (fr_ ? (z.bravo ? z.bravo() : 'Bravo ! 🎉') : 'Yes! 🎉') + '</p>' : '<p class="piege-vanne">' + (z.prof ? '🦝 ' : '😂 ') + esc(f && f.vanne ? f.vanne : 'Presque !') + '</p>') +
+      (!juste && f && f.vanne ? '<p class="avis-vanne"><button class="petit-bouton" data-a="qz-avis" data-v="1">😂 ' + (fr_ ? 'Trop drôle' : 'Funny') + '</button> <button class="petit-bouton" data-a="qz-avis" data-v="-1">🙄 ' + (fr_ ? 'Pas drôle' : 'Not funny') + '</button></p>' : '') +
       '<p class="piege-bon" lang="' + (fr_ ? 'fr' : 'en') + '">✅ ' + esc(q.bonTexte || q.bon) + '</p>' + (q.regle ? '<p class="piege-regle">💡 ' + esc(q.regle) + '</p>' : '') +
       '<button class="moyen plein" data-a="qz-suivant">' + (z.i + 1 < z.liste.length ? 'Suivant →' : 'Voir le résultat') + '</button>';
     bruit(juste ? 'juste' : 'faux'); if(!juste && niveauHumour() > 0) bruit('boing');
@@ -2751,6 +2807,21 @@
     if(t === 'examen') return 'Erreurs à l’examen du niveau ' + x;
     return null;
   }
+  // v5.75 : résumé des 7 derniers jours (tout reste sur l'appareil).
+  function resumeSemaine(){
+    const jr = J().journal || {}, jours = []; for(let k = 6; k >= 0; k--) jours.push(jour(-k));
+    const somme = cle => jours.reduce((t, d) => t + ((jr[d] || {})[cle] || 0), 0);
+    const actifs = jours.filter(d => jr[d] && Object.keys(jr[d]).length).length, min = somme('min');
+    const mat = [['mots', '🖼️', 'Mots'], ['anglais', '🇬🇧', 'Anglais'], ['maths', '🔢', 'Maths'], ['sciences', '🚀', 'Sciences']].map(([k, ic, nom]) => {
+      const b = somme(k + '+'), e = somme(k + '-'), n = b + e; return n ? '<li><span>' + ic + ' ' + nom + '</span><strong>' + b + '/' + n + ' (' + Math.round(b / n * 100) + ' %)</strong></li>' : ''; }).join('');
+    const barres = jours.map(d => { const x = jr[d] || {}, n = Object.keys(x).filter(k => /[+-]$/.test(k)).reduce((t, k) => t + x[k], 0);
+      return '<span class="jour-barre" title="' + d + ' : ' + n + ' réponses"><i style="height:' + Math.min(100, n * 3) + '%"></i><small>' + ['D', 'L', 'M', 'M', 'J', 'V', 'S'][new Date(d + 'T12:00').getDay()] + '</small></span>'; }).join('');
+    const av = Array.isArray(J().avisVannes) ? J().avisVannes : [], top = v => av.filter(x => x.v === v).slice(-4).reverse();
+    return '<h3>📅 Cette semaine</h3><p class="pieges-intro"><strong>' + actifs + ' jour' + (actifs > 1 ? 's' : '') + '</strong> de jeu sur 7 · <strong>' + min + ' min</strong> environ</p>' +
+      '<div class="semaine-barres" aria-hidden="true">' + barres + '</div>' +
+      (mat ? '<ul class="pieges-cats">' + mat + '</ul>' : '<p class="petit">Pas encore de réponses cette semaine.</p>') +
+      (av.length ? '<h3>😂 Ce qui fait rire (ou pas)</h3><ul class="pieges-cats">' + top(1).map(x => '<li><span>😂 ' + esc(x.t) + '</span></li>').join('') + top(-1).map(x => '<li><span>🙄 ' + esc(x.t) + '</span></li>').join('') + '</ul>' : '');
+  }
   function tableauParents(){
     const e = etatAnglais(), s = statsAnglais(), nv = window.PARCOURS ? PARCOURS.niveauActuel(e.niveaux) : 0;
     const err = Object.entries(J().erreurs || {}).map(([k, n]) => [libelleErreur(k), n]).filter(x => x[0]).sort((a, b) => b[1] - a[1]).slice(0, 6);
@@ -2760,6 +2831,7 @@
       '<p class="pieges-intro">Niveau réussi : <strong>' + (nv ? nv + ' / 3' : 'pas encore') + '</strong> · Révisions : <strong>' + e.revisions.length + ' jour' + (e.revisions.length > 1 ? 's' : '') + '</strong> (dernière : ' + der + ', série : ' + serieRevisions() + ')</p>' +
       '<ul class="pieges-cats">' + ligne('📚', 'Mots anglais bien connus', s.mots) + ligne('🪤', 'Pièges déjoués', s.pieges + '/' + (window.PIEGES ? PIEGES.liste.length : 0)) + ligne('☕', 'Situations réussies', s.situations + '/' + A_EN().SITUATIONS.length) +
         ligne('📖', 'Histoires lues', s.histoires + '/' + (window.HISTOIRES ? HISTOIRES.liste.length : 0)) + ligne('✍️', 'Phrases parfaites en dictée', s.dictees) + ligne('🗣️', 'Phrases dites à voix haute', s.repete) + ligne('🎤', 'Battles gagnées', s.victoires) + '</ul>' +
+      resumeSemaine() +
       '<h3>🔎 Ce qui coince</h3>' + (err.length ? '<ul class="pieges-cats">' + err.map(([t, n]) => ligne('•', esc(t), n + '×')).join('') + '</ul><p class="petit">Astuce : la révision du jour reprend ces points automatiquement.</p>' : '<p>Rien de particulier pour l’instant. 👍</p>') +
       '<h3>🤖 Le juge de vannes d’Ami</h3><p class="petit">Ami garde les vannes qui font rire (😂) et retire celles qui tombent à plat (🙄). Il refuse toute vanne qui vise la personne (insulte, physique, gros mot, violence, infos perso).</p>' +
       '<ul class="pieges-cats">' + (() => { const sc = J().notesVannes || {}, v = Object.values(sc); return '<li><span>😂 Vannes favorites</span><strong>' + v.filter(x => x >= 2).length + '</strong></li><li><span>🗑️ Vannes retirées</span><strong>' + v.filter(x => window.JUGE && x <= JUGE.SEUIL).length + '</strong></li>'; })() + '</ul>' +
@@ -2990,9 +3062,10 @@
       '<div class="actions serrees"><button class="moyen plein" data-a="maths-melange">🔁 Entraînement mélangé</button>' +
         (niv.examen && M.EXAMENS[niv.examen] ? '<button class="moyen" data-a="maths-examen">📝 ' + esc(M.EXAMENS[niv.examen].titre) + (e.examens[e.niveau] != null ? ' (' + window.MATHS.nb(e.examens[e.niveau], 1) + '/20)' : '') + '</button>' : '') +
         '<button class="moyen" data-a="maths-defi">🔗 Défier un pote</button></div>' +
-      doms.map(d => '<h3>' + esc(d.d) + '</h3><div class="cartes-anglais">' + d.l.map(c => M.disponible(c[0])
-        ? '<button class="carte-anglais" data-a="maths-chap" data-v="' + esc(c[0]) + '"><strong>' + esc(c[2]) + '</strong><span>' + (etoiles(c[0]) || '▶ 10 questions') + '</span></button>'
-        : '<div class="carte-anglais bientot" aria-disabled="true"><strong>' + esc(c[2]) + '</strong><span>🛠️ bientôt</span></div>').join('') + '</div>').join('') +
+      // v5.75 : les chapitres rangés par domaine, en blocs côte à côte (plus de longue colonne à moitié vide).
+      '<div class="domaines">' + doms.map(d => '<section class="domaine"><h3>' + esc(d.d) + ' <small>' + d.l.length + '</small></h3><div class="liste-chap">' + d.l.map(c => M.disponible(c[0])
+        ? '<button class="chap" data-a="maths-chap" data-v="' + esc(c[0]) + '"><span>' + esc(c[2]) + '</span><em>' + (etoiles(c[0]) || '▶ 10') + '</em></button>'
+        : '<div class="chap bientot" aria-disabled="true"><span>' + esc(c[2]) + '</span><em>🛠️</em></div>').join('') + '</div></section>').join('') + '</div>' +
       (() => { const l = (Array.isArray(annalesMaths[e.niveau]) ? annalesMaths[e.niveau] : []).filter(x => x && /^https:\/\/(www\.)?(education\.gouv\.fr|eduscol\.education\.(gouv\.)?fr)\//.test(x.lien)).slice(0, 20);
         return l.length ? '<h3>📄 Sujets officiels (sur le site du ministère)</h3><ul class="pieges-cats">' + l.map(x => '<li><a href="' + esc(x.lien) + '" target="_blank" rel="noopener noreferrer">' + esc((x.session ? x.session + ' — ' : '') + x.titre) + '</a></li>').join('') + '</ul>' : ''; })() +
       '<p class="petit">👥 Battle en direct : ouvre le salon des battles et choisis « maths ».</p></main>', 'maths');
@@ -3102,6 +3175,8 @@
           maths:j.maths && typeof j.maths === 'object' ? j.maths : {},
           vannesVues:Math.min(1e6, Math.max(0, Math.floor(Number(j.vannesVues)) || 0)),
           vannesIA:j.vannesIA !== false,
+          journal:(() => { const o = {}; if(j.journal && typeof j.journal === 'object') for(const [d, x] of Object.entries(j.journal).slice(-21)) if(/^\d{4}-\d\d-\d\d$/.test(d) && x && typeof x === 'object'){ o[d] = {}; for(const [k, n] of Object.entries(x)) if(/^(mots|anglais|maths|sciences)[+-]$|^min$/.test(k)) o[d][k] = Math.max(0, Math.min(1e5, Math.floor(Number(n) || 0))); } return o; })(),
+          avisVannes:Array.isArray(j.avisVannes) ? j.avisVannes.filter(x => x && typeof x.t === 'string').slice(-150).map(x => ({ t:x.t.slice(0, 220), v:x.v === 1 ? 1 : -1, d:String(x.d || '').slice(0, 10) })) : [],
           vannesDites:Array.isArray(j.vannesDites) ? j.vannesDites.filter(x => typeof x === 'string' && /^[0-9a-z]{1,8}$/.test(x)).slice(-400) : [],
           trophees:Array.isArray(j.trophees) ? j.trophees.filter(k => TROPHEES.includes(k)) : [], facile:!!j.facile });
         base.joueurs = d.joueurs.map(propre); base.actif = 0;
@@ -3143,6 +3218,7 @@
       case 'theme-retour': return choisirJeu(theme);
       case 'jeu': return commencer(v);
       case 'defi': return defi();
+      case 'porte-mots': return porteMots();
       case 'lecon': return lecon();
       case 'phrases': return atelierPhrases();
       case 'pieges': return pieges();
@@ -3293,6 +3369,8 @@
       case 'effacer': return effacer();
       case 'carnet': return carnet();
       case 'fous-rires': return fousRires();
+      case 'qz-avis': { const t = qz && qz.derniereVanne; if(t){ const j = J(); j.avisVannes = (Array.isArray(j.avisVannes) ? j.avisVannes : []).filter(x => x.t !== t).concat({ t, v:v === '1' ? 1 : -1, d:jour() }).slice(-150); garder();
+          document.querySelectorAll('[data-a="qz-avis"]').forEach(x => { x.disabled = true; if(x.dataset.v === v) x.classList.add('plein'); }); } return; }
       case 'garder-vanne': { const m = partie && partie.dernierModele; if(m){ const j = J(); j.vannesAimees = (Array.isArray(j.vannesAimees) ? j.vannesAimees : []).filter(x => x !== m).concat(m).slice(-100); if(window.JUGE) j.notesVannes = JUGE.noter(j.notesVannes, m, 2); } return garderVanne(); }
       case 'pas-drole': { const m = partie && partie.dernierModele; if(m){ const j = J(); j.pasDrole = (Array.isArray(j.pasDrole) ? j.pasDrole : []).filter(x => x !== m).concat(m).slice(-200); if(window.JUGE) j.notesVannes = JUGE.noter(j.notesVannes, m, -3); garder(); } const pd = $('#pas-drole'); if(pd){ pd.textContent = '✓ ' + (base.ui === 'en' ? 'Noted' : 'Noté, Ami la range au placard'); pd.disabled = true; } return; }
       case 'oublier-vanne': { const j = J(), i = Number(v); if(Array.isArray(j.fousRires) && Number.isInteger(i)){ j.fousRires.splice(i, 1); garder(); } return fousRires(); }

@@ -21,7 +21,7 @@ function page(langue, config, avant){
   w.TextEncoder = TextEncoder; w.TextDecoder = TextDecoder;
   w.__fetch = []; w.fetch = async (u) => { w.__fetch.push(String(u)); return { ok:true, json:async () => (w.__reponse || { actif:false }) }; };
   if(avant) avant(w);
-  for(const f of ['js/donnees.js', 'js/voix.js', 'js/textes.js', 'js/articulation.js', 'js/genres.js', 'js/confusions.js', 'js/vannes.js', 'js/pieges.js', 'js/anglais.js', 'js/clash.js', 'js/histoires.js', 'js/blagues-en.js', 'js/parcours.js', 'js/rigolade.js', 'js/clash-plus.js', 'js/salon.js', 'js/juge.js', 'js/maths.js', 'js/sciences.js', 'js/vannes-cash.js', 'js/vannes-ironie.js', 'js/vannes-mots.js', 'js/offre.js', 'js/jeu.js']) w.eval(lire(f));
+  for(const f of ['js/donnees.js', 'js/voix.js', 'js/phrases-enregistrees.js', 'js/textes.js', 'js/articulation.js', 'js/genres.js', 'js/confusions.js', 'js/vannes.js', 'js/pieges.js', 'js/anglais.js', 'js/clash.js', 'js/histoires.js', 'js/blagues-en.js', 'js/parcours.js', 'js/rigolade.js', 'js/clash-plus.js', 'js/salon.js', 'js/juge.js', 'js/maths.js', 'js/sciences.js', 'js/vannes-cash.js', 'js/vannes-ironie.js', 'js/vannes-mots.js', 'js/offre.js', 'js/jeu.js']) w.eval(lire(f));
   return w;
 }
 // Certificats d'abonnement comme les signe le serveur (même format que serveur/functions/ami-abonnement).
@@ -1612,6 +1612,34 @@ await test('v5.74 : l’essentiel — Ami se tait (consignes, vannes), mais les 
   assert.ok(w.SALON.questionsMixtes(7, 40).some(q => /^o:/.test(q.id)), 'les questions « qu’a dit Ami ? » restent');
   A.direPhrase('Ami commente', 'fr'); A.direEcoute('Listen to me', 'en');
   return new Promise(r => setTimeout(() => { assert.deepStrictEqual(dits, ['Listen to me'], 'seul ce qu’il faut écouter est dit'); r(); }, 200));
+});
+
+await test('v5.75 : accueil en 4 portes, résumé de la semaine, avis sur les vannes, 3D chargée à la demande, phrases enregistrées', async () => {
+  const w = page(), A = w.AmiDesMots, $ = s => w.document.querySelector(s), $$ = s => [...w.document.querySelectorAll(s)];
+  const clic = (a, v) => { const b = w.document.createElement('button'); b.dataset.a = a; if(v != null) b.dataset.v = v; w.document.body.appendChild(b); b.click(); b.remove(); };
+  assert.match(lire('js/config-site.js'), /ACCUEIL_SIMPLE:true/);
+  Object.assign(A.CONFIG, { ACCUEIL_SIMPLE:true, VILLAGE_CACHE:true, MOTS_CITY_CACHE:true }); A.base.ui = 'fr'; A.base.cible = 'en'; A.accueil();
+  assert.deepStrictEqual($$('.porte').map(b => b.dataset.a), ['porte-mots', 'maths', 'sciences', 'potes'], '4 portes');
+  assert.ok($('[data-a="defi"]') && $('[data-a="lecon"]'), 'défi et 5 mots restent visibles');
+  assert.ok($('.mot-jour') && $('nav.raccourcis [data-a="reglages"]') && $('nav.raccourcis [data-a="carnet"]') && $('nav.raccourcis [data-a="parents"]'), 'mot du jour, carnet, réglages, parents');
+  assert.ok(!$('nav.raccourcis [data-a="vestiaire"]') && !$('nav.raccourcis [data-a="trophees"]') && !$('nav.raccourcis [data-a="astuces"]') && !$('.carte-jour:not(.mot-jour)'), 'ce qui ne sert pas pour l’instant est rangé');
+  assert.ok(!$('.phrases-accueil') && !$('.pieges-accueil'), 'le reste est rangé derrière les portes');
+  clic('porte-mots'); for(const a of ['lecon', 'themes', 'revoir', 'phrases', 'anglais']) assert.ok($('[data-a="' + a + '"]'), 'porte mots : ' + a);
+  assert.ok($('a[href="professeur.html"]'), 'le professeur est derrière la porte');
+  // Résumé parents
+  const j = A.J(), d = new Date(), jr = d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+  j.journal = { [jr]:{ 'maths+':7, 'maths-':3, 'mots+':12, min:14 } }; j.avisVannes = [{ t:'Ton hypoténuse fait la taille d’un immeuble.', v:1, d:jr }];
+  clic('parents'); const m = $('main').textContent.match(/(\d+) × (\d+)/); $('#porte-parents').value = String(m[1] * m[2]); clic('parents-ouvrir');
+  const txt = $('main').textContent; assert.match(txt, /Cette semaine/); assert.match(txt, /7\/10 \(70 %\)/); assert.match(txt, /14 min/); assert.match(txt, /hypoténuse/, 'les vannes qui font rire');
+  assert.match(lire('js/jeu.js'), /data-a="qz-avis" data-v="1"/, 'avis 😂 / 🙄 après une vanne de maths ou sciences');
+  const sw = lire('sw.js'), F = JSON.parse(sw.match(/const FICHIERS = (\[[\s\S]*?\]);/)[1]), L = JSON.parse(sw.match(/const LOURDS = (\[[\s\S]*?\]);/)[1]);
+  assert.ok(!F.some(f => /^vendor\/|^assets\/3d\//.test(f)) && L.includes('vendor/three.module.js'), '3D seulement à la demande');
+  assert.ok(F.includes('js/jeu.js') && F.includes('index.html'), 'l’essentiel reste hors connexion');
+  assert.ok(require('fs').existsSync(require('path').join(__dirname, '..', 'docs/a-enregistrer/phrases-en.csv')) && require('fs').existsSync(require('path').join(__dirname, '..', 'docs/a-relire/maths-5e.csv')));
+  // Phrase enregistrée → MP3 au lieu de la voix du téléphone.
+  let mp3 = ''; w.Audio = function(u){ mp3 = u; return { play(){ return Promise.resolve(); }, pause(){}, addEventListener(){} }; };
+  w.PHRASES_ENREGISTREES = { en:[A.fnv1a('I can see the sea.')] }; A.direEcoute('I can see the sea.', 'en');
+  assert.match(mp3, /\/en\/[0-9a-z]+\.mp3$/, 'enregistrement joué : ' + mp3);
 });
 
 console.log(`\n${ok} réussi(s), ${ko} échoué(s)`);
