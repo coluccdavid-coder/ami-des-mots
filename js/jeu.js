@@ -197,7 +197,7 @@
     tournoi:['tournoi', 'tournoi-go', 'tournoi-go-memes', 'potes', 'potes-go', 'potes-joue', 'potes-revanche'], 'defi-pote':['defi-pote', 'defi-pote-go'],
     salon:['salon', 'salon-creer', 'salon-rejoindre', 'salon-public', 'salon-entrer-public'],
     trompe:['trompe'], oreilles:['oreilles'], vraifaux:['vraifaux'], avent:['avent'], betisier:['betisier'], maison:['maison'],
-    maths:['maths', 'maths-chap', 'maths-melange', 'maths-examen', 'maths-defi'], sciences:['sciences', 'sciences-theme'],
+    maths:['maths', 'maths-chap', 'maths-melange', 'maths-examen', 'maths-defi'], sciences:['sciences', 'sciences-theme', 'matieres', 'matiere', 'matiere-niveau', 'matiere-chap', 'matiere-melange', 'matiere-examen', 'examens', 'examen-go', 'examen-suite'],
     village3d:['accueil-3d'], motscity:[]
   };
   const COIN_DE = {}; for(const c in COINS) for(const a of COINS[c]) COIN_DE[a] = c;
@@ -502,7 +502,8 @@
     return '<div class="portes">' +
       porte('porte-mots', '🇬🇧', en ? 'Words & English' : 'Mots & anglais', en ? 'Games, sentences, traps, teacher' : 'Jeux, phrases, pièges, professeur', 'porte-mots') +
       (window.MATHS ? porte('maths', '🔢', 'Maths', en ? 'Year 6 to final exam · Prof Pi teases' : 'De la 6e au bac · Prof Pi te vanne', 'porte-maths') : '') +
-      (window.SCIENCES ? porte('sciences', '🚀', 'Sciences', en ? 'Planets, rockets, human body' : 'Planètes, fusées, corps humain', 'porte-sciences') : '') +
+      (window.MATIERES ? porte('matieres', '📚', en ? 'Subjects' : 'Matières', en ? 'French, history, biology, physics, exams' : 'Français, histoire-géo, SVT, physique, brevet & bac', 'porte-sciences')
+        : window.SCIENCES ? porte('sciences', '🚀', 'Sciences', en ? 'Planets, rockets, human body' : 'Planètes, fusées, corps humain', 'porte-sciences') : '') +
       (window.MATHS || A_EN() ? porte('potes', '⚔️', 'Battle', en ? 'With friends: maths, English, comebacks' : 'Entre potes : maths, anglais, vannes', 'porte-battle') : '') +
       '</div>';
   }
@@ -2252,7 +2253,7 @@
   // Chaque joueur répond à la même formule (mêmes types, mêmes niveaux) ; Ami commente entre les tours et
   // charrie les réponses, jamais les joueurs. Liens vers le défi par lien, le salon en direct et la battle contre Ami.
   let potes = null;
-  const MATIERES_POTES = [['melange', '🎲', 'Le grand mélange', 'Maths, anglais ET vannes'], ['maths', '🔢', 'Maths', 'Calcul, fractions, équations…'], ['anglais', '🇬🇧', 'Anglais', 'Pièges, oreille, vrai ou faux'], ['vannes', '🎤', 'Vannes', 'Ami clashe : trouve la meilleure punchline']];
+  const MATIERES_POTES = [['melange', '🎲', 'Le grand mélange', 'Maths, anglais ET vannes'], ['culture', '📚', 'Culture G', 'Français, histoire-géo, SVT, physique'], ['maths', '🔢', 'Maths', 'Calcul, fractions, équations…'], ['anglais', '🇬🇧', 'Anglais', 'Pièges, oreille, vrai ou faux'], ['vannes', '🎤', 'Vannes', 'Ami clashe : trouve la meilleure punchline']];
   // Questions d'une battle : graine → toujours les mêmes pour une graine (revanche équitable).
   // Longueur : nombre de questions par joueur (mélange ; une seule matière : un peu moins).
   const LONGUEURS_POTES = { courte:[9, 6, '⚡ Courte'], normale:[15, 10, '🔥 Normale'], marathon:[24, 16, '🏃 Marathon'] };
@@ -2269,6 +2270,8 @@
       return l.map(m => ({ id:'c:' + m.ami, consigne:'🎤 Ami te clashe : renvoie-lui la meilleure punchline !', enonce:'« ' + m.ami + ' »', ecoute:m.ami, trad:m.fr,
         bon:m.bon.en, faux:m.faux.slice(0, 3), regle:'🇫🇷 ' + m.bon.fr, dire:m.bon.en }));
     };
+    if(mode === 'culture' && window.MATIERES){ const ids = ['francais', 'histoire', 'svt', 'physique'], l = ids.map((id, i) => MATIERES.serie(id, 'melange', niveau, Math.ceil(N / ids.length) + 1, graine + i * 101, 'taquin'));
+      const out = []; for(let i = 0; out.length < N && i < N; i++) for(const x of l) if(x[i] && out.length < N) out.push(x[i]); if(out.length) return out; }
     if(mode === 'maths') return maths(N);
     if(mode === 'anglais') return anglais(N);
     if(mode === 'vannes') return vannes(N);
@@ -2280,7 +2283,7 @@
   function potesMenu(){
     potes = null;
     const noms = Array.isArray(base.famille) ? base.famille : [], A = A_EN(), niv = window.MATHS ? etatMaths().niveau : '6e';
-    const dispo = MATIERES_POTES.filter(([k]) => k === 'maths' ? !!window.MATHS : k === 'melange' ? !!(window.MATHS || A) : !!A);
+    const dispo = MATIERES_POTES.filter(([k]) => k === 'maths' ? !!window.MATHS : k === 'melange' ? !!(window.MATHS || A) : k === 'culture' ? !!window.MATIERES : !!A);
     const choix = dispo.some(x => x[0] === base.potesMode) ? base.potesMode : dispo[0][0];
     poser(barre('accueil') + '<main class="coin-anglais potes"><h2>⚔️ Battle entre potes</h2>' +
       '<p class="pieges-intro">2 à 4 joueurs sur ce téléphone, chacun son tour. Ami pose les questions, compte les points… et charrie les mauvaises réponses. 😏</p>' +
@@ -2302,7 +2305,7 @@
     if(noms.length < 2){ const m = $('#potes-msg'); if(m) m.textContent = 'Il faut au moins 2 joueurs ! 👥'; return; }
     const nv = $('#potes-niveau'), niveau = nv && window.MATHS && MATHS.NIVEAUX.includes(nv.value) ? nv.value : (window.MATHS ? etatMaths().niveau : '6e');
     base.famille = noms; garder();
-    const modes = MATIERES_POTES.map(x => x[0]).filter(k => k === 'maths' ? !!window.MATHS : k === 'melange' ? true : !!A_EN());
+    const modes = MATIERES_POTES.map(x => x[0]).filter(k => k === 'maths' ? !!window.MATHS : k === 'melange' ? true : k === 'culture' ? !!window.MATIERES : !!A_EN());
     potes = { noms, scores:[], i:0, mode:modes.includes(base.potesMode) ? base.potesMode : modes[0], niveau, longueur:base.potesLongueur || 'normale', graine:Math.floor(Math.random() * 1e9) };
     potesTour();
   }
@@ -2589,7 +2592,7 @@
     const z = qz; if(!z || z.repondu) return;
     const q = z.liste[z.i], choix = z.options[i]; if(choix == null) return;
     z.repondu = true; const juste = choix === q.bon; if(juste) z.bonnes++;
-    noterJournal(z.prof || q.chap ? 'maths' : window.SCIENCES && SCIENCES.Q.some(x => x[0] === q.id) ? 'sciences' : 'anglais', juste);
+    noterJournal(q.matiere || (z.prof || q.chap ? 'maths' : window.SCIENCES && SCIENCES.Q.some(x => x[0] === q.id) ? 'sciences' : 'anglais'), juste);
     if(q.apres) q.apres(juste, choix); garder();
     document.querySelectorAll('.piege-opt').forEach((b, k) => { b.disabled = true; if(z.options[k] === q.bon) b.classList.add('ok'); else if(k === i) b.classList.add('ko'); });
     let f = !juste && (q.vanneDe ? { vanne:q.vanneDe(choix) } : q.faux.find(x => x.en === choix));
@@ -2802,6 +2805,7 @@
     if(t === 'mot'){ const [m, b] = x.split('>'); if(MOTS[m] && MOTS[b]) return 'Confond ' + b + ' « ' + nomMot(b) + ' » avec ' + m + ' « ' + nomMot(m) + ' »'; }
     if(t === 'piege' && window.PIEGES){ const p = PIEGES.liste.find(y => y.id === x); if(p) return 'Piège : « ' + p.fr + ' » → ' + p.bon; }
     if(t === 'maths' && window.MATHS){ for(const n of MATHS.NIVEAUX){ const c = MATHS.chapitresDe(n).find(y => y[0] === x); if(c) return 'Maths ' + n + ' : ' + c[2]; } }
+    if(t === 'mat' && window.MATIERES){ const [id, c] = x.split(':'), m = MATIERES.trouver(id), ch = m && m.chapitres.find(y => y.id === c); if(ch) return m.nom + ' : ' + ch.nom; }
     if(t === 'sciences' && window.SCIENCES){ const q = SCIENCES.parId(x); if(q) return 'Sciences : ' + q.q; }
     if(t === 'dictee'){ const [e, a] = x.split('>'); return 'Dictée : écrit « ' + e + ' » au lieu de « ' + a + ' »'; }
     if(t === 'examen') return 'Erreurs à l’examen du niveau ' + x;
@@ -2812,7 +2816,7 @@
     const jr = J().journal || {}, jours = []; for(let k = 6; k >= 0; k--) jours.push(jour(-k));
     const somme = cle => jours.reduce((t, d) => t + ((jr[d] || {})[cle] || 0), 0);
     const actifs = jours.filter(d => jr[d] && Object.keys(jr[d]).length).length, min = somme('min');
-    const mat = [['mots', '🖼️', 'Mots'], ['anglais', '🇬🇧', 'Anglais'], ['maths', '🔢', 'Maths'], ['sciences', '🚀', 'Sciences']].map(([k, ic, nom]) => {
+    const mat = [['mots', '🖼️', 'Mots'], ['anglais', '🇬🇧', 'Anglais'], ['maths', '🔢', 'Maths'], ['francais', '📝', 'Français'], ['histoire', '🏛️', 'Histoire-géo'], ['svt', '🧬', 'SVT'], ['physique', '⚗️', 'Physique-chimie'], ['sciences', '🚀', 'Sciences']].map(([k, ic, nom]) => {
       const b = somme(k + '+'), e = somme(k + '-'), n = b + e; return n ? '<li><span>' + ic + ' ' + nom + '</span><strong>' + b + '/' + n + ' (' + Math.round(b / n * 100) + ' %)</strong></li>' : ''; }).join('');
     const barres = jours.map(d => { const x = jr[d] || {}, n = Object.keys(x).filter(k => /[+-]$/.test(k)).reduce((t, k) => t + x[k], 0);
       return '<span class="jour-barre" title="' + d + ' : ' + n + ' réponses"><i style="height:' + Math.min(100, n * 3) + '%"></i><small>' + ['D', 'L', 'M', 'M', 'J', 'V', 'S'][new Date(d + 'T12:00').getDay()] + '</small></span>'; }).join('');
@@ -3090,6 +3094,110 @@
     mathsSerie(e.niveau, ex.n, '📝 ' + ex.titre + ' · ' + e.niveau, z => { const note = Math.round(20 * z.bonnes / z.liste.length * 10) / 10; etatMaths().examens[e.niveau] = note; garder(); finJeuMaths(z, '📝 ' + ex.titre, note); });
   }
 
+  // ── v5.76 : les matières du programme (français, histoire-géo-EMC, SVT, physique-chimie) + brevet & bac blancs ──
+  function etatMatieres(){
+    const j = J(), o = j.matieres && typeof j.matieres === 'object' ? j.matieres : {}, N = window.MATIERES ? MATIERES.NIVEAUX : [];
+    const niveau = N.includes(o.niveau) ? o.niveau : (window.MATHS ? etatMaths().niveau : '6e');
+    const chap = {}; if(o.chap && typeof o.chap === 'object') for(const [k, v] of Object.entries(o.chap)) if(/^[0-9a-z-]{1,20}:[0-9a-z-]{1,30}$/.test(k) && v && typeof v === 'object') chap[k] = { ok:Math.min(1e5, Math.max(0, Math.floor(+v.ok || 0))), n:Math.min(1e5, Math.max(0, Math.floor(+v.n || 0))) };
+    const notes = {}; if(o.notes && typeof o.notes === 'object') for(const [k, v] of Object.entries(o.notes)) if(/^[0-9a-z-]{1,40}$/.test(k) && Number.isFinite(+v)) notes[k] = Math.min(20, Math.max(0, +v));
+    const derniere = window.MATIERES && MATIERES.trouver(o.derniere) ? o.derniere : '';
+    j.matieres = { niveau, chap, notes, derniere }; return j.matieres;
+  }
+  const noteSur20 = z => Math.round(20 * z.bonnes / Math.max(1, z.liste.length) * 10) / 10;
+  function matieresAccueil(){
+    qz = null; const M = window.MATIERES; if(!M) return accueil();
+    const c = (a, v, ic, t1, t2) => '<button class="carte-anglais" data-a="' + a + '"' + (v ? ' data-v="' + v + '"' : '') + '><span class="ic">' + ic + '</span><strong>' + t1 + '</strong><small>' + t2 + '</small></button>';
+    poser(barre('accueil') + '<main class="coin-anglais matieres-ecran"><h2>📚 Matières</h2><p class="pieges-intro">Le programme de la 6e au bac, avec Ami qui vanne les erreurs (jamais toi) et t’explique la bonne réponse.</p>' +
+      '<div class="onglets-matieres" role="tablist"><button class="onglet actif" role="tab" aria-selected="true">📖 Réviser</button><button class="onglet" role="tab" aria-selected="false" data-a="examens">📝 Brevet & bac blancs</button></div>' +
+      '<div class="cartes-anglais">' +
+        c('matiere', 'francais', '📝', 'Français', 'Conjugaison, orthographe, grammaire, figures de style, littérature') +
+        (window.MATHS ? c('maths', '', '🔢', 'Maths', 'De la 6e au bac, avec Prof Pi') : '') +
+        c('matiere', 'histoire', '🏛️', 'Histoire-géo & EMC', 'Repères, géographie, citoyenneté') +
+        c('matiere', 'svt', '🧬', 'SVT', 'Le vivant, le corps humain, la Terre, la génétique') +
+        c('matiere', 'physique', '⚗️', 'Physique-chimie', 'Matière, électricité, vitesse, énergie') +
+        (window.SCIENCES ? c('sciences', '', '🚀', 'Sciences rigolotes', 'Planètes, fusées, médecine… avec des clashs') : '') +
+      '</div></main>');
+  }
+  function matiereAccueil(id){
+    qz = null; const M = window.MATIERES, m = M && M.trouver(id); if(!m) return matieresAccueil();
+    const e = etatMatieres(), niveaux = M.NIVEAUX, chs = M.chapitres(id, e.niveau), ton = etatMaths().ton, doms = []; e.derniere = id;
+    for(const c of chs){ let d = doms.find(x => x.d === c.dom); if(!d) doms.push(d = { d:c.dom, l:[] }); d.l.push(c); }
+    const etoiles = cid => { const s = e.chap[id + ':' + cid]; if(!s || !s.n) return ''; const p = s.ok / s.n; return s.n >= 10 && p >= .9 ? '⭐⭐⭐' : p >= .7 ? '⭐⭐' : '⭐'; };
+    const ex = m.examens && m.examens[e.niveau];
+    poser(barre('matieres') + '<main class="coin-anglais coin-maths matiere-ecran"><h2>' + m.ic + ' ' + esc(m.nom) + '</h2>' +
+      '<div class="onglets-niveaux" role="tablist">' + niveaux.map(n => { const vide = !M.chapitres(id, n).length;
+        return '<button role="tab" aria-selected="' + (n === e.niveau) + '" class="onglet' + (n === e.niveau ? ' actif' : '') + (vide ? ' vide' : '') + '" data-a="matiere-niveau" data-v="' + id + '|' + n + '">' + n + '</button>'; }).join('') + '</div>' +
+      '<p class="ton-prof">Ton d’Ami : ' + TONS_PROF.map(([k, l]) => '<button class="petit-bouton' + (k === ton ? ' actif' : '') + '" data-a="maths-ton-matiere" data-v="' + id + '|' + k + '" aria-pressed="' + (k === ton) + '">' + l + '</button>').join(' ') + '</p>' +
+      (chs.length ? '<div class="actions serrees"><button class="moyen plein" data-a="matiere-melange" data-v="' + id + '">🔁 Entraînement mélangé</button>' +
+        (ex ? '<button class="moyen" data-a="matiere-examen" data-v="' + id + '">📝 ' + esc(ex) + (e.notes[id + '-' + e.niveau] != null ? ' (' + String(e.notes[id + '-' + e.niveau]).replace('.', ',') + '/20)' : '') + '</button>' : '') + '</div>' +
+        '<div class="domaines">' + doms.map(d => '<section class="domaine"><h3>' + esc(d.d) + ' <small>' + d.l.length + '</small></h3><div class="liste-chap">' +
+          d.l.map(c => '<button class="chap" data-a="matiere-chap" data-v="' + id + '|' + c.id + '"><span>' + esc(c.nom) + '</span><em>' + (etoiles(c.id) || '▶ 10') + '</em></button>').join('') + '</div></section>').join('') + '</div>'
+        : '<p class="pieges-intro">🛠️ Cette matière arrive bientôt pour la ' + esc(e.niveau) + '. Choisis un autre niveau.</p>') +
+      '</main>', 'matieres');
+  }
+  // Une série de questions d'une matière. fin(z) facultatif (examens).
+  function matiereSerie(id, cible, n, titre, fin){
+    const M = window.MATIERES, e = etatMatieres(), liste = M.serie(id, cible, e.niveau, n, Math.floor(Math.random() * 1e9), etatMaths().ton);
+    if(!liste.length) return matiereAccueil(id);
+    questionsGo(liste, { titre, retour:'matiere', lang:'fr', sujet:id,
+      onReponse:(juste, q) => { const k = id + ':' + q.chap, s = e.chap[k] || (e.chap[k] = { ok:0, n:0 }); s.n++; if(juste) s.ok++; else noterErreur('mat:' + id + ':' + q.chap); garder(); },
+      fin:fin || (z => finMatiere(z, titre, id)) });
+  }
+  function finMatiere(z, titre, id, note){
+    const p = z.bonnes / z.liste.length; J().plumes += z.bonnes; garder(); bruit('fin');
+    const mot = p === 1 ? 'Sans faute ! Ami range ses vannes, il n’en a pas eu besoin. 👏' : p >= .7 ? 'Solide ! Ami a cherché la petite bête… pas trouvée. 😏' : p >= .4 ? 'Ça vient ! Ami a bien rigolé, mais tu progresses.' : 'Ami a vidé tout son stock de vannes. On recommence ? 💪';
+    poser(barre('matiere') + '<main class="centre"><div class="ami-moyen">' + ami(p >= .7 ? 'fete' : 'malin') + '</div><h2>' + esc(titre) + '</h2>' +
+      (note != null ? '<p class="note-examen">' + String(note).replace('.', ',') + ' / 20</p>' : '<p class="score">' + z.bonnes + ' / ' + z.liste.length + '</p>') + '<p>' + mot + '</p>' +
+      '<div class="actions serrees"><button class="moyen plein" data-a="matiere-melange" data-v="' + esc(id) + '">🔁 Encore</button><button class="moyen" data-a="matiere" data-v="' + esc(id) + '">📚 ' + esc((window.MATIERES.trouver(id) || {}).nom || '') + '</button></div></main>');
+  }
+  // ── Brevet & bac blancs : plusieurs épreuves à la suite, une note par épreuve, puis la moyenne ──
+  const EXAMENS_BLANCS = {
+    brevet:{ titre:'Brevet blanc', niveau:'3e', ic:'🎓', epreuves:[['francais', 'Français', 10], ['maths', 'Maths', 10], ['histoire', 'Histoire-géo & EMC', 10], ['sciences2', 'Sciences (SVT + physique-chimie)', 10]] },
+    bacfr:{ titre:'Bac de français blanc', niveau:'1re', ic:'📝', epreuves:[['francais', 'Français (1re)', 20]] },
+    bacmaths1:{ titre:'Maths 1re blanc', niveau:'1re', ic:'🔢', epreuves:[['maths', 'Maths 1re', 15]] },
+    bacmathsT:{ titre:'Bac de maths blanc', niveau:'Tle', ic:'🔢', epreuves:[['maths', 'Maths terminale', 20]] }
+  };
+  let examen = null;
+  function examensAccueil(){
+    qz = null; const e = etatMatieres();
+    poser(barre('matieres') + '<main class="coin-anglais matieres-ecran"><h2>📝 Brevet & bac blancs</h2><p class="pieges-intro">Plusieurs épreuves à la suite, comme le jour J. Une note sur 20 par épreuve, puis ta moyenne. Les sujets sont dans l’esprit de l’examen ; les vrais sujets officiels sont sur le site du ministère.</p>' +
+      '<div class="onglets-matieres" role="tablist"><button class="onglet" role="tab" aria-selected="false" data-a="matieres">📖 Réviser</button><button class="onglet actif" role="tab" aria-selected="true">📝 Brevet & bac blancs</button></div>' +
+      '<div class="cartes-anglais">' + Object.entries(EXAMENS_BLANCS).map(([k, x]) => '<button class="carte-anglais" data-a="examen-go" data-v="' + k + '"><span class="ic">' + x.ic + '</span><strong>' + esc(x.titre) + '</strong><small>' + esc(x.niveau) + ' · ' + x.epreuves.map(p => p[1]).join(', ') +
+        (e.notes['blanc-' + k] != null ? ' · dernière moyenne : ' + String(e.notes['blanc-' + k]).replace('.', ',') + '/20' : '') + '</small></button>').join('') + '</div></main>');
+  }
+  function questionsEpreuve(cle, niveau, n){
+    const g = Math.floor(Math.random() * 1e9), ton = etatMaths().ton, M = window.MATIERES;
+    if(cle === 'maths') return window.MATHS ? MATHS.questionsSalon(g, n, niveau) : [];
+    if(cle === 'sciences2') return M.serie('svt', 'examen', niveau, Math.ceil(n / 2), g, ton).concat(M.serie('physique', 'examen', niveau, Math.floor(n / 2), g + 1, ton));
+    return M.serie(cle, 'examen', niveau, n, g, ton);
+  }
+  function examenGo(k){
+    const x = EXAMENS_BLANCS[k]; if(!x) return examensAccueil();
+    examen = { k, x, i:0, notes:[] }; examenEpreuve();
+  }
+  function examenEpreuve(){
+    const ex = examen; if(!ex) return examensAccueil();
+    if(ex.i >= ex.x.epreuves.length){
+      const moy = Math.round(ex.notes.reduce((t, n) => t + n, 0) / ex.notes.length * 10) / 10; etatMatieres().notes['blanc-' + ex.k] = moy; J().plumes += Math.round(moy); garder(); bruit('fin');
+      const mention = moy >= 16 ? 'Mention très bien 🏆' : moy >= 14 ? 'Mention bien 🥈' : moy >= 12 ? 'Mention assez bien 🥉' : moy >= 10 ? 'Admis ✅' : 'Pas encore… mais tu as vu où ça coince 💪';
+      return poser(barre('matieres') + '<main class="centre examen-fin"><div class="ami-moyen">' + ami(moy >= 10 ? 'fete' : 'malin') + '</div><h2>' + ex.x.ic + ' ' + esc(ex.x.titre) + '</h2>' +
+        '<ul class="pieges-cats">' + ex.x.epreuves.map((p, i) => '<li><span>' + esc(p[1]) + '</span><strong>' + String(ex.notes[i]).replace('.', ',') + '/20</strong></li>').join('') + '</ul>' +
+        '<p class="note-examen">Moyenne : ' + String(moy).replace('.', ',') + ' / 20</p><p><strong>' + mention + '</strong></p>' +
+        '<div class="actions serrees"><button class="moyen plein" data-a="examen-go" data-v="' + ex.k + '">🔁 Un autre sujet</button><button class="moyen" data-a="examens">📝 Les examens</button></div></main>');
+    }
+    const [cle, nom, n] = ex.x.epreuves[ex.i], liste = questionsEpreuve(cle, ex.x.niveau, n);
+    poser(barre('matieres') + '<main class="centre"><div class="ami-moyen">' + ami('malin') + '</div><p class="piege-cat">' + esc(ex.x.titre) + ' · épreuve ' + (ex.i + 1) + '/' + ex.x.epreuves.length + '</p><h2>' + esc(nom) + '</h2>' +
+      '<p>' + liste.length + ' questions. Prends ton temps : c’est le jour J pour de faux. 📝</p><button class="gros" data-a="examen-suite">C’est parti ▶</button></main>');
+    ex.liste = liste;
+  }
+  function examenSuite(){
+    const ex = examen; if(!ex || !ex.liste) return examensAccueil();
+    const [cle, nom] = ex.x.epreuves[ex.i];
+    questionsGo(ex.liste, { titre:'📝 ' + nom, retour:'examens', lang:'fr', prof:cle === 'maths', sujet:cle === 'maths' ? 'maths' : cle,
+      onReponse:(juste, q) => { if(!juste) noterErreur(cle === 'maths' ? 'maths:' + q.chap : 'mat:' + (q.matiere || cle) + ':' + q.chap); },
+      fin:z => { ex.notes.push(noteSur20(z)); ex.i++; examenEpreuve(); } });
+  }
+
   // ── Coin sciences : espace, fusées, corps humain et médecine — avec des clashs quand on se trompe ──
   function sciencesAccueil(){
     qz = null; const SC = window.SCIENCES; if(!SC) return accueil();
@@ -3173,9 +3281,10 @@
           maison:j.maison && typeof j.maison === 'object' ? { achats:Array.isArray(j.maison.achats) ? j.maison.achats.filter(x => typeof x === 'string').slice(0, 40) : [], places:j.maison.places && typeof j.maison.places === 'object' ? Object.fromEntries(Object.entries(j.maison.places).filter(([k, v]) => /^(sol[0-5]|mur[0-2])$/.test(k) && typeof v === 'string')) : {} } : { achats:[], places:{} },
           gag:Math.min(20, Math.max(0, Math.floor(Number(j.gag)) || 0)),
           maths:j.maths && typeof j.maths === 'object' ? j.maths : {},
+          matieres:j.matieres && typeof j.matieres === 'object' ? j.matieres : {},
           vannesVues:Math.min(1e6, Math.max(0, Math.floor(Number(j.vannesVues)) || 0)),
           vannesIA:j.vannesIA !== false,
-          journal:(() => { const o = {}; if(j.journal && typeof j.journal === 'object') for(const [d, x] of Object.entries(j.journal).slice(-21)) if(/^\d{4}-\d\d-\d\d$/.test(d) && x && typeof x === 'object'){ o[d] = {}; for(const [k, n] of Object.entries(x)) if(/^(mots|anglais|maths|sciences)[+-]$|^min$/.test(k)) o[d][k] = Math.max(0, Math.min(1e5, Math.floor(Number(n) || 0))); } return o; })(),
+          journal:(() => { const o = {}; if(j.journal && typeof j.journal === 'object') for(const [d, x] of Object.entries(j.journal).slice(-21)) if(/^\d{4}-\d\d-\d\d$/.test(d) && x && typeof x === 'object'){ o[d] = {}; for(const [k, n] of Object.entries(x)) if(/^(mots|anglais|maths|sciences|francais|histoire|svt|physique)[+-]$|^min$/.test(k)) o[d][k] = Math.max(0, Math.min(1e5, Math.floor(Number(n) || 0))); } return o; })(),
           avisVannes:Array.isArray(j.avisVannes) ? j.avisVannes.filter(x => x && typeof x.t === 'string').slice(-150).map(x => ({ t:x.t.slice(0, 220), v:x.v === 1 ? 1 : -1, d:String(x.d || '').slice(0, 10) })) : [],
           vannesDites:Array.isArray(j.vannesDites) ? j.vannesDites.filter(x => typeof x === 'string' && /^[0-9a-z]{1,8}$/.test(x)).slice(-400) : [],
           trophees:Array.isArray(j.trophees) ? j.trophees.filter(k => TROPHEES.includes(k)) : [], facile:!!j.facile });
@@ -3258,6 +3367,17 @@
       case 'maison-ranger': { const m = etatMaison(); delete m.places[v]; garder(); maisonMsg = '📦 Rangé dans le carton.'; return maison(); }
       case 'betisier': return betisier();
       case 'best-suivant': if(best){ best.i++; } return afficherBest();
+      case 'matieres': return matieresAccueil();
+      case 'matiere': return matiereAccueil(v || (window.MATIERES && etatMatieres().derniere) || 'francais');
+      case 'matiere-niveau': { const [id, n] = String(v).split('|'); if(window.MATIERES && MATIERES.NIVEAUX.includes(n)){ etatMatieres().niveau = n; garder(); } return matiereAccueil(id); }
+      case 'maths-ton-matiere': { const [id, k] = String(v).split('|'); if(TONS_PROF.some(x => x[0] === k)){ etatMaths().ton = k; garder(); } return matiereAccueil(id); }
+      case 'matiere-chap': { const [id, c] = String(v).split('|'), m = window.MATIERES && MATIERES.trouver(id), ch = m && m.chapitres.find(x => x.id === c); return ch ? matiereSerie(id, c, 10, m.ic + ' ' + ch.nom) : matieresAccueil(); }
+      case 'matiere-melange': { const m = window.MATIERES && MATIERES.trouver(v); return m ? matiereSerie(v, 'melange', 10, m.ic + ' ' + m.nom + ' · ' + etatMatieres().niveau) : matieresAccueil(); }
+      case 'matiere-examen': { const m = window.MATIERES && MATIERES.trouver(v), e = etatMatieres(), t = m && m.examens && m.examens[e.niveau]; if(!t) return matiereAccueil(v);
+        return matiereSerie(v, 'examen', 20, '📝 ' + t, z => { const note = noteSur20(z); etatMatieres().notes[v + '-' + e.niveau] = note; garder(); finMatiere(z, '📝 ' + t, v, note); }); }
+      case 'examens': return examensAccueil();
+      case 'examen-go': return examenGo(v);
+      case 'examen-suite': return examenSuite();
       case 'potes': return potesMenu();
       case 'potes-matiere': if(MATIERES_POTES.some(x => x[0] === v)){ base.potesMode = v; garder(); } return potesMenu();
       case 'potes-longueur': if(LONGUEURS_POTES[v]){ base.potesLongueur = v; garder(); } return potesMenu();

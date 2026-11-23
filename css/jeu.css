@@ -1793,3 +1793,9 @@ html.gfx-ultra main h2 .emoji-titre{ -webkit-text-fill-color:initial; }
 .chap:hover{ background:rgba(255,255,255,.16); transform:translateX(3px); }
 .chap em{ font-style:normal; font-size:.82rem; opacity:.85; white-space:nowrap; }
 .chap.bientot{ opacity:.5; cursor:default; }
+/* v5.76 : matières, onglets Réviser / Brevet & bac blancs, notes d'examen */
+.onglets-matieres{ display:flex; gap:8px; justify-content:center; flex-wrap:wrap; margin:4px 0 16px; }
+.onglets-matieres .onglet{ padding:10px 18px; border-radius:999px; border:1px solid rgba(255,255,255,.2); background:rgba(255,255,255,.08); color:inherit; font:inherit; font-weight:900; cursor:pointer; }
+.onglets-matieres .onglet.actif{ background:#ffd36b; color:#2a2156; border-color:#ffd36b; }
+.onglet.vide{ opacity:.45; }
+.note-examen{ font-size:clamp(2rem, 6vw, 3.2rem); font-weight:1000; margin:8px 0; background:linear-gradient(90deg, #ffd36b, #2BE0B0); -webkit-background-clip:text; background-clip:text; color:transparent; }

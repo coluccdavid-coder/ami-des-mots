@@ -8,7 +8,7 @@
 const fs = require('fs'), path = require('path');
 const ICI = path.join(__dirname, '..'), w = {};
 global.window = w;
-for(const f of ['js/juge.js', 'js/maths.js', 'js/vannes-cash.js', 'js/vannes-ironie.js', 'js/sciences.js', 'js/pieges.js', 'js/anglais.js', 'js/clash.js', 'js/histoires.js', 'js/parcours.js', 'js/rigolade.js', 'js/clash-plus.js'])
+for(const f of ['js/juge.js', 'js/maths.js', 'js/vannes-cash.js', 'js/vannes-ironie.js', 'js/sciences.js', 'js/pieges.js', 'js/anglais.js', 'js/clash.js', 'js/histoires.js', 'js/parcours.js', 'js/rigolade.js', 'js/clash-plus.js', 'js/matieres.js', 'js/mat-francais.js', 'js/mat-histoire.js', 'js/mat-svt-pc.js'])
   new Function('window', fs.readFileSync(path.join(ICI, f), 'utf8'))(w);
 // Même empreinte que le jeu (js/jeu.js, fnv1a) : c'est le nom du MP3 sur le serveur des voix.
 const fnv1a = s => { let h = 0x811c9dc5; for(let i = 0; i < s.length; i++){ h ^= s.charCodeAt(i); h = Math.imul(h, 0x01000193); } return (h >>> 0).toString(36); };
@@ -33,6 +33,13 @@ for(const niv of M.NIVEAUX){
 const S = w.SCIENCES;
 bilan.push('sciences : ' + ecrire('docs/a-relire/sciences.csv', ['thème', 'question', 'bonne réponse', 'mauvaise réponse 1', 'clash 1', 'mauvaise réponse 2', 'clash 2', 'explication', 'OK ? (oui/non)', 'remarque'],
   S.Q.map(x => [x[1], x[2], x[3], (x[4][0] || [])[0], (x[4][0] || [])[1], (x[4][1] || [])[0], (x[4][1] || [])[1], x[5], '', ''])) + ' questions');
+// Matières du programme (v5.76) : 4 exemples par chapitre et par niveau.
+for(const m of w.MATIERES.LISTE){
+  const lignes = [];
+  for(const c of m.chapitres) for(const nv of c.niv) for(const q of w.MATIERES.serie(m.id, c.id, nv, 4, 77, 'taquin'))
+    lignes.push([nv, c.dom, c.nom, q.enonce, q.bon, q.faux.map(f => f.en + ' → ' + f.vanne).join(' | '), q.regle || '', '', '']);
+  bilan.push(m.id + ' : ' + ecrire('docs/a-relire/' + m.id + '.csv', ['niveau', 'domaine', 'chapitre', 'énoncé', 'bonne réponse', 'mauvaises réponses → vanne', 'explication', 'OK ? (oui/non)', 'remarque du prof'], lignes) + ' questions');
+}
 // Phrases anglaises des jeux d'écoute.
 const A = w.ANGLAIS, R = w.RIGOLADE, vu = new Map();
 const ajouter = (jeu, en, fr) => { en = String(en || '').trim(); if(!en || vu.has(en)) return; vu.set(en, [jeu, en, fr || '', 'en/' + fnv1a(en) + '.mp3', '']); };
