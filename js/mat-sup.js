@@ -20,13 +20,13 @@
   const PHYSIO = [
     ['Quelle hormone fait baisser la glycémie ?', 'L’insuline', [['Le glucagon', 'Le glucagon la fait monter.'], ['L’adrénaline', 'Elle la fait plutôt monter.']], 'Sécrétée par le pancréas.'],
     ['Un antibiotique est efficace contre :', 'Certaines bactéries', [['Les virus', 'Les antibiotiques ne marchent pas sur les virus, comme celui de la grippe.'], ['Tous les microbes', 'Non : seulement des bactéries, et pas toutes.']], 'D’où l’importance du bon usage.'],
-    ['Un essai clinique en « double aveugle » signifie :', 'Ni le patient ni le médecin ne savent qui reçoit le traitement', [['Le patient a les yeux bandés', 'Non, c’est une image.'], ['Personne ne prend de traitement', 'Non.']], 'Pour éviter les biais.'],
-    ['L’effet placebo, c’est :', 'Une amélioration liée au fait de croire recevoir un traitement', [['Un effet toxique', 'Non.'], ['Un vaccin', 'Non.']], 'D’où les groupes témoins.'],
-    ['L’incidence d’une maladie mesure :', 'Le nombre de nouveaux cas sur une période', [['Le nombre total de malades', 'Ça, c’est la prévalence.'], ['Le nombre de médecins', 'Non.']], 'Épidémiologie.']
+    ['Un essai clinique en « double aveugle » signifie :', 'Ni le patient ni le médecin ne savent qui reçoit le traitement', [['Le patient a les yeux bandés', 'Non, c’est une image.'], ['Personne ne prend de traitement', 'Cette réponse est partie faire un tour et elle a oublié de revenir.']], 'Pour éviter les biais.'],
+    ['L’effet placebo, c’est :', 'Une amélioration liée au fait de croire recevoir un traitement', [['Un effet toxique', 'Ami a vérifié trois fois : c’est toujours non. Mais c’était audacieux.'], ['Un vaccin', 'Celle-là, même un GPS en panne ne l’aurait pas choisie.']], 'D’où les groupes témoins.'],
+    ['L’incidence d’une maladie mesure :', 'Le nombre de nouveaux cas sur une période', [['Le nombre total de malades', 'Ça, c’est la prévalence.'], ['Le nombre de médecins', 'Bien tenté ! Ami donne 10 pour le courage et 0 pour le résultat.']], 'Épidémiologie.']
   ];
   const ETUDES_SANTE = [
-    ['Après le bac, on entre en études de santé principalement par :', 'Le PASS ou une licence avec option santé (L.AS)', [['Un concours à 30 ans uniquement', 'Non.'], ['Le permis de conduire', 'Non.']], 'Parcours d’accès spécifique santé, licence accès santé.'],
-    ['Les filières « MMOPK » sont :', 'Médecine, maïeutique, odontologie, pharmacie, kinésithérapie', [['Maths, musique, optique, physique, karaté', 'Bel effort d’imagination.'], ['Uniquement médecine', 'Non.']], 'Maïeutique = sage-femme.'],
+    ['Après le bac, on entre en études de santé principalement par :', 'Le PASS ou une licence avec option santé (L.AS)', [['Un concours à 30 ans uniquement', 'Cette réponse a pris le mauvais train. Direction : nulle part, terminus : raté.'], ['Le permis de conduire', 'Ami a failli tomber de sa branche. Il s’est rattrapé de justesse.']], 'Parcours d’accès spécifique santé, licence accès santé.'],
+    ['Les filières « MMOPK » sont :', 'Médecine, maïeutique, odontologie, pharmacie, kinésithérapie', [['Maths, musique, optique, physique, karaté', 'Bel effort d’imagination.'], ['Uniquement médecine', 'Réponse originale, ça oui. Juste, pas du tout.']], 'Maïeutique = sage-femme.'],
     ['Combien d’années dure au minimum la formation d’un médecin généraliste ?', '10 ans environ', [['3 ans', 'Bien plus long !'], ['20 ans', 'Long, mais pas à ce point.']], 'Premier, deuxième et troisième cycles.']
   ];
   const genDebit = r => { const fc = un(r, [60, 70, 80]), ves = un(r, [60, 70, 80]), d = fc * ves / 1000;
@@ -36,28 +36,28 @@
   const INSTITUTIONS = [
     ['La Constitution actuelle de la France date de :', '1958', [['1789', '1789, c’est la Déclaration des droits de l’homme.'], ['1946', '1946, c’est la IVe République.']], 'Ve République.'],
     ['Le Parlement français est composé :', 'De l’Assemblée nationale et du Sénat', [['Du Président et des ministres', 'Ça, c’est l’exécutif.'], ['Des juges', 'Non : ils forment l’autorité judiciaire.']], 'Pouvoir législatif.'],
-    ['Combien de membres nommés siègent au Conseil constitutionnel ?', '9', [['12', 'Non.'], ['577', '577, ce sont les députés.']], 'Renouvelés par tiers tous les trois ans.'],
-    ['La plus haute juridiction de l’ordre judiciaire est :', 'La Cour de cassation', [['Le Conseil d’État', 'Il est au sommet de l’ordre ADMINISTRATIF.'], ['Le tribunal de commerce', 'Non.']], 'Elle juge le droit, pas les faits.'],
-    ['La hiérarchie des normes place au sommet :', 'La Constitution (et le bloc de constitutionnalité)', [['Les arrêtés municipaux', 'Ils sont tout en bas.'], ['Les contrats', 'Non.']], 'Pyramide des normes.']
+    ['Combien de membres nommés siègent au Conseil constitutionnel ?', '9', [['12', 'Cette réponse sort tout droit d’un rêve bizarre. Réveille-toi, Ami t’attend.'], ['577', '577, ce sont les députés.']], 'Renouvelés par tiers tous les trois ans.'],
+    ['La plus haute juridiction de l’ordre judiciaire est :', 'La Cour de cassation', [['Le Conseil d’État', 'Il est au sommet de l’ordre ADMINISTRATIF.'], ['Le tribunal de commerce', 'Raté ! Mais Ami garde cette réponse pour son bêtisier préféré.']], 'Elle juge le droit, pas les faits.'],
+    ['La hiérarchie des normes place au sommet :', 'La Constitution (et le bloc de constitutionnalité)', [['Les arrêtés municipaux', 'Ils sont tout en bas.'], ['Les contrats', 'Là, la réponse a confondu la carte et le territoire. Et la carte était à l’envers.']], 'Pyramide des normes.']
   ];
   const DROIT_BASES = [
-    ['Le Code civil a été promulgué en :', '1804', [['1958', 'Non.'], ['1789', 'Non.']], 'Code Napoléon.'],
-    ['La présomption d’innocence signifie :', 'Toute personne est innocente tant que sa culpabilité n’est pas établie', [['On est coupable tant qu’on n’a pas prouvé son innocence', 'C’est l’inverse.'], ['Les mineurs ne sont jamais jugés', 'Non.']], 'Article 9 de la DDHC.'],
-    ['Les infractions pénales sont classées en :', 'Contraventions, délits et crimes', [['Petites, moyennes et grandes', 'Le droit a des noms plus précis.'], ['Civiles et commerciales', 'Non.']], 'Selon leur gravité.'],
-    ['« Pas de crime, pas de peine sans loi », c’est :', 'Le principe de légalité', [['Le principe de précaution', 'Non : il concerne les risques.'], ['La prescription', 'Non.']], 'Nullum crimen, nulla poena sine lege.'],
-    ['Pour devenir avocat, il faut notamment obtenir :', 'Le CAPA, après l’examen d’entrée au CRFPA', [['Le permis bateau', 'Non.'], ['Le bac seulement', 'Il faut de longues études après.']], 'Après un master en droit en général.'],
-    ['Les magistrats sont formés à :', 'L’École nationale de la magistrature (ENM)', [['L’École de l’air', 'Non.'], ['Polytechnique', 'Non.']], 'À Bordeaux.']
+    ['Le Code civil a été promulgué en :', '1804', [['1958', 'Ami a sorti sa loupe : aucune trace de bonne réponse ici.'], ['1789', 'Cette réponse a de l’imagination. Beaucoup trop, même.']], 'Code Napoléon.'],
+    ['La présomption d’innocence signifie :', 'Toute personne est innocente tant que sa culpabilité n’est pas établie', [['On est coupable tant qu’on n’a pas prouvé son innocence', 'C’est l’inverse.'], ['Les mineurs ne sont jamais jugés', 'Pas loin… enfin si, très loin. À peu près à l’autre bout du pays.']], 'Article 9 de la DDHC.'],
+    ['Les infractions pénales sont classées en :', 'Contraventions, délits et crimes', [['Petites, moyennes et grandes', 'Le droit a des noms plus précis.'], ['Civiles et commerciales', 'Ami applaudit l’effort, puis il pose ses ailes sur sa tête.']], 'Selon leur gravité.'],
+    ['« Pas de crime, pas de peine sans loi », c’est :', 'Le principe de légalité', [['Le principe de précaution', 'Non : il concerne les risques.'], ['La prescription', 'Cette réponse mériterait un prix. Le prix de la plus belle sortie de route.']], 'Nullum crimen, nulla poena sine lege.'],
+    ['Pour devenir avocat, il faut notamment obtenir :', 'Le CAPA, après l’examen d’entrée au CRFPA', [['Le permis bateau', 'Cette réponse est partie faire un tour et elle a oublié de revenir.'], ['Le bac seulement', 'Il faut de longues études après.']], 'Après un master en droit en général.'],
+    ['Les magistrats sont formés à :', 'L’École nationale de la magistrature (ENM)', [['L’École de l’air', 'Ami a vérifié trois fois : c’est toujours non. Mais c’était audacieux.'], ['Polytechnique', 'Celle-là, même un GPS en panne ne l’aurait pas choisie.']], 'À Bordeaux.']
   ];
 
   // ═══════════════ ASTROPHYSIQUE ═══════════════
   const ASTRO = [
     ['Quelle réaction fait briller le Soleil ?', 'La fusion de l’hydrogène en hélium', [['La combustion du charbon', 'Le Soleil n’est pas un barbecue géant.'], ['La fission de l’uranium', 'La fission, c’est dans les centrales nucléaires.']], 'Fusion nucléaire au cœur de l’étoile.'],
-    ['L’âge estimé de l’Univers est d’environ :', '13,8 milliards d’années', [['4,6 milliards d’années', 'Ça, c’est l’âge du système solaire.'], ['6 000 ans', 'Non.']], 'D’après le fond diffus cosmologique.'],
+    ['L’âge estimé de l’Univers est d’environ :', '13,8 milliards d’années', [['4,6 milliards d’années', 'Ça, c’est l’âge du système solaire.'], ['6 000 ans', 'Bien tenté ! Ami donne 10 pour le courage et 0 pour le résultat.']], 'D’après le fond diffus cosmologique.'],
     ['Une étoile comme le Soleil finira en :', 'Naine blanche', [['Trou noir', 'Il faut une étoile bien plus massive.'], ['Étoile à neutrons', 'Il faut aussi plus de masse.']], 'Après une phase de géante rouge.'],
     ['La première exoplanète autour d’une étoile semblable au Soleil a été découverte en :', '1995', [['1969', '1969, c’est le premier pas sur la Lune.'], ['2020', 'Bien plus tôt !']], '51 Pegasi b, par Michel Mayor et Didier Queloz.'],
     ['Le fond diffus cosmologique a une température d’environ :', '2,7 K', [['273 K', '273 K, c’est 0 °C.'], ['5 800 K', 'Ça, c’est la surface du Soleil.']], 'Lumière la plus ancienne de l’Univers.'],
     ['Notre galaxie s’appelle :', 'La Voie lactée', [['Andromède', 'Andromède est notre grande voisine.'], ['La Grande Ourse', 'C’est une constellation.']], 'Galaxie spirale.'],
-    ['Pour devenir astrophysicien, il faut en général :', 'Un doctorat (bac + 8) en astrophysique', [['Un CAP', 'Non.'], ['Un télescope et c’est tout', 'Il faut aussi beaucoup de maths et de physique.']], 'Master puis thèse.']
+    ['Pour devenir astrophysicien, il faut en général :', 'Un doctorat (bac + 8) en astrophysique', [['Un CAP', 'Cette réponse a pris le mauvais train. Direction : nulle part, terminus : raté.'], ['Un télescope et c’est tout', 'Il faut aussi beaucoup de maths et de physique.']], 'Master puis thèse.']
   ];
   const ASTRO_GEN = [
     r => { const [nom, d] = un(r, [['la Lune', 384000], ['le Soleil', 150e6], ['Mars (au plus près)', 54.6e6]]), t = d / 300000;

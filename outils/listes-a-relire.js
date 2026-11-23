@@ -8,7 +8,7 @@
 const fs = require('fs'), path = require('path');
 const ICI = path.join(__dirname, '..'), w = {};
 global.window = w;
-for(const f of ['js/juge.js', 'js/maths.js', 'js/vannes-cash.js', 'js/vannes-ironie.js', 'js/sciences.js', 'js/pieges.js', 'js/anglais.js', 'js/clash.js', 'js/histoires.js', 'js/parcours.js', 'js/rigolade.js', 'js/clash-plus.js', 'js/matieres.js', 'js/mat-francais.js', 'js/mat-histoire.js', 'js/mat-svt-pc.js', 'js/mat-sup.js', 'js/epreuves.js', 'js/epreuves-spe.js', 'js/epreuves-plus.js', 'js/epreuves-oraux.js'])
+for(const f of ['js/juge.js', 'js/maths.js', 'js/vannes-cash.js', 'js/vannes-ironie.js', 'js/sciences.js', 'js/pieges.js', 'js/anglais.js', 'js/clash.js', 'js/histoires.js', 'js/parcours.js', 'js/rigolade.js', 'js/clash-plus.js', 'js/matieres.js', 'js/mat-francais.js', 'js/mat-histoire.js', 'js/mat-svt-pc.js', 'js/mat-sup.js', 'js/epreuves.js', 'js/epreuves-spe.js', 'js/epreuves-plus.js', 'js/epreuves-oraux.js', 'js/epreuves-pro.js'])
   new Function('window', fs.readFileSync(path.join(ICI, f), 'utf8'))(w);
 // Même empreinte que le jeu (js/jeu.js, fnv1a) : c'est le nom du MP3 sur le serveur des voix.
 const fnv1a = s => { let h = 0x811c9dc5; for(let i = 0; i < s.length; i++){ h ^= s.charCodeAt(i); h = Math.imul(h, 0x01000193); } return (h >>> 0).toString(36); };

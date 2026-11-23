@@ -74,6 +74,8 @@
     if(typeof o.PRIX === 'string' && o.PRIX.length <= 20) r.PRIX = o.PRIX;
     for(const k of ['THEMES_GRATUITS', 'JEUX_GRATUITS', 'COINS_PLUS']){ const l = liste(o[k]); if(l) r[k] = l; }
     if(Number.isInteger(o.JOUEURS_GRATUITS) && o.JOUEURS_GRATUITS >= 1 && o.JOUEURS_GRATUITS <= 6) r.JOUEURS_GRATUITS = o.JOUEURS_GRATUITS;
+    // v5.85 : liens Stripe réglés dans le coin admin du serveur (seulement des adresses Stripe en https).
+    for(const k of ['LIEN_PAIEMENT', 'LIEN_GESTION']) if(typeof o[k] === 'string' && (o[k] === '' || /^https:\/\/(buy|billing)\.stripe\.com\/[A-Za-z0-9_\/?=&.-]{1,200}$/.test(o[k]))) r[k] = o[k];
     return r;
   }
 
@@ -169,6 +171,42 @@
     base.abo.jeton = r.actif ? r.jeton : ''; base.abo.verifie = jour(); garder();
     droits = await verifierJeton(base.abo.jeton, base.abo.code);
     if(plus() !== avant && !partie) accueil();
+  }
+
+  // ── v5.85 : l'offre réglée dans le coin admin du serveur (serveur-php/offre.php) ──
+  // Elle n'est appliquée que si sa signature est valide (clé publique du jeu) : personne ne peut la fabriquer
+  // dans le navigateur. Elle passe avant js/offre.js et config-site.js. Elle ne donne jamais Plus à personne :
+  // Plus reste réservé au certificat signé de l'abonnement. Une copie signée est gardée pour le hors-ligne.
+  const CLE_OFFRE = 'amidesmots:offre';
+  async function verifierOffre(texte, sig){
+    try{
+      if(typeof texte !== 'string' || typeof sig !== 'string' || texte.length > 20000 || !CONFIG.CLE_PUBLIQUE || !(window.crypto && crypto.subtle)) return null;
+      const cle = await crypto.subtle.importKey('jwk', CONFIG.CLE_PUBLIQUE, { name:'ECDSA', namedCurve:'P-256' }, false, ['verify']);
+      if(!await crypto.subtle.verify({ name:'ECDSA', hash:'SHA-256' }, cle, b64u(sig), new TextEncoder().encode('offre|' + texte))) return null;
+      const o = offreLue(JSON.parse(texte));
+      return Object.keys(o).length ? o : null;
+    }catch(e){ return null; }
+  }
+  // Applique une offre signée ; dit si le jeu doit se redessiner (payant allumé / éteint).
+  async function appliquerOffre(texte, sig){
+    const o = await verifierOffre(texte, sig); if(!o) return false;
+    const avant = CONFIG.MODE_PAYANT; Object.assign(CONFIG, o);
+    try{ localStorage.setItem(CLE_OFFRE, JSON.stringify({ offre:texte, sig })); }catch(e){}
+    if(CONFIG.MODE_PAYANT && !avant){ droits = await verifierJeton(base.abo.jeton, base.abo.code); await rafraichir(true); }
+    return true;
+  }
+  async function offreGardee(){
+    try{ const g = JSON.parse(localStorage.getItem(CLE_OFFRE) || 'null'); if(g) return await appliquerOffre(g.offre, g.sig); }catch(e){}
+    return false;
+  }
+  async function offreServeur(){
+    if(!CONFIG.SERVEUR || !CONFIG.CLE_PUBLIQUE) return false;
+    try{
+      const r = await fetch(String(CONFIG.SERVEUR).replace(/\/?$/, '/') + 'offre.php', { cache:'no-cache' });
+      if(!r.ok) return false;
+      const d = await r.json();
+      return d && d.offre ? await appliquerOffre(d.offre, d.sig) : false;
+    }catch(e){ return false; }
   }
 
   // ── Petits outils ─────────────────────────────────────────────────
@@ -3190,7 +3228,7 @@
   function examensAccueil(){
     qz = null; blanc = null; const E = window.EPREUVES, e = etatMatieres(); if(!E) return matieresAccueil();
     poser(barre('matieres') + '<main class="coin-anglais matieres-ecran"><h2>📝 Brevet & bac blancs</h2><p class="pieges-intro">Construits comme les vrais sujets 2026 : mêmes parties, mêmes types d’exercices, même barème. Une note sur 20 par épreuve, puis la moyenne avec les coefficients officiels. Et Ami qui vanne chaque erreur. 😏</p>' +
-      ongletsExamens('examens') + '<div class="cartes-anglais">' + Object.entries(E.BLANCS).filter(([k, x]) => !x.tle && !x.techno && !/^(oral-dnb|oral-eaf|grand-oral)$/.test(k)).map(([k, x]) => '<button class="carte-anglais" data-a="examen-go" data-v="' + k + '"><span class="ic">' + x.ic + '</span><strong>' + esc(x.titre) + '</strong><small>' + esc(x.niveau) + ' · ' +
+      ongletsExamens('examens') + '<div class="cartes-anglais">' + Object.entries(E.BLANCS).filter(([k, x]) => !x.tle && !x.techno && !x.pro && !/^(oral-dnb|oral-eaf|grand-oral)$/.test(k)).map(([k, x]) => '<button class="carte-anglais" data-a="examen-go" data-v="' + k + '"><span class="ic">' + x.ic + '</span><strong>' + esc(x.titre) + '</strong><small>' + esc(x.niveau) + ' · ' +
         x.epreuves.map(p => esc(E.EPREUVES[p[0]].titre)).join(', ') + (e.notes['blanc-' + k] != null ? ' · dernière note : ' + virg(e.notes['blanc-' + k]) + '/20' : '') + '</small></button>').join('') + '</div>' +
       (E.SPES ? '<section class="domaine"><h3>🎒 Terminale : spécialités et philosophie</h3><div class="cartes-anglais"><button class="carte-anglais" data-a="bac-tle"><span class="ic">🎓</span><strong>Bac blanc de terminale</strong><small>2 spécialités au choix + philosophie, coefficients officiels' +
         (e.notes['blanc-bac-tle'] != null ? ' · dernière note : ' + virg(e.notes['blanc-bac-tle']) + '/20' : '') + '</small></button>' +
@@ -3198,6 +3236,9 @@
           (e.notes['blanc-' + k] != null ? ' · ' + virg(e.notes['blanc-' + k]) + '/20' : '') + '</small></button>').join('') + '</div></section>' : '') +
       (E.BLANCS['grand-oral'] ? '<section class="domaine"><h3>🎤 Les oraux</h3><div class="cartes-anglais">' + ['oral-dnb', 'oral-eaf', 'grand-oral'].map(k => { const x = E.BLANCS[k], ep = E.EPREUVES[x.epreuves[0][0]];
         return '<button class="carte-anglais" data-a="examen-go" data-v="' + k + '"><span class="ic">🎤</span><strong>' + esc(x.titre) + '</strong><small>' + esc(x.niveau) + ' · ' + esc(ep.duree) + '</small></button>'; }).join('') + '</div></section>' : '') +
+      (E.BLANCS['bac-pro'] ? '<section class="domaine"><h3>🔧 Voie professionnelle</h3><div class="cartes-anglais">' + ['bac-pro', 'cap'].map(k => { const x = E.BLANCS[k];
+        return '<button class="carte-anglais" data-a="examen-go" data-v="' + k + '"><span class="ic">' + x.ic + '</span><strong>' + esc(x.titre) + '</strong><small>' + x.epreuves.map(p => esc(E.EPREUVES[p[0]].titre.replace(/^(Bac pro|CAP) · /, ''))).join(', ') +
+          (e.notes['blanc-' + k] != null ? ' · ' + virg(e.notes['blanc-' + k]) + '/20' : '') + '</small></button>'; }).join('') + '</div></section>' : '') +
       (E.SERIES_TECHNO ? '<section class="domaine"><h3>🛠️ Bac technologique</h3><div class="cartes-anglais">' + Object.entries(E.BLANCS).filter(([, x]) => x.techno).map(([k, x]) => '<button class="carte-anglais" data-a="examen-go" data-v="' + k + '"><span class="ic">' + x.ic + '</span><strong>' + esc(x.titre) + '</strong><small>' +
         x.epreuves.map(p => esc(E.EPREUVES[p[0]].titre)).join(' + ') + (e.notes['blanc-' + k] != null ? ' · ' + virg(e.notes['blanc-' + k]) + '/20' : '') + '</small></button>').join('') + '</div></section>' : '') + '</main>');
   }
@@ -3642,12 +3683,16 @@
   const params = new URLSearchParams(location.search), lienAller = params.get('aller'), lienDefi = params.get('defi'), lienSalon = params.get('salon');
   if(retourPaiement) try{ history.replaceState(null, '', location.pathname); }catch(e){}
   // Au lancement : le certificat gardé est vérifié (hors connexion aussi), puis le serveur est consulté.
-  window.AmiDesMotsPret = verifierJeton(base.abo.jeton, base.abo.code).then(d => { droits = d; if(d && !partie && !lienAller && !lienDefi && !lienSalon && !depuis3D()) accueil(); return rafraichir(retourPaiement); });
+  // v5.85 : l'offre signée (gardée, puis celle du serveur) est appliquée avant ; l'écran se redessine si elle change.
+  const redessiner = () => { if(!partie && !lienAller && !lienDefi && !lienSalon && !depuis3D()) accueil(); };
+  window.AmiDesMotsPret = offreGardee().then(g => { if(g) redessiner(); return verifierJeton(base.abo.jeton, base.abo.code); })
+    .then(d => { droits = d; if(d) redessiner(); return rafraichir(retourPaiement); })
+    .then(() => offreServeur()).then(chg => { if(chg) redessiner(); });
   // Le webhook Stripe peut arriver quelques secondes après le retour.
   if(retourPaiement) [5000, 15000, 40000].forEach(ms => setTimeout(() => { if(!plus()) rafraichir(true); }, ms));
   if(boucheDispo()) try{ Articulation.init(); }catch(e){}
   if('serviceWorker' in navigator && location.protocol === 'https:') navigator.serviceWorker.register('sw.js').catch(() => {});
-  window.AmiDesMots = { base, J, affiche, fnv1a, urlVoix, accueil, themes, choisirJeu, commencer, lettresPossibles, distincts, motsDu, aDire, CATALOGUE, MECAS, disponible, nomJeu, aRevoir, noter, jour, defi, revoir, lecon, astuces, aToi, blague, carnet, noteVoix, sansEmojis, direPhrase, direEcoute, iaPrecharger, iaPrendre, vanneObjets, avecArticle, astuce, niveauHumour, fousRires, reglages, CONFIG, COINS, coinOuvert, offreLue, facile, nbMots, restaurer, verifierJeton, plus, ecranPlus, formatCode, rafraichir,
+  window.AmiDesMots = { CLE_OFFRE, verifierOffre, base, J, affiche, fnv1a, urlVoix, accueil, themes, choisirJeu, commencer, lettresPossibles, distincts, motsDu, aDire, CATALOGUE, MECAS, disponible, nomJeu, aRevoir, noter, jour, defi, revoir, lecon, astuces, aToi, blague, carnet, noteVoix, sansEmojis, direPhrase, direEcoute, iaPrecharger, iaPrendre, vanneObjets, avecArticle, astuce, niveauHumour, fousRires, reglages, CONFIG, COINS, coinOuvert, offreLue, facile, nbMots, restaurer, verifierJeton, plus, ecranPlus, formatCode, rafraichir,
     get etat(){ return J(); } };
   garder();
   if(lienDefi || lienSalon){

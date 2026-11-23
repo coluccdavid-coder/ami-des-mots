@@ -1,5 +1,28 @@
 # Coin admin — choisir ce qui est gratuit et ce qui est dans Plus
 
+## ⭐ Nouveau (v5.85) : le compte admin du serveur — réglage EN DIRECT
+Une fois le serveur PHP en ligne (OVH), le plus simple est **`https://ton-domaine.fr/serveur/admin/`** :
+- **seul l'admin y entre** (mot de passe, gardé haché dans `config-ami.php` hors du dossier `www`) ;
+- section **💰 Offre et paiement** : activer le payant, prix, nombre de joueurs gratuits,
+  **lien de paiement Stripe** et **portail client Stripe** (seules des adresses `https://buy.stripe.com/…` /
+  `https://billing.stripe.com/…` sont acceptées), **coins réservés à Plus**, **thèmes et jeux gratuits** ;
+- **💾 Enregistrer et publier** : les joueurs reçoivent le changement à la prochaine ouverture du jeu,
+  **sans toucher au dépôt GitHub**.
+
+Sécurité : le serveur **signe** les réglages avec sa clé privée ; le jeu ne les applique que si la signature est
+bonne (clé publique `CLE_PUBLIQUE`). Personne ne peut fabriquer une fausse offre depuis son navigateur.
+Ces réglages ne disent que **ce qui est payant** : ils n'ouvrent jamais Plus à personne (Plus = abonnement
+Stripe vérifié, certificat signé). Ils passent avant `js/offre.js` et `config-site.js`.
+Le serveur n'accepte que les thèmes, jeux et coins qui existent (`serveur-php/admin/catalogue.json`,
+refait par `npm run verifier`).
+
+À savoir honnêtement : le jeu est un site statique ; un petit malin peut toujours bricoler son navigateur pour
+voir un coin payant. Ce qui est vraiment protégé côté serveur : l'abonnement, l'IA des vannes, le salon.
+
+Sans serveur, la méthode ci-dessous (fichier `js/offre.js`) marche toujours.
+
+## Méthode sans serveur : `admin.html`
+
 Ouvre **`admin.html`** (en local : `http://localhost:8765/admin.html` ; en ligne : `https://ton-site/admin.html`).
 
 ## Ce qu'on peut régler

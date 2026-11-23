@@ -1,0 +1,11 @@
+Ami des mots 5.84.0
+
+🔧 Voie professionnelle
+- Bac pro blanc (épreuves générales) : français, histoire-géo-EMC, maths et physique-chimie, PSE (secours, risques professionnels, budget),
+  économie-droit / économie-gestion (contrat de travail, prud'hommes, facture et TVA), langue vivante (anglais professionnel).
+- CAP blanc (épreuves générales) : français et HG-EMC, maths et physique-chimie, PSE.
+- Espace Officiel : pages du bac pro et du CAP, base nationale des sujets de l'enseignement professionnel.
+- Les épreuves professionnelles (propres à chaque métier) ne sont pas couvertes : leurs sujets ne sont pas publics, sauf en CAP.
+
+😂 Vannes : 124 vannes plates (« Non. ») remplacées par de vraies vannes ; un test vérifie qu'il n'en reste plus aucune.
+Tests : 127 tests unitaires OK.

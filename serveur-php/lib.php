@@ -104,6 +104,14 @@ function ami_signer_certificat(string $code, string $finIso): string {
   if (!openssl_sign($charge, $der, $cle, OPENSSL_ALGO_SHA256)) throw new RuntimeException('signature impossible');
   return $charge . '.' . ami_b64u(ami_der_vers_brut($der));
 }
+// v5.85 : signature d'un texte quelconque (réglages de l'offre). Le jeu la vérifie avec la clé publique.
+function ami_signer_texte(string $texte): string {
+  $pem = @file_get_contents(ami_config()['cle_privee_pem'] ?? '');
+  $cle = $pem ? openssl_pkey_get_private($pem) : false;
+  if (!$cle) throw new RuntimeException('clé privée absente');
+  if (!openssl_sign($texte, $der, $cle, OPENSSL_ALGO_SHA256)) throw new RuntimeException('signature impossible');
+  return ami_b64u(ami_der_vers_brut($der));
+}
 function ami_der_vers_brut(string $der): string {
   $i = 2; if (ord($der[1]) & 0x80) $i += ord($der[1]) & 0x7f;
   $lire = function () use ($der, &$i) { $i++; $n = ord($der[$i]); $i++; $v = substr($der, $i, $n); $i += $n; return $v; };

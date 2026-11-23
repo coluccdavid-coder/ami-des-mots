@@ -86,7 +86,7 @@
   function afficher(){
     const o = offre, b = bilan(o), change = !pareil(o, publiee());
     $('#app').innerHTML =
-      '<header><h1>🛠️ Coin admin — Gratuit ou Plus</h1><p>Coche ce qui est <strong>gratuit</strong>. Ce qui n’est pas coché est réservé à <strong>Plus ✨</strong>.</p></header>' +
+      '<header><h1>🛠️ Coin admin — Gratuit ou Plus</h1><p>Coche ce qui est <strong>gratuit</strong>. Ce qui n’est pas coché est réservé à <strong>Plus ✨</strong>.</p><p>💡 Avec le serveur en ligne, règle tout <strong>en direct</strong> (payant, prix, liens Stripe) dans le compte admin protégé : <code>https://ton-domaine.fr/serveur/admin/</code> (voir COIN-ADMIN.md).</p></header>' +
       '<section class="resume" aria-live="polite"><div><b>' + b.themes + '/' + b.totalThemes + '</b> thèmes gratuits</div><div><b>' + b.jeux + '/' + b.totalJeux + '</b> jeux gratuits</div><div><b>' + b.coins + '/' + b.totalCoins + '</b> coins gratuits</div><div><b>' + o.JOUEURS_GRATUITS + '</b> joueur' + (o.JOUEURS_GRATUITS > 1 ? 's' : '') + ' gratuit' + (o.JOUEURS_GRATUITS > 1 ? 's' : '') + '</div></section>' +
       (b.alertes.length ? '<div class="alerte" role="alert">⚠️ ' + b.alertes.map(esc).join('<br>⚠️ ') + '</div>' : '') +
       '<section><h2>💶 L’offre</h2>' +
