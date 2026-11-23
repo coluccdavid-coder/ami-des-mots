@@ -929,7 +929,8 @@ body::after{
   animation:poussiere3d 42s linear infinite;
 }
 @keyframes poussiere3d{to{background-position:360px 320px,-420px 380px,510px -470px,-390px 430px,620px -540px}}
-#app{transform-style:preserve-3d}
+/* v5.75 : « preserve-3d » sur #app faisait de #app le repère des éléments « fixes » : la bulle d’erreur et le bouton « J’ai compris » se retrouvaient sous l’écran ou les uns sur les autres. */
+#app{transform-style:flat}
 .ciel{
   isolation:isolate;
   background:
@@ -1741,3 +1742,54 @@ button:focus-visible,a:focus-visible,select:focus-visible,input:focus-visible,[t
 .potes select{ font:inherit; font-weight:800; padding:8px 30px 8px 12px; border-radius:12px; border:1px solid var(--bord); background:rgba(255,255,255,.12); color:#fff; }
 .potes select option{ color:var(--encre); background:#fff; }
 /* v5.74 : les boutons 🔊 🐢 🎤 restent (exception voulue : on garde ce qu'il faut écouter). */
+/* v5.75 : accueil simplifié — 4 grandes portes */
+.portes{ display:grid; grid-template-columns:repeat(2, minmax(0, 1fr)); gap:14px; margin:14px 0; }
+.porte{ position:relative; overflow:hidden; display:grid; grid-template-columns:auto 1fr; grid-template-rows:auto auto; column-gap:12px; align-items:center; text-align:left;
+  min-height:96px; padding:16px 18px; border:0; border-radius:22px; color:#1b1240; font:inherit; cursor:pointer; box-shadow:0 7px 0 rgba(0,0,0,.18), 0 14px 30px rgba(6,5,31,.35);
+  transition:transform .15s, filter .15s; }
+.porte:hover{ transform:translateY(-3px); filter:brightness(1.07); } .porte:active{ transform:translateY(2px); box-shadow:0 3px 0 rgba(0,0,0,.18); }
+.porte-ic{ grid-row:1 / span 2; font-size:2.4rem; line-height:1; filter:drop-shadow(0 4px 6px rgba(0,0,0,.25)); }
+.porte strong{ font-size:1.3rem; font-weight:1000; } .porte small{ font-size:.85rem; font-weight:800; opacity:.8; }
+.porte-mots{ background:linear-gradient(135deg, #7ee8fa, #80ff72); } .porte-maths{ background:linear-gradient(135deg, #b69cff, #6ad7ff); }
+.porte-sciences{ background:linear-gradient(135deg, #ffd36b, #ff9a8b); } .porte-battle{ background:linear-gradient(135deg, #ff4e6a, #ffb347); }
+@media (max-width:520px){ .portes{ gap:10px; } .porte{ grid-template-columns:1fr; text-align:center; justify-items:center; padding:14px 10px; min-height:120px; }
+  .porte-ic{ grid-row:auto; font-size:2.1rem; margin-bottom:4px; } .porte strong{ font-size:1.1rem; } .porte small{ font-size:.74rem; } }
+/* v5.75 : résumé de la semaine (parents) et avis sur les vannes */
+.semaine-barres{ display:grid; grid-template-columns:repeat(7, 1fr); gap:8px; height:90px; align-items:end; margin:6px 0 12px; }
+.jour-barre{ display:grid; grid-template-rows:1fr auto; height:100%; text-align:center; }
+.jour-barre i{ align-self:end; display:block; min-height:4px; border-radius:8px 8px 3px 3px; background:linear-gradient(180deg, #2BE0B0, #7B5CFF); }
+.jour-barre small{ font-weight:900; opacity:.7; margin-top:4px; }
+.avis-vanne{ display:flex; gap:8px; flex-wrap:wrap; margin:4px 0 8px; }
+.avis-vanne .plein{ background:#ffd36b; color:#2a2156; }
+a.carte-anglais{ text-decoration:none; color:inherit; }
+.emoji-titre{ display:inline-block; -webkit-text-fill-color:initial; color:#fff; background:none!important; -webkit-background-clip:border-box; background-clip:border-box; letter-spacing:0; }
+html.gfx-ultra main h2 .emoji-titre{ -webkit-text-fill-color:initial; }
+/* v5.75 : après une erreur, tout se voit — la bulle au-dessus, puis une rangée de boutons en dessous
+   (« Je la garde », « J'ai compris — continuer », « Pas drôle »), sans rien qui se chevauche. */
+.apres-erreur{ position:fixed; z-index:9; left:50%; bottom:calc(14px + env(safe-area-inset-bottom)); transform:translateX(-50%);
+  display:flex; gap:10px; align-items:center; justify-content:center; flex-wrap:wrap; width:min(760px, calc(100vw - 24px)); pointer-events:none; }
+.apres-erreur > *{ pointer-events:auto; }
+.apres-erreur .continuer-erreur:not([hidden]), .apres-erreur .garder-vanne:not([hidden]), .apres-erreur .pas-drole:not([hidden]){
+  position:static!important; inset:auto!important; transform:none!important; margin:0!important; animation:none; }
+.apres-erreur .continuer-erreur:not([hidden]){ order:2; flex:0 1 auto; }
+.apres-erreur .garder-vanne:not([hidden]){ order:1; } .apres-erreur .pas-drole:not([hidden]){ order:3; }
+.partie .bulle.ko, .partie .bulle.ok, .bulle.ko, .bulle.ok{ bottom:calc(86px + env(safe-area-inset-bottom))!important; max-height:calc(46vh)!important; overflow:auto; }
+@media (max-width:560px){ .apres-erreur{ gap:8px; } .apres-erreur .continuer-erreur:not([hidden]){ order:0; flex:1 1 100%; }
+  .partie .bulle.ko, .bulle.ko{ bottom:calc(126px + env(safe-area-inset-bottom))!important; } }
+/* La place pour la bulle : on peut toujours faire défiler jusqu'aux réponses. */
+.partie:has(.bulle:not(:empty)){ padding-bottom:calc(220px + env(safe-area-inset-bottom)); }
+/* v5.75 : même raison pour le plateau de jeu : pas de contexte 3D qui « capture » la bulle et les boutons fixes. */
+.partie, main.partie{ transform-style:flat!important; }
+@media (min-width:700px){ .apres-erreur{ flex-wrap:nowrap; } }
+.apres-erreur .petit-bouton{ white-space:nowrap; }
+/* v5.75 : chapitres de maths rangés en blocs par domaine */
+.domaines{ display:grid; grid-template-columns:repeat(auto-fill, minmax(min(100%, 300px), 1fr)); gap:14px; margin:12px 0 18px; align-items:start; }
+.domaine{ background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.14); border-radius:20px; padding:12px 12px 14px; }
+.domaine h3{ margin:2px 6px 10px; font-size:1.05rem; display:flex; justify-content:space-between; align-items:center; }
+.domaine h3 small{ font-size:.75rem; font-weight:900; opacity:.7; background:rgba(255,255,255,.12); border-radius:20px; padding:2px 9px; }
+.liste-chap{ display:grid; gap:7px; }
+.chap{ display:flex; justify-content:space-between; align-items:center; gap:10px; width:100%; text-align:left; padding:11px 14px; border-radius:14px;
+  border:1px solid rgba(255,255,255,.16); background:rgba(255,255,255,.08); color:inherit; font:inherit; font-weight:800; cursor:pointer; transition:background .15s, transform .15s; }
+.chap:hover{ background:rgba(255,255,255,.16); transform:translateX(3px); }
+.chap em{ font-style:normal; font-size:.82rem; opacity:.85; white-space:nowrap; }
+.chap.bientot{ opacity:.5; cursor:default; }
