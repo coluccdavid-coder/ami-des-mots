@@ -1740,3 +1740,4 @@ button:focus-visible,a:focus-visible,select:focus-visible,input:focus-visible,[t
 .potes-fin .podium small{ display:block; font-size:.8rem; opacity:.8; }
 .potes select{ font:inherit; font-weight:800; padding:8px 30px 8px 12px; border-radius:12px; border:1px solid var(--bord); background:rgba(255,255,255,.12); color:#fff; }
 .potes select option{ color:var(--encre); background:#fff; }
+/* v5.74 : les boutons 🔊 🐢 🎤 restent (exception voulue : on garde ce qu'il faut écouter). */

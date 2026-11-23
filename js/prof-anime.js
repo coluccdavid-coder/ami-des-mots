@@ -85,7 +85,8 @@
     opts = opts || {};
     if(!opts.sansBulle) bulle(texte.length > 140 ? texte.slice(0, 137) + '…' : texte, opts.ms);
     const t = sansEmojis(texte);
-    if(!voixOn || !t || !window.speechSynthesis){ simulerParole(t); return; }
+    const coupees = !!(window.CONFIG_JEU && window.CONFIG_JEU.VOIX_COUPEES);   // v5.73 : voix débranchées (le bec bouge quand même)
+    if(coupees || !voixOn || !t || !window.speechSynthesis){ simulerParole(t); return; }
     try{
       speechSynthesis.cancel();
       const u = new SpeechSynthesisUtterance(t), v = voixFr(); if(v) u.voice = v;

@@ -1,0 +1,12 @@
+AMI DES MOTS — VERSION 5.73
+On reste sur l'essentiel pour l'instant (réglages dans js/config-site.js, rien n'est supprimé)
+
+- BOUCHE_CACHE:true — « Comment la bouche fait ce mot » (👄) n'apparaît plus nulle part.
+- VOIX_COUPEES:true — aucune voix : ni enregistrements des mots, ni voix du téléphone (consignes, vannes,
+  professeur). Les boutons 🔊 🐢 🎤 sont cachés ; les jeux qui demandent d'écouter (Écoute, Écoute le mot,
+  dictée, Répète après Ami, Le jeu des oreilles, questions « qu'a dit Ami ? ») sont retirés des menus et des
+  battles ; un ancien lien vers un jeu d'écoute ouvre un jeu d'images. Le prof hibou bouge toujours le bec,
+  sa bulle affiche le texte ; le réglage « La voix d'Ami » est caché.
+- MOTS_CITY_CACHE:true — Mots City n'est plus sur l'accueil ; mots-city.html ramène à l'accueil
+  (mots-city.html?voir=1 pour le tester).
+- Avec VILLAGE_CACHE (v5.72), tout revient en mettant false. Tests : 116/116.

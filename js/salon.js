@@ -8,7 +8,8 @@
   function questionsMixtes(graine, n){
     const R = window.RIGOLADE, P = window.PIEGES, A = window.ANGLAIS, rnd = R.hasardGraine(graine);
     const tirer = l => l[Math.floor(rnd() * l.length)];
-    const types = ['piege', 'battle', 'vf', 'oreille'], vus = new Set(), out = [];
+    // Questions « qu'a dit Ami ? » retirées seulement si JEUX_ECOUTE_CACHE.
+    const types = ['piege', 'battle', 'vf'].concat(window.CONFIG_JEU && CONFIG_JEU.JEUX_ECOUTE_CACHE ? [] : ['oreille']), vus = new Set(), out = [];
     for(let i = 0; out.length < n && i < n * 20; i++){
       const t = types[out.length % types.length]; let q = null;
       if(t === 'piege' && P){ const p = tirer(P.liste); q = { id:'p:' + p.id, consigne:'Comment dit-on en anglais ?', enonce:'🇫🇷 ' + p.fr, bon:p.bon, faux:p.faux.slice(0, 2), regle:p.regle, dire:p.bon }; }

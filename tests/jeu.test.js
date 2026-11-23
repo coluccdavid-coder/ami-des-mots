@@ -1599,6 +1599,21 @@ await test('v5.72 : village caché pour l’instant (réglage VILLAGE_CACHE), ri
   assert.match(lire('monde-3d.html'), /CONFIG_JEU\.VILLAGE_CACHE/); assert.ok(require('fs').existsSync(require('path').join(__dirname, '..', 'monde-3d.html')));
 });
 
+await test('v5.74 : l’essentiel — Ami se tait (consignes, vannes), mais les jeux d’écoute gardent leur voix ; 👄 et Mots City cachés', () => {
+  const C = lire('js/config-site.js'); for(const k of ['VOIX_COUPEES:true', 'JEUX_ECOUTE_CACHE:false', 'BOUCHE_CACHE:true', 'MOTS_CITY_CACHE:true']) assert.ok(C.includes(k), k);
+  const w = page(), A = w.AmiDesMots, $ = s => w.document.querySelector(s);
+  Object.assign(A.CONFIG, { VOIX_COUPEES:true, JEUX_ECOUTE_CACHE:false, BOUCHE_CACHE:true, MOTS_CITY_CACHE:true }); A.base.ui = 'fr'; A.base.cible = 'en';
+  const dits = []; w.speechSynthesis = { getVoices:() => [{ name:'Google', lang:'en-US' }, { name:'Google', lang:'fr-FR' }], cancel(){}, resume(){}, speak(u){ dits.push(u.text); }, addEventListener(){} };
+  w.SpeechSynthesisUtterance = function(t){ this.text = t; };
+  A.accueil();
+  assert.ok(!$('.mots-city-accueil'), 'pas de Mots City'); assert.ok(!$('[data-a="bouche"]'), 'pas de 👄');
+  assert.ok($('[data-a="ecouter"]'), 'le 🔊 du mot du jour reste');
+  A.choisirJeu('animaux'); assert.ok(w.document.querySelector('[data-v^="ecoute"]'), 'les jeux d’écoute restent dans le menu');
+  assert.ok(w.SALON.questionsMixtes(7, 40).some(q => /^o:/.test(q.id)), 'les questions « qu’a dit Ami ? » restent');
+  A.direPhrase('Ami commente', 'fr'); A.direEcoute('Listen to me', 'en');
+  return new Promise(r => setTimeout(() => { assert.deepStrictEqual(dits, ['Listen to me'], 'seul ce qu’il faut écouter est dit'); r(); }, 200));
+});
+
 console.log(`\n${ok} réussi(s), ${ko} échoué(s)`);
 process.exit(ko ? 1 : 0);
 })();

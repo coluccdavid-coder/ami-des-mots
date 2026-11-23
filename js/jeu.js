@@ -52,6 +52,15 @@
     // Coins réservés à Plus (choisis dans admin.html, rangés dans js/offre.js).
     COINS_PLUS:[]
   }, offreLue(window.OFFRE_AMI), window.CONFIG_JEU || {});
+  // v5.73 : « l'essentiel pour l'instant » (js/config-site.js). Rien n'est supprimé, tout revient en mettant false.
+  // VOIX_COUPEES : Ami ne commente plus à voix haute (consignes, vannes, répliques, professeur).
+  // Exception voulue (v5.74) : les jeux où il faut écouter gardent leur voix (mots enregistrés, dictée,
+  // Répète après Ami, jeu des oreilles, « qu'a dit Ami ? ») ainsi que tous les boutons 🔊 🐢 🎤.
+  const voixCoupee = () => !!CONFIG.VOIX_COUPEES;
+  const jeuxEcouteCaches = () => !!CONFIG.JEUX_ECOUTE_CACHE;
+  const boucheDispo = () => !!window.Articulation && !CONFIG.BOUCHE_CACHE; // « Comment la bouche fait ce mot »
+  const JEUX_A_ECOUTER = ['ecoute', 'ecoute_mot'];
+
 
   // Avec le serveur PHP, l'abonnement et les vannes IA passent par lui (sauf adresse donnée à part).
   if(CONFIG.SERVEUR){ const b = String(CONFIG.SERVEUR).replace(/\/?$/, '/'); if(!CONFIG.API_ABONNEMENT) CONFIG.API_ABONNEMENT = b + 'abonnement.php'; if(!CONFIG.API_VANNES) CONFIG.API_VANNES = b + 'vannes.php'; if(!CONFIG.API_VANNES_DIRECT) CONFIG.API_VANNES_DIRECT = b + 'vannes-direct.php'; }
@@ -329,10 +338,15 @@
     return true;
   }
   // Les consignes (dans la langue du joueur) sont lues par la voix du téléphone.
-  function lireConsigne(texte){ if(texte && !voixNavigateur(base.ui, texte)) silence(); }
+  function lireConsigne(texte){ if(voixCoupee()) return; if(texte && !voixNavigateur(base.ui, texte)) silence(); }
   // Une phrase (vanne + correction) n'a pas d'enregistrement : on ne la demande
   // pas au serveur des voix, on la lit avec la voix du téléphone, sans chevauchement.
+  // direPhrase : Ami qui commente (coupé si VOIX_COUPEES) ; direEcoute : ce qu'il faut écouter (toujours là).
   function direPhrase(texte, langue, vitesse){
+    if(voixCoupee()) return;
+    direEcoute(texte, langue, vitesse);
+  }
+  function direEcoute(texte, langue, vitesse){
     try{ if(lecteur){ lecteur.pause(); lecteur = null; } }catch(e){}
     if(texte && !voixNavigateur(langue, texte, vitesse)) silence();
   }
@@ -498,7 +512,7 @@
         (piegesDispo() ? '<button class="gros pieges-accueil" data-a="' + (A_EN() ? 'anglais' : 'pieges') + '">🇬🇧 Le coin anglais <span>🪤🎤✍️</span></button>' : '') +
         (CONFIG.VILLAGE_CACHE ? '' : '<button class="gros village-accueil" data-a="village">🗺️ ' + {"fr": "Explorer le village", "en": "Explore the word village", "es": "Explorar el pueblo", "it": "Esplora il villaggio", "pt": "Explorar a aldeia", "de": "Das Wörterdorf erkunden", "ar": "استكشف قرية الكلمات", "tr": "Kelime köyünü keşfet", "pl": "Odkryj wioskę słów", "ja": "ことばの村を探検", "uk": "Дослідити селище слів", "ko": "단어 마을 탐험하기", "dz": "اكتشف قرية الكلمات", "ma": "اكتشف قرية الكلمات", "tn": "اكتشف قرية الكلمات", "kab": "Snirem tamdint n wawalen"}[base.ui] + '</button>' +
         '<button class="gros monde-3d-accueil" data-a="accueil-3d">🌍 ' + (base.ui === 'en' ? 'Play in the 3D village' : base.ui === 'fr' ? 'Jouer dans le village 3D' : '3D') + ' <span>🚀</span></button>') +
-        '<a class="gros monde-3d-accueil mots-city-accueil" href="mots-city.html">🛵 Mots City — l’anglais en rigolant <span>😂</span></a>' +
+        (CONFIG.MOTS_CITY_CACHE ? '' : '<a class="gros monde-3d-accueil mots-city-accueil" href="mots-city.html">🛵 Mots City — l’anglais en rigolant <span>😂</span></a>') +
         (installation ? '<button class="moyen plein installer-appli" data-a="installer">📲 Installer l’appli sur cet appareil</button>' : '') +
         (window.MATHS ? '<button class="gros monde-3d-accueil maths-accueil" data-a="maths">🔢 Maths de la 6e au bac — Prof Pi te vanne <span>🦝</span></button>' : '') +
         '<a class="gros monde-3d-accueil professeur-ia-accueil" href="professeur.html">🧑‍🏫 Le professeur IA — Anglais & maths <span>✨</span></a>' +
@@ -542,7 +556,7 @@
     return '<section class="carte-jour mot-jour"><h2>☀️ ' + esc(t('mot_du_jour')) + '</h2><div class="mot-jour-in">' + image(e, 'pic-jour') +
       '<div><p class="mot-jour-mot" dir="' + dirCible() + '">' + esc(nomMot(e)) + '</p>' + (tr ? '<p class="mot-jour-trad" dir="auto">= ' + esc(tr) + '</p>' : '') +
       '<div class="mot-jour-actions"><button class="moyen" data-a="ecouter" data-v="' + e + '">🔊</button><button class="moyen" data-a="lent" data-v="' + e + '" aria-label="' + esc(t('lentement')) + '">🐢</button>' +
-      (window.Articulation ? '<button class="moyen" data-a="bouche" data-v="' + e + '" aria-label="' + esc(t('bouche')) + '">👄</button>' : '') +
+      (boucheDispo() ? '<button class="moyen" data-a="bouche" data-v="' + e + '" aria-label="' + esc(t('bouche')) + '">👄</button>' : '') +
       '<button class="moyen" data-a="a-toi" data-v="' + e + '" aria-label="' + esc(t('a_toi')) + '">🎤</button></div></div></div></section>';
   }
   function astuceDuJour(){
@@ -680,6 +694,7 @@
   const avecTrad = liste => base.ui === base.cible ? [] : liste.filter(e => MOTS[e][base.ui]);
   const autresThemes = th => THEMES.filter(x => x !== th && ouvert(x) && distincts(motsDu(x, base.cible), base.cible).length >= 4);
   function disponible(meca, th){
+    if(jeuxEcouteCaches() && JEUX_A_ECOUTER.includes(meca)) return false;
     const mots = motsDu(th, base.cible);
     if(/^traduction|memoire_trad/.test(meca)) return distincts(avecTrad(mots), base.cible).length >= 4;
     if(meca === 'lettres' || meca === 'lettre_manquante') return lettresPossibles(mots).length >= 4;
@@ -956,6 +971,7 @@
     mode = mode || 'theme';
     id = mode === 'theme' ? normaliser(id) : id;
     if(mode === 'theme' && (!jeuOuvert(id) || !ouvert(theme))) return ecranPlus('theme-retour');
+    if(jeuxEcouteCaches() && JEUX_A_ECOUTER.includes(mecaDe(id))) id = 'quel_mot:' + ((id.split(':')[1]) || 'n');
     const meca = mecaDe(id), niv = (id.split(':')[1]) || 'n';
     let N = NIVEAUX[niv] || NIVEAUX.n;
     // Lecture facile : 3 choix au plus, moins de paires, jamais de temps limité.
@@ -994,7 +1010,7 @@
   }
   // Les jeux « mélangés » (défi, révision, contre la montre, grand quiz).
   function mixte(){
-    const l = ['ecoute', 'quel_mot', 'vrai_faux', 'ombre', 'ecoute_mot'];
+    const l = ['ecoute', 'quel_mot', 'vrai_faux', 'ombre', 'ecoute_mot'].filter(m => !jeuxEcouteCaches() || !JEUX_A_ECOUTER.includes(m));
     const e = motI();
     if(base.ui !== base.cible && MOTS[e][base.ui]) l.push('traduction', 'traduction_inverse');
     if(!SANS_LETTRES.includes(base.cible) && lettresPossibles([e]).length) l.push('premiere_lettre');
@@ -1056,7 +1072,7 @@
     cadre(t('nouveau_mot'), t('a_nouveau_mot'),
       '<div class="centre nouveau-mot">' + image(e, 'pic-grande') +
       '<p class="mot-source" dir="' + dirCible() + '">' + esc(nomMot(e)) + '</p>' + (tr ? '<p class="trad-nouveau" dir="auto">= ' + esc(tr) + '</p>' : '') +
-      ecouteBtn(e) + '<div class="prononcer">' + (window.Articulation ? '<button class="moyen" data-a="bouche" data-v="' + e + '">👄 ' + esc(t('bouche')) + '</button>' : '') +
+      ecouteBtn(e) + '<div class="prononcer">' + (boucheDispo() ? '<button class="moyen" data-a="bouche" data-v="' + e + '">👄 ' + esc(t('bouche')) + '</button>' : '') +
       '<button class="moyen" data-a="a-toi" data-v="' + e + '">🎤 ' + esc(t('a_toi')) + '</button></div></div>' +
       '<div class="actions"><button class="moyen plein" data-a="compris" data-v="' + e + '">' + esc(t('compris')) + ' ›</button>' +
       '<button class="moyen" data-a="deja-connu" data-v="' + e + '">' + esc(t('deja_connu')) + '</button></div>');
@@ -1781,13 +1797,13 @@
       '<div class="cartes-anglais">' +
       carte('pieges', '🪤', 'Les pièges', 'Les erreurs que font tous les francophones', '🏅 ' + m + '/' + P.liste.length) +
       carte('situations', '☕', 'Situations de la vie', 'Café, école, magasin… choisis ta réplique', '✅ ' + e.situations.length + '/' + A_EN().SITUATIONS.length) +
-      carte('dictee', '✍️', 'Dictée rigolote', 'Ami parle, tu écris (attention aux mots jumeaux !)', '✍️ ' + e.dictees + ' phrase' + (e.dictees > 1 ? 's' : '') + ' parfaite' + (e.dictees > 1 ? 's' : '')) +
+      (jeuxEcouteCaches() ? '' : carte('dictee', '✍️', 'Dictée rigolote', 'Ami parle, tu écris (attention aux mots jumeaux !)', '✍️ ' + e.dictees + ' phrase' + (e.dictees > 1 ? 's' : '') + ' parfaite' + (e.dictees > 1 ? 's' : ''))) +
       carte('histoires', '📖', 'Mini-histoires', 'Lis et écoute de petites histoires du village', '📖 ' + e.histoires.length + '/' + (window.HISTOIRES ? HISTOIRES.liste.length : 0)) +
-      carte('repeter', '🗣️', 'Répète après Ami', 'Dis la phrase, réécoute-toi, compare', '🗣️ ' + e.repete.length + '/' + (window.PARCOURS ? PARCOURS.REPETER.length : 0)) +
+      (jeuxEcouteCaches() ? '' : carte('repeter', '🗣️', 'Répète après Ami', 'Dis la phrase, réécoute-toi, compare', '🗣️ ' + e.repete.length + '/' + (window.PARCOURS ? PARCOURS.REPETER.length : 0))) +
       carte('battle', '🎤', 'Battles', 'Rap, vannes, en famille, entre potes, en direct', '🏆 ' + e.victoires + ' victoire' + (e.victoires > 1 ? 's' : '')) +
       '</div><h3 class="section-anglais">😂 Pour rire (et apprendre)</h3><div class="cartes-anglais">' +
       carte('trompe', '🦉', 'Ami se trompe exprès', 'Trouve ses fautes et corrige-le !', '🔔') +
-      carte('oreilles', '👂', 'Le jeu des oreilles', 'ship ou sheep ? three ou tree ?', '👂') +
+      (jeuxEcouteCaches() ? '' : carte('oreilles', '👂', 'Le jeu des oreilles', 'ship ou sheep ? three ou tree ?', '👂')) +
       carte('vraifaux', '🤥', 'True or false?', 'Ami raconte des bêtises…', '🤥') +
       carte('avent', '🎄', 'Calendrier de l’Avent', 'Un mot d’hiver par jour', '🎄 ' + (Array.isArray(J().avent) ? J().avent.length : 0) + '/24') +
       carte('betisier', '📺', 'Le bêtisier', 'Le best-of de tes vannes de la semaine', '📺') +
@@ -1957,7 +1973,7 @@
       '<button class="moyen plein" data-a="dictee-verifier">✔ Vérifier</button>' +
       '<div class="piege-retour" id="dictee-retour" role="status" aria-live="polite"></div></main>');
     const z = $('#dictee-texte'); if(z) z.addEventListener('keydown', ev => { if(ev.key === 'Enter' && !ev.shiftKey){ ev.preventDefault(); verifierDictee(); } });
-    direPhrase(d.liste[d.i].en, 'en');
+    direEcoute(d.liste[d.i].en, 'en');
   }
   function verifierDictee(){
     const d = dictee; if(!d || d.fait) return;
@@ -2447,7 +2463,7 @@
       '<div class="piege-options">' + P.opts.map((o, k) => '<button class="moyen piege-opt" data-a="salon-rep" data-v="' + k + '" lang="en">' + esc(o) + '</button>').join('') + '</div>' +
       '<div class="piege-retour" id="qz-retour" role="status" aria-live="polite"></div><ol class="scores-salon" id="scores-salon"></ol>' +
       '<div class="reactions">' + window.SALON.REACTIONS.slice(0, 4).map(r => '<button class="reaction" data-a="salon-reaction" data-v="' + r.id + '" lang="en">' + r.e + '</button>').join('') + '</div><p class="aide" id="salle-msg" role="status"></p></main>');
-    majScores(); if(q.ecoute) direPhrase(q.ecoute, 'en');
+    majScores(); if(q.ecoute) direEcoute(q.ecoute, 'en');
     salon.chrono = setInterval(() => { const ms = Date.now() - P.debut, c = $('#chrono'); if(c) c.style.width = Math.max(0, 100 - ms / 150) + '%';
       if(ms > 15000){ if(!P.repondu) repondreSalon(-1); if(estHote() && ms > 17500) passerSalon(i + 1); } }, 200);
   }
@@ -2509,7 +2525,7 @@
       '<div><p class="piege-consigne">' + esc(q.consigne) + '</p><p class="piege-fr">' + esc(q.enonce || '') + (q.ecoute ? ' <button class="bouton-rond" data-a="qz-ecouter" aria-label="Écouter">🔊</button>' + (q.lent ? ' <button class="bouton-rond" data-a="qz-lent" aria-label="Écouter lentement">🐢</button>' : '') : '') + '</p>' + (q.trad ? traduire(q.trad) : '') + '</div></div>' +
       '<div class="piege-options">' + z.options.map((o, i) => '<button class="moyen piege-opt" data-a="qz-rep" data-v="' + i + '" lang="' + (z.lang || q.lang || 'en') + '">' + esc(o) + '</button>').join('') + '</div>' +
       '<div class="piege-retour" id="qz-retour" role="status" aria-live="polite"></div></main>');
-    if(q.ecoute) direPhrase(q.ecoute, 'en');
+    if(q.ecoute) direEcoute(q.ecoute, 'en');
     if(!q.vanneDe && q.faux && q.faux.length){
       const sujet = z.prof ? 'maths' : z.sujet || (q.lang === 'fr' ? 'sciences' : 'anglais');
       const tm = J().maths && J().maths.ton, ton = z.prof ? ({ doux:0, taquin:2, sanspitie:3 }[tm] ?? 2) : niveauHumour();
@@ -2659,7 +2675,7 @@
       '<div class="actions serrees" id="rep-apres" hidden><button class="moyen" data-a="me-reecouter">👂 Me réécouter</button><button class="moyen" data-a="repeter-ecouter">🦉 Ami</button><button class="moyen plein" data-a="repeter-bien">👍 Bien dit !</button></div>' +
       '<p class="petit">🔒 Ta voix reste sur cet appareil : elle n’est ni gardée ni envoyée.</p>' +
       '<p><button class="moyen" data-a="repeter-suivant">Phrase suivante →</button></p></main>');
-    direPhrase(ph.en, 'en');
+    direEcoute(ph.en, 'en');
   }
   async function enregistrerPhrase(){
     const r = rep1; if(!r) return;
@@ -2676,7 +2692,7 @@
         micro.url = URL.createObjectURL(new Blob(morceaux, { type:rec.mimeType || 'audio/webm' }));
         if(btn){ btn.classList.remove('enregistre'); btn.textContent = '🎤 Encore une fois'; }
         if(apres) apres.hidden = false; if(etat) etat.textContent = 'Écoute-toi, puis Ami : c’est pareil ?';
-        const a = new Audio(micro.url); a.onended = () => setTimeout(() => direPhrase(ph.en, 'en'), 300); a.play().catch(() => {});
+        const a = new Audio(micro.url); a.onended = () => setTimeout(() => direEcoute(ph.en, 'en'), 300); a.play().catch(() => {});
       };
       rec.start(); if(btn){ btn.classList.add('enregistre'); btn.textContent = '⏺ J’écoute…'; }
       if(etat) etat.textContent = 'Vas-y, dis : « ' + ph.en + ' »';
@@ -3145,18 +3161,18 @@
       case 'battle-go': return battleGo(v);
       case 'invente': return inventeGo();
       case 'invente-choix': { const [c, k] = String(v).split(':'); if(invente && ['v', 'a', 'l'].includes(c)) invente[c] = Number(k) || 0; return inventeGo(); }
-      case 'invente-dire': { const ph = invente && PARCOURS.inventer(invente.v, invente.a, invente.l); if(ph){ direPhrase(ph.en, 'en'); const aie = A_EN().AIE[Math.floor(Math.random() * A_EN().AIE.length)]; const r = $('#invente-retour'); if(r) r.textContent = '🦉 « ' + aie.en + ' » (' + aie.fr + ')'; bruit('juste'); } return; }
+      case 'invente-dire': { const ph = invente && PARCOURS.inventer(invente.v, invente.a, invente.l); if(ph){ direEcoute(ph.en, 'en'); const aie = A_EN().AIE[Math.floor(Math.random() * A_EN().AIE.length)]; const r = $('#invente-retour'); if(r) r.textContent = '🦉 « ' + aie.en + ' » (' + aie.fr + ')'; bruit('juste'); } return; }
       case 'invente-garder': { const ph = invente && PARCOURS.inventer(invente.v, invente.a, invente.l); if(ph){ const j = J(); j.fousRires = Array.isArray(j.fousRires) ? j.fousRires : []; const vv = ph.en + ' (' + ph.fr + ')'; if(!j.fousRires.some(x => x.v === vv)) j.fousRires = [{ v:vv, e:'🦉' }].concat(j.fousRires).slice(0, 60); garder(); const r = $('#invente-retour'); if(r) r.textContent = '✓ Rangée dans tes fous rires !'; } return; }
       case 'parcours': return parcours();
       case 'trompe': return amiTrompe();
       case 'trompe-juge': return jugerTrompe(v);
       case 'trompe-corrige': return corrigerTrompe(Number(v));
       case 'trompe-suivant': if(trompe){ trompe.i++; } return afficherTrompe();
-      case 'trompe-ecouter': if(trompe && trompe.l[trompe.i]){ const x = trompe.l[trompe.i]; direPhrase(x.faute ? x.p.faux[x.k].en : x.p.bon, 'en'); } return;
+      case 'trompe-ecouter': if(trompe && trompe.l[trompe.i]){ const x = trompe.l[trompe.i]; direEcoute(x.faute ? x.p.faux[x.k].en : x.p.bon, 'en'); } return;
       case 'oreilles': return oreillesGo();
       case 'vraifaux': return vraiFauxGo();
-      case 'qz-lent': if(qz && qz.liste[qz.i] && qz.liste[qz.i].ecoute) direPhrase(qz.liste[qz.i].ecoute, 'en', .6); return;
-      case 'dire-en': return direPhrase(String(v || ''), 'en');
+      case 'qz-lent': if(qz && qz.liste[qz.i] && qz.liste[qz.i].ecoute) direEcoute(qz.liste[qz.i].ecoute, 'en', .6); return;
+      case 'dire-en': return direEcoute(String(v || ''), 'en');
       case 'avent': return avent();
       case 'avent-case': return aventCase(Number(v));
       case 'avent-rep': return aventRep(v);
@@ -3194,7 +3210,7 @@
       case 'salon-quitter': quitterSalon(); return salonAccueil();
       case 'salon-lancer': if(salon && estHote() && listeJoueurs().length >= 2) salon.canal.envoyer('debut', Object.assign({ id:salon.id, graine:Math.floor(Math.random() * 1e9), n:6 }, window.MATHS && MATHS.NIVEAUX.includes(v) ? { m:v } : {})); return;
       case 'salon-rep': return repondreSalon(Number(v));
-      case 'salon-ecouter': if(salon && salon.partie){ const q = salon.partie.liste[salon.partie.i]; if(q && q.ecoute) direPhrase(q.ecoute, 'en'); } return;
+      case 'salon-ecouter': if(salon && salon.partie){ const q = salon.partie.liste[salon.partie.i]; if(q && q.ecoute) direEcoute(q.ecoute, 'en'); } return;
       case 'salon-reaction': if(salon && salon.canal) salon.canal.envoyer('reaction', { id:salon.id, r:String(v) }); return;
       case 'salon-chat': { if(!salon || salon.public || !base.salonChat) return; const z = $('#chat-texte'), f = window.SALON.filtrer(z && z.value); if(f.texte){ salon.canal.envoyer('chat', { id:salon.id, t:f.texte }); z.value = ''; } return; }
       case 'salon-muet': if(salon && v && v !== salon.id){ if(salon.muets.has(v)) salon.muets.delete(v); else salon.muets.add(v); afficherSalle(); } return;
@@ -3215,16 +3231,16 @@
       case 'revision': return revisionGo();
       case 'qz-rep': return repondreQuestion(Number(v));
       case 'qz-suivant': if(qz){ qz.i++; } return afficherQuestion();
-      case 'qz-ecouter': if(qz && qz.liste[qz.i] && qz.liste[qz.i].ecoute) direPhrase(qz.liste[qz.i].ecoute, 'en'); return;
-      case 'bj-ecouter': if(window.BLAGUES_EN){ const bj = BLAGUES_EN.duJour(); direPhrase(bj.q + ' … ' + bj.r, 'en'); } return;
+      case 'qz-ecouter': if(qz && qz.liste[qz.i] && qz.liste[qz.i].ecoute) direEcoute(qz.liste[qz.i].ecoute, 'en'); return;
+      case 'bj-ecouter': if(window.BLAGUES_EN){ const bj = BLAGUES_EN.duJour(); direEcoute(bj.q + ' … ' + bj.r, 'en'); } return;
       case 'histoires': return histoires();
       case 'histoire-go': return histoireGo(v);
       case 'ligne-suivante': if(lecture){ lecture.i++; } return afficherLigne();
       case 'ligne-avant': if(lecture && lecture.i > 0){ lecture.i--; } return afficherLigne();
-      case 'ligne-ecouter': if(lecture && lecture.h.lignes[lecture.i]) direPhrase(lecture.h.lignes[lecture.i][1], 'en'); return;
+      case 'ligne-ecouter': if(lecture && lecture.h.lignes[lecture.i]) direEcoute(lecture.h.lignes[lecture.i][1], 'en'); return;
       case 'repeter': return repeter();
-      case 'repeter-ecouter': if(rep1) direPhrase(PARCOURS.REPETER[rep1.i].en, 'en'); return;
-      case 'repeter-lent': if(rep1) direPhrase(PARCOURS.REPETER[rep1.i].en, 'en', .6); return;
+      case 'repeter-ecouter': if(rep1) direEcoute(PARCOURS.REPETER[rep1.i].en, 'en'); return;
+      case 'repeter-lent': if(rep1) direEcoute(PARCOURS.REPETER[rep1.i].en, 'en', .6); return;
       case 'repeter-micro': return enregistrerPhrase();
       case 'repeter-bien': { if(rep1){ const e = etatAnglais(); if(!e.repete.includes(rep1.i)){ e.repete.push(rep1.i); J().plumes += 1; garder(); } const s2 = $('#rep-etat'); if(s2) s2.textContent = '✅ Bravo ! Phrase suivante ?'; bruit('juste'); } return; }
       case 'repeter-suivant': { const l = PARCOURS.REPETER, e = etatAnglais(); let i = l.findIndex((x, k) => !e.repete.includes(k) && (!rep1 || k !== rep1.i)); if(i < 0) i = rep1 ? (rep1.i + 1) % l.length : 0; return afficherRepeter(i); }
@@ -3232,21 +3248,21 @@
       case 'parents-ouvrir': { const z = $('#porte-parents'); if(porteParents && z && Number(z.value) === porteParents.a * porteParents.b) return tableauParents(); const m = $('#porte-msg'); if(m) m.textContent = 'Ce n’est pas ça. Demande à un adulte ! 😉'; return; }
       case 'battle-rep': return repondreBattle(Number(v));
       case 'battle-suivant': if(battle){ battle.i++; } return afficherBattle();
-      case 'battle-ecouter': if(battle && battle.manches[battle.i]) direPhrase(battle.manches[battle.i].ami, 'en'); return;
+      case 'battle-ecouter': if(battle && battle.manches[battle.i]) direEcoute(battle.manches[battle.i].ami, 'en'); return;
       case 'situations': return situations();
       case 'situation-go': return situationGo(v);
       case 'situation-rep': return repondreSituation(Number(v));
       case 'situation-suivant': if(situation){ situation.i++; } return afficherSituation();
-      case 'situation-ecouter': if(situation){ const et = situation.x.etapes[situation.i]; if(et && et.dit) direPhrase(et.dit, 'en'); } return;
+      case 'situation-ecouter': if(situation){ const et = situation.x.etapes[situation.i]; if(et && et.dit) direEcoute(et.dit, 'en'); } return;
       case 'dictee': return dicteeGo();
-      case 'dictee-ecouter': if(dictee && dictee.liste[dictee.i]) direPhrase(dictee.liste[dictee.i].en, 'en'); return;
-      case 'dictee-lent': if(dictee && dictee.liste[dictee.i]) direPhrase(dictee.liste[dictee.i].en, 'en', .6); return;
+      case 'dictee-ecouter': if(dictee && dictee.liste[dictee.i]) direEcoute(dictee.liste[dictee.i].en, 'en'); return;
+      case 'dictee-lent': if(dictee && dictee.liste[dictee.i]) direEcoute(dictee.liste[dictee.i].en, 'en', .6); return;
       case 'dictee-verifier': return verifierDictee();
       case 'dictee-suivant': if(dictee){ dictee.i++; } return afficherDictee();
       case 'pieges-go': return piegesGo();
       case 'piege-rep': return repondrePiege(Number(v));
       case 'piege-suivant': if(piege){ piege.i++; } return afficherPiege();
-      case 'piege-ecouter': if(piege && piege.liste[piege.i]) direPhrase(piege.liste[piege.i].bon, 'en'); return;
+      case 'piege-ecouter': if(piege && piege.liste[piege.i]) direEcoute(piege.liste[piege.i].bon, 'en'); return;
       case 'village': return depuis3D() ? retour3D() : village();
       case 'village-lieu': return entrerVillageLieu(v);
       case 'phrase-token': return choisirMotPhrase(Number(v));
@@ -3259,7 +3275,7 @@
       case 'revoir': return revoir();
       case 'ecouter': return dire(v);
       case 'lent': return direLent(v);
-      case 'bouche': fermerFenetre(); return window.Articulation && Articulation.montrer(aDire(v), b);
+      case 'bouche': fermerFenetre(); return boucheDispo() && Articulation.montrer(aDire(v), b);
       case 'a-toi': return aToi(v);
       case 'enregistrer': return b.classList.contains('enregistre') ? (micro && micro.rec && micro.rec.state === 'recording' && micro.rec.stop()) : enregistrer(v);
       case 'je-l-ai-dit': { const k = cleMot(v), j = J(); j.parle = j.parle || []; if(!j.parle.includes(k)){ j.parle = j.parle.concat(k); j.plumes += 1; garder(); } const et = $('#a-toi-etat'); if(et) et.textContent = t('a_toi_bravo'); eclat(b); bruit('juste'); return; }
@@ -3350,9 +3366,9 @@
   window.AmiDesMotsPret = verifierJeton(base.abo.jeton, base.abo.code).then(d => { droits = d; if(d && !partie && !lienAller && !lienDefi && !lienSalon && !depuis3D()) accueil(); return rafraichir(retourPaiement); });
   // Le webhook Stripe peut arriver quelques secondes après le retour.
   if(retourPaiement) [5000, 15000, 40000].forEach(ms => setTimeout(() => { if(!plus()) rafraichir(true); }, ms));
-  if(window.Articulation) try{ Articulation.init(); }catch(e){}
+  if(boucheDispo()) try{ Articulation.init(); }catch(e){}
   if('serviceWorker' in navigator && location.protocol === 'https:') navigator.serviceWorker.register('sw.js').catch(() => {});
-  window.AmiDesMots = { base, J, affiche, fnv1a, urlVoix, accueil, themes, choisirJeu, commencer, lettresPossibles, distincts, motsDu, aDire, CATALOGUE, MECAS, disponible, nomJeu, aRevoir, noter, jour, defi, revoir, lecon, astuces, aToi, blague, carnet, noteVoix, sansEmojis, iaPrecharger, iaPrendre, vanneObjets, avecArticle, astuce, niveauHumour, fousRires, reglages, CONFIG, COINS, coinOuvert, offreLue, facile, nbMots, restaurer, verifierJeton, plus, ecranPlus, formatCode, rafraichir,
+  window.AmiDesMots = { base, J, affiche, fnv1a, urlVoix, accueil, themes, choisirJeu, commencer, lettresPossibles, distincts, motsDu, aDire, CATALOGUE, MECAS, disponible, nomJeu, aRevoir, noter, jour, defi, revoir, lecon, astuces, aToi, blague, carnet, noteVoix, sansEmojis, direPhrase, direEcoute, iaPrecharger, iaPrendre, vanneObjets, avecArticle, astuce, niveauHumour, fousRires, reglages, CONFIG, COINS, coinOuvert, offreLue, facile, nbMots, restaurer, verifierJeton, plus, ecranPlus, formatCode, rafraichir,
     get etat(){ return J(); } };
   garder();
   if(lienDefi || lienSalon){
