@@ -1,0 +1,13 @@
+Ami des mots — version 6.4 : Objectif NASA, anglais « Sup », et la bande de Plumo une seule fois
+
+- 🚀 Nouvelle matière « Objectif NASA » (programme français, 2nde → Sup) et « Road to NASA » (programme anglais, Year 10 → University) :
+  parcours et diplômes (conditions NASA 2026 : citoyenneté américaine, master STEM, 3 ans d'expérience ; stages OSTEM/Pathways
+  réservés aux Américains ; voie européenne : ESA Graduate Trainee, CNES, industrie), métiers, et tous les exercices :
+  fusées (Tsiolkovski, poussée/poids), orbites (vitesse, période, libération, gravité en altitude), communications (délais radio,
+  antennes), unités (lbf, mph, °F — l'erreur de Mars Climate Orbiter), vie à bord (oxygène, eau recyclée), missions (Apollo, ISS,
+  Artemis II d'avril 2026, Mars, Webb), anglais de mission, code et logiciels de vol, géopolitique de l'espace.
+  Calculs générés et vérifiés par les tests. Examen blanc « Road to NASA » au niveau University.
+- 🇬🇧 Anglais (programme français) : niveau « Sup » — certifications (TOEIC, IELTS, Cambridge, CLES), anglais universitaire,
+  anglais scientifique (et de la NASA), anglais professionnel, grammaire et expressions C1, test de niveau C1.
+- 📞 La bande de potes de Plumo ne débarque plus qu'une fois par série (fini le rappel à 8, 12… bonnes réponses).
+171 tests.

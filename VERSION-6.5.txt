@@ -1,0 +1,24 @@
+Ami des mots — version 6.5 : le coin maths et le labo des sciences entièrement en anglais quand l'appli est en anglais
+
+- 🔢 Coin maths de Prof Pi (6e → Terminale) : avec l'interface en anglais, TOUT passe en anglais.
+  - Énoncés, réponses, mauvaises réponses, règles : 199 morceaux de phrases traduits (226 emplacements) (js/maths-en.js).
+  - Les 118 erreurs classiques : explication + vannes taquines + vannes cash, réécrites en anglais
+    (toutes passent le juge, elles visent l'erreur, jamais l'élève).
+  - Niveaux (6e = Year 7…), domaines, 73 chapitres et examens blancs (Mock brevet, Mock bac…) traduits.
+  - Typographie anglaise : 12.5 au lieu de 12,5 ; 1,200 au lieu de 1 200 ; €12.50 ; 16:47 au lieu de 16 h 47 ;
+    intervalles [2, 5) au lieu de [2 ; 5[ ; pas d'espace avant ? ! : %.
+  - La montée en pression (même erreur refaite) a sa version anglaise ; les listes de vannes françaises
+    (trash talk, expressions imagées, bande de Plumo) ne s'affichent plus sur une question de maths en anglais.
+  - Défi de maths entre potes : les questions suivent la langue de l'interface.
+  - En français, rien ne change (même graine = mêmes questions).
+- 🚀 Labo des sciences : les 41 questions (planètes, fusées, corps humain, médecine), leurs 82 vannes, les explications,
+  les thèmes et les punchlines « cash » traduits (js/sciences-en.js). Exemple adapté : Thomas Pesquet → Tim Peake.
+- 🌍 Traductions d'écrans : les guillemets français « » dans 17 textes anglais remplacés par “ ”.
+- ✅ Nouveau test : avec l'interface en anglais, 7 niveaux × 3 tons × 25 questions générés sans un mot de français ;
+  écran du coin maths, question, retour et examen blanc vérifiés ; les 41 questions de sciences dans les 3 tons aussi.
+  Parcours automatique des écrans principaux en anglais : plus aucun écran avec du français (hors « mot du jour », qui est
+  le mot français à apprendre).
+
+Pas encore fait : si on choisit le programme FRANÇAIS en interface anglaise, ses matières (histoire, SVT, physique…) et
+ses épreuves restent en français (le programme anglais, lui, est en anglais). En espagnol, allemand, italien et portugais,
+les écrans sont traduits mais les exercices de maths et de sciences restent en français.

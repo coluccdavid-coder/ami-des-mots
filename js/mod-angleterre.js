@@ -89,7 +89,7 @@
       groupe('🎒 Year 6 · KS2 SATs (twin papers)', ['sats-gps', 'sats-reading', 'sats-maths']) +
       groupe('🎓 Year 11 · GCSE', ['gcse-maths-f', 'gcse-maths-h', 'gcse-english-lang', 'gcse-english-lit', 'gcse-science', 'gcse-history', 'gcse-geography', 'gcse-computing', 'gcse-french', 'gcse-spanish', 'gcse-german']) +
       groupe('🎓 Year 13 · A level', ['alevel-maths', 'alevel-sciences', 'alevel-english', 'alevel-options', 'alevel-humanities']) +
-      groupe('🏛️ University entrance', ['uni-ucat', 'uni-lnat']));
+      groupe('🏛️ University entrance', ['uni-ucat', 'uni-lnat', 'uni-nasa']));
   }
   function mockGo(k, graine, passe){
     const x = G.EXAMENS[k]; if(!x) return mocks();
