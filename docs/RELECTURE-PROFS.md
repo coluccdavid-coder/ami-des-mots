@@ -20,7 +20,7 @@ Compter environ **1 heure par matière** (une centaine de questions).
 | Philosophie | `philo.csv` |
 | SES, HGGSP, HLP, NSI (spécialités, v5.95) | `ses.csv`, `hggsp.csv`, `hlp.csv`, `nsi.csv` |
 | Droit, médecine (après le bac) | `droit.csv`, `medecine.csv` |
-| Traductions de l'interface (v5.95) | `js/textes-plus.js` : à faire relire par des locuteurs natifs (10 langues) |
+| Traductions de l'interface (v5.95, v5.99.3) | `js/textes-plus.js` et `js/textes-ecrans.js` (≈600 textes, anglais, espagnol, allemand, italien, portugais) : à faire relire par des locuteurs natifs |
 | Brevet, bac blancs, annales | `epreuves.csv` |
 | Sciences (jeu « Sciences ») | `sciences.csv` |
 
