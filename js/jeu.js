@@ -920,8 +920,8 @@
     fr:[
       {
         eclair:["Mon bec a cliqué avant mon cerveau !","Oups… mes lunettes sont en mode avion.","J’ai visé juste. Pas la bonne image, mais juste !","Mon cerveau charge… à 2 %."]
-        ,devinette:["Pourquoi Plumo aime les quiz ? Pour se prendre des plumes !","Quel est le sport préféré du hibou ? Le vol… plané !","Pourquoi le hibou révise ? Pour ne pas sécher !","Quel mot fait peur à Plumo ? « Surprise »… surtout au contrôle !"]
-        ,chute:["Plumo : « J’étais sûr ! » Le dictionnaire : « C’est bien le problème. »","Plumo cherche ses neurones. Ils sont partis en pause.","Le hibou dit « facile ! » Le quiz répond « ah oui ? »","Plumo a demandé un indice. Son cerveau lui a dit : « Bonne chance. »"]
+        ,devinette:["Pourquoi Plumo aime les quiz ? Pour se prendre des plumes !","Quel est le sport préféré du hibou ? Le vol… plané !","Pourquoi le hibou révise ? Pour ne pas sécher !","Quel mot fait peur à Plumo ? « Surprise »… surtout au contrôle !","Pourquoi les plongeurs plongent-ils toujours en arrière ? Parce que sinon ils tombent dans le bateau.","Quel est le comble pour un électricien ? Ne pas être au courant.","Que dit un zéro à un huit ? Belle ceinture !","Pourquoi les poissons détestent l’ordinateur ? À cause du net.","Qu’est-ce qui est jaune et qui attend ? Jonathan.","Pourquoi les livres ont-ils toujours froid ? Parce qu’ils ont une couverture.","Quel est le comble pour un jardinier ? Raconter des salades.","J’ai une blague sur les dictionnaires, mais elle manque de définition.","Pourquoi les verbes sont-ils toujours fatigués ? Parce qu’ils se conjuguent à tous les temps.","J’ai voulu faire une blague sur les synonymes, mais je n’ai pas trouvé d’équivalent.","Pourquoi le point final est-il si fier ? Parce qu’il a toujours le dernier mot.","Les lettres se sont disputées. Ça a fini en majuscule.","Le passé composé a quitté le présent : leur relation était devenue trop compliquée."]
+        ,chute:["Plumo : « J’étais sûr ! » Le dictionnaire : « C’est bien le problème. »","Plumo cherche ses neurones. Ils sont partis en pause.","Le hibou dit « facile ! » Le quiz répond « ah oui ? »","Plumo a demandé un indice. Son cerveau lui a dit : « Bonne chance. »","Plumo : « Mon cerveau vient de faire une mise à jour. » Le quiz : « Dommage, elle a échoué. »","Plumo n’est pas paresseux : il est en mode économie de mouvement.","Plumo voulait être raisonnable, mais il n’a pas trouvé le bouton.","Plumo a décidé de prendre sa vie en main. Elle lui a demandé de la reposer."]
       },
       {
         eclair:["J’ai cliqué avec panache… et zéro précision.","Mon cerveau a pris la mauvaise sortie.","J’ai confondu réfléchir et cliquer. Classique.","Même mon écho répond mieux que moi."]
@@ -2836,6 +2836,7 @@
   function chrono(fin){ const r = Math.max(0, Math.ceil((fin - Date.now()) / 1000)); return Math.floor(r / 60) + ':' + String(r % 60).padStart(2, '0'); }
   setInterval(() => { if(!qz || !qz.finA) return; const e = document.getElementById('chrono-veille'); if(e) e.textContent = '⏱️ ' + chrono(qz.finA); if(Date.now() >= qz.finA && !qz.repondu && e) afficherQuestion(); }, 1000);
   function afficherQuestion(){
+    if(qz && !qz.repondu) qz.debutQ = Date.now();   // v6.9 : chrono de la question (réponse éclair ou lente)
     const z = qz; if(!z) return coinAnglais();
     if(z.i >= z.liste.length || (z.finA && Date.now() >= z.finA)) return z.fin(z);   // v6.0 : finA = fin du chrono (veille de contrôle)
     const q = z.liste[z.i]; z.repondu = false; z.options = A_EN().melanger([q.bon].concat(q.faux.map(f => f.en)));
@@ -2905,9 +2906,19 @@
     else if(TT && TT.IMAGEES && f && f.vanne && !gbQ && (z.prof || q.matiere) && (J().maths || {}).ton !== 'doux' && (String(f.vanne).length < 45 || (['taquin', 'sanspitie'].includes((J().maths || {}).ton || 'taquin') && Math.random() < 0.25))){
       const court = /^(Non\.?|Non :.*)$/.test(String(f.vanne).trim()), drole = TT.choisir(Math.random() < 0.7 ? TT.IMAGEES : TT.TCHATCHE.map(x => x.replace(/^🥊 /, '')), {}, memoireVannes());
       f = Object.assign({}, f, { vanne:drole + (court && /^Non\.?$/.test(String(f.vanne).trim()) ? '' : ' ' + f.vanne) }); }
+    // v6.9 : réponse lente (plus de 25 s) → on la chambre, gentiment, sur le temps (pas en « Tout doux », pas sur une question en autre langue).
+    const dtQ = z.debutQ ? Date.now() - z.debutQ : 0, tonQ = (J().maths || {}).ton || 'taquin', lentQ = dtQ > 25000 && tonQ !== 'doux' && !!TT && !!TT.lent && !gbQ && (q.lang || z.lang || 'fr') === 'fr';
+    if(!juste && f && f.vanne && lentQ && Math.random() < 0.6) f = Object.assign({}, f, { vanne:TT.lent(memoireVannes()) + ' ' + f.vanne });
     if(f && f.vanne) noterBetisier(f.vanne);
     // v5.90 : une vanne aussi quand c'est juste (sauf si l'écran a son propre « bravo »).
     const anglaisSeul = gbQ || ((z.lang || q.lang) !== 'fr' && !q.matiere && !z.prof);
+    // v6.9 : punchlines arrogantes sur une bonne réponse : éclair (< 3 s), mot difficile (long), ou de temps en temps dans les jeux de mots.
+    const frQ = !anglaisSeul && (q.lang || z.lang || 'fr') === 'fr', difQ = /^[\p{L}’'-]{11,}$/u.test(String(q.bon || '')) && !z.prof && !q.matiere;
+    if(juste && !bravoTrash && TT && TT.arrogant && frQ && tonQ !== 'doux'){
+      if((dtQ > 0 && dtQ < 3000) || difQ) bravoTrash = TT.arrogant({ rapide:dtQ > 0 && dtQ < 3000, difficile:difQ }, memoireVannes());
+      else if(!z.prof && !q.matiere && Math.random() < 0.35) bravoTrash = TT.arrogant({ mots:true }, memoireVannes());
+      else if(dtQ > 25000 && TT.lent) bravoTrash = TT.lent(memoireVannes()) + ' Mais c’est juste ! ✅';
+    }
     if(juste && !bravoTrash && !z.bravo && TT && TT.bonneReponse) bravoTrash = TT.bonneReponse((J().maths || {}).ton || 'taquin', z.suite, memoireVannes(), anglaisSeul);
     // v5.91 : 3 d'affilée → Plumo prévient qu'il appelle ses potes ; la 4e → la bande débarque et vanne Plumo (jamais le joueur).
     let bande = null, raccrochage = '';
