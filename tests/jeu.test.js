@@ -206,7 +206,7 @@ await test('reprise de la v1 : plumes, étoiles et vestiaire deviennent le premi
   const w = page(undefined, undefined, x => x.localStorage.setItem('amidesmots:v1', JSON.stringify({ ui:'fr', cible:'es', plumes:33, etoiles:{ 'es:animaux:ecoute':2 }, jours:[], porte:['echarpe'] })));
   const E = etat(w);
   // L'espagnol est masqué pour l'instant : on apprend l'anglais, mais le choix « es » est gardé pour plus tard.
-  assert.strictEqual(E.cible, 'en'); assert.strictEqual(E.cibleMasquee, 'es');
+  assert.strictEqual(E.cible, 'es', 'v5.99.2 : l’espagnol est une langue scolaire, il reste choisi');
   assert.strictEqual(E.joueurs[0].plumes, 33); assert.strictEqual(E.joueurs[0].etoiles['es:animaux:ecoute'], 2);
   assert.deepStrictEqual(E.joueurs[0].porte, ['echarpe']);
   assert.strictEqual(w.localStorage.getItem('amidesmots:v1'), null);
@@ -221,8 +221,8 @@ await test('catalogue : 50 jeux, 19 sortes, 6 familles ; chaque nom et consigne 
   for(const l in w.TEXTES) for(const [m] of A.MECAS){ assert.ok(w.TEXTES[l]['j_' + m], l + ' j_' + m); assert.ok(w.TEXTES[l]['a_' + m], l + ' a_' + m); }
 });
 await test('chacun des 50 jeux se lance et affiche de quoi répondre (français → anglais, et kabyle)', () => {
-  for(const [ui, cible] of [['fr', 'en'], ['fr', 'kab'], ['ar', 'fr']]){
-    const w = page(ui === 'ar' ? 'ar' : 'fr-FR'); const A = w.AmiDesMots, d = w.document;
+  for(const [ui, cible] of [['fr', 'en'], ['fr', 'kab'], ['ar', 'fr'], ['fr', 'es'], ['fr', 'de'], ['fr', 'it'], ['fr', 'pt'], ['fr', 'ar'], ['es', 'en']]){
+    const w = page(ui === 'fr' ? 'fr-FR' : ui); const A = w.AmiDesMots, d = w.document;
     A.base.cible = cible;
     let lances = 0;
     for(const c of A.CATALOGUE){
@@ -1137,7 +1137,10 @@ await test('langues : seules les langues activées sont visibles, les autres res
   const w = page(); const d = w.document;
   const choix = d.querySelector('#cible');
   assert.ok(choix, 'le sélecteur de langue doit être présent');
-  assert.deepStrictEqual(Array.from(choix.options).map(o => o.value), ['fr', 'en']);
+  // v5.99.2 : « J'apprends » = langues enseignées à l'école (sauf celle qu'on parle) ; « Je parle » = français + ces langues.
+  assert.deepStrictEqual(Array.from(choix.options).map(o => o.value), ['en', 'es', 'de', 'it', 'pt', 'ar']);
+  assert.deepStrictEqual(Array.from(d.querySelector('#ui').options).map(o => o.value), ['fr', 'en', 'es', 'de', 'it', 'pt', 'ar']);
+  assert.ok(w.TEXTES.uk && w.TEXTES.ja && w.TEXTES.tr && w.TEXTES.pl, 'les langues retirées des listes restent dans les données');
   assert.strictEqual(w.MOTS['🐱'].ko, '고양이', 'le coréen reste conservé dans les données');
   assert.strictEqual(w.MOTS['🐱'].ar, 'قطة', 'larabe reste conservé dans les données');
   assert.strictEqual(w.MOTS['🐱'].kab, 'AMCIC', 'le kabyle reste conservé dans les données');
@@ -2293,6 +2296,14 @@ await test('v5.99 : plumes magiques — offre filtrée, solde lu au serveur, ach
   await w2.AmiDesMotsPret; w2.AmiDesMots.questionsGo(w2.MATIERES.serie('ses', 'examen', 'Tle', 2, 3, 'taquin'), { titre:'t', retour:'matieres' }); await new Promise(r => setTimeout(r, 20));
   const v2 = env2.filter(e => /vannes-direct/.test(e.u)); assert.strictEqual(v2.length, 1); assert.ok(!('code' in v2[0].b), 'pas de code quand les plumes sont éteintes');
   assert.ok(!env2.some(e => /plumes\.php/.test(e.u)));
+});
+
+await test('v5.99.2 : une langue d’interface retirée de la liste reste choisie et affichée ; on n’apprend jamais la langue qu’on parle', () => {
+  const w = page('uk'); const d = w.document;
+  assert.ok(Array.from(d.querySelector('#ui').options).some(o => o.value === 'uk' && o.selected));
+  const w2 = page('en'); assert.ok(!Array.from(w2.document.querySelector('#cible').options).some(o => o.value === 'en'));
+  assert.ok(Array.from(w2.document.querySelector('#cible').options).some(o => o.value === 'fr'));
+  assert.notStrictEqual(w2.AmiDesMots.base.cible, 'en');
 });
 
 console.log(`\n${ok} réussi(s), ${ko} échoué(s)`);

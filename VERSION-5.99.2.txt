@@ -1,0 +1,10 @@
+Ami des mots 5.99.2
+
+🎒 Langues de l'école seulement dans les listes de l'accueil :
+  - « Je parle » : français, anglais, espagnol, allemand, italien, portugais, arabe.
+  - « J'apprends » : anglais, espagnol, allemand, italien, portugais, arabe (+ français pour les élèves qui parlent
+    une autre langue). On n'apprend jamais la langue qu'on parle.
+  - Turc, polonais, ukrainien, japonais et les autres restent dans les données (rien n'est supprimé) ; un joueur qui
+    les avait déjà choisis les garde.
+Vérifié : 149 tests ; les jeux de mots se lancent dans chaque langue scolaire (français → espagnol, allemand, italien,
+  portugais, arabe ; espagnol → anglais ; arabe → français).
