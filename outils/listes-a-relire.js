@@ -8,7 +8,7 @@
 const fs = require('fs'), path = require('path');
 const ICI = path.join(__dirname, '..'), w = {};
 global.window = w;
-for(const f of ['js/juge.js', 'js/maths.js', 'js/vannes-cash.js', 'js/vannes-ironie.js', 'js/sciences.js', 'js/pieges.js', 'js/anglais.js', 'js/clash.js', 'js/histoires.js', 'js/parcours.js', 'js/rigolade.js', 'js/clash-plus.js', 'js/matieres.js', 'js/mat-francais.js', 'js/mat-histoire.js', 'js/mat-svt-pc.js', 'js/mat-sup.js', 'js/epreuves.js', 'js/epreuves-spe.js', 'js/epreuves-plus.js', 'js/epreuves-oraux.js', 'js/epreuves-pro.js'])
+for(const f of ['js/juge.js', 'js/vannes-libres.js', 'js/maths.js', 'js/vannes-cash.js', 'js/vannes-ironie.js', 'js/sciences.js', 'js/pieges.js', 'js/anglais.js', 'js/clash.js', 'js/histoires.js', 'js/parcours.js', 'js/rigolade.js', 'js/clash-plus.js', 'js/matieres.js', 'js/mat-francais.js', 'js/mat-histoire.js', 'js/mat-svt-pc.js', 'js/mat-sup.js', 'js/epreuves.js', 'js/epreuves-spe.js', 'js/epreuves-plus.js', 'js/epreuves-oraux.js', 'js/epreuves-pro.js'])
   new Function('window', fs.readFileSync(path.join(ICI, f), 'utf8'))(w);
 // Même empreinte que le jeu (js/jeu.js, fnv1a) : c'est le nom du MP3 sur le serveur des voix.
 const fnv1a = s => { let h = 0x811c9dc5; for(let i = 0; i < s.length; i++){ h ^= s.charCodeAt(i); h = Math.imul(h, 0x01000193); } return (h >>> 0).toString(36); };
@@ -54,6 +54,7 @@ for(const v of R.VRAI_FAUX) ajouter('True or false', v.en, v.fr);
 for(const h of w.HISTOIRES.liste) for(const l of h.lignes) ajouter('Histoire : ' + h.titre, l[1], l[2]);
 for(const s of A.SITUATIONS) for(const e of s.etapes){ ajouter('Situation : ' + s.titre, e.dit, e.fr); ajouter('Situation : ' + s.titre + ' (réponse)', e.bon, ''); }
 for(const m of A.BATTLE.concat(w.CLASH.MANCHES)){ ajouter('Battle (Ami)', m.ami, m.fr); ajouter('Battle (réplique)', m.bon.en, m.bon.fr); }
+for(const v of w.VANNES_LIBRES.toutes()) ajouter('Clash libre (' + v.cat + ')', v.en, v.fr);
 for(const p of w.PIEGES.liste) ajouter('Pièges', p.bon, p.fr);
 bilan.push('phrases à enregistrer : ' + ecrire('docs/a-enregistrer/phrases-en.csv', ['jeu', 'phrase anglaise', 'traduction', 'fichier MP3 attendu (sur le serveur des voix)', 'enregistrée ? (oui)'], [...vu.values()]) + ' phrases');
 console.log(bilan.join('\n'));

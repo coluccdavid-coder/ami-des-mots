@@ -63,7 +63,7 @@
 
 
   // Avec le serveur PHP, l'abonnement et les vannes IA passent par lui (sauf adresse donnée à part).
-  if(CONFIG.SERVEUR){ const b = String(CONFIG.SERVEUR).replace(/\/?$/, '/'); if(!CONFIG.API_ABONNEMENT) CONFIG.API_ABONNEMENT = b + 'abonnement.php'; if(!CONFIG.API_VANNES) CONFIG.API_VANNES = b + 'vannes.php'; if(!CONFIG.API_VANNES_DIRECT) CONFIG.API_VANNES_DIRECT = b + 'vannes-direct.php'; }
+  if(CONFIG.SERVEUR){ const b = String(CONFIG.SERVEUR).replace(/\/?$/, '/'); if(!CONFIG.API_ABONNEMENT) CONFIG.API_ABONNEMENT = b + 'abonnement.php'; if(!CONFIG.API_VANNES) CONFIG.API_VANNES = b + 'vannes.php'; if(!CONFIG.API_VANNES_DIRECT) CONFIG.API_VANNES_DIRECT = b + 'vannes-direct.php'; if(!CONFIG.API_VANNE_JUGE) CONFIG.API_VANNE_JUGE = b + 'vanne-juge.php'; }
 
   // js/offre.js (fabriqué par le coin admin) : on ne garde que les réglages connus, au bon format.
   // Il ne peut que dire ce qui est réservé à Plus, jamais ouvrir Plus.
@@ -231,7 +231,7 @@
   // Chaque action d'entrée mène à son coin ; les actions internes passent par l'entrée.
   const COINS = {
     pieges:['pieges', 'pieges-go'], situations:['situations', 'situation-go'], histoires:['histoires', 'histoire-go'],
-    dictee:['dictee'], parcours:['parcours'], phrases:['phrases'], battle:['battle', 'battle-go'], rap:['rap'],
+    dictee:['dictee'], parcours:['parcours'], phrases:['phrases'], battle:['battle', 'battle-go', 'clash-libre', 'clash-libre-go', 'clash-libre-carte', 'clash-libre-melange', 'clash-libre-ecrire', 'clash-libre-envoyer', 'clash-libre-reaction', 'clash-libre-suite', 'clash-libre-paquet', 'clash-libre-ajouter', 'clash-libre-retirer', 'clash-libre-garder'], rap:['rap'],
     tournoi:['tournoi', 'tournoi-go', 'tournoi-go-memes', 'potes', 'potes-go', 'potes-joue', 'potes-revanche', 'potes-trash'], 'defi-pote':['defi-pote', 'defi-pote-go'],
     salon:['salon', 'salon-creer', 'salon-rejoindre', 'salon-public', 'salon-entrer-public'],
     trompe:['trompe'], oreilles:['oreilles'], vraifaux:['vraifaux'], avent:['avent'], betisier:['betisier'], maison:['maison'],
@@ -1905,10 +1905,141 @@
 
   // Battle : 3 manches. Ami se vante ; on choisit la réplique juste et drôle. Point seulement du premier coup.
   let battle = null;
+  // ── v5.86 : Clash libre — on se vanne, tout simplement (un téléphone, chacun son tour, en anglais ET en français) ──
+  let clashL = null;
+  function clashLibre(){
+    const V = window.VANNES_LIBRES; if(!V) return battleMenu();
+    const n = (base.clashNoms || ['', '']);
+    reverifierPaquet();
+    poser(barre('battle') + '<main class="battle-ecran clash-libre"><h2>🗯️ Clash libre</h2>' +
+      '<p>On se vanne, c’est tout ! Chacun son tour, on se passe le téléphone. Chaque vanne est en <strong>anglais</strong> et en français : tu chambres <em>et</em> tu apprends.</p>' +
+      '<p class="aide">👊 Règle d’or : on vise ce que fait l’autre (le jeu, les devoirs, le téléphone…), <strong>jamais qui il est</strong> : ni physique, ni famille, ni origine.</p>' +
+      '<p><label>Joueur 1 <input id="cl-n1" maxlength="16" value="' + esc(n[0]) + '" placeholder="Joueur 1"></label></p>' +
+      '<p><label>Joueur 2 <input id="cl-n2" maxlength="16" value="' + esc(n[1]) + '" placeholder="Joueur 2"></label></p>' +
+      '<p class="piege-consigne">Combien de vannes chacun ?</p><div class="actions serrees">' +
+      [3, 5, 8].map(k => '<button class="moyen' + (k === 5 ? ' plein' : '') + '" data-a="clash-libre-go" data-v="' + k + '">' + k + ' vannes</button>').join('') + '</div>' +
+      '<div class="actions serrees"><button class="moyen" data-a="clash-libre-paquet">➕ Ajouter des vannes au paquet (⭐ ' + paquet().length + ')</button></div></main>');
+  }
+  function clashLibreGo(nb){
+    const V = window.VANNES_LIBRES; if(!V) return battleMenu();
+    // Revanche : plus de champs à l'écran, on reprend les noms gardés.
+    const garde = base.clashNoms || [], nom = (id, k) => { const x = $(id); const v = String(x ? x.value : (garde[k] || '')).replace(/[<>]/g, '').trim().slice(0, 16); return v && V.juger(v).ok ? v : 'Joueur ' + (k + 1); };
+    const j = [nom('#cl-n1', 0), nom('#cl-n2', 1)];
+    base.clashNoms = j; garder();
+    clashL = { j, aura:[0, 0], tour:0, total:Math.max(1, Math.min(8, Number(nb) || 5)) * 2, jouees:[], main:V.tirer([], null, paquet()), vanne:null, ecrire:false, msg:'' };
+    clashLibreTour();
+  }
+  function clashLibreTour(){
+    const c = clashL, V = window.VANNES_LIBRES; if(!c || !V) return clashLibre();
+    if(c.tour >= c.total) return clashLibreFin();
+    const moi = c.tour % 2, lui = 1 - moi;
+    const cartes = c.main.map((v, k) => '<button class="carte-anglais clash-carte" data-a="clash-libre-carte" data-v="' + k + '"><span class="ic">' + v.ic + '</span>' + (v.en ? '<strong lang="en">' + esc(v.en) + '</strong><small>🇫🇷 ' + esc(v.fr) + '</small>' : '<strong>' + esc(v.fr) + '</strong>') + '</button>').join('');
+    poser(barre('battle') + '<main class="battle-ecran clash-libre"><p class="piege-cat">🗯️ Vanne ' + (Math.floor(c.tour / 2) + 1) + '/' + (c.total / 2) + ' · ✨ ' + esc(c.j[0]) + ' ' + c.aura[0] + ' – ' + c.aura[1] + ' ' + esc(c.j[1]) + '</p>' +
+      '<h2>🎤 ' + esc(c.j[moi]) + ', envoie ta vanne à ' + esc(c.j[lui]) + ' !</h2>' +
+      (c.ecrire
+        ? '<p><label>Ta vanne (en anglais ou en français) <textarea id="cl-texte" maxlength="140" rows="3"></textarea></label></p>' +
+          '<p class="aide" id="cl-msg" role="status" aria-live="polite">' + esc(c.msg) + '</p>' +
+          '<div class="actions serrees"><button class="moyen plein" data-a="clash-libre-envoyer">🎤 Envoyer</button><button class="moyen" data-a="clash-libre-ecrire">🃏 Revenir aux cartes</button></div>'
+        : '<div class="cartes-anglais">' + cartes + '</div><div class="actions serrees"><button class="moyen" data-a="clash-libre-melange">🔁 Autres vannes</button><button class="moyen" data-a="clash-libre-ecrire">✍️ J’écris la mienne</button></div>') +
+      '</main>');
+  }
+  function clashLibreEnvoyer(v){
+    const c = clashL; if(!c) return clashLibre();
+    c.vanne = v; c.ecrire = false; c.msg = '';
+    if(v.cat) c.jouees.push(V_L().cle(v));
+    const moi = c.tour % 2, lui = 1 - moi, V = window.VANNES_LIBRES;
+    poser(barre('battle') + '<main class="battle-ecran clash-libre centre"><p class="piege-cat">🎤 ' + esc(c.j[moi]) + ' → ' + esc(c.j[lui]) + '</p>' +
+      '<div class="bulle-ami clash-vanne">' + (v.en ? '<p class="piege-fr" lang="en">« ' + esc(v.en) + ' »</p><p class="petit">🇫🇷 ' + esc(v.fr) + '</p>' : '<p class="piege-fr">« ' + esc(v.fr) + ' »</p>') + '</div>' +
+      '<p class="piege-consigne">📱 Passe le téléphone à <strong>' + esc(c.j[lui]) + '</strong>. Alors, ta réaction ?</p>' +
+      '<div class="actions serrees">' + V.REACTIONS.map(r => '<button class="moyen" data-a="clash-libre-reaction" data-v="' + r[0] + '">' + r[1] + ' ' + esc(r[2]) + '</button>').join('') + '</div>' +
+      (!v.cat ? '<div class="actions serrees"><button class="moyen" data-a="clash-libre-garder">➕ Garder cette vanne dans le paquet</button></div><p class="aide" id="cl-garde" role="status" aria-live="polite"></p>' : '') + '</main>');
+    if(v.en) direPhrase(v.en, 'en');
+  }
+  function clashLibreReaction(id){
+    const c = clashL, V = window.VANNES_LIBRES; if(!c || !c.vanne) return clashLibre();
+    const r = V.REACTIONS.find(x => x[0] === id); if(!r) return;
+    const moi = c.tour % 2; c.aura[moi] = Math.max(0, c.aura[moi] + r[3]);
+    if(r[0] === 'feu' || r[0] === 'rire') bruit('juste');
+    // « Trop méchant » sur une vanne du paquet : elle en sort (c'est la famille qui a le dernier mot).
+    let sortie = false;
+    if(r[0] === 'mechant' && c.vanne.perso){ const avant = paquet().length; base.clashPerso = paquet().filter(x => x.fr !== c.vanne.fr); sortie = paquet().length < avant; garder(); }
+    c.tour++; c.vanne = null; c.main = V.tirer(c.jouees, null, paquet());
+    if(r[0] === 'mechant'){ c.msg = ''; poser(barre('battle') + '<main class="battle-ecran clash-libre centre"><h2>🚫 Carton jaune</h2><p>On se chambre, on ne se blesse pas : on vise ce que l’autre fait, pas qui il est. −2 d’aura.</p>' + (sortie ? '<p>⭐ Cette vanne sort du paquet.</p>' : '') + '<button class="moyen plein" data-a="clash-libre-suite">Continuer →</button></main>'); return; }
+    clashLibreTour();
+  }
+  function clashLibreFin(){
+    const c = clashL, V = window.VANNES_LIBRES; if(!c) return clashLibre();
+    const g = c.aura[0] === c.aura[1] ? -1 : c.aura[0] > c.aura[1] ? 0 : 1;
+    const apprises = [...new Set(c.jouees)].map(k => V.toutes(paquet()).find(v => V.cle(v) === k)).filter(v => v && v.en);
+    J().plumes += 2; garder();
+    poser(barre('battle') + '<main class="centre battle-fin clash-libre"><div class="ami-moyen">' + ami('fete') + '</div>' +
+      '<h2>' + (g < 0 ? '🤝 Égalité parfaite ! Aura partagée.' : '🏆 ' + esc(c.j[g]) + ' gagne le clash !') + '</h2>' +
+      '<p class="battle-score">✨ ' + esc(c.j[0]) + ' ' + c.aura[0] + ' – ' + c.aura[1] + ' ' + esc(c.j[1]) + '</p>' +
+      '<p>' + esc(c.j[0]) + ' : ' + esc(V.titre(c.aura[0])) + ' · ' + esc(c.j[1]) + ' : ' + esc(V.titre(c.aura[1])) + '</p>' +
+      (apprises.length ? '<details class="contexte-exo" open><summary>📚 L’anglais que vous venez d’apprendre</summary><ul>' + apprises.map(v => '<li><strong lang="en">' + esc(v.en) + '</strong> — ' + esc(v.fr) + '</li>').join('') + '</ul></details>' : '') +
+      '<div class="actions serrees"><button class="moyen plein" data-a="clash-libre-go" data-v="' + (c.total / 2) + '">🔁 Revanche</button><button class="moyen" data-a="clash-libre">🗯️ Changer de joueurs</button><button class="moyen" data-a="battle">🎤 Autres battles</button></div></main>');
+    clashL = null;
+  }
+
+  // ── v5.87 : ⭐ le paquet de vannes ajoutées par les joueurs, trié par le juge d'Ami puis par l'IA du serveur ──
+  const V_L = () => window.VANNES_LIBRES;
+  const paquet = () => Array.isArray(base.clashPerso) ? base.clashPerso.filter(v => v && typeof v.fr === 'string') : [];
+  let paquetMsg = '', paquetVerif = false;
+  // Réponse de l'IA : { garder, raison, en_corrige } ; null si le serveur ne répond pas.
+  async function jugerParIA(fr, en){
+    if(!CONFIG.API_VANNE_JUGE || typeof fetch !== 'function') return null;
+    try{
+      const r = await fetch(CONFIG.API_VANNE_JUGE, { method:'POST', cache:'no-store', headers:{ 'Content-Type':'application/json' }, body:JSON.stringify({ fr, en }) });
+      if(!r.ok) return null;
+      const d = await r.json(); return d && typeof d.garder === 'boolean' ? d : null;
+    }catch(e){ return null; }
+  }
+  // Ajoute une vanne : règles d'abord (tout de suite), puis l'IA. Sans serveur : règles seules. Serveur muet : en attente.
+  async function ajouterAuPaquet(fr, en){
+    const V = V_L(); fr = String(fr || '').replace(/\s+/g, ' ').trim().slice(0, 140); en = String(en || '').replace(/\s+/g, ' ').trim().slice(0, 140);
+    if(!fr) return { ok:false, msg:'✍️ Écris la vanne en français (l’anglais est en option).' };
+    for(const t of [fr, en]) if(t){ const j = V.juger(t); if(!j.ok) return { ok:false, msg:'🛑 Le juge d’Ami refuse : ' + j.raisons.join(', ') + '.' }; }
+    if(paquet().some(x => x.fr.toLowerCase() === fr.toLowerCase())) return { ok:false, msg:'⭐ Elle est déjà dans le paquet.' };
+    if(paquet().length >= 100) return { ok:false, msg:'Le paquet est plein (100 vannes) : retire-en une d’abord.' };
+    let etat = 'regles', msg = '✅ Ajoutée ! Vérifiée par le juge d’Ami.';
+    if(CONFIG.API_VANNE_JUGE){
+      const ia = await jugerParIA(fr, en);
+      if(ia && !ia.garder) return { ok:false, msg:'🤖 L’IA ne la met pas dans le paquet' + (ia.raison ? ' : ' + ia.raison : '.') };
+      if(ia){ etat = 'ok'; msg = '🤖✅ L’IA valide, elle entre dans le paquet !'; if(ia.en_corrige && V.juger(ia.en_corrige).ok){ en = ia.en_corrige; msg += ' Anglais corrigé : « ' + en + ' ».'; } }
+      else { etat = 'attente'; msg = '⏳ L’IA ne répond pas pour l’instant : la vanne attend sa vérification avant de sortir en jeu.'; }
+    }
+    base.clashPerso = paquet().concat([{ fr, en, etat }]); garder();
+    return { ok:true, msg };
+  }
+  // À l'ouverture du Clash libre : les vannes en attente repassent devant l'IA (5 au plus).
+  async function reverifierPaquet(){
+    if(paquetVerif || !CONFIG.API_VANNE_JUGE) return; paquetVerif = true;
+    try{
+      for(const v of paquet().filter(x => x.etat === 'attente').slice(0, 5)){
+        const ia = await jugerParIA(v.fr, v.en); if(!ia) break;
+        base.clashPerso = ia.garder ? paquet().map(x => x === v ? Object.assign({}, x, { etat:'ok', en:ia.en_corrige && V_L().juger(ia.en_corrige).ok ? ia.en_corrige : x.en }) : x) : paquet().filter(x => x !== v);
+        garder();
+      }
+    } finally { paquetVerif = false; }
+  }
+  function clashPaquet(){
+    const p = paquet(), etiquette = { ok:'🤖✅ validée par l’IA', regles:'✅ juge d’Ami', attente:'⏳ attend l’IA' };
+    poser(barre('battle') + '<main class="battle-ecran clash-libre"><h2>⭐ Ajouter des vannes au paquet</h2>' +
+      '<p>Vos vannes à vous sortiront dans le Clash libre. ' + (CONFIG.API_VANNE_JUGE ? '🤖 L’IA trie : elle refuse celles qui visent la personne et corrige l’anglais.' : 'Le juge d’Ami les vérifie (l’IA s’activera avec le serveur).') + '</p>' +
+      '<p><label>La vanne en français <textarea id="cl-fr" maxlength="140" rows="2"></textarea></label></p>' +
+      '<p><label>En anglais (si tu sais, sinon laisse vide) <input id="cl-en" maxlength="140" lang="en"></label></p>' +
+      '<div class="actions serrees"><button class="moyen plein" data-a="clash-libre-ajouter">➕ Proposer</button><button class="moyen" data-a="clash-libre">← Retour au clash</button></div>' +
+      '<p class="aide" id="cl-paquet-msg" role="status" aria-live="polite">' + esc(paquetMsg) + '</p>' +
+      (p.length ? '<h3>⭐ Nos vannes (' + p.length + ')</h3><ul class="liste-paquet">' + p.map((v, k) => '<li><strong>' + esc(v.fr) + '</strong>' + (v.en ? ' <span lang="en">— ' + esc(v.en) + '</span>' : '') + ' <small>' + (etiquette[v.etat] || '') + '</small> <button class="bouton-rond" data-a="clash-libre-retirer" data-v="' + k + '" aria-label="Retirer cette vanne">🗑️</button></li>').join('') + '</ul>' : '') +
+      '</main>');
+    paquetMsg = '';
+  }
+
   function battleMenu(){
     battle = null; arreterBeat(); quitterSalon();
     if(!piegesDispo() || !A_EN()) return pieges();
     poser(barre('anglais') + '<main class="coin-anglais"><h2>🎤 Battle de vannes</h2><div class="cartes-anglais">' +
+      (window.VANNES_LIBRES ? '<button class="carte-anglais" data-a="clash-libre"><span class="ic">🗯️</span><strong>Clash libre</strong><small>On se vanne, c’est tout ! Entre potes, en anglais et en français</small></button>' : '') +
       '<button class="carte-anglais" data-a="battle-go" data-v="ami"><span class="ic">🦉</span><strong>Contre Ami</strong><small>3 manches : cloue-lui le bec !</small></button>' +
       '<button class="carte-anglais" data-a="battle-go" data-v="famille"><span class="ic">🦊🐼</span><strong>En famille</strong><small>Deux équipes, chacun son tour, Ami arbitre</small></button>' +
       '<button class="carte-anglais" data-a="invente"><span class="ic">✍️</span><strong>Invente ta vanne</strong><small>Fabrique une vanne en anglais pour Ami</small></button>' +
@@ -3446,6 +3577,30 @@
       case 'pieges': return pieges();
       case 'anglais': return coinAnglais();
       case 'battle': return battleMenu();
+      case 'clash-libre': return clashLibre();
+      case 'clash-libre-go': return clashLibreGo(v);
+      case 'clash-libre-carte': if(clashL && clashL.main[+v]) return clashLibreEnvoyer(clashL.main[+v]); return clashLibre();
+      case 'clash-libre-melange': if(clashL){ clashL.main = window.VANNES_LIBRES.tirer(clashL.jouees, null, paquet()); return clashLibreTour(); } return clashLibre();
+      case 'clash-libre-ecrire': if(clashL){ clashL.ecrire = !clashL.ecrire; clashL.msg = ''; return clashLibreTour(); } return clashLibre();
+      case 'clash-libre-envoyer': {
+        if(!clashL) return clashLibre();
+        const x = $('#cl-texte'), t = x ? String(x.value).trim() : '', jg = window.VANNES_LIBRES.juger(t);
+        if(!jg.ok){ const m = $('#cl-msg'); if(m) m.textContent = '🛑 Le juge d’Ami refuse : ' + jg.raisons.join(', ') + '.'; return; }
+        return clashLibreEnvoyer({ fr:t });
+      }
+      case 'clash-libre-reaction': return clashLibreReaction(v);
+      case 'clash-libre-suite': return clashLibreTour();
+      case 'clash-libre-paquet': return clashPaquet();
+      case 'clash-libre-ajouter': {
+        const fr = $('#cl-fr') ? $('#cl-fr').value : '', en = $('#cl-en') ? $('#cl-en').value : '', m = $('#cl-paquet-msg');
+        if(m) m.textContent = CONFIG.API_VANNE_JUGE ? '🤖 L’IA réfléchit…' : '';
+        return ajouterAuPaquet(fr, en).then(r => { paquetMsg = r.msg; if(r.ok) return clashPaquet(); const z = $('#cl-paquet-msg'); if(z) z.textContent = r.msg; });
+      }
+      case 'clash-libre-retirer': { const p = paquet(); if(p[+v]){ p.splice(+v, 1); base.clashPerso = p; garder(); paquetMsg = '🗑️ Retirée du paquet.'; } return clashPaquet(); }
+      case 'clash-libre-garder': {
+        if(!clashL || !clashL.vanne) return; const b = document.querySelector('[data-a="clash-libre-garder"]'); if(b) b.disabled = true;
+        return ajouterAuPaquet(clashL.vanne.fr, '').then(r => { const z = $('#cl-garde'); if(z) z.textContent = r.msg; });
+      }
       case 'installer': if(installation){ const ev = installation; installation = null; ev.prompt(); ev.userChoice.finally(() => accueil()); } return;
       case 'maths': return mathsAccueil();
       case 'maths-niveau': if(window.MATHS && MATHS.NIVEAUX.includes(v)){ etatMaths().niveau = v; garder(); } return mathsAccueil();

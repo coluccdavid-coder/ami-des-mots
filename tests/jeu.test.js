@@ -21,7 +21,7 @@ function page(langue, config, avant){
   w.TextEncoder = TextEncoder; w.TextDecoder = TextDecoder;
   w.__fetch = []; w.fetch = async (u) => { w.__fetch.push(String(u)); return { ok:true, json:async () => (w.__reponse || { actif:false }) }; };
   if(avant) avant(w);
-  for(const f of ['js/donnees.js', 'js/voix.js', 'js/phrases-enregistrees.js', 'js/textes.js', 'js/articulation.js', 'js/genres.js', 'js/confusions.js', 'js/vannes.js', 'js/pieges.js', 'js/anglais.js', 'js/clash.js', 'js/histoires.js', 'js/blagues-en.js', 'js/parcours.js', 'js/rigolade.js', 'js/clash-plus.js', 'js/salon.js', 'js/juge.js', 'js/maths.js', 'js/sciences.js', 'js/trash-talk.js', 'js/epreuves.js', 'js/epreuves-spe.js', 'js/epreuves-plus.js', 'js/epreuves-oraux.js', 'js/epreuves-pro.js', 'js/matieres.js', 'js/mat-francais.js', 'js/mat-histoire.js', 'js/mat-svt-pc.js', 'js/mat-sup.js', 'js/vannes-cash.js', 'js/vannes-ironie.js', 'js/vannes-mots.js', 'js/offre.js', 'js/jeu.js']) w.eval(lire(f));
+  for(const f of ['js/donnees.js', 'js/voix.js', 'js/phrases-enregistrees.js', 'js/textes.js', 'js/articulation.js', 'js/genres.js', 'js/confusions.js', 'js/vannes.js', 'js/pieges.js', 'js/anglais.js', 'js/clash.js', 'js/histoires.js', 'js/blagues-en.js', 'js/parcours.js', 'js/rigolade.js', 'js/clash-plus.js', 'js/salon.js', 'js/juge.js', 'js/vannes-libres.js', 'js/maths.js', 'js/sciences.js', 'js/trash-talk.js', 'js/epreuves.js', 'js/epreuves-spe.js', 'js/epreuves-plus.js', 'js/epreuves-oraux.js', 'js/epreuves-pro.js', 'js/matieres.js', 'js/mat-francais.js', 'js/mat-histoire.js', 'js/mat-svt-pc.js', 'js/mat-sup.js', 'js/vannes-cash.js', 'js/vannes-ironie.js', 'js/vannes-mots.js', 'js/offre.js', 'js/jeu.js']) w.eval(lire(f));
   return w;
 }
 // Certificats d'abonnement comme les signe le serveur (même format que serveur/functions/ami-abonnement).
@@ -1177,7 +1177,8 @@ await test('aucune promesse de santé, aucun traceur ; un seul envoi : le code d
   assert.ok(!/rééduc|thérap|aphasi|AVC|guérir|soigne(?!\s+rien)|Alzheimer/i.test(tout.replace(/il ne soigne rien/g, '')), 'promesse de santé');
   const J = lire('js/jeu.js');
   assert.ok(!/google-analytics|gtag|fbq|matomo|sendBeacon|XMLHttpRequest/.test(J));
-  assert.strictEqual((J.match(/fetch\(/g) || []).length, 5, 'cinq fetch : vérification du code, vannes IA (Plus), vannes en direct (serveur configuré), carte des programmes de maths, offre signée (rien n’est envoyé)');
+  assert.strictEqual((J.match(/fetch\(/g) || []).length, 6, 'six fetch : vérification du code, vannes IA (Plus), vannes en direct (serveur configuré), carte des programmes de maths, offre signée (rien n’est envoyé), tri des vannes ajoutées (texte de la vanne seulement)');
+  assert.match(J, /fetch\(CONFIG\.API_VANNE_JUGE, \{ method:'POST', cache:'no-store', headers:\{ 'Content-Type':'application\/json' \}, body:JSON\.stringify\(\{ fr, en \}\) \}\)/);
   assert.match(J, /fetch\(String\(CONFIG\.SERVEUR\)\.replace\(\/\\\/\?\$\/, '\/'\) \+ 'offre\.php', \{ cache:'no-cache' \}\)/);
   assert.match(J, /fetch\(CONFIG\.API_VANNES_DIRECT, /); assert.match(J, /API_VANNES_DIRECT = b \+ 'vannes-direct\.php'/);
   assert.match(J, /fetch\(String\(CONFIG\.SERVEUR\)\.replace\(\/\\\/\?\$\/, '\/'\) \+ 'programme\.php\?quoi=maths'/);
@@ -1482,6 +1483,73 @@ await test('v5.85 : offre réglée dans l’admin du serveur, signée ; jamais d
   assert.ok(!/mdp|password|cle_privee/i.test(O.replace(/^\/\/.*$/gm, '')), 'aucun secret renvoyé');
   const C = JSON.parse(lire('serveur-php/admin/catalogue.json'));
   assert.deepStrictEqual(C.coins.flatMap(g => g[1].map(c => c[0])).sort(), Object.keys(A.COINS).sort());
+});
+await test('v5.86 : Clash libre — on se vanne entre potes, en anglais et en français, sans viser la personne', async () => {
+  const w = page(), d = w.document, V = w.VANNES_LIBRES;
+  // Toutes les vannes du paquet passent le juge ; anglais et français remplis.
+  assert.ok(V.toutes().length >= 50);
+  for(const v of V.toutes()){ assert.ok(v.en && v.fr, v.en); assert.ok(V.juger(v.en).ok, v.en + ' ' + V.juger(v.en).raisons); assert.ok(V.juger(v.fr).ok, v.fr + ' ' + V.juger(v.fr).raisons); }
+  // Le parler des jeunes passe ; viser la personne non.
+  for(const ok of ['Wesh gros, t’es un ouf', 'Tranquille, gros, ta riposte arrive avec trois jours de décalage', 'T’es un ouf, t’as joué sans lunettes de soleil… en pleine nuit'.replace(' sans lunettes de soleil', '')]) assert.ok(V.juger(ok).ok, ok);
+  for(const ko of ['t’es gros', 'ta mère joue mieux que toi', 't’es moche', 'tes cheveux sont ratés', 'retourne dans ton pays', 't’es pauvre', 'your family is weird']) assert.ok(!V.juger(ko).ok, ko);
+  // Partie complète : noms, 2 vannes chacun, réactions, carton jaune, fin avec l’anglais appris.
+  clic(w, '[data-a="anglais"]'); clic(w, '[data-a="battle"]'); clic(w, '[data-a="clash-libre"]');
+  d.getElementById('cl-n1').value = 'Inès'; d.getElementById('cl-n2').value = 'Yanis';
+  clic(w, '[data-a="clash-libre-go"][data-v="3"]');
+  assert.match(d.querySelector('h2').textContent, /Inès, envoie ta vanne à Yanis/);
+  assert.strictEqual(d.querySelectorAll('.clash-carte').length, 3);
+  clic(w, '[data-a="clash-libre-carte"][data-v="0"]'); assert.match(d.body.textContent, /Passe le téléphone à Yanis/);
+  clic(w, '[data-a="clash-libre-reaction"][data-v="feu"]');
+  assert.match(d.querySelector('h2').textContent, /Yanis, envoie ta vanne à Inès/);
+  // Vanne écrite : refusée si elle vise la personne, acceptée sinon.
+  clic(w, '[data-a="clash-libre-ecrire"]'); d.getElementById('cl-texte').value = 't’es moche'; clic(w, '[data-a="clash-libre-envoyer"]');
+  assert.match(d.getElementById('cl-msg').textContent, /refuse/);
+  d.getElementById('cl-texte').value = 'Wesh gros, ton dribble a demandé un remboursement'; clic(w, '[data-a="clash-libre-envoyer"]');
+  assert.match(d.body.textContent, /ton dribble a demandé un remboursement/);
+  clic(w, '[data-a="clash-libre-reaction"][data-v="mechant"]'); assert.match(d.body.textContent, /Carton jaune/); clic(w, '[data-a="clash-libre-suite"]');
+  for(let k = 0; k < 4; k++){ clic(w, '[data-a="clash-libre-carte"][data-v="1"]'); clic(w, '[data-a="clash-libre-reaction"][data-v="rire"]'); }
+  assert.match(d.querySelector('h2').textContent, /Inès gagne le clash/);
+  assert.match(d.querySelector('.battle-score').textContent, /Inès 11 – 6 Yanis/);
+  assert.ok(d.querySelectorAll('.contexte-exo li').length >= 3, 'liste de l’anglais appris');
+  // Revanche : mêmes joueurs.
+  clic(w, '[data-a="clash-libre-go"]'); assert.match(d.querySelector('h2').textContent, /Inès, envoie ta vanne à Yanis/);
+});
+await test('v5.87 : ajouter des vannes au paquet — règles, puis l’IA trie ; en attente si le serveur se tait', async () => {
+  const attendreUn = () => new Promise(r => setTimeout(r, 30));
+  // 1) Sans serveur : le juge d’Ami seul.
+  let w = page(), d = w.document;
+  clic(w, '[data-a="anglais"]'); clic(w, '[data-a="battle"]'); clic(w, '[data-a="clash-libre"]'); clic(w, '[data-a="clash-libre-paquet"]');
+  d.getElementById('cl-fr').value = 't’es moche'; clic(w, '[data-a="clash-libre-ajouter"]'); await attendreUn();
+  assert.match(d.getElementById('cl-paquet-msg').textContent, /refuse/);
+  d.getElementById('cl-fr').value = 'Wesh gros, ton dribble a demandé un remboursement'; clic(w, '[data-a="clash-libre-ajouter"]'); await attendreUn();
+  assert.match(d.body.textContent, /Ajoutée/); assert.strictEqual(w.AmiDesMots.base.clashPerso[0].etat, 'regles');
+  assert.ok(!w.__fetch.some(u => /vanne-juge/.test(u)), 'pas de serveur : rien n’est envoyé');
+  // Elle sort en jeu (⭐), et « trop méchant » la fait sortir du paquet.
+  const V = w.VANNES_LIBRES; assert.ok(V.toutes(w.AmiDesMots.base.clashPerso).some(v => v.perso));
+  clic(w, '[data-a="clash-libre"]'); clic(w, '[data-a="clash-libre-go"][data-v="3"]');
+  let k = 0; while(!d.querySelector('.clash-carte .ic') || ![...d.querySelectorAll('.clash-carte')].some(b => b.textContent.includes('dribble'))){ clic(w, '[data-a="clash-libre-melange"]'); if(++k > 60) break; }
+  const carte = [...d.querySelectorAll('.clash-carte')].find(b => b.textContent.includes('dribble')); assert.ok(carte, 'la vanne ⭐ sort dans les cartes'); carte.click();
+  clic(w, '[data-a="clash-libre-reaction"][data-v="mechant"]'); assert.match(d.body.textContent, /sort du paquet/); assert.strictEqual(w.AmiDesMots.base.clashPerso.length, 0);
+  // 2) Avec serveur : l’IA refuse, l’IA accepte (et corrige l’anglais), l’IA muette → en attente, puis revérifiée.
+  w = page(undefined, { MODE_PAYANT:false, SERVEUR:'https://ami.example/serveur' }); d = w.document;
+  let rep = { garder:false, raison:'Elle vise la famille de façon déguisée.' }, corps = [];
+  w.fetch = async (u, o) => { w.__fetch.push(String(u)); if(/vanne-juge/.test(u)){ corps.push(JSON.parse(o.body)); if(rep === null) return { ok:false, json:async () => ({}) }; return { ok:true, json:async () => rep }; } return { ok:true, json:async () => ({}) }; };
+  clic(w, '[data-a="anglais"]'); clic(w, '[data-a="battle"]'); clic(w, '[data-a="clash-libre"]'); clic(w, '[data-a="clash-libre-paquet"]');
+  d.getElementById('cl-fr').value = 'Ton goûter a plus de followers que toi'; clic(w, '[data-a="clash-libre-ajouter"]'); await attendreUn();
+  assert.match(d.getElementById('cl-paquet-msg').textContent, /L’IA ne la met pas dans le paquet : Elle vise la famille/);
+  assert.deepStrictEqual(Object.keys(corps[0]).sort(), ['en', 'fr'], 'seulement le texte de la vanne');
+  rep = { garder:true, raison:'', en_corrige:'Bro, your dribble asked for a refund.' };
+  d.getElementById('cl-fr').value = 'Wesh gros, ton dribble a demandé un remboursement'; d.getElementById('cl-en').value = 'Bro your dribble ask refund'; clic(w, '[data-a="clash-libre-ajouter"]'); await attendreUn();
+  assert.match(d.body.textContent, /L’IA valide/); assert.strictEqual(w.AmiDesMots.base.clashPerso[0].en, 'Bro, your dribble asked for a refund.');
+  rep = null;
+  d.getElementById('cl-fr').value = 'Ta riposte est arrivée en colis suivi'; clic(w, '[data-a="clash-libre-ajouter"]'); await attendreUn();
+  assert.strictEqual(w.AmiDesMots.base.clashPerso[1].etat, 'attente');
+  assert.ok(!V.toutes(w.AmiDesMots.base.clashPerso).some(v => v.fr === 'Ta riposte est arrivée en colis suivi'), 'en attente : ne sort pas en jeu');
+  rep = { garder:true, raison:'', en_corrige:null }; clic(w, '[data-a="clash-libre"]'); await attendreUn(); await attendreUn();
+  assert.strictEqual(w.AmiDesMots.base.clashPerso[1].etat, 'ok', 'revérifiée à l’ouverture du clash');
+  // Le serveur : clé et règles côté serveur seulement.
+  const P = lire('serveur-php/vanne-juge.php');
+  assert.match(P, /Dans le doute, REFUSE/); assert.match(P, /ami_limiter\('vanne-juge'/); assert.ok(!/sk-ant-/.test(P));
 });
 await test('hors connexion : le service worker garde le jeu et toutes ses images', () => {
   const S = lire('sw.js');

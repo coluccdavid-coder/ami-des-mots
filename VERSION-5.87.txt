@@ -1,0 +1,18 @@
+Ami des mots 5.87.0
+
+⭐ Ajouter ses vannes au paquet du Clash libre — l'IA trie
+- Clash libre → « ➕ Ajouter des vannes au paquet » : la vanne en français (+ l'anglais si on sait).
+  Après une vanne écrite en jeu : « ➕ Garder cette vanne dans le paquet ».
+- Tri en deux temps :
+  1. le juge d'Ami (règles, tout de suite, même hors ligne) : gros mots, insultes, physique, famille, origine, religion, argent, violence, infos perso ;
+  2. l'IA du serveur (serveur-php/vanne-juge.php) : refuse ce que les règles ne voient pas (moquerie déguisée, harcèlement,
+     sous-entendu, verlan, personne réelle visée…), « dans le doute, refuse », et corrige l'anglais s'il est faux.
+     Elle garde les vannes qui piquent fort tant qu'elles visent ce que la personne FAIT.
+- Serveur muet : la vanne est « en attente » et ne sort pas en jeu ; elle repasse devant l'IA à la prochaine ouverture du clash.
+  Sans serveur configuré : le juge d'Ami seul.
+- Les vannes ⭐ sortent dans les cartes comme une catégorie. « 🚫 Là, c'est trop méchant » sur une vanne ⭐ la retire du paquet.
+- Liste des vannes du paquet avec leur état (🤖✅ IA / ✅ juge d'Ami / ⏳ attend l'IA) et bouton 🗑️. 100 vannes au plus, gardées sur l'appareil.
+- Seul le texte de la vanne part au serveur (ni prénom, ni code). Limites : 20 par minute, 60 par jour par appareil (vanne_juge_par_jour).
+
+Vérifié : 130 tests ; essai réel de vanne-juge.php avec une fausse IA (acceptée + anglais corrigé, refusée, GET refusé, prénom non transmis).
+Contient aussi les v5.84 à v5.86.

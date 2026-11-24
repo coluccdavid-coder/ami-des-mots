@@ -19,7 +19,9 @@
   const VISE = /\b(tu es|t es|tu as l air|t as l air|t es vraiment|t es trop|vous etes|ta mere|ton pere|ta soeur|ton frere|you are|you re|youre|ur|your mom|your mum|your face|ta tete|ta face|ton nez|tes dents|tes oreilles)\b/;
   const mots = t => bas(t).replace(/[’']/g, ' ').replace(/[^a-z0-9 ]/g, ' ').split(/\s+/).filter(Boolean);
   function juger(texte){
-    const raisons = [], t = String(texte || ''), m = mots(t), phrase = ' ' + m.join(' ') + ' ';
+    // « wesh gros », « …, gros » : on interpelle un pote, ce n'est pas une moquerie (« t'es gros » reste refusé).
+    const t = String(texte || ''), sansAppel = t.replace(/\b(wesh|tranquille|salut|merci|allez|eh|oh)[\s,]+gros\b/gi, '$1').replace(/,\s*gros\b/gi, ',');
+    const raisons = [], m = mots(sansAppel), phrase = ' ' + m.join(' ') + ' ';
     if(!t.trim()) raisons.push('vide');
     if(t.length > 300) raisons.push('trop longue');
     if(m.some(x => GROS.includes(x))) raisons.push('gros mot');
