@@ -92,7 +92,13 @@
   const UI = Object.keys(window.TEXTES);
   // Langues visibles pendant la phase de lancement des voix dédiées.
   // Les autres langues et leurs contenus restent intégralement dans donnees.js.
-  const APPRENDRE = ['fr', 'en'];
+  // v5.99.2 : seules les langues enseignées à l'école sont proposées. Les autres langues restent dans les données
+  // (et restent choisies si elles l'étaient déjà), elles ne sont simplement plus affichées dans les listes.
+  const SCOLAIRES = ['en', 'es', 'de', 'it', 'pt', 'ar'];
+  const PARLE_VISIBLES = ['fr'].concat(SCOLAIRES);
+  const APPRENDRE = SCOLAIRES.concat('fr');   // le français reste à apprendre pour les élèves qui parlent une autre langue
+  const apprendreVisibles = () => APPRENDRE.filter(l => l !== base.ui);
+  const parleVisibles = () => PARLE_VISIBLES.concat(UI.includes(base.ui) && !PARLE_VISIBLES.includes(base.ui) ? [base.ui] : []);
   const DEFI = 8, MAX_JOUEURS = 6;
   const ACCESSOIRES = [['echarpe', 15], ['lunettes', 40], ['noeud', 80], ['chapeau', 140], ['couronne', 250]];
   const COULEURS = [['#B7845A', '#DBAA78', '#8C5E37'], ['#6E8FB8', '#A6C1E0', '#4A6A93'], ['#C9787A', '#EBB0B1', '#9E5153'], ['#7FA36B', '#B5D3A2', '#587C46'], ['#A08AC0', '#CDBDE3', '#76619A'], ['#7D7D7D', '#B9B9B9', '#555555']];
@@ -128,8 +134,9 @@
     // Conserver le choix précédent pour une réactivation ultérieure,
     // sans l'afficher ni le supprimer des données de l'application.
     if(base.cible) base.cibleMasquee = base.cible;
-    base.cible = base.ui === 'fr' ? 'en' : 'fr';
+    base.cible = base.ui === 'en' ? 'fr' : 'en';
   }
+  if(base.cible === base.ui) base.cible = base.ui === 'en' ? 'fr' : 'en';
   if(base.son === undefined) base.son = true;
 
   // ── Abonnement ────────────────────────────────────────────────────
@@ -628,8 +635,8 @@
         '<h1>Ami des mots</h1>' +
         (J().nom ? '<p class="joueur">' + esc(t('bonjour', J().nom)) + (base.joueurs.length > 1 ? ' · <button class="lien" data-a="qui">' + esc(t('changer_joueur')) + '</button>' : '') + '</p>' : '<p class="accroche">' + esc(t('accroche')) + '</p>') +
         '<div class="choix-langues">' +
-          '<label>' + esc(t('je_parle')) + '<select id="ui">' + opts(UI, base.ui) + '</select></label>' +
-          '<label>' + esc(t('j_apprends')) + '<select id="cible">' + opts(APPRENDRE, base.cible) + '</select></label>' +
+          '<label>' + esc(t('je_parle')) + '<select id="ui">' + opts(parleVisibles(), base.ui) + '</select></label>' +
+          '<label>' + esc(t('j_apprends')) + '<select id="cible">' + opts(apprendreVisibles(), base.cible) + '</select></label>' +
         '</div></div></section>' +
       '<main class="accueil">' +
         (s >= 2 && !fait ? '<p class="serie-danger" role="status">' + esc(tt('serie_danger', s)) + '</p>' : '') +
@@ -669,7 +676,7 @@
         '</nav>' +
         '<p class="liens-legaux"><a href="legal.html#confidentialite">' + esc(tt('confidentialite')) + '</a> · <a href="legal.html#cgu">' + esc(tt('regles')) + '</a> · <a href="legal.html#mentions">' + esc(tt('mentions')) + '</a></p>' +
       '</main>', 'accueil');
-    $('#ui').addEventListener('change', ev => { base.ui = ev.target.value; garder(); accueil(); });
+    $('#ui').addEventListener('change', ev => { base.ui = ev.target.value; if(base.cible === base.ui) base.cible = base.ui === 'en' ? 'fr' : 'en'; garder(); accueil(); });
     $('#cible').addEventListener('change', ev => { base.cible = ev.target.value; garder(); prefs(); accueil(); });
   }
   // Le décor de l'accueil : aurore, collines, lucioles, une étoile filante.
