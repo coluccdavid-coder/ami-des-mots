@@ -150,3 +150,4 @@ function ami_claude(string $systeme, array $contenu, string $modele, int $max = 
 }
 
 require_once __DIR__ . '/paiement-lib.php';
+require_once __DIR__ . '/credits-lib.php';

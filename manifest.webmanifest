@@ -1,7 +1,7 @@
 {
   "name": "Ami des mots",
   "short_name": "Ami des mots",
-  "description": "Des mots en images, dans 16 langues, avec Ami le hibou.",
+  "description": "Des mots en images, avec Plumo le hibou.",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",

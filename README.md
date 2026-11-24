@@ -1,6 +1,6 @@
 # Ami des mots
 
-Un jeu pour apprendre et réviser des mots en images, dans 16 langues, avec
+Un jeu pour apprendre et réviser des mots en images, avec
 Plumo le hibou. Produit **séparé** de reparole.fr : mêmes images, mêmes mots,
 même hibou, mais un jeu grand public, pas un outil de soin. reparole.fr
 n'est pas modifié.

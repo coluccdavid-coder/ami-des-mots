@@ -39,12 +39,13 @@ try {
   if ((int) ami_val($db, 'SELECT n FROM ami_vannes_appels WHERE code = ? AND jour = ?', [$cle, $jour]) > $max) ami_json(['erreur' => 'quota', 'max' => $max], 429);
 } catch (Throwable $e) { error_log('ami vanne-juge base ' . $e->getMessage()); ami_json(['erreur' => 'indisponible'], 503); }
 
+$garde = ami_credits_garde($d['code'] ?? '', 1);   // v5.99 : 1 plume (si les plumes sont allumées)
 $demande = 'Vanne en français : ' . ($fr !== '' ? json_encode($fr, JSON_UNESCAPED_UNICODE) : '(aucune)') . "\n"
   . 'Version anglaise : ' . ($en !== '' ? json_encode($en, JSON_UNESCAPED_UNICODE) : '(aucune)');
 $texte = ami_claude(SYSTEME_JUGE, [['type' => 'text', 'text' => $demande]], $cfg['anthropic_modele'] ?? 'claude-haiku-5-5', 200, 12);
-if ($texte === null) ami_json(['erreur' => 'ia_indisponible'], 502);
+if ($texte === null) { ami_credits_rembourser_garde($garde); ami_json(['erreur' => 'ia_indisponible'], 502); }
 $a = strpos($texte, '{'); $b = strrpos($texte, '}');
 $o = ($a !== false && $b !== false) ? json_decode(substr($texte, $a, $b - $a + 1), true) : null;
-if (!is_array($o) || !is_bool($o['garder'] ?? null)) ami_json(['erreur' => 'ia_illisible'], 502);
+if (!is_array($o) || !is_bool($o['garder'] ?? null)) { ami_credits_rembourser_garde($garde); ami_json(['erreur' => 'ia_illisible'], 502); }
 $corrige = is_string($o['en_corrige'] ?? null) && $en !== '' ? $txt($o['en_corrige'], 140) : null;
 ami_json(['garder' => $o['garder'], 'raison' => $txt($o['raison'] ?? '', 160), 'en_corrige' => $corrige !== '' ? $corrige : null]);

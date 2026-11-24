@@ -1,0 +1,15 @@
+Ami des mots 5.99.0
+
+🪶 Plumes magiques (crédits d'IA), éteintes tant que tu ne les allumes pas dans le coin admin.
+  - Une vanne écrite par l'IA = 1 plume (le tri d'une vanne du Clash libre aussi). Si l'IA ne livre pas, la plume est rendue.
+  - Quota mensuel inclus dans Plus (réglable), puis le solde acheté. Sans plumes : Plumo garde ses vannes, rien n'est bloqué.
+  - Packs (petit / moyen / grand) : Stripe sur le site (reconnu par le prix price_… — un pack n'ouvre jamais Plus « à vie »),
+    produits consommables Google Play / App Store vérifiés auprès des stores. Chaque achat crédité une seule fois ;
+    un remboursement Stripe retire le pack.
+  - Solde gardé sur le serveur (plumes.php), retrait atomique ; achat derrière une question pour adultes ; textes en 11 langues.
+  - Admin : réglages des plumes dans l'offre (signée), suivi du mois, « offrir des plumes » à un code.
+  - CGV : section plumes. docs/ADMIN.md : comment entrer dans l'admin et mettre les plumes en route.
+Vérifié : 148 tests ; essai réel PHP + SQLite avec faux Stripe / Google / Apple / IA : achat Stripe (rejoué : 1 seul crédit),
+  pack ≠ « à vie », quota Plus, plumes rendues, Google (valide, rejoué, faux), Apple, remboursement, 6 appels simultanés,
+  plumes éteintes = comportement d'avant ; enregistrement des réglages dans l'admin (valeurs pirates écartées).
+À la mise en ligne : relancer schema.sql (tables ami_credits, ami_credits_mouvements).

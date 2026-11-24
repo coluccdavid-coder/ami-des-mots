@@ -1,8 +1,8 @@
 {
   "name": "ami-des-mots",
-  "version": "5.98.0",
+  "version": "5.99.1",
   "private": true,
-  "description": "Ami des mots — un jeu pour apprendre des mots en images, dans 16 langues.",
+  "description": "Ami des mots — un jeu pour apprendre des mots en images.",
   "scripts": {
     "test": "node tests/jeu.test.js && node tests/apprentissage-adaptatif.test.js && node tests/tuteur-pedagogique.test.js && node tests/professeur-ia.test.js",
     "sw": "node outils/construire-sw.js",

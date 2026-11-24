@@ -1,7 +1,7 @@
 <?php
 // Ami des mots — vannes écrites par Claude EN DIRECT pour la question affichée (v5.66).
 // Le jeu envoie la question, la bonne réponse, les mauvaises réponses possibles et les dernières vannes déjà dites ;
-// Claude répond une vanne neuve par mauvaise réponse. Le jeu la repasse au juge de Plumo et garde ses vannes à lui
+// Claude répond une vanne neuve par mauvaise réponse. v5.99 : avec les plumes allumées, le jeu envoie aussi le code (rien d'autre). Le jeu la repasse au juge de Plumo et garde ses vannes à lui
 // si le serveur ne répond pas vite. Aucune donnée personnelle n'est envoyée (ni prénom, ni code, ni voix).
 // POST { sujet, langue, ton:0..3, question, bonne, fausses:[…], deja:[…] } → { vannes:{ "<fausse>":"…" } }
 declare(strict_types=1);
@@ -77,6 +77,8 @@ try {
   if ((int) ami_val($db, 'SELECT n FROM ami_vannes_appels WHERE code = ? AND jour = ?', [$cle, $jour]) > $max) ami_json(['erreur' => 'quota', 'max' => $max], 429);
 } catch (Throwable $e) { error_log('ami vannes-direct base ' . $e->getMessage()); ami_json(['erreur' => 'indisponible'], 503); }
 
+// v5.99 : plumes magiques (si allumées dans l'admin) : 1 plume par vanne demandée, rendue si l'IA ne la livre pas.
+$garde = ami_credits_garde($d['code'] ?? '', count($fausses));
 $angle = ANGLES[random_int(0, count(ANGLES) - 1)];
 $style = $trash ? STYLES_TRASH[random_int(0, count(STYLES_TRASH) - 1)] : STYLES[random_int(0, count(STYLES) - 1)];
 $demande = 'Sujet : ' . SUJETS[$sujet] . ".\nQuestion : " . ($question !== '' ? $question : '(une image à nommer)') . "\nBonne réponse : $bonne\n"
@@ -88,7 +90,7 @@ $demande = 'Sujet : ' . SUJETS[$sujet] . ".\nQuestion : " . ($question !== '' ? 
   . ($langue === 'en' ? "Écris les vannes en anglais simple.\n" : "Écris les vannes en français.\n")
   . ($deja ? 'Déjà dites (interdites, ne pas imiter) : ' . json_encode($deja, JSON_UNESCAPED_UNICODE) : '');
 $texte = ami_claude(SYSTEME, [['type' => 'text', 'text' => $demande]], $cfg['anthropic_modele'] ?? 'claude-haiku-5-5', 600, 12);
-if ($texte === null) ami_json(['erreur' => 'ia_indisponible'], 502);
+if ($texte === null) { ami_credits_rembourser_garde($garde); ami_json(['erreur' => 'ia_indisponible'], 502); }
 
 $a = strpos($texte, '{'); $b = strrpos($texte, '}');
 $o = ($a !== false && $b !== false) ? json_decode(substr($texte, $a, $b - $a + 1), true) : null;
@@ -101,4 +103,5 @@ if (is_array($o)) foreach ($fausses as $f) {
   if ($n < 12 || $n > 180 || preg_match('~https?:|www\.|@~i', $v) || in_array($v, $deja, true)) continue;
   $r[$f] = $v;
 }
+ami_credits_rembourser_garde($garde, count($fausses) - count($r));
 ami_json(['vannes' => (object) $r]);

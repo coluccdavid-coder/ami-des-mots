@@ -30,6 +30,12 @@ Relecture de tous les points d'accès de `serveur-php/` comme le ferait un attaq
   aucune IP, aucun cookie, aucun identifiant ; limite anti-abus (20 envois par minute) ; « Ne pas me suivre » respecté.
 - Rappels de l'appli : notifications locales planifiées sur le téléphone, sans serveur, désactivées par défaut.
 
+## Ajouté en v5.99 : plumes magiques
+- Solde gardé sur le serveur seulement ; retrait par un UPDATE conditionnel (jamais sous zéro, même avec des appels simultanés — essayé : 6 appels en même temps, solde exact).
+- Chaque achat crédité une seule fois (référence unique : paiement Stripe, jeton Google, transaction Apple) ; un remboursement retire le pack.
+- Le nombre de plumes d'un pack vient de l'admin, jamais du téléphone ; le pack Stripe est reconnu par son prix `price_…`, et ne peut pas ouvrir Plus « à vie ».
+- Plumes éteintes : rien ne change, aucun code n'est envoyé avec les vannes.
+
 ## À faire au moment de la mise en ligne
 
 - Relancer `schema.sql` (nouvelle table `ami_visites`).

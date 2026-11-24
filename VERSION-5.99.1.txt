@@ -1,0 +1,5 @@
+Ami des mots 5.99.1
+
+Retiré : la mention « dans 16 langues » (description du site, « À propos » dans les 11 langues de l'interface,
+manifeste de l'appli, README, message des phrases relues). Les langues elles-mêmes sont toutes conservées.
+Le manifeste dit maintenant « Plumo le hibou » (il restait « Ami le hibou »).

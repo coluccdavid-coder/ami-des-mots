@@ -126,3 +126,22 @@ function ami_magasin_rafraichir(string $code): void {
     $db->prepare("UPDATE ami_abonnements SET fin = ?, statut = 'magasin', maj = ? WHERE code = ? AND statut = 'magasin'")->execute([$v['fin'], ami_maintenant(), $code]);
   } catch (Throwable $e) { error_log('ami magasin rafraichir ' . $e->getMessage()); }
 }
+
+// ── v5.99 : packs de plumes achetés dans l'appli (produits « consommables »), vérifiés auprès de Google / Apple. ──
+// → référence unique de l'achat (pour ne créditer qu'une fois), ou null si l'achat n'est pas valide.
+function ami_magasin_consommable(string $plateforme, string $produit, string $jeton): ?string {
+  if (!in_array($produit, AMI_PACKS, true)) return null;
+  if ($plateforme === 'google') {
+    $c = ami_config(); $paquet = $c['android_package'] ?? 'fr.amidesmots.app';
+    $url = ami_base('google_api', 'https://androidpublisher.googleapis.com') . '/androidpublisher/v3/applications/' . rawurlencode($paquet) . '/purchases/products/' . rawurlencode($produit) . '/tokens/' . rawurlencode($jeton);
+    $r = ami_http('GET', $url, ['Authorization: Bearer ' . ami_google_acces()], null, 20);
+    $d = $r[0] === 200 ? json_decode($r[1], true) : null;
+    return is_array($d) && (int) ($d['purchaseState'] ?? 1) === 0 ? 'google:' . hash('sha256', $jeton) : null;
+  }
+  $d = ami_apple_api('/inApps/v1/transactions/' . rawurlencode($jeton));
+  $t = $d && !empty($d['signedTransactionInfo']) ? ami_apple_charge($d['signedTransactionInfo']) : null;
+  $c = ami_config();
+  if (!$t || ($t['bundleId'] ?? '') !== ($c['apple_bundle_id'] ?? 'fr.amidesmots.app') || ($t['productId'] ?? '') !== $produit
+    || ($t['type'] ?? '') !== 'Consumable' || !empty($t['revocationDate'])) return null;
+  return 'apple:' . (string) ($t['transactionId'] ?? $jeton);
+}

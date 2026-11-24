@@ -10,6 +10,18 @@ ami_limiter('magasin', 30);
 $d = ami_corps_json(4096); $cfg = ami_config();
 $code = (string) ($d['code'] ?? ''); $plateforme = (string) ($d['plateforme'] ?? ''); $produit = (string) ($d['produit'] ?? ''); $jeton = trim((string) ($d['jeton'] ?? ''));
 $produits = $cfg['magasin_produits'] ?? ['plus_mensuel' => 'abonnement', 'plus_annuel' => 'abonnement', 'plus_famille' => 'abonnement', 'plus_a_vie' => 'a_vie'];
+// v5.99 : pack de plumes magiques (consommable) — le nombre de plumes vient de l'admin, jamais du téléphone.
+if (in_array($produit, AMI_PACKS, true)) {
+  if (!preg_match(AMI_FORMAT_CODE, $code) || !in_array($plateforme, ['google', 'apple'], true) || !preg_match('/^[A-Za-z0-9._:-]{5,600}$/', $jeton)) ami_json(['erreur' => 'format'], 400);
+  try {
+    $pack = ami_credits_reglages()['packs'][$produit] ?? null;
+    if (!$pack || !ami_credits_reglages()['actif']) ami_json(['erreur' => 'pack_inconnu'], 409);
+    $ref = ami_magasin_consommable($plateforme, $produit, $jeton);
+    if (!$ref) ami_json(['erreur' => 'achat_invalide'], 402);
+    $db = ami_db(); $neuf = ami_credits_ajouter($db, $code, (int) $pack['plumes'], $ref, 'achat ' . $produit . ' ' . $plateforme);
+    ami_json(['plumes' => ami_credits_etat($db, $code), 'credite' => $neuf]);
+  } catch (Throwable $ex) { error_log('ami magasin plumes ' . $ex->getMessage()); ami_json(['erreur' => 'indisponible'], 503); }
+}
 if (!preg_match(AMI_FORMAT_CODE, $code) || !in_array($plateforme, ['google', 'apple'], true) || !isset($produits[$produit]) || !preg_match('/^[A-Za-z0-9._:-]{5,600}$/', $jeton))
   ami_json(['erreur' => 'format'], 400);
 try {

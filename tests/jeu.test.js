@@ -1179,9 +1179,12 @@ await test('aucune promesse de santé, aucun traceur ; un seul envoi : le code d
   assert.ok(!/rééduc|thérap|aphasi|AVC|guérir|soigne(?!\s+rien)|Alzheimer/i.test(tout.replace(/il ne soigne rien/g, '')), 'promesse de santé');
   const J = lire('js/jeu.js');
   assert.ok(!/google-analytics|gtag|fbq|matomo|sendBeacon|XMLHttpRequest/.test(J));
-  assert.strictEqual((J.match(/fetch\(/g) || []).length, 8, 'huit fetch : fréquentation anonyme (type d’événement et plateforme seulement), vérification du code, vannes IA (Plus), vannes en direct (serveur configuré), carte des programmes de maths, offre signée (rien n’est envoyé), tri des vannes ajoutées (texte de la vanne seulement), code cadeau (code AMI + code cadeau)');
+  assert.strictEqual((J.match(/fetch\(/g) || []).length, 9, 'neuf fetch : solde de plumes (code AMI seulement), fréquentation anonyme (type d’événement et plateforme seulement), vérification du code, vannes IA (Plus), vannes en direct (serveur configuré), carte des programmes de maths, offre signée (rien n’est envoyé), tri des vannes ajoutées (texte de la vanne seulement), code cadeau (code AMI + code cadeau)');
   assert.match(J, /body:JSON\.stringify\(\{ code:base\.abo\.code, cadeau \}\)/);
-  assert.match(J, /fetch\(CONFIG\.API_VANNE_JUGE, \{ method:'POST', cache:'no-store', headers:\{ 'Content-Type':'application\/json' \}, body:JSON\.stringify\(\{ fr, en \}\) \}\)/);
+  assert.match(J, /fetch\(CONFIG\.API_VANNE_JUGE, \{ method:'POST', cache:'no-store', headers:\{ 'Content-Type':'application\/json' \}, body:JSON\.stringify\(\{ fr, en, \.\.\.codePlumes\(\) \}\) \}\)/);
+  // v5.99 : le code n'accompagne la vanne que si les plumes sont allumées dans l'admin.
+  assert.match(J, /const codePlumes = \(\) => plumesActives\(\) \? \{ code:base\.abo\.code \} : \{\};/);
+  assert.match(J, /fetch\(CONFIG\.API_PLUMES, \{ method:'POST', cache:'no-store', headers:\{ 'Content-Type':'application\/json' \}, body:JSON\.stringify\(\{ code:base\.abo\.code \}\) \}\)/);
   assert.match(J, /fetch\(String\(CONFIG\.SERVEUR\)\.replace\(\/\\\/\?\$\/, '\/'\) \+ 'offre\.php', \{ cache:'no-cache' \}\)/);
   assert.match(J, /fetch\(CONFIG\.API_VANNES_DIRECT, /); assert.match(J, /API_VANNES_DIRECT = b \+ 'vannes-direct\.php'/);
   assert.match(J, /fetch\(String\(CONFIG\.SERVEUR\)\.replace\(\/\\\/\?\$\/, '\/'\) \+ 'programme\.php\?quoi=maths'/);
@@ -2256,6 +2259,40 @@ await test('v5.98 : vannes de l’IA signalées 🤖, carnet d’erreurs, taille
   // Accessoires en relief.
   j.porte = ['chapeau', 'couronne']; va('accueil');
   assert.ok(d.querySelector('.ami-acc-chapeau linearGradient') && d.querySelector('.ami-acc-couronne radialGradient'));
+});
+
+await test('v5.99 : plumes magiques — offre filtrée, solde lu au serveur, achat derrière une question pour adultes, code envoyé seulement si allumées, 402 = vannes de Plumo', async () => {
+  const CREDITS = { actif:true, quota_plus:300, packs:[{ id:'plumes_petit', plumes:200, prix:'1,99 €', lien:'https://buy.stripe.com/p1', stripe_prix:'price_X', magasin:false },
+    { id:'pirate', plumes:9999, prix:'0 €', lien:'https://buy.stripe.com/x' }, { id:'plumes_grand', plumes:-5, lien:'https://buy.stripe.com/g' }, { id:'plumes_moyen', plumes:600, lien:'https://evil.example/' }] };
+  const envois = [];
+  const avant = x => { x.fetch = async (u, o) => { envois.push({ u:String(u), b:o && o.body ? JSON.parse(o.body) : null });
+    if(/plumes\.php$/.test(u)) return { ok:true, status:200, json:async () => ({ actif:true, solde:42, quota:300, quota_restant:120 }) };
+    if(/vannes-direct/.test(u)) return { ok:false, status:402, json:async () => ({ erreur:'plumes' }) };
+    return { ok:true, status:200, json:async () => ({ actif:false }) }; }; };
+  const w = page(undefined, { MODE_PAYANT:true, SERVEUR:'https://ami.example/serveur', CREDITS }, avant); await w.AmiDesMotsPret;
+  const A = w.AmiDesMots, d = w.document;
+  A.ecranPlus(); await new Promise(r => setTimeout(r, 20));
+  assert.match(d.getElementById('plumes-solde').textContent, /42 plumes · 120 restantes/);
+  const va = (a, v) => { const x = d.createElement('button'); x.dataset.a = a; if(v != null) x.dataset.v = v; d.body.appendChild(x); x.click(); x.remove(); };
+  va('plumes'); assert.ok(!d.querySelector('.carte-formule'), 'pas de pack avant la question pour adultes');
+  const m = d.querySelector('main').textContent.match(/(\d+) × (\d+)/); d.getElementById('porte-plumes').value = '1'; va('plumes-ouvrir');
+  assert.match(d.getElementById('porte-plumes-msg').textContent, /pas ça/);
+  d.getElementById('porte-plumes').value = String(m[1] * m[2]); va('plumes-ouvrir'); await new Promise(r => setTimeout(r, 20));
+  const cartes = [...d.querySelectorAll('.carte-formule')];
+  assert.strictEqual(cartes.length, 1, 'packs inconnus, négatifs ou hors Stripe écartés');
+  assert.match(cartes[0].getAttribute('href'), /^https:\/\/buy\.stripe\.com\/p1\?client_reference_id=AMI-/); assert.match(cartes[0].textContent, /200/);
+  // Vannes en direct : le code part avec la demande ; 402 → Plumo garde ses vannes, plus d'appel pendant un moment.
+  const s = w.MATIERES.serie('ses', 'examen', 'Tle', 2, 3, 'taquin'); A.questionsGo(s, { titre:'t', retour:'matieres' }); await new Promise(r => setTimeout(r, 20));
+  const v = envois.filter(e => /vannes-direct/.test(e.u)); assert.strictEqual(v.length, 1); assert.match(v[0].b.code, /^AMI-/);
+  assert.ok(A.base.plumesVides, 'plus de plumes noté');
+  const faux = [...d.querySelectorAll('.piege-opt')].find(b => b.textContent !== s[0].bon); faux.click();
+  assert.ok(!/🤖/.test(d.getElementById('qz-retour').textContent), 'vanne de Plumo, pas de l’IA');
+  va('qz-suivant'); await new Promise(r => setTimeout(r, 20)); assert.strictEqual(envois.filter(e => /vannes-direct/.test(e.u)).length, 1, 'pas de nouvel appel après 402');
+  // Plumes éteintes : aucun code envoyé.
+  const env2 = []; const w2 = page(undefined, { SERVEUR:'https://ami.example/serveur', CREDITS:{ actif:false, quota_plus:0, packs:[] } }, x => { x.fetch = async (u, o) => { env2.push({ u:String(u), b:o && o.body ? JSON.parse(o.body) : null }); return { ok:true, status:200, json:async () => ({ vannes:{} }) }; }; });
+  await w2.AmiDesMotsPret; w2.AmiDesMots.questionsGo(w2.MATIERES.serie('ses', 'examen', 'Tle', 2, 3, 'taquin'), { titre:'t', retour:'matieres' }); await new Promise(r => setTimeout(r, 20));
+  const v2 = env2.filter(e => /vannes-direct/.test(e.u)); assert.strictEqual(v2.length, 1); assert.ok(!('code' in v2[0].b), 'pas de code quand les plumes sont éteintes');
+  assert.ok(!env2.some(e => /plumes\.php/.test(e.u)));
 });
 
 console.log(`\n${ok} réussi(s), ${ko} échoué(s)`);

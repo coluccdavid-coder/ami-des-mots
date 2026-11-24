@@ -27,11 +27,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   $id = (int) ($_POST['id'] ?? 0); $a = $_POST['action'] ?? '';
   if ($a === 'sortir') { session_destroy(); header('Location: ./'); exit; }
   if ($a === 'offre') { enregistrer_offre($db, $_POST); header('Location: ./?ok=offre'); exit; }
+  if ($a === 'geste') { $cg = strtoupper(trim((string) ($_POST['code'] ?? ''))); $ng = max(1, min(5000, (int) ($_POST['plumes'] ?? 0)));
+    $msgPlumes = preg_match(AMI_FORMAT_CODE, $cg) && ami_credits_ajouter($db, $cg, $ng, 'geste:' . bin2hex(random_bytes(8)), 'geste ' . mb_substr((string) ($_POST['raison'] ?? ''), 0, 40)) ? '✅ ' . $ng . ' plumes ajoutées à ' . $cg . '.' : '⚠️ Code invalide.'; }
   if ($a === 'cadeaux') { $nouveauxCadeaux = ami_cadeaux_actifs() ? creer_cadeaux($db, $_POST) : []; }
   $s = $db->prepare("SELECT * FROM ami_veille WHERE id = ? AND statut = 'a_valider'"); $s->execute([$id]); $v = $s->fetch();
   if ($v && $a === 'rejeter') $db->prepare("UPDATE ami_veille SET statut = 'rejete', decide = ? WHERE id = ?")->execute([ami_maintenant(), $id]);
   if ($v && $a === 'publier') { publier($db, json_decode($v['proposition'], true)); $db->prepare("UPDATE ami_veille SET statut = 'publie', decide = ? WHERE id = ?")->execute([ami_maintenant(), $id]); }
-  if ($a !== 'cadeaux') { header('Location: ./'); exit; }
+  if ($a !== 'cadeaux' && $a !== 'geste') { header('Location: ./'); exit; }
 }
 // ── L'offre : seules les valeurs du catalogue (catalogue.json, fabriqué depuis le jeu) sont acceptées. ──
 function catalogue(): array { $c = json_decode((string) @file_get_contents(__DIR__ . '/catalogue.json'), true); return is_array($c) ? $c : ['themes' => [], 'jeux' => [], 'coins' => []]; }
@@ -56,12 +58,60 @@ function enregistrer_offre(PDO $db, array $p): void {
       return ['id' => $id, 'prix' => mb_substr(trim((string) ($p['F_' . $id . '_prix'] ?? '')), 0, 20), 'lien' => $lien($p['F_' . $id . '_lien'] ?? ''),
         'essai' => mb_substr(trim((string) ($p['F_' . $id . '_essai'] ?? '')), 0, 40), 'magasin' => !empty($p['F_' . $id . '_magasin'])];
     }, AMI_FORMULES))),
+    // v5.99 : plumes magiques (crédits d'IA). Seuls des nombres, des prix affichés et des liens/prix Stripe vérifiés.
+    'CREDITS' => [
+      'actif' => !empty($p['C_actif']),
+      'quota_plus' => max(0, min(100000, (int) ($p['C_quota_plus'] ?? 0))),
+      'packs' => array_values(array_filter(array_map(function ($id) use ($p, $lien) {
+        $n = max(0, min(1000000, (int) ($p['P_' . $id . '_plumes'] ?? 0)));
+        if (empty($p['P_' . $id . '_on']) || $n <= 0) return null;
+        $prixStripe = trim((string) ($p['P_' . $id . '_stripe_prix'] ?? ''));
+        return ['id' => $id, 'plumes' => $n, 'prix' => mb_substr(trim((string) ($p['P_' . $id . '_prix'] ?? '')), 0, 20), 'lien' => $lien($p['P_' . $id . '_lien'] ?? ''),
+          'stripe_prix' => preg_match('/^price_[A-Za-z0-9]{6,60}$/', $prixStripe) ? $prixStripe : '', 'magasin' => !empty($p['P_' . $id . '_magasin'])];
+      }, AMI_PACKS))),
+    ],
   ];
   $mysql = $db->getAttribute(PDO::ATTR_DRIVER_NAME) === 'mysql';
   $db->prepare('INSERT INTO ami_publications (cle, contenu, maj) VALUES (?, ?, ?) ' . ($mysql ? 'ON DUPLICATE KEY UPDATE contenu = VALUES(contenu), maj = VALUES(maj)' : 'ON CONFLICT(cle) DO UPDATE SET contenu = excluded.contenu, maj = excluded.maj'))
     ->execute(['offre', json_encode($o, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES), ami_maintenant()]);
 }
 const AMI_FORMULES = ['mensuel', 'annuel', 'famille', 'a_vie'];
+const AMI_NOMS_PACKS = ['plumes_petit' => 'Petit pack', 'plumes_moyen' => 'Pack moyen', 'plumes_grand' => 'Grand pack'];
+function formulaire_plumes(array $o, callable $e): string {
+  $c = (array) ($o['CREDITS'] ?? []); $pk = []; foreach ((array) ($c['packs'] ?? []) as $x) if (is_array($x) && isset($x['id'])) $pk[$x['id']] = $x;
+  $h = '<h3>🪶 Plumes magiques (crédits d’IA)</h3><p class="petit">Allumées : chaque vanne écrite par l’IA coûte 1 plume (le tri d’une vanne du Clash libre aussi). '
+    . 'Les abonnés Plus ont un quota par mois inclus ; au-delà, ou sans Plus, on achète des packs. Sans plumes, le jeu garde les vannes de Plumo : rien n’est bloqué. '
+    . 'Éteintes : l’IA reste gratuite pour tous, avec ses plafonds par jour.<br><strong>Stripe</strong> : créez un produit et un Payment Link par pack, et recopiez ici l’identifiant du prix (<code>price_…</code>, fiche du produit) : c’est lui qui dit au serveur quel pack a été payé. '
+    . '<strong>Stores</strong> : produits « consommables » <code>plumes_petit</code>, <code>plumes_moyen</code>, <code>plumes_grand</code>.</p>'
+    . '<p><label style="font-size:1.1em"><input type="checkbox" name="C_actif" value="1"' . (!empty($c['actif']) ? ' checked' : '') . '> <strong>Allumer les plumes</strong></label> '
+    . '<label>Quota inclus dans Plus (plumes par mois) <input type="number" name="C_quota_plus" min="0" max="100000" value="' . (int) ($c['quota_plus'] ?? 300) . '"></label></p>'
+    . '<table><tr><th>Pack</th><th>Plumes</th><th>Prix affiché</th><th>Lien Stripe</th><th>Prix Stripe (price_…)</th><th>Stores</th></tr>';
+  $defaut = ['plumes_petit' => 200, 'plumes_moyen' => 600, 'plumes_grand' => 1500];
+  foreach (AMI_PACKS as $id) { $x = $pk[$id] ?? []; $n = fn($k) => 'P_' . $id . '_' . $k;
+    $h .= '<tr><td><label><input type="checkbox" name="' . $n('on') . '" value="1"' . ($x ? ' checked' : '') . '> ' . $e(AMI_NOMS_PACKS[$id]) . '</label></td>'
+      . '<td><input type="number" name="' . $n('plumes') . '" min="1" style="width:6em" value="' . (int) ($x['plumes'] ?? $defaut[$id]) . '"></td>'
+      . '<td><input name="' . $n('prix') . '" size="8" maxlength="20" value="' . $e($x['prix'] ?? '') . '"></td>'
+      . '<td><input name="' . $n('lien') . '" size="28" placeholder="https://buy.stripe.com/…" value="' . $e($x['lien'] ?? '') . '"></td>'
+      . '<td><input name="' . $n('stripe_prix') . '" size="22" placeholder="price_…" value="' . $e($x['stripe_prix'] ?? '') . '"></td>'
+      . '<td><input type="checkbox" name="' . $n('magasin') . '" value="1"' . (!empty($x['magasin']) ? ' checked' : '') . '></td></tr>'; }
+  return $h . '</table>';
+}
+// Suivi des plumes + geste commercial (ajouter des plumes à un code, par ex. après une réclamation).
+function section_plumes(PDO $db, string $jeton, callable $e, string $msg): string {
+  try {
+    $mois = gmdate('Y-m') . '%';
+    $vendues = (int) ami_val($db, "SELECT COALESCE(SUM(plumes), 0) FROM ami_credits_mouvements WHERE cree LIKE ? AND motif LIKE 'achat%'", [$mois]);
+    $achats = (int) ami_val($db, "SELECT COUNT(*) FROM ami_credits_mouvements WHERE cree LIKE ? AND motif LIKE 'achat%'", [$mois]);
+    $quota = (int) ami_val($db, 'SELECT COALESCE(SUM(quota_utilise), 0) FROM ami_credits WHERE mois = ?', [gmdate('Y-m')]);
+    $reste = (int) ami_val($db, 'SELECT COALESCE(SUM(solde), 0) FROM ami_credits');
+  } catch (Throwable $x) { return '<section><h2>🪶 Plumes</h2><p>Tables absentes : relancez <code>schema.sql</code>.</p></section>'; }
+  return '<section><h2>🪶 Plumes ce mois-ci</h2>' . ($msg ? '<p>' . $e($msg) . '</p>' : '')
+    . '<p><strong>' . $achats . '</strong> achats · <strong>' . $vendues . '</strong> plumes vendues · <strong>' . $quota . '</strong> plumes du quota Plus utilisées · <strong>' . $reste . '</strong> plumes en attente dans les soldes</p>'
+    . '<p class="petit">Coût réel de l’IA : voir la console Anthropic (fixez-y une limite de dépense par mois).</p>'
+    . '<form method="post"><input type="hidden" name="jeton" value="' . $jeton . '"><input type="hidden" name="action" value="geste">'
+    . '🎁 Offrir des plumes : <label>Code du joueur <input name="code" size="18" placeholder="AMI-XXXX-XXXX-XXXX" required></label> <label>Plumes <input type="number" name="plumes" min="1" max="5000" value="50" style="width:6em"></label> '
+    . '<label>Raison <input name="raison" maxlength="40" placeholder="geste commercial"></label> <button>Ajouter</button></form></section>';
+}
 const AMI_NOMS_FORMULES = ['mensuel' => 'Mensuel', 'annuel' => 'Annuel', 'famille' => 'Famille', 'a_vie' => 'À vie (paiement unique)'];
 function formulaire_formules(array $o, callable $e): string {
   $f = []; foreach ((array) ($o['FORMULES'] ?? []) as $x) if (is_array($x) && isset($x['id'])) $f[$x['id']] = $x;
@@ -120,6 +170,7 @@ function formulaire_offre(PDO $db, string $jeton, callable $e): string {
     . '<p><label>Prix affiché <input name="PRIX" maxlength="20" value="' . $e($o['PRIX']) . '"></label> <label>Joueurs gratuits <input type="number" min="1" max="6" name="JOUEURS_GRATUITS" value="' . (int) $o['JOUEURS_GRATUITS'] . '"></label></p>'
     . '<p><label>Lien de paiement Stripe <input name="LIEN_PAIEMENT" size="60" placeholder="https://buy.stripe.com/…" value="' . $e($o['LIEN_PAIEMENT']) . '"></label><br><label>Portail client Stripe <input name="LIEN_GESTION" size="60" placeholder="https://billing.stripe.com/…" value="' . $e($o['LIEN_GESTION']) . '"></label></p>'
     . formulaire_formules($o, $e)
+    . formulaire_plumes($o, $e)
     . '<h3>✨ Coins réservés à Plus (cochés = payants)</h3>';
   foreach ($cat['coins'] as $g) { $h .= '<p><strong>' . $e($g[0]) . '</strong><br>'; foreach ($g[1] as $c) $h .= $case('COINS_PLUS', $c[0], in_array($c[0], $o['COINS_PLUS'], true), $c[1] . ' ' . $c[2]); $h .= '</p>'; }
   $h .= '<h3>🆓 Thèmes de mots gratuits (cochés = gratuits)</h3><p>'; foreach ($cat['themes'] as $t) $h .= $case('THEMES_GRATUITS', $t[0], $th === null || in_array($t[0], $th, true), $t[1]); $h .= '</p>';
@@ -141,7 +192,7 @@ function publier(PDO $db, array $p): void {
 }
 $j = $e($_SESSION['jeton']);
 $l = $db->query("SELECT * FROM ami_veille WHERE statut = 'a_valider' ORDER BY id")->fetchAll();
-$out = (($_GET['ok'] ?? '') === 'offre' ? '<section>✅ Offre enregistrée et publiée.</section>' : '') . section_frequentation($db, $e) . formulaire_offre($db, $j, $e) . section_cadeaux($db, $j, $e, $nouveauxCadeaux ?? []) . '<h1>🛠️ Veille des programmes et annales</h1><p class="petit">L’IA a lu les documents officiels. Vérifie, puis publie : le jeu l’affiche à la prochaine ouverture du coin maths.</p>';
+$out = (($_GET['ok'] ?? '') === 'offre' ? '<section>✅ Offre enregistrée et publiée.</section>' : '') . section_frequentation($db, $e) . section_plumes($db, $j, $e, $msgPlumes ?? '') . formulaire_offre($db, $j, $e) . section_cadeaux($db, $j, $e, $nouveauxCadeaux ?? []) . '<h1>🛠️ Veille des programmes et annales</h1><p class="petit">L’IA a lu les documents officiels. Vérifie, puis publie : le jeu l’affiche à la prochaine ouverture du coin maths.</p>';
 if (!$l) $out .= '<section><p>Rien à valider. Lance la veille : <code>php veille.php</code> (ou la tâche planifiée).</p></section>';
 foreach ($l as $v) {
   $p = json_decode($v['proposition'], true);
