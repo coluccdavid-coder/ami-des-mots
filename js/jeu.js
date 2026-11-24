@@ -89,12 +89,14 @@
     return r;
   }
 
+  // v5.99.3 : textes des écrans dans la langue de l'interface (js/textes-ecrans.js) ; le français reste le français.
+  function TXT(fr){ let l = 'fr'; try{ l = base.ui; }catch(e){} return window.L ? window.L(fr, l) : fr; }
   const UI = Object.keys(window.TEXTES);
   // Langues visibles pendant la phase de lancement des voix dédiées.
   // Les autres langues et leurs contenus restent intégralement dans donnees.js.
   // v5.99.2 : seules les langues enseignées à l'école sont proposées. Les autres langues restent dans les données
   // (et restent choisies si elles l'étaient déjà), elles ne sont simplement plus affichées dans les listes.
-  const SCOLAIRES = ['en', 'es', 'de', 'it', 'pt', 'ar'];
+  const SCOLAIRES = ['en', 'es', 'de', 'it', 'pt'];   // v5.99.3 : l'arabe est retiré des listes pour l'instant (gardé dans les données)
   const PARLE_VISIBLES = ['fr'].concat(SCOLAIRES);
   const APPRENDRE = SCOLAIRES.concat('fr');   // le français reste à apprendre pour les élèves qui parlent une autre langue
   const apprendreVisibles = () => APPRENDRE.filter(l => l !== base.ui);
@@ -599,10 +601,10 @@
   function portesAccueil(){
     const en = base.ui === 'en', porte = (a, ic, titre, sous, cls) => '<button class="porte ' + cls + '" data-a="' + a + '"><span class="porte-ic" aria-hidden="true">' + ic + '</span><strong>' + titre + '</strong><small>' + sous + '</small></button>';
     return '<div class="portes">' +
-      porte('porte-mots', '🇬🇧', en ? 'Words & English' : 'Mots & anglais', en ? 'Games, sentences, traps, teacher' : 'Jeux, phrases, pièges, professeur', 'porte-mots') +
-      (window.MATHS ? porte('maths', '🔢', 'Maths', en ? 'Year 6 to final exam · Prof Pi teases' : 'De la 6e au bac · Prof Pi te vanne', 'porte-maths') : '') +
-      (window.MATIERES ? porte('matieres', '📚', en ? 'Subjects' : 'Matières', en ? 'French, history, biology, physics, exams' : 'Français, histoire-géo, SVT, physique, brevet & bac', 'porte-sciences')
-        : window.SCIENCES ? porte('sciences', '🚀', 'Sciences', en ? 'Planets, rockets, human body' : 'Planètes, fusées, corps humain', 'porte-sciences') : '') +
+      porte('porte-mots', '🇬🇧', en ? 'Words & English' : TXT('Mots & anglais'), en ? 'Games, sentences, traps, teacher' : TXT('Jeux, phrases, pièges, professeur'), 'porte-mots') +
+      (window.MATHS ? porte('maths', '🔢', TXT('Maths'), en ? 'Year 6 to final exam · Prof Pi teases' : TXT('De la 6e au bac · Prof Pi te vanne'), 'porte-maths') : '') +
+      (window.MATIERES ? porte('matieres', '📚', en ? 'Subjects' : TXT('Matières'), en ? 'French, history, biology, physics, exams' : TXT('Français, histoire-géo, SVT, physique, brevet & bac'), 'porte-sciences')
+        : window.SCIENCES ? porte('sciences', '🚀', TXT('Sciences'), en ? 'Planets, rockets, human body' : TXT('Planètes, fusées, corps humain'), 'porte-sciences') : '') +
       (window.MATHS || A_EN() ? porte('potes', '⚔️', 'Battle', en ? 'With friends: maths, English, comebacks' : 'Entre potes : maths, anglais, vannes', 'porte-battle') : '') +
       '</div>';
   }
@@ -611,15 +613,15 @@
     const en = base.ui === 'en', rev = aRevoir().length, c = (a, ic, t1, t2, href) => href
       ? '<a class="carte-anglais" href="' + href + '"><span class="ic">' + ic + '</span><strong>' + t1 + '</strong><small>' + t2 + '</small></a>'
       : '<button class="carte-anglais" data-a="' + a + '"><span class="ic">' + ic + '</span><strong>' + t1 + '</strong><small>' + t2 + '</small></button>';
-    poser(barre('accueil') + '<main class="coin-anglais porte-mots-ecran"><h2><span class="emoji-titre" aria-hidden="true">🇬🇧</span> ' + (en ? 'Words & English' : 'Mots & anglais') + '</h2><div class="cartes-anglais">' +
-      c('lecon', '📚', esc(t('apprendre')), en ? '5 new words with pictures' : '5 nouveaux mots en images') +
-      c('themes', '▶️', esc(t('jouer')), en ? 'All the word games' : 'Tous les jeux de mots') +
-      c('revoir', '🔁', esc(t('revoir')) + (rev ? ' (' + rev + ')' : ''), en ? 'Words to practise again' : 'Les mots à retravailler') +
-      c('phrases', '💬', en ? 'Sentence workshop' : 'Atelier des phrases', en ? 'Build your first sentences' : 'Construis tes premières phrases') +
-      (piegesDispo() ? c(A_EN() ? 'anglais' : 'pieges', '🪤', 'Le coin anglais', en ? 'Traps, situations, dictation, battles' : 'Pièges, situations, dictée, battles') : '') +
-      c('', '🧑‍🏫', en ? 'AI teacher' : 'Le professeur', en ? 'Lessons that adapt to you' : 'Des leçons qui s’adaptent à toi', 'professeur.html') +
-      (CONFIG.VILLAGE_CACHE ? '' : c('village', '🗺️', en ? 'Word village' : 'Le village', en ? 'Explore by places' : 'Explorer par lieux') + c('accueil-3d', '🌍', en ? '3D village' : 'Village 3D', en ? 'Walk around and play' : 'Se promener et jouer')) +
-      (CONFIG.MOTS_CITY_CACHE ? '' : c('', '🛵', 'Mots City', en ? 'English while having fun' : 'L’anglais en rigolant', 'mots-city.html')) +
+    poser(barre('accueil') + '<main class="coin-anglais porte-mots-ecran"><h2><span class="emoji-titre" aria-hidden="true">🇬🇧</span> ' + (en ? 'Words & English' : TXT('Mots & anglais')) + '</h2><div class="cartes-anglais">' +
+      c('lecon', '📚', esc(t('apprendre')), en ? '5 new words with pictures' : TXT('5 nouveaux mots en images')) +
+      c('themes', '▶️', esc(t('jouer')), en ? 'All the word games' : TXT('Tous les jeux de mots')) +
+      c('revoir', '🔁', esc(t('revoir')) + (rev ? ' (' + rev + ')' : ''), en ? 'Words to practise again' : TXT('Les mots à retravailler')) +
+      c('phrases', '💬', en ? 'Sentence workshop' : TXT('Atelier des phrases'), en ? 'Build your first sentences' : TXT('Construis tes premières phrases')) +
+      (piegesDispo() ? c(A_EN() ? 'anglais' : 'pieges', '🪤', 'Le coin anglais', en ? 'Traps, situations, dictation, battles' : TXT('Pièges, situations, dictée, battles')) : '') +
+      c('', '🧑‍🏫', en ? 'AI teacher' : TXT('Le professeur'), en ? 'Lessons that adapt to you' : TXT('Des leçons qui s’adaptent à toi'), 'professeur.html') +
+      (CONFIG.VILLAGE_CACHE ? '' : c('village', '🗺️', en ? 'Word village' : TXT('Le village'), en ? 'Explore by places' : TXT('Explorer par lieux')) + c('accueil-3d', '🌍', en ? '3D village' : TXT('Village 3D'), en ? 'Walk around and play' : TXT('Se promener et jouer'))) +
+      (CONFIG.MOTS_CITY_CACHE ? '' : c('', '🛵', 'Mots City', en ? 'English while having fun' : TXT('L’anglais en rigolant'), 'mots-city.html')) +
       '</div></main>');
   }
   function accueil(){
@@ -640,22 +642,22 @@
         '</div></div></section>' +
       '<main class="accueil">' +
         (s >= 2 && !fait ? '<p class="serie-danger" role="status">' + esc(tt('serie_danger', s)) + '</p>' : '') +
-        (function(){ const b = bilanAdaptatif(); return b.total ? '<section class="carte-apprentissage" aria-label="Progression adaptative"><strong>🧠 Ton apprentissage</strong><span>' + b.aRevoir + ' notion(s) à revoir · ' + b.maitrisees + ' maîtrisée(s) · ' + b.total + ' suivie(s)</span></section>' : ''; })() +
+        (function(){ const b = bilanAdaptatif(); return b.total ? '<section class="carte-apprentissage" aria-label="Progression adaptative"><strong>🧠 Ton apprentissage</strong><span>' + b.aRevoir + TXT(' notion(s) à revoir · ') + b.maitrisees + TXT(' maîtrisée(s) · ') + b.total + ' suivie(s)</span></section>' : ''; })() +
         '<button class="gros defi' + (defiFait ? ' fait' : '') + '" data-a="defi">' + (defiFait ? '✓ ' : '⚡ ') + esc(t('defi')) + '</button>' +
         '<button class="gros apprendre" data-a="lecon">📚 ' + esc(t('apprendre')) + '</button>' +
         // v5.75 : accueil simplifié — 4 grandes portes ; tout le reste est rangé derrière (ACCUEIL_SIMPLE dans config-site.js).
         (CONFIG.ACCUEIL_SIMPLE ? portesAccueil() : '' +
-        '<button class="gros phrases-accueil" data-a="phrases">💬 ' + (base.ui === 'en' ? 'Build your first sentences' : 'Atelier des phrases') + ' <span>✨</span></button>' +
+        '<button class="gros phrases-accueil" data-a="phrases">💬 ' + (base.ui === 'en' ? 'Build your first sentences' : TXT('Atelier des phrases')) + ' <span>✨</span></button>' +
         (piegesDispo() ? '<button class="gros pieges-accueil" data-a="' + (A_EN() ? 'anglais' : 'pieges') + '">🇬🇧 Le coin anglais <span>🪤🎤✍️</span></button>' : '') +
-        (CONFIG.VILLAGE_CACHE ? '' : '<button class="gros village-accueil" data-a="village">🗺️ ' + {"fr": "Explorer le village", "en": "Explore the word village", "es": "Explorar el pueblo", "it": "Esplora il villaggio", "pt": "Explorar a aldeia", "de": "Das Wörterdorf erkunden", "ar": "استكشف قرية الكلمات", "tr": "Kelime köyünü keşfet", "pl": "Odkryj wioskę słów", "ja": "ことばの村を探検", "uk": "Дослідити селище слів", "ko": "단어 마을 탐험하기", "dz": "اكتشف قرية الكلمات", "ma": "اكتشف قرية الكلمات", "tn": "اكتشف قرية الكلمات", "kab": "Snirem tamdint n wawalen"}[base.ui] + '</button>' +
-        '<button class="gros monde-3d-accueil" data-a="accueil-3d">🌍 ' + (base.ui === 'en' ? 'Play in the 3D village' : base.ui === 'fr' ? 'Jouer dans le village 3D' : '3D') + ' <span>🚀</span></button>') +
-        (CONFIG.MOTS_CITY_CACHE ? '' : '<a class="gros monde-3d-accueil mots-city-accueil" href="mots-city.html">🛵 Mots City — l’anglais en rigolant <span>😂</span></a>') +
-        (installation ? '<button class="moyen plein installer-appli" data-a="installer">📲 Installer l’appli sur cet appareil</button>' : '') +
-        (window.MATHS ? '<button class="gros monde-3d-accueil maths-accueil" data-a="maths">🔢 Maths de la 6e au bac — Prof Pi te vanne <span>🦝</span></button>' : '') +
-        '<a class="gros monde-3d-accueil professeur-ia-accueil" href="professeur.html">🧑‍🏫 Le professeur IA — Anglais & maths <span>✨</span></a>' +
-        (window.SCIENCES ? '<button class="gros monde-3d-accueil sciences-accueil" data-a="sciences">🚀 Sciences : planètes, fusées, corps humain <span>🔬</span></button>' : '') +
-        (window.MATHS || A_EN() ? '<button class="gros monde-3d-accueil potes-accueil" data-a="potes">⚔️ ' + (base.ui === 'en' ? 'Battle with friends — maths, English, comebacks' : 'Battle entre potes — maths, anglais et vannes') + ' <span>🔥</span></button>' : '')) +
-        (CONFIG.ACCUEIL_SIMPLE && installation ? '<button class="moyen plein installer-appli" data-a="installer">📲 Installer l’appli sur cet appareil</button>' : '') +
+        (CONFIG.VILLAGE_CACHE ? '' : '<button class="gros village-accueil" data-a="village">🗺️ ' + {"fr": TXT("Explorer le village"), "en": "Explore the word village", "es": "Explorar el pueblo", "it": "Esplora il villaggio", "pt": "Explorar a aldeia", "de": "Das Wörterdorf erkunden", "ar": "استكشف قرية الكلمات", "tr": "Kelime köyünü keşfet", "pl": "Odkryj wioskę słów", "ja": "ことばの村を探検", "uk": "Дослідити селище слів", "ko": "단어 마을 탐험하기", "dz": "اكتشف قرية الكلمات", "ma": "اكتشف قرية الكلمات", "tn": "اكتشف قرية الكلمات", "kab": "Snirem tamdint n wawalen"}[base.ui] + '</button>' +
+        '<button class="gros monde-3d-accueil" data-a="accueil-3d">🌍 ' + (base.ui === 'en' ? 'Play in the 3D village' : base.ui === 'fr' ? TXT('Jouer dans le village 3D') : '3D') + ' <span>🚀</span></button>') +
+        (CONFIG.MOTS_CITY_CACHE ? '' : TXT('<a class="gros monde-3d-accueil mots-city-accueil" href="mots-city.html">🛵 Mots City — l’anglais en rigolant <span>😂</span></a>')) +
+        (installation ? TXT('<button class="moyen plein installer-appli" data-a="installer">📲 Installer l’appli sur cet appareil</button>') : '') +
+        (window.MATHS ? TXT('<button class="gros monde-3d-accueil maths-accueil" data-a="maths">🔢 Maths de la 6e au bac — Prof Pi te vanne <span>🦝</span></button>') : '') +
+        TXT('<a class="gros monde-3d-accueil professeur-ia-accueil" href="professeur.html">🧑‍🏫 Le professeur IA — Anglais & maths <span>✨</span></a>') +
+        (window.SCIENCES ? TXT('<button class="gros monde-3d-accueil sciences-accueil" data-a="sciences">🚀 Sciences : planètes, fusées, corps humain <span>🔬</span></button>') : '') +
+        (window.MATHS || A_EN() ? '<button class="gros monde-3d-accueil potes-accueil" data-a="potes">⚔️ ' + (base.ui === 'en' ? 'Battle with friends — maths, English, comebacks' : TXT('Battle entre potes — maths, anglais et vannes')) + ' <span>🔥</span></button>' : '')) +
+        (CONFIG.ACCUEIL_SIMPLE && installation ? TXT('<button class="moyen plein installer-appli" data-a="installer">📲 Installer l’appli sur cet appareil</button>') : '') +
         (CONFIG.ACCUEIL_SIMPLE ? (rev ? '<div class="actions serrees"><button class="moyen" data-a="revoir">🔁 ' + esc(t('revoir')) + ' <span class="pastille">' + rev + '</span></button></div>' : '') :
         '<div class="actions serrees">' +
           '<button class="moyen" data-a="themes">▶ ' + esc(t('jouer')) + '</button>' +
@@ -1103,7 +1105,7 @@
   }
   function correctionDansLangue(mot){
     const l = langueBlagues();
-    return l === 'en' ? 'The correct answer was: ' + mot : l === 'fr' ? "C'était : " + mot : t('c_etait', mot);
+    return l === 'en' ? 'The correct answer was: ' + mot : l === 'fr' ? TXT("C'était : ") + mot : t('c_etait', mot);
   }
   // v5.75 : avant, seule l'humeur « surpris » affichait la bulle d'erreur ; les autres la cachaient.
   function amiDit(txt, humeur){
@@ -1180,7 +1182,7 @@
     if(partie.bonne && MOTS[partie.bonne] && langueBlagues() === 'fr'){
       const nom = e => { const c = nomVanne(e, base.cible), f = nomVanne(e, 'fr'); return c && f && c !== f ? c + ' (' + f + ')' : f || c; };
       const ch = [...document.querySelectorAll('[data-a="repondre"]')].map(b => b.dataset.v).filter(e => MOTS[e] && e !== partie.bonne);
-      if(ch.length) iaPrecharger('mots', 'Quel est le nom de cette image ? (' + LANGUES_APPRENDRE[base.cible] + ')', { id:partie.bonne, texte:nom(partie.bonne) }, ch.map(e => ({ id:e, texte:nom(e) })), niveauHumour(), 'fr');
+      if(ch.length) iaPrecharger('mots', TXT('Quel est le nom de cette image ? (') /* consigne pour l'IA : reste en français */ + LANGUES_APPRENDRE[base.cible] + ')', { id:partie.bonne, texte:nom(partie.bonne) }, ch.map(e => ({ id:e, texte:nom(e) })), niveauHumour(), 'fr');
     }
   }
   const nbChoix = () => partie.mode === 'theme' && partie.meca !== 'chrono' && partie.meca !== 'grand_quiz' ? partie.N.choix : facile() ? 3 : 4;
@@ -1414,8 +1416,8 @@
       if(niveauHumour() > 0) bruit('boing');
       reactionAmi(niveauHumour());
       partie.derniereVanne = { v:vanne, e:partie.bonne };
-      const fav = $('#garder-vanne'); if(fav){ fav.hidden = false; fav.disabled = false; fav.textContent = '😂 ' + (base.ui === 'en' ? 'Keep it' : 'Je la garde'); }
-      const pd = $('#pas-drole'); if(pd){ pd.hidden = false; pd.disabled = false; pd.textContent = '🙄 ' + (base.ui === 'en' ? 'Not funny' : 'Pas drôle'); }
+      const fav = $('#garder-vanne'); if(fav){ fav.hidden = false; fav.disabled = false; fav.textContent = '😂 ' + (base.ui === 'en' ? 'Keep it' : TXT('Je la garde')); }
+      const pd = $('#pas-drole'); if(pd){ pd.hidden = false; pd.disabled = false; pd.textContent = '🙄 ' + (base.ui === 'en' ? 'Not funny' : TXT('Pas drôle')); }
       partie.dernierModele = derniereBlague;
       const suite = $('#continuer-erreur');
       if(suite){ suite.hidden = false; suite.focus({preventScroll:true}); }
@@ -1436,16 +1438,16 @@
     const j = J(); j.fousRires = Array.isArray(j.fousRires) ? j.fousRires : [];
     if(!j.fousRires.some(x => x.v === d.v && x.e === d.e)) j.fousRires = [{ v:d.v, e:d.e }].concat(j.fousRires).slice(0, 60);
     garder();
-    const b = $('#garder-vanne'); if(b){ b.textContent = '✓ ' + (base.ui === 'en' ? 'Saved!' : 'Gardée !'); b.disabled = true; }
+    const b = $('#garder-vanne'); if(b){ b.textContent = '✓ ' + (base.ui === 'en' ? 'Saved!' : TXT('Gardée !')); b.disabled = true; }
   }
   function fousRires(){
     const l = (J().fousRires || []).filter(x => x && typeof x.v === 'string' && MOTS[x.e]);
     const en = base.ui === 'en';
-    const corps = !l.length ? '<p class="centre">' + (en ? 'No jokes yet. After a mistake, tap “😂 Keep it”!' : 'Pas encore de vanne. Après une erreur, touche « 😂 Je la garde » !') + '</p>' :
+    const corps = !l.length ? '<p class="centre">' + (en ? 'No jokes yet. After a mistake, tap “😂 Keep it”!' : TXT('Pas encore de vanne. Après une erreur, touche « 😂 Je la garde » !')) + '</p>' :
       '<ul class="carnet">' + l.map((x, i) => '<li><button class="ligne-carnet" data-a="ecouter" data-v="' + x.e + '">' + image(x.e, 'pic-mini') +
         '<span class="txt"><strong>' + esc(nomMot(x.e)) + '</strong><span>' + esc(x.v) + '</span></span></button>' +
         '<button class="petit-bouton" data-a="oublier-vanne" data-v="' + i + '" aria-label="' + (en ? 'Remove' : 'Retirer') + '">✕</button></li>').join('') + '</ul>';
-    poser(barre('carnet') + '<main><h2>😂 ' + (en ? 'My laughs' : 'Mes fous rires') + '</h2><p class="aide">' + (en ? 'Tap a joke to hear its word again.' : 'Touche une vanne pour réentendre son mot.') + '</p>' + corps + '<p class="note" id="note-voix" aria-live="polite"></p></main>');
+    poser(barre('carnet') + '<main><h2>😂 ' + (en ? 'My laughs' : 'Mes fous rires') + '</h2><p class="aide">' + (en ? 'Tap a joke to hear its word again.' : TXT('Touche une vanne pour réentendre son mot.')) + '</p>' + corps + '<p class="note" id="note-voix" aria-live="polite"></p></main>');
   }
   // Étincelles qui jaillissent d'une bonne réponse.
   function eclat(el){
@@ -1624,7 +1626,7 @@
 
   // ── Le village de Plumo : carte d'aventure reliée aux thèmes existants ──
   const VILLAGE_TEXT = {
-    fr:{title:"Le village des mots",intro:"Plumo a besoin de toi ! Choisis un lieu et pars à la découverte des mots.",mission:"Ta mission",hint:"Chaque lieu cache des mots à découvrir. Termine une partie pour faire progresser ton carnet.",back:"Retour au nid"},
+    fr:{title:TXT("Le village des mots"),intro:TXT("Plumo a besoin de toi ! Choisis un lieu et pars à la découverte des mots."),mission:"Ta mission",hint:TXT("Chaque lieu cache des mots à découvrir. Termine une partie pour faire progresser ton carnet."),back:TXT("Retour au nid")},
     en:{title:"The Word Village",intro:"Plumo needs your help! Pick a place and discover new words.",mission:"Your mission",hint:"Every place is full of words. Finish a game to grow your word notebook.",back:"Back to the nest"},
     es:{title:"El pueblo de las palabras",intro:"¡Plumo necesita tu ayuda! Elige un lugar y descubre palabras.",mission:"Tu misión",hint:"Cada lugar esconde palabras. Termina una partida para llenar tu cuaderno.",back:"Volver al nido"},
     it:{title:"Il villaggio delle parole",intro:"Plumo ha bisogno di te! Scegli un luogo e scopri nuove parole.",mission:"La tua missione",hint:"Ogni luogo nasconde parole. Completa una partita per arricchire il quaderno.",back:"Torna al nido"},
@@ -1642,13 +1644,13 @@
     kab:{title:"Tamdint n wawalen",intro:"Plumo yesra tallelt-ik! Fren adeg sakin snirem awalen imaynuten.",mission:"Tameẓla-k",hint:"Yal adeg yesɛa awalen. Fak urar akken ad ternuḍ deg tferkit-ik.",back:"Uɣal ɣer usennun"}
   };
   const LIEUX_VILLAGE = [
-    {theme:'animaux',icon:'🌳',fr:'La forêt des animaux',en:'Animal Forest'},
-    {theme:'manger',icon:'🍓',fr:'Le marché gourmand',en:'The Food Market'},
+    {theme:'animaux',icon:'🌳',fr:TXT('La forêt des animaux'),en:'Animal Forest'},
+    {theme:'manger',icon:'🍓',fr:TXT('Le marché gourmand'),en:'The Food Market'},
     {theme:'maison',icon:'🏡',fr:'La maison bavarde',en:'The Talking House'},
     {theme:'nature',icon:'🌻',fr:'Le jardin merveilleux',en:'The Wonder Garden'},
-    {theme:'ville',icon:'🚲',fr:'La place du village',en:'Village Square'},
-    {theme:'musique',icon:'🎵',fr:'La scène enchantée',en:'The Magic Stage'},
-    {theme:'habits',icon:'🧢',fr:'La boutique des costumes',en:'The Costume Shop'},
+    {theme:'ville',icon:'🚲',fr:TXT('La place du village'),en:'Village Square'},
+    {theme:'musique',icon:'🎵',fr:TXT('La scène enchantée'),en:'The Magic Stage'},
+    {theme:'habits',icon:'🧢',fr:TXT('La boutique des costumes'),en:'The Costume Shop'},
     {theme:'atelier',icon:'🔭',fr:'Le laboratoire curieux',en:'The Curious Lab'}
   ];
   function village(){
@@ -1661,10 +1663,10 @@
       return '<button class="lieu-village'+(libre?'':' verrou')+(visite?' visite':'')+'" data-a="'+(libre?'village-lieu':'plus')+'" data-v="'+l.theme+'">' +
         '<span class="lieu-icone" aria-hidden="true">'+l.icon+'</span><span class="lieu-titre">'+esc(titre)+'</span>' +
         '<span class="lieu-theme">'+esc(t('th_'+l.theme))+'</span>' +
-        '<span class="lieu-bas">'+(libre?(visite?'✓ '+(base.ui==='en'?'Visited today':'Visité aujourd’hui'):(base.ui==='en'?'Explore this place':'Explorer ce lieu')):'✨ '+esc(t('plus_badge')) )+'</span></button>';
+        '<span class="lieu-bas">'+(libre?(visite?'✓ '+(base.ui==='en'?'Visited today':TXT('Visité aujourd’hui')):(base.ui==='en'?'Explore this place':TXT('Explorer ce lieu'))):'✨ '+esc(t('plus_badge')) )+'</span></button>';
     }).join('');
     const dialogues={
-      fr:["Psst… j’ai entendu des mots rigolos dans la forêt !","Le marché sent bon… et les mots aussi !","Dans cette maison, chaque objet a une histoire.","Tu es prêt ? Le village compte sur toi !"],
+      fr:[TXT("Psst… j’ai entendu des mots rigolos dans la forêt !"),TXT("Le marché sent bon… et les mots aussi !"),TXT("Dans cette maison, chaque objet a une histoire."),TXT("Tu es prêt ? Le village compte sur toi !")],
       en:["Psst… I heard funny words in the forest!","The market smells lovely… and so do the words!","Every object in this house has a story.","Ready? The whole village is counting on you!"]
     };
     const ds=dialogues[base.ui]||dialogues.fr, d=ds[Math.floor(Math.random()*ds.length)];
@@ -1760,41 +1762,41 @@
       poser(barre('accueil') + '<main class="atelier-phrases fin-phrases">' +
         '<div class="ami-moyen ami-3d">' + ami('fete') + '</div>' +
         '<p class="sur-titre-phrases">✨ ' + (base.ui === 'en' ? 'MISSION COMPLETE' : 'MISSION TERMINÉE') + '</p>' +
-        '<h2>' + (base.ui === 'en' ? 'Sentence superstar!' : 'Champion des phrases !') + '</h2>' +
-        '<p>' + (base.ui === 'en' ? 'You built 12 sentences. Plumo is proud of you!' : 'Tu as construit 12 phrases. Plumo est très fier de toi !') + '</p>' +
+        '<h2>' + (base.ui === 'en' ? 'Sentence superstar!' : TXT('Champion des phrases !')) + '</h2>' +
+        '<p>' + (base.ui === 'en' ? 'You built 12 sentences. Plumo is proud of you!' : TXT('Tu as construit 12 phrases. Plumo est très fier de toi !')) + '</p>' +
         '<p class="gain-phrases">⭐ +' + p.gain + ' plumes</p>' +
-        '<button class="moyen plein" data-a="accueil">' + (base.ui === 'en' ? 'Back to the nest' : 'Retour au nid') + '</button></main>');
+        '<button class="moyen plein" data-a="accueil">' + (base.ui === 'en' ? 'Back to the nest' : TXT('Retour au nid')) + '</button></main>');
       return;
     }
     const phrase = p.liste[p.index];
     const tokens = phrase.split(' ');
     const choisis = p.choisis;
     const ordre = tokens.map((_,i)=>i).filter(i=>!choisis.includes(i));
-    const titre = base.ui === 'en' ? 'Sentence workshop' : 'Atelier des phrases';
-    const aide = base.ui === 'en' ? 'Tap the words in the right order.' : 'Touche les mots dans le bon ordre.';
-    const langue = base.cible === 'en' ? 'English' : 'Français';
+    const titre = base.ui === 'en' ? 'Sentence workshop' : TXT('Atelier des phrases');
+    const aide = base.ui === 'en' ? 'Tap the words in the right order.' : TXT('Touche les mots dans le bon ordre.');
+    const langue = base.cible === 'en' ? 'English' : TXT('Français');
     poser(barre('accueil') + '<main class="atelier-phrases">' +
       '<div class="atelier-entete"><div class="ami-phrase ami-3d" id="ami-phrase">' + ami('content') + '</div>' +
-      '<div><p class="sur-titre-phrases">🧩 ' + titre + '</p><h2>' + (base.ui === 'en' ? 'Put the sentence together!' : 'Construis la phrase !') + '</h2>' +
+      '<div><p class="sur-titre-phrases">🧩 ' + titre + '</p><h2>' + (base.ui === 'en' ? 'Put the sentence together!' : TXT('Construis la phrase !')) + '</h2>' +
       '<p class="aide-phrases">' + aide + '</p><span class="langue-phrase">' + langue + '</span></div></div>' +
       '<div class="progress-phrases" aria-label="' + (p.index+1) + ' / ' + p.liste.length + '"><span style="width:' + ((p.index/p.liste.length)*100) + '%"></span></div>' +
       '<p class="compteur-phrases">' + (base.ui === 'en' ? 'Sentence' : 'Phrase') + ' ' + (p.index+1) + ' / ' + p.liste.length + '</p>' +
-      '<div class="phrase-construite" aria-live="polite" dir="auto">' + (choisis.length ? choisis.map(i=>'<span class="mot-place">'+esc(tokens[i])+'</span>').join(' ') : '<span class="placeholder-phrase">'+(base.ui==='en'?'Your sentence will appear here…':'Ta phrase apparaîtra ici…')+'</span>') + '</div>' +
+      '<div class="phrase-construite" aria-live="polite" dir="auto">' + (choisis.length ? choisis.map(i=>'<span class="mot-place">'+esc(tokens[i])+'</span>').join(' ') : '<span class="placeholder-phrase">'+(base.ui==='en'?'Your sentence will appear here…':TXT('Ta phrase apparaîtra ici…'))+'</span>') + '</div>' +
       '<div class="tuiles-phrases" dir="auto">' + melanger(ordre).map(i=>'<button class="tuile-phrase" data-a="phrase-token" data-v="'+i+'">'+esc(tokens[i])+'</button>').join('') + '</div>' +
-      '<p class="retour-phrase" id="retour-phrase" role="status" aria-live="polite">'+(base.ui==='en'?'Plumo says: Let’s make a sentence!':'Plumo dit : Allez, on fabrique une phrase !')+'</p>' +
+      '<p class="retour-phrase" id="retour-phrase" role="status" aria-live="polite">'+(base.ui==='en'?'Plumo says: Let’s make a sentence!':TXT('Plumo dit : Allez, on fabrique une phrase !'))+'</p>' +
       '<div class="actions actions-phrases">' +
       '<button class="moyen" data-a="phrase-reset">↶ '+(base.ui==='en'?'Start again':'Recommencer')+'</button>' +
       '<button class="moyen" data-a="phrase-hint">💡 '+(base.ui==='en'?'Hint':'Indice')+'</button>' +
-      '<button class="moyen plein" data-a="phrase-check">✓ '+(base.ui==='en'?'Check':'Vérifier')+'</button></div>' +
-      '<p class="note-phrases">'+(base.ui==='en'?'No rush. Learning is an adventure!':'Pas de chrono : apprendre, c’est une aventure !')+'</p></main>');
+      '<button class="moyen plein" data-a="phrase-check">✓ '+(base.ui==='en'?'Check':TXT('Vérifier'))+'</button></div>' +
+      '<p class="note-phrases">'+(base.ui==='en'?'No rush. Learning is an adventure!':TXT('Pas de chrono : apprendre, c’est une aventure !'))+'</p></main>');
   }
   function atelierPhrases(){
     if(!PHRASES[base.cible]){
       const en = base.ui === 'en';
       poser(barre('accueil') + '<main class="centre atelier-phrases">' +
-        '<div class="ami-moyen ami-3d">'+ami('content')+'</div><h2>💬 '+(en?'Sentence workshop':'Atelier des phrases')+'</h2>' +
-        '<p>'+(en?'Carefully reviewed sentence activities are currently available in French and English. Word games remain available in the other languages.':'Les phrases relues sont disponibles pour le moment en français et en anglais. Les jeux de mots restent disponibles dans les autres langues.')+'</p>' +
-        '<button class="moyen plein" data-a="accueil">'+(en?'Back':'Retour')+'</button></main>');
+        '<div class="ami-moyen ami-3d">'+ami('content')+'</div><h2>💬 '+(en?'Sentence workshop':TXT('Atelier des phrases'))+'</h2>' +
+        '<p>'+(en?'Carefully reviewed sentence activities are currently available in French and English. Word games remain available in the other languages.':TXT('Les phrases relues sont disponibles pour le moment en français et en anglais. Les jeux de mots restent disponibles dans les autres langues.'))+'</p>' +
+        '<button class="moyen plein" data-a="accueil">'+(en?'Back':TXT('Retour'))+'</button></main>');
       return;
     }
     atelierPhrase={liste:melanger(PHRASES[base.cible].slice()),index:0,choisis:[],gain:0};
@@ -1812,14 +1814,14 @@
     const p=atelierPhrase, tokens=p.liste[p.index].split(' ');
     const zone=$('#retour-phrase');
     if(p.choisis.length!==tokens.length || p.choisis.some((v,i)=>v!==i)){
-      if(zone) zone.textContent = langueBlagues()==='en' ? 'Oops! My words have gone on an adventure without me.' : 'Oups ! Mes mots sont partis faire une phrase sans moi !';
+      if(zone) zone.textContent = langueBlagues()==='en' ? 'Oops! My words have gone on an adventure without me.' : TXT('Oups ! Mes mots sont partis faire une phrase sans moi !');
       const amiEl=$('#ami-phrase'); if(amiEl){amiEl.classList.remove('ami-raté'); void amiEl.offsetWidth; amiEl.classList.add('ami-raté');}
       bruit('faux');
       return;
     }
     p.gain+=3; J().plumes+=3; garder(); bruit('juste');
     const zone2=$('#retour-phrase');
-    if(zone2) zone2.textContent=base.ui==='en'?'Brilliant! Plumo is doing a happy dance!':'Bravo ! Plumo fait sa danse de la victoire !';
+    if(zone2) zone2.textContent=base.ui==='en'?'Brilliant! Plumo is doing a happy dance!':TXT('Bravo ! Plumo fait sa danse de la victoire !');
     const amiEl=$('#ami-phrase'); if(amiEl){amiEl.innerHTML=ami('fete');amiEl.classList.add('ami-3d');}
     const boutons=document.querySelectorAll('.tuile-phrase'); boutons.forEach(b=>b.disabled=true);
     const check=$('[data-a="phrase-check"]'); if(check) check.disabled=true;
@@ -1836,7 +1838,7 @@
     const prochain=p.choisis.length;
     if(prochain<tokens.length){
       const zone=$('#retour-phrase');
-      if(zone) zone.textContent=(base.ui==='en'?'Plumo’s hint: the next word is “':'Indice de Plumo : le prochain mot est « ')+tokens[prochain]+(base.ui==='en'?'”':' »');
+      if(zone) zone.textContent=(base.ui==='en'?'Plumo’s hint: the next word is “':TXT('Indice de Plumo : le prochain mot est « '))+tokens[prochain]+(base.ui==='en'?'”':' »');
     }
   }
 
@@ -1860,20 +1862,20 @@
   function pieges(){
     piege = null;
     if(!piegesDispo()){
-      poser(barre('accueil') + '<main class="centre"><div class="ami-moyen">' + ami('content') + '</div><h2>🪤 Les pièges de l’anglais</h2>' +
-        '<p>Ce coin est fait pour les francophones qui apprennent l’anglais : choisis « Je parle : Français » et « J’apprends : Anglais ».</p>' +
-        '<p><button class="moyen plein" data-a="accueil">Retour</button></p></main>');
+      poser(barre('accueil') + '<main class="centre"><div class="ami-moyen">' + ami('content') + TXT('</div><h2>🪤 Les pièges de l’anglais</h2>') +
+        TXT('<p>Ce coin est fait pour les francophones qui apprennent l’anglais : choisis « Je parle : Français » et « J’apprends : Anglais ».</p>') +
+        TXT('<p><button class="moyen plein" data-a="accueil">Retour</button></p></main>'));
       return;
     }
     const P = window.PIEGES, e = etatPieges(), m = P.maitrises(e), auj = P.jourNum(), dus = P.liste.filter(p => e[p.id] && e[p.id].d <= auj).length;
     const cats = Object.keys(P.CATS).map(c => { const l = P.liste.filter(p => p.cat === c), ok = l.filter(p => e[p.id] && e[p.id].b >= 3).length;
       return '<li><span>' + esc(P.CATS[c]) + '</span><span class="points" aria-label="' + ok + '/' + l.length + '">' + ok + '/' + l.length + '</span></li>'; }).join('');
     poser(barre(A_EN() ? 'anglais' : 'accueil') + '<main class="pieges-accueil-ecran">' +
-      '<div class="ami-moyen">' + ami('content') + '</div><h2>🪤 Les pièges de l’anglais</h2>' +
-      '<p class="pieges-intro">« I have 10 years », « I am agree », « a car red »… Les francophones tombent tous dedans ! Ici, chaque piège a sa vanne : tu ris, et tu ne retombes plus dedans.</p>' +
-      '<p class="pieges-score">🏅 Pièges déjoués : <strong>' + m + '/' + P.liste.length + '</strong>' + (dus ? ' · 🔁 ' + dus + ' à revoir' : '') + '</p>' +
+      '<div class="ami-moyen">' + ami('content') + TXT('</div><h2>🪤 Les pièges de l’anglais</h2>') +
+      TXT('<p class="pieges-intro">« I have 10 years », « I am agree », « a car red »… Les francophones tombent tous dedans ! Ici, chaque piège a sa vanne : tu ris, et tu ne retombes plus dedans.</p>') +
+      TXT('<p class="pieges-score">🏅 Pièges déjoués : <strong>') + m + '/' + P.liste.length + '</strong>' + (dus ? ' · 🔁 ' + dus + TXT(' à revoir') : '') + '</p>' +
       '<ul class="pieges-cats">' + cats + '</ul>' +
-      '<button class="gros" data-a="pieges-go">▶ C’est parti (6 pièges)</button></main>');
+      TXT('<button class="gros" data-a="pieges-go">▶ C’est parti (6 pièges)</button></main>'));
   }
   function piegesGo(){
     if(!piegesDispo()) return pieges();
@@ -1885,18 +1887,18 @@
     if(pg.i >= pg.liste.length){
       const P = window.PIEGES, m = P.maitrises(etatPieges());
       poser(barre('accueil') + '<main class="centre pieges-fin"><div class="ami-moyen">' + ami('fete') + '</div>' +
-        '<h2>' + (pg.bonnes === pg.liste.length ? 'Aucun piège ne t’a eu ! 🏆' : 'Pièges repérés !') + '</h2>' +
-        '<p>' + pg.bonnes + '/' + pg.liste.length + ' du premier coup · 🏅 ' + m + '/' + P.liste.length + ' pièges déjoués en tout</p>' +
+        '<h2>' + (pg.bonnes === pg.liste.length ? TXT('Aucun piège ne t’a eu ! 🏆') : TXT('Pièges repérés !')) + '</h2>' +
+        '<p>' + pg.bonnes + '/' + pg.liste.length + TXT(' du premier coup · 🏅 ') + m + '/' + P.liste.length + TXT(' pièges déjoués en tout</p>') +
         (pg.gain ? '<p class="gain-phrases">⭐ +' + pg.gain + ' plumes</p>' : '') +
-        '<p>Les pièges ratés reviendront bientôt : c’est comme ça qu’on les retient.</p>' +
-        '<div class="actions serrees"><button class="moyen plein" data-a="pieges-go">🔁 Encore</button><button class="moyen" data-a="pieges">🪤 Tous les pièges</button><button class="moyen" data-a="' + (A_EN() ? 'anglais' : 'accueil') + '">' + (A_EN() ? '🇬🇧 Coin anglais' : '🏠 Accueil') + '</button></div></main>');
+        TXT('<p>Les pièges ratés reviendront bientôt : c’est comme ça qu’on les retient.</p>') +
+        TXT('<div class="actions serrees"><button class="moyen plein" data-a="pieges-go">🔁 Encore</button><button class="moyen" data-a="pieges">🪤 Tous les pièges</button><button class="moyen" data-a="') + (A_EN() ? 'anglais' : 'accueil') + '">' + (A_EN() ? '🇬🇧 Coin anglais' : '🏠 Accueil') + '</button></div></main>');
       return;
     }
     const p = pg.liste[pg.i]; pg.repondu = false; pg.options = window.PIEGES.options(p);
     poser(barre('pieges') + '<main class="piege-ecran">' +
       '<p class="piege-cat">' + esc(window.PIEGES.CATS[p.cat]) + ' · ' + (pg.i + 1) + '/' + pg.liste.length + '</p>' +
       '<div class="piege-haut"><div class="ami-moyen" id="ami-piege">' + ami('content') + '</div>' +
-      '<div><p class="piege-consigne">Comment dit-on en anglais ?</p><p class="piege-fr">🇫🇷 ' + esc(p.fr) + '</p></div></div>' +
+      TXT('<div><p class="piege-consigne">Comment dit-on en anglais ?</p><p class="piege-fr">🇫🇷 ') + esc(p.fr) + '</p></div></div>' +
       '<div class="piege-options">' + pg.options.map((o, i) => '<button class="moyen piege-opt" data-a="piege-rep" data-v="' + i + '" lang="en">' + esc(o) + '</button>').join('') + '</div>' +
       '<div class="piege-retour" id="piege-retour" role="status" aria-live="polite"></div></main>');
   }
@@ -1913,10 +1915,10 @@
     const deja = juste ? 0 : noterErreur('piege:' + p.id); if(!juste) garder();
     const a = $('#ami-piege'); if(a) a.innerHTML = ami(juste ? 'fete' : 'surpris');
     const r = $('#piege-retour');
-    if(r) r.innerHTML = (juste ? '<p class="piege-bravo">Yes! 🎉 Tu as évité le piège.</p>' : '<p class="piege-vanne">😂 ' + (deja >= 2 ? 'Encore ce piège ! Il t’aime bien, on dirait. ' : '') + esc(vannePiquante(faux ? faux.vanne : 'Presque !')) + '</p>') +
+    if(r) r.innerHTML = (juste ? TXT('<p class="piege-bravo">Yes! 🎉 Tu as évité le piège.</p>') : '<p class="piege-vanne">😂 ' + (deja >= 2 ? TXT('Encore ce piège ! Il t’aime bien, on dirait. ') : '') + esc(vannePiquante(faux ? faux.vanne : 'Presque !')) + '</p>') +
       '<p class="piege-bon" lang="en">✅ ' + esc(p.bon) + ' <button class="bouton-rond" data-a="piege-ecouter" aria-label="Écouter la bonne phrase">🔊</button></p>' +
       '<p class="piege-regle">💡 ' + esc(p.regle) + '</p>' +
-      '<button class="moyen plein" data-a="piege-suivant">' + (pg.i + 1 < pg.liste.length ? 'Piège suivant →' : 'Voir mon score') + '</button>';
+      '<button class="moyen plein" data-a="piege-suivant">' + (pg.i + 1 < pg.liste.length ? TXT('Piège suivant →') : 'Voir mon score') + '</button>';
     bruit(juste ? 'juste' : 'faux');
     direPhrase(p.bon, 'en');
     const n = $('[data-a="piege-suivant"]'); if(n) n.focus({ preventScroll:true });
@@ -1945,33 +1947,34 @@
     const bj = window.BLAGUES_EN && BLAGUES_EN.duJour(), dus = revisionDue().length, serieJ = serieRevisions();
     const carte = (a, icone, titre, texte, info) => '<button class="carte-anglais" data-a="' + a + '"><span class="ic">' + icone + '</span><strong>' + titre + '</strong><small>' + texte + '</small><em>' + info + '</em></button>';
     poser(barre('accueil') + '<main class="coin-anglais"><div class="ami-moyen">' + ami('content') + '</div>' +
-      '<h2>🇬🇧 Le coin anglais</h2><p class="pieges-intro">Pour parler anglais pour de vrai… en rigolant.</p>' +
-      (cour ? '<button class="carte-parcours" data-a="parcours"><span class="ic">' + cour.icone + '</span><span><strong>Mon parcours · Niveau ' + cour.n + ' : ' + esc(cour.titre) + '</strong><small>' + (cour.valide ? '🎓 Tous les niveaux réussis !' : cour.pret ? '🎓 Prêt pour l’examen !' : cour.etapes.filter(x => x.ok).length + '/' + cour.etapes.length + ' étapes') + '</small></span><span class="barre-prog"><i style="width:' + Math.round(100 * cour.etapes.filter(x => x.ok).length / cour.etapes.length) + '%"></i></span></button>' : '') +
-      '<button class="carte-revision" data-a="revision">🔁 <strong>Ma révision du jour</strong> <small>' + (dus ? dus + ' chose' + (dus > 1 ? 's' : '') + ' à revoir · 5 minutes' : 'De nouveaux pièges t’attendent') + (serieJ > 1 ? ' · 🔥 ' + serieJ + ' jours de suite' : '') + '</small></button>' +
-      (bj ? '<div class="blague-jour"><p><strong>😂 La blague anglaise du jour</strong></p><p class="bj-q" lang="en">' + esc(bj.q) + ' <button class="bouton-rond" data-a="bj-ecouter" aria-label="Écouter la blague">🔊</button></p>' +
-        '<details><summary>Réponse…</summary><p class="bj-r" lang="en">' + esc(bj.r) + '</p><p class="petit">🇫🇷 ' + esc(bj.fr) + '</p><p class="bj-jeu">💡 ' + esc(bj.jeu) + '</p></details></div>' : '') +
+      TXT('<h2>🇬🇧 Le coin anglais</h2><p class="pieges-intro">Pour parler anglais pour de vrai… en rigolant.</p>') +
+      (cour ? '<button class="carte-parcours" data-a="parcours"><span class="ic">' + cour.icone + TXT('</span><span><strong>Mon parcours · Niveau ') + cour.n + ' : ' + esc(cour.titre) + '</strong><small>' + (cour.valide ? TXT('🎓 Tous les niveaux réussis !') : cour.pret ? TXT('🎓 Prêt pour l’examen !') : cour.etapes.filter(x => x.ok).length + '/' + cour.etapes.length + TXT(' étapes')) + '</small></span><span class="barre-prog"><i style="width:' + Math.round(100 * cour.etapes.filter(x => x.ok).length / cour.etapes.length) + '%"></i></span></button>' : '') +
+      TXT('<button class="carte-revision" data-a="revision">🔁 <strong>Ma révision du jour</strong> <small>') + (dus ? dus + ' chose' + (dus > 1 ? 's' : '') + TXT(' à revoir · 5 minutes') : TXT('De nouveaux pièges t’attendent')) + (serieJ > 1 ? ' · 🔥 ' + serieJ + TXT(' jours de suite') : '') + '</small></button>' +
+      (bj ? TXT('<div class="blague-jour"><p><strong>😂 La blague anglaise du jour</strong></p><p class="bj-q" lang="en">') + esc(bj.q) + ' <button class="bouton-rond" data-a="bj-ecouter" aria-label="Écouter la blague">🔊</button></p>' +
+        TXT('<details><summary>Réponse…</summary><p class="bj-r" lang="en">') + esc(bj.r) + '</p><p class="petit">🇫🇷 ' + esc(bj.fr) + '</p><p class="bj-jeu">💡 ' + esc(bj.jeu) + '</p></details></div>' : '') +
       '<div class="cartes-anglais">' +
-      carte('pieges', '🪤', 'Les pièges', 'Les erreurs que font tous les francophones', '🏅 ' + m + '/' + P.liste.length) +
-      carte('situations', '☕', 'Situations de la vie', 'Café, école, magasin… choisis ta réplique', '✅ ' + e.situations.length + '/' + A_EN().SITUATIONS.length) +
-      (jeuxEcouteCaches() ? '' : carte('dictee', '✍️', 'Dictée rigolote', 'Plumo parle, tu écris (attention aux mots jumeaux !)', '✍️ ' + e.dictees + ' phrase' + (e.dictees > 1 ? 's' : '') + ' parfaite' + (e.dictees > 1 ? 's' : ''))) +
-      carte('histoires', '📖', 'Mini-histoires', 'Lis et écoute de petites histoires du village', '📖 ' + e.histoires.length + '/' + (window.HISTOIRES ? HISTOIRES.liste.length : 0)) +
-      (jeuxEcouteCaches() ? '' : carte('repeter', '🗣️', 'Répète après Plumo', 'Dis la phrase, réécoute-toi, compare', '🗣️ ' + e.repete.length + '/' + (window.PARCOURS ? PARCOURS.REPETER.length : 0))) +
-      carte('battle', '🎤', 'Battles', 'Rap, vannes, en famille, entre potes, en direct', '🏆 ' + e.victoires + ' victoire' + (e.victoires > 1 ? 's' : '')) +
-      '</div><h3 class="section-anglais">😂 Pour rire (et apprendre)</h3><div class="cartes-anglais">' +
-      carte('trompe', '🦉', 'Plumo se trompe exprès', 'Trouve ses fautes et corrige-le !', '🔔') +
-      (jeuxEcouteCaches() ? '' : carte('oreilles', '👂', 'Le jeu des oreilles', 'ship ou sheep ? three ou tree ?', '👂')) +
-      carte('vraifaux', '🤥', 'True or false?', 'Plumo raconte des bêtises…', '🤥') +
-      carte('avent', '🎄', 'Calendrier de l’Avent', 'Un mot d’hiver par jour', '🎄 ' + (Array.isArray(J().avent) ? J().avent.length : 0) + '/24') +
-      carte('betisier', '📺', 'Le bêtisier', 'Le best-of de tes vannes de la semaine', '📺') +
-      carte('maison', '🏠', 'Ma maison', 'Dépense tes plumes, apprends les meubles', '🪶 ' + J().plumes) +
-      '</div><p><button class="moyen" data-a="parents">👪 Espace parents</button></p></main>');
+      carte('pieges', '🪤', TXT('Les pièges'), TXT('Les erreurs que font tous les francophones'), '🏅 ' + m + '/' + P.liste.length) +
+      carte('situations', '☕', TXT('Situations de la vie'), TXT('Café, école, magasin… choisis ta réplique'), '✅ ' + e.situations.length + '/' + A_EN().SITUATIONS.length) +
+      (jeuxEcouteCaches() ? '' : carte('dictee', '✍️', TXT('Dictée rigolote'), TXT('Plumo parle, tu écris (attention aux mots jumeaux !)'), '✍️ ' + e.dictees + ' phrase' + (e.dictees > 1 ? 's' : '') + ' parfaite' + (e.dictees > 1 ? 's' : ''))) +
+      carte('histoires', '📖', 'Mini-histoires', TXT('Lis et écoute de petites histoires du village'), '📖 ' + e.histoires.length + '/' + (window.HISTOIRES ? HISTOIRES.liste.length : 0)) +
+      (jeuxEcouteCaches() ? '' : carte('repeter', '🗣️', TXT('Répète après Plumo'), TXT('Dis la phrase, réécoute-toi, compare'), '🗣️ ' + e.repete.length + '/' + (window.PARCOURS ? PARCOURS.REPETER.length : 0))) +
+      carte('battle', '🎤', 'Battles', TXT('Rap, vannes, en famille, entre potes, en direct'), '🏆 ' + e.victoires + ' victoire' + (e.victoires > 1 ? 's' : '')) +
+      TXT('</div><h3 class="section-anglais">😂 Pour rire (et apprendre)</h3><div class="cartes-anglais">') +
+      carte('trompe', '🦉', TXT('Plumo se trompe exprès'), TXT('Trouve ses fautes et corrige-le !'), '🔔') +
+      (jeuxEcouteCaches() ? '' : carte('oreilles', '👂', TXT('Le jeu des oreilles'), TXT('ship ou sheep ? three ou tree ?'), '👂')) +
+      carte('vraifaux', '🤥', 'True or false?', TXT('Plumo raconte des bêtises…'), '🤥') +
+      carte('avent', '🎄', TXT('Calendrier de l’Avent'), 'Un mot d’hiver par jour', '🎄 ' + (Array.isArray(J().avent) ? J().avent.length : 0) + '/24') +
+      carte('betisier', '📺', TXT('Le bêtisier'), TXT('Le best-of de tes vannes de la semaine'), '📺') +
+      carte('maison', '🏠', TXT('Ma maison'), TXT('Dépense tes plumes, apprends les meubles'), '🪶 ' + J().plumes) +
+      TXT('</div><p><button class="moyen" data-a="parents">👪 Espace parents</button></p></main>'));
   }
 
   // Battle : 3 manches. Plumo se vante ; on choisit la réplique juste et drôle. Point seulement du premier coup.
   let battle = null;
   // ── v5.86 : Clash libre — on se vanne, tout simplement (un téléphone, chacun son tour, en anglais ET en français) ──
   let clashL = null;
-  const lc = (fr, en) => base.ui === 'fr' ? fr : en; // v5.95 : Clash libre en français pour l'interface française, sinon en anglais
+  // v5.99.3 : français pour l'interface française, anglais pour 'en', sinon la traduction (js/textes-ecrans.js) ou à défaut l'anglais.
+  const lc = (fr, en) => base.ui === 'fr' ? fr : base.ui === 'en' ? en : (window.TRAD_ECRANS && TRAD_ECRANS[fr] ? TXT(fr) : en); // v5.95 : Clash libre en français pour l'interface française, sinon en anglais
   function clashLibre(){
     const V = window.VANNES_LIBRES; if(!V) return battleMenu();
     const n = (base.clashNoms || ['', '']);
@@ -1988,7 +1991,7 @@
   function clashLibreGo(nb){
     const V = window.VANNES_LIBRES; if(!V) return battleMenu();
     // Revanche : plus de champs à l'écran, on reprend les noms gardés.
-    const garde = base.clashNoms || [], nom = (id, k) => { const x = $(id); const v = String(x ? x.value : (garde[k] || '')).replace(/[<>]/g, '').trim().slice(0, 16); return v && V.juger(v).ok ? v : 'Joueur ' + (k + 1); };
+    const garde = base.clashNoms || [], nom = (id, k) => { const x = $(id); const v = String(x ? x.value : (garde[k] || '')).replace(/[<>]/g, '').trim().slice(0, 16); return v && V.juger(v).ok ? v : TXT('Joueur ') + (k + 1); };
     const j = [nom('#cl-n1', 0), nom('#cl-n2', 1)];
     base.clashNoms = j; garder();
     clashL = { j, aura:[0, 0], tour:0, total:Math.max(1, Math.min(8, Number(nb) || 5)) * 2, jouees:[], main:V.tirer([], null, paquet()), vanne:null, ecrire:false, msg:'' };
@@ -2062,16 +2065,16 @@
   // Ajoute une vanne : règles d'abord (tout de suite), puis l'IA. Sans serveur : règles seules. Serveur muet : en attente.
   async function ajouterAuPaquet(fr, en){
     const V = V_L(); fr = String(fr || '').replace(/\s+/g, ' ').trim().slice(0, 140); en = String(en || '').replace(/\s+/g, ' ').trim().slice(0, 140);
-    if(!fr) return { ok:false, msg:'✍️ Écris la vanne en français (l’anglais est en option).' };
-    for(const t of [fr, en]) if(t){ const j = V.juger(t); if(!j.ok) return { ok:false, msg:'🛑 Le juge de Plumo refuse : ' + j.raisons.join(', ') + '.' }; }
-    if(paquet().some(x => x.fr.toLowerCase() === fr.toLowerCase())) return { ok:false, msg:'⭐ Elle est déjà dans le paquet.' };
-    if(paquet().length >= 100) return { ok:false, msg:'Le paquet est plein (100 vannes) : retire-en une d’abord.' };
-    let etat = 'regles', msg = '✅ Ajoutée ! Vérifiée par le juge de Plumo.';
+    if(!fr) return { ok:false, msg:TXT('✍️ Écris la vanne en français (l’anglais est en option).') };
+    for(const t of [fr, en]) if(t){ const j = V.juger(t); if(!j.ok) return { ok:false, msg:TXT('🛑 Le juge de Plumo refuse : ') + j.raisons.join(', ') + '.' }; }
+    if(paquet().some(x => x.fr.toLowerCase() === fr.toLowerCase())) return { ok:false, msg:TXT('⭐ Elle est déjà dans le paquet.') };
+    if(paquet().length >= 100) return { ok:false, msg:TXT('Le paquet est plein (100 vannes) : retire-en une d’abord.') };
+    let etat = 'regles', msg = TXT('✅ Ajoutée ! Vérifiée par le juge de Plumo.');
     if(CONFIG.API_VANNE_JUGE){
       const ia = await jugerParIA(fr, en);
-      if(ia && !ia.garder) return { ok:false, msg:'🤖 L’IA ne la met pas dans le paquet' + (ia.raison ? ' : ' + ia.raison : '.') };
-      if(ia){ etat = 'ok'; msg = '🤖✅ L’IA valide, elle entre dans le paquet !'; if(ia.en_corrige && V.juger(ia.en_corrige).ok){ en = ia.en_corrige; msg += ' Anglais corrigé : « ' + en + ' ».'; } }
-      else { etat = 'attente'; msg = '⏳ L’IA ne répond pas pour l’instant : la vanne attend sa vérification avant de sortir en jeu.'; }
+      if(ia && !ia.garder) return { ok:false, msg:TXT('🤖 L’IA ne la met pas dans le paquet') + (ia.raison ? ' : ' + ia.raison : '.') };
+      if(ia){ etat = 'ok'; msg = TXT('🤖✅ L’IA valide, elle entre dans le paquet !'); if(ia.en_corrige && V.juger(ia.en_corrige).ok){ en = ia.en_corrige; msg += TXT(' Anglais corrigé : « ') + en + ' ».'; } }
+      else { etat = 'attente'; msg = TXT('⏳ L’IA ne répond pas pour l’instant : la vanne attend sa vérification avant de sortir en jeu.'); }
     }
     base.clashPerso = paquet().concat([{ fr, en, etat }]); garder();
     return { ok:true, msg };
@@ -2088,12 +2091,12 @@
     } finally { paquetVerif = false; }
   }
   function clashPaquet(){
-    const p = paquet(), etiquette = { ok:'🤖✅ validée par l’IA', regles:'✅ juge de Plumo', attente:'⏳ attend l’IA' };
-    poser(barre('battle') + '<main class="battle-ecran clash-libre"><h2>⭐ Ajouter des vannes au paquet</h2>' +
-      '<p>Vos vannes à vous sortiront dans le Clash libre. ' + (CONFIG.API_VANNE_JUGE ? '🤖 L’IA trie : elle refuse celles qui visent la personne et corrige l’anglais.' : 'Le juge de Plumo les vérifie (l’IA s’activera avec le serveur).') + '</p>' +
-      '<p><label>La vanne en français <textarea id="cl-fr" maxlength="140" rows="2"></textarea></label></p>' +
-      '<p><label>En anglais (si tu sais, sinon laisse vide) <input id="cl-en" maxlength="140" lang="en"></label></p>' +
-      '<div class="actions serrees"><button class="moyen plein" data-a="clash-libre-ajouter">➕ Proposer</button><button class="moyen" data-a="clash-libre">← Retour au clash</button></div>' +
+    const p = paquet(), etiquette = { ok:TXT('🤖✅ validée par l’IA'), regles:TXT('✅ juge de Plumo'), attente:'⏳ attend l’IA' };
+    poser(barre('battle') + TXT('<main class="battle-ecran clash-libre"><h2>⭐ Ajouter des vannes au paquet</h2>') +
+      TXT('<p>Vos vannes à vous sortiront dans le Clash libre. ') + (CONFIG.API_VANNE_JUGE ? TXT('🤖 L’IA trie : elle refuse celles qui visent la personne et corrige l’anglais.') : TXT('Le juge de Plumo les vérifie (l’IA s’activera avec le serveur).')) + '</p>' +
+      TXT('<p><label>La vanne en français <textarea id="cl-fr" maxlength="140" rows="2"></textarea></label></p>') +
+      TXT('<p><label>En anglais (si tu sais, sinon laisse vide) <input id="cl-en" maxlength="140" lang="en"></label></p>') +
+      TXT('<div class="actions serrees"><button class="moyen plein" data-a="clash-libre-ajouter">➕ Proposer</button><button class="moyen" data-a="clash-libre">← Retour au clash</button></div>') +
       '<p class="aide" id="cl-paquet-msg" role="status" aria-live="polite">' + esc(paquetMsg) + '</p>' +
       (p.length ? '<h3>⭐ Nos vannes (' + p.length + ')</h3><ul class="liste-paquet">' + p.map((v, k) => '<li><strong>' + esc(v.fr) + '</strong>' + (v.en ? ' <span lang="en">— ' + esc(v.en) + '</span>' : '') + ' <small>' + (etiquette[v.etat] || '') + '</small> <button class="bouton-rond" data-a="clash-libre-retirer" data-v="' + k + '" aria-label="Retirer cette vanne">🗑️</button></li>').join('') + '</ul>' : '') +
       '</main>');
@@ -2103,15 +2106,15 @@
   function battleMenu(){
     battle = null; arreterBeat(); quitterSalon();
     if(!piegesDispo() || !A_EN()) return pieges();
-    poser(barre('anglais') + '<main class="coin-anglais"><h2>🎤 Battle de vannes</h2><div class="cartes-anglais">' +
-      (window.VANNES_LIBRES ? '<button class="carte-anglais" data-a="clash-libre"><span class="ic">🗯️</span><strong>Clash libre</strong><small>On se vanne, c’est tout ! Entre potes, en anglais et en français</small></button>' : '') +
-      '<button class="carte-anglais" data-a="battle-go" data-v="ami"><span class="ic">🦉</span><strong>Contre Plumo</strong><small>3 manches : cloue-lui le bec !</small></button>' +
-      '<button class="carte-anglais" data-a="battle-go" data-v="famille"><span class="ic">🦊🐼</span><strong>En famille</strong><small>Deux équipes, chacun son tour, Plumo arbitre</small></button>' +
-      '<button class="carte-anglais" data-a="invente"><span class="ic">✍️</span><strong>Invente ta vanne</strong><small>Fabrique une vanne en anglais pour Plumo</small></button>' +
-      '<button class="carte-anglais" data-a="rap"><span class="ic">🎤🔥</span><strong>Battle de rap</strong><small>Sur scène : complète les rimes de Plumo, fais crier le public !</small></button>' +
-      '<button class="carte-anglais" data-a="tournoi"><span class="ic">👨‍👩‍👧</span><strong>Battle en famille</strong><small>2 à 4 joueurs, chacun son tour</small></button>' +
-      '<button class="carte-anglais" data-a="defi-pote"><span class="ic">📨</span><strong>Défier un pote</strong><small>Par lien : mêmes questions, on compare</small></button>' +
-      '<button class="carte-anglais" data-a="salon"><span class="ic">🛸</span><strong>Salon en direct</strong><small>Retrouve tes potes et battle en même temps</small></button></div></main>');
+    poser(barre('anglais') + TXT('<main class="coin-anglais"><h2>🎤 Battle de vannes</h2><div class="cartes-anglais">') +
+      (window.VANNES_LIBRES ? TXT('<button class="carte-anglais" data-a="clash-libre"><span class="ic">🗯️</span><strong>Clash libre</strong><small>On se vanne, c’est tout ! Entre potes, en anglais et en français</small></button>') : '') +
+      TXT('<button class="carte-anglais" data-a="battle-go" data-v="ami"><span class="ic">🦉</span><strong>Contre Plumo</strong><small>3 manches : cloue-lui le bec !</small></button>') +
+      TXT('<button class="carte-anglais" data-a="battle-go" data-v="famille"><span class="ic">🦊🐼</span><strong>En famille</strong><small>Deux équipes, chacun son tour, Plumo arbitre</small></button>') +
+      TXT('<button class="carte-anglais" data-a="invente"><span class="ic">✍️</span><strong>Invente ta vanne</strong><small>Fabrique une vanne en anglais pour Plumo</small></button>') +
+      TXT('<button class="carte-anglais" data-a="rap"><span class="ic">🎤🔥</span><strong>Battle de rap</strong><small>Sur scène : complète les rimes de Plumo, fais crier le public !</small></button>') +
+      TXT('<button class="carte-anglais" data-a="tournoi"><span class="ic">👨‍👩‍👧</span><strong>Battle en famille</strong><small>2 à 4 joueurs, chacun son tour</small></button>') +
+      TXT('<button class="carte-anglais" data-a="defi-pote"><span class="ic">📨</span><strong>Défier un pote</strong><small>Par lien : mêmes questions, on compare</small></button>') +
+      TXT('<button class="carte-anglais" data-a="salon"><span class="ic">🛸</span><strong>Salon en direct</strong><small>Retrouve tes potes et battle en même temps</small></button></div></main>'));
   }
   function battleGo(mode){
     if(!piegesDispo() || !A_EN()) return pieges();
@@ -2126,29 +2129,29 @@
     if(b.i >= b.manches.length && b.fam){
       const g = b.eq[0] === b.eq[1] ? -1 : b.eq[0] > b.eq[1] ? 0 : 1;
       poser(barre('anglais') + '<main class="centre battle-fin"><div class="ami-moyen">' + ami('fete') + '</div>' +
-        '<h2>' + (g < 0 ? 'Égalité ! Plumo offre des plumes à tout le monde. 🤝' : 'Victoire de l’équipe ' + ['🦊', '🐼'][g] + ' !') + '</h2>' +
-        '<p class="battle-score">🦊 ' + b.eq[0] + ' – ' + b.eq[1] + ' 🐼</p><p lang="en">🦉 « What a battle! You both speak great English! »</p><p>Quelle battle ! Vous parlez tous très bien anglais !</p>' +
+        '<h2>' + (g < 0 ? TXT('Égalité ! Plumo offre des plumes à tout le monde. 🤝') : TXT('Victoire de l’équipe ') + ['🦊', '🐼'][g] + ' !') + '</h2>' +
+        '<p class="battle-score">🦊 ' + b.eq[0] + ' – ' + b.eq[1] + TXT(' 🐼</p><p lang="en">🦉 « What a battle! You both speak great English! »</p><p>Quelle battle ! Vous parlez tous très bien anglais !</p>') +
         '<div class="actions serrees"><button class="moyen plein" data-a="battle-go" data-v="famille">🔁 Revanche</button><button class="moyen" data-a="battle">🎤 Autres battles</button></div></main>');
       return;
     }
     if(b.i >= b.manches.length){
       const e = etatAnglais(); e.battles++; const gagne = b.toi > b.ami; if(gagne) e.victoires++; garder();
       poser(barre('anglais') + '<main class="centre battle-fin"><div class="ami-moyen">' + ami(gagne ? 'surpris' : 'fete') + '</div>' +
-        '<h2>' + (b.toi === 3 ? 'Victoire écrasante ! 🏆' : gagne ? 'Tu gagnes la battle ! 🎤' : 'Plumo gagne… de justesse ! 🦉') + '</h2>' +
+        '<h2>' + (b.toi === 3 ? TXT('Victoire écrasante ! 🏆') : gagne ? TXT('Tu gagnes la battle ! 🎤') : TXT('Plumo gagne… de justesse ! 🦉')) + '</h2>' +
         '<p class="battle-score">Toi ' + b.toi + ' – ' + b.ami + ' Plumo</p>' +
         '<p lang="en">🦉 « ' + (gagne ? 'OK, you win… Rematch tomorrow?' : 'I win! But your English is getting better!') + ' »</p>' +
-        '<p>' + (gagne ? 'D’accord, tu as gagné… Revanche demain ?' : 'J’ai gagné ! Mais ton anglais progresse !') + '</p>' +
+        '<p>' + (gagne ? TXT('D’accord, tu as gagné… Revanche demain ?') : TXT('J’ai gagné ! Mais ton anglais progresse !')) + '</p>' +
         '<div class="actions serrees"><button class="moyen plein" data-a="battle-go" data-v="ami">🔁 Revanche</button><button class="moyen" data-a="battle">🎤 Autres battles</button></div></main>');
       return;
     }
     const m = b.manches[b.i]; b.essai = 0; b.fini = false;
     b.options = A_EN().melanger([m.bon.en].concat(m.faux.map(f => f.en)));
     const finale = b.i === b.manches.length - 1, moy = b.foule.length ? Math.round(b.foule.reduce((x, y) => x + y, 0) / b.foule.length) : 0;
-    poser(barre('battle') + '<main class="battle-ecran' + (finale ? ' finale' : '') + '"><p class="piege-cat">' + (finale ? '🏆 FINALE · ' : '') + '🎤 Manche ' + (b.i + 1) + '/' + b.manches.length + ' · ' + (b.fam ? '🦊 ' + b.eq[0] + ' – ' + b.eq[1] + ' 🐼 · <strong>À l’équipe ' + ['🦊', '🐼'][b.i % 2] + ' !</strong>' : 'Toi ' + b.toi + ' – ' + b.ami + ' Plumo') + '</p>' +
+    poser(barre('battle') + '<main class="battle-ecran' + (finale ? ' finale' : '') + '"><p class="piege-cat">' + (finale ? '🏆 FINALE · ' : '') + TXT('🎤 Manche ') + (b.i + 1) + '/' + b.manches.length + ' · ' + (b.fam ? '🦊 ' + b.eq[0] + ' – ' + b.eq[1] + TXT(' 🐼 · <strong>À l’équipe ') + ['🦊', '🐼'][b.i % 2] + ' !</strong>' : 'Toi ' + b.toi + ' – ' + b.ami + ' Plumo') + '</p>' +
       '<div class="piege-haut"><div class="ami-moyen" id="ami-battle">' + ami('content') + '</div>' +
       '<div class="bulle-ami"><p class="piege-fr" lang="en">« ' + esc(m.ami) + ' » <button class="bouton-rond" data-a="battle-ecouter" aria-label="Réécouter Plumo">🔊</button></p>' + traduire(m.fr) + '</div></div>' +
       (b.foule.length ? '<div class="clash-public" aria-label="Énergie du public">📣 Public <span class="jauge"><span style="width:' + moy + '%"></span></span>' + (b.serie > 1 ? ' <strong>🔥 x' + b.serie + '</strong>' : '') + '</div>' : '') +
-      '<p class="piege-consigne">Ta réplique (juste ET drôle) :</p>' +
+      TXT('<p class="piege-consigne">Ta réplique (juste ET drôle) :</p>') +
       '<div class="piege-options">' + b.options.map((o, i) => '<button class="moyen piege-opt" data-a="battle-rep" data-v="' + i + '" lang="en">' + esc(o) + '</button>').join('') + '</div>' +
       '<div class="piege-retour" id="battle-retour" role="status" aria-live="polite"></div></main>');
     direPhrase(m.ami, 'en');
@@ -2166,10 +2169,10 @@
       b.serie = b.essai === 0 ? b.serie + 1 : 0;
       const ovation = C && b.essai === 0 ? '<p class="clash-foule">' + esc(C.FOULE[Math.floor(Math.random() * C.FOULE.length)]) + (C.SERIE[Math.min(4, b.serie)] && !b.fam ? ' <strong>' + esc(C.SERIE[Math.min(4, b.serie)]) + '</strong>' : '') + '</p>' : '';
       if(a) a.innerHTML = ami(b.serie >= 3 ? 'choque' : 'surpris');
-      if(r) r.innerHTML = '<p class="piege-bravo">🎤 ' + (b.essai === 0 ? (b.fam ? 'Bien envoyé ! Point pour l’équipe ' + ['🦊', '🐼'][b.i % 2] + '.' : 'Bien envoyé ! Point pour toi.') : (b.fam ? 'Trouvé ! Mais pas de point cette fois.' : 'Trouvé ! Mais le point va à Plumo cette fois.')) + '</p>' +
+      if(r) r.innerHTML = '<p class="piege-bravo">🎤 ' + (b.essai === 0 ? (b.fam ? TXT('Bien envoyé ! Point pour l’équipe ') + ['🦊', '🐼'][b.i % 2] + '.' : TXT('Bien envoyé ! Point pour toi.')) : (b.fam ? TXT('Trouvé ! Mais pas de point cette fois.') : TXT('Trouvé ! Mais le point va à Plumo cette fois.'))) + '</p>' +
         '<p class="piege-bon" lang="en">« ' + esc(m.bon.en) + ' »</p><p class="petit">🇫🇷 ' + esc(m.bon.fr) + '</p>' +
         ovation + '<p lang="en">🦉 « ' + esc(aie.en) + ' » <small>(' + esc(aie.fr) + ')</small></p>' +
-        '<button class="moyen plein" data-a="battle-suivant">' + (b.i + 1 < b.manches.length ? 'Manche suivante →' : 'Résultat') + '</button>';
+        '<button class="moyen plein" data-a="battle-suivant">' + (b.i + 1 < b.manches.length ? TXT('Manche suivante →') : TXT('Résultat')) + '</button>';
       bruit('juste'); direPhrase(m.bon.en, 'en');
     } else {
       b.essai++; bouton.disabled = true; bouton.classList.add('ko');
@@ -2178,7 +2181,7 @@
       const C = window.CLASH, rip = C ? C.RIPOSTES[(b.i * 3 + b.essai) % C.RIPOSTES.length] : null; b.serie = 0;
       // Plumo contre-attaque (sur la réplique ratée), puis la vanne explique l'erreur d'anglais.
       if(r) r.innerHTML = (rip ? '<p class="clash-riposte" lang="en">🦉 « ' + esc(rip.en) + ' » <small lang="fr">(' + esc(rip.fr) + ')</small></p>' : '') +
-        '<p class="piege-vanne">😂 ' + esc(vannePiquante(f ? f.vanne : 'Presque !')) + '</p><p class="petit">Essaie une autre réplique !</p>';
+        '<p class="piege-vanne">😂 ' + esc(vannePiquante(f ? f.vanne : 'Presque !')) + TXT('</p><p class="petit">Essaie une autre réplique !</p>');
       if(rip && niveauHumour() > 0) direPhrase(rip.en, 'en');
       bruit('faux');
     }
@@ -2190,8 +2193,8 @@
     situation = null;
     if(!piegesDispo() || !A_EN()) return pieges();
     const e = etatAnglais();
-    poser(barre('anglais') + '<main class="coin-anglais"><h2>☕ Situations de la vie</h2><p class="pieges-intro">Écoute, puis choisis ce que tu réponds. Comme en vrai !</p><div class="cartes-anglais">' +
-      A_EN().SITUATIONS.map(x => '<button class="carte-anglais" data-a="situation-go" data-v="' + x.id + '"><span class="ic">' + x.icone + '</span><strong>' + esc(x.titre) + '</strong><em>' + (e.situations.includes(x.id) ? '✅ réussie' : '▶ à jouer') + '</em></button>').join('') +
+    poser(barre('anglais') + TXT('<main class="coin-anglais"><h2>☕ Situations de la vie</h2><p class="pieges-intro">Écoute, puis choisis ce que tu réponds. Comme en vrai !</p><div class="cartes-anglais">') +
+      A_EN().SITUATIONS.map(x => '<button class="carte-anglais" data-a="situation-go" data-v="' + x.id + '"><span class="ic">' + x.icone + '</span><strong>' + esc(x.titre) + '</strong><em>' + (e.situations.includes(x.id) ? TXT('✅ réussie') : TXT('▶ à jouer')) + '</em></button>').join('') +
       '</div></main>');
   }
   function situationGo(id){
@@ -2203,9 +2206,9 @@
     const x = sn.x;
     if(sn.i >= x.etapes.length){
       const e = etatAnglais(); if(!e.situations.includes(x.id)) e.situations.push(x.id); J().plumes += sn.premiers; garder();
-      poser(barre('situations') + '<main class="centre"><div class="ami-moyen">' + ami('fete') + '</div><h2>' + x.icone + ' ' + esc(x.titre) + ' : réussi !</h2>' +
-        '<p>' + sn.premiers + '/' + x.etapes.length + ' du premier coup' + (sn.premiers ? ' · ⭐ +' + sn.premiers + ' plumes' : '') + '</p>' +
-        '<p>Tu sais maintenant te débrouiller dans cette situation en anglais. 🎉</p>' +
+      poser(barre('situations') + '<main class="centre"><div class="ami-moyen">' + ami('fete') + '</div><h2>' + x.icone + ' ' + esc(x.titre) + TXT(' : réussi !</h2>') +
+        '<p>' + sn.premiers + '/' + x.etapes.length + TXT(' du premier coup') + (sn.premiers ? ' · ⭐ +' + sn.premiers + ' plumes' : '') + '</p>' +
+        TXT('<p>Tu sais maintenant te débrouiller dans cette situation en anglais. 🎉</p>') +
         '<div class="actions serrees"><button class="moyen plein" data-a="situations">☕ Autres situations</button><button class="moyen" data-a="anglais">🇬🇧 Coin anglais</button></div></main>');
       return;
     }
@@ -2215,7 +2218,7 @@
     poser(barre('situations') + '<main class="battle-ecran"><p class="piege-cat">' + x.icone + ' ' + esc(x.titre) + ' · ' + (sn.i + 1) + '/' + x.etapes.length + '</p>' +
       (sn.i === 0 && x.intro ? '<p class="situation-intro">📍 ' + esc(x.intro) + '</p>' : '') +
       (et.dit ? '<div class="bulle-ami"><p class="piege-fr"><span class="qui">' + esc(x.qui) + ' :</span> <span lang="en">« ' + esc(et.dit) + ' »</span> <button class="bouton-rond" data-a="situation-ecouter" aria-label="Réécouter">🔊</button></p>' + (comprendre ? '' : traduire(et.fr)) + '</div>' : '') +
-      '<p class="piege-consigne">' + (comprendre ? esc(et.question) : 'Tu réponds :') + '</p>' +
+      '<p class="piege-consigne">' + (comprendre ? esc(et.question) : TXT('Tu réponds :')) + '</p>' +
       '<div class="piege-options">' + sn.options.map((o, i) => '<button class="moyen piege-opt" data-a="situation-rep" data-v="' + i + '"' + (comprendre ? '' : ' lang="en"') + '>' + esc(o) + '</button>').join('') + '</div>' +
       '<div class="piege-retour" id="situation-retour" role="status" aria-live="polite"></div></main>');
     if(et.dit) direPhrase(et.dit, 'en');
@@ -2227,8 +2230,8 @@
     if(choix === et.bon){
       sn.fini = true; if(sn.essai === 0) sn.premiers++;
       bouton.classList.add('ok'); document.querySelectorAll('.piege-opt').forEach(x => { x.disabled = true; });
-      if(r) r.innerHTML = '<p class="piege-bravo">✅ ' + (et.mode === 'comprendre' ? 'Bien compris !' : 'Parfait, c’est ce qu’on dit !') + '</p>' + (et.fr && et.mode === 'comprendre' ? '<p class="petit">🇬🇧 « ' + esc(et.dit) + ' » = ' + esc(et.fr) + '</p>' : '') +
-        '<button class="moyen plein" data-a="situation-suivant">' + (sn.i + 1 < sn.x.etapes.length ? 'Suite →' : 'Fin de la scène') + '</button>';
+      if(r) r.innerHTML = '<p class="piege-bravo">✅ ' + (et.mode === 'comprendre' ? 'Bien compris !' : TXT('Parfait, c’est ce qu’on dit !')) + '</p>' + (et.fr && et.mode === 'comprendre' ? '<p class="petit">🇬🇧 « ' + esc(et.dit) + ' » = ' + esc(et.fr) + '</p>' : '') +
+        '<button class="moyen plein" data-a="situation-suivant">' + (sn.i + 1 < sn.x.etapes.length ? 'Suite →' : TXT('Fin de la scène')) + '</button>';
       bruit('juste'); if(et.mode !== 'comprendre') direPhrase(et.bon, 'en');
     } else {
       sn.essai++; bouton.disabled = true; bouton.classList.add('ko');
@@ -2247,18 +2250,18 @@
   function afficherDictee(){
     const d = dictee; if(!d) return coinAnglais();
     if(d.i >= d.liste.length){
-      poser(barre('anglais') + '<main class="centre"><div class="ami-moyen">' + ami('fete') + '</div><h2>✍️ Dictée terminée !</h2>' +
+      poser(barre('anglais') + '<main class="centre"><div class="ami-moyen">' + ami('fete') + TXT('</div><h2>✍️ Dictée terminée !</h2>') +
         '<p>' + d.parfaites + '/' + d.liste.length + ' phrases parfaites' + (d.parfaites ? ' · ⭐ +' + 2 * d.parfaites + ' plumes' : '') + '</p>' +
-        '<div class="actions serrees"><button class="moyen plein" data-a="dictee">🔁 Une autre dictée</button><button class="moyen" data-a="anglais">🇬🇧 Coin anglais</button></div></main>');
+        TXT('<div class="actions serrees"><button class="moyen plein" data-a="dictee">🔁 Une autre dictée</button><button class="moyen" data-a="anglais">🇬🇧 Coin anglais</button></div></main>'));
       return;
     }
     d.fait = false;
-    poser(barre('anglais') + '<main class="battle-ecran dictee-ecran"><p class="piege-cat">✍️ Dictée · ' + (d.i + 1) + '/' + d.liste.length + '</p>' +
-      '<div class="piege-haut"><div class="ami-moyen">' + ami('content') + '</div><p class="piege-consigne">Écoute Plumo, puis écris la phrase en anglais.</p></div>' +
+    poser(barre('anglais') + TXT('<main class="battle-ecran dictee-ecran"><p class="piege-cat">✍️ Dictée · ') + (d.i + 1) + '/' + d.liste.length + '</p>' +
+      '<div class="piege-haut"><div class="ami-moyen">' + ami('content') + TXT('</div><p class="piege-consigne">Écoute Plumo, puis écris la phrase en anglais.</p></div>') +
       '<div class="actions serrees"><button class="moyen plein" data-a="dictee-ecouter">🔊 Écouter</button><button class="moyen" data-a="dictee-lent">🐢 Lentement</button></div>' +
       '<label class="dictee-label" for="dictee-texte">Ta phrase :</label>' +
       '<textarea id="dictee-texte" lang="en" rows="2" autocapitalize="off" autocomplete="off" autocorrect="off" spellcheck="false" maxlength="160"></textarea>' +
-      '<button class="moyen plein" data-a="dictee-verifier">✔ Vérifier</button>' +
+      TXT('<button class="moyen plein" data-a="dictee-verifier">✔ Vérifier</button>') +
       '<div class="piege-retour" id="dictee-retour" role="status" aria-live="polite"></div></main>');
     const z = $('#dictee-texte'); if(z) z.addEventListener('keydown', ev => { if(ev.key === 'Enter' && !ev.shiftKey){ ev.preventDefault(); verifierDictee(); } });
     direEcoute(d.liste[d.i].en, 'en');
@@ -2272,9 +2275,9 @@
     else { for(const e of c.erreurs) if(e.ecrit) noterErreur('dictee:' + e.ecrit + '>' + e.attendu); garder(); }
     const rendu = c.mots.map((m, k) => '<span class="' + (c.ok[k] ? 'mot-ok' : 'mot-ko') + '">' + esc(m) + '</span>').join(' ');
     const r = $('#dictee-retour');
-    if(r) r.innerHTML = (c.juste ? '<p class="piege-bravo">✨ Parfait ! Pas une faute.</p>' : '<p class="piege-vanne">😂 ' + esc(c.erreurs.length ? A_EN().vanneDictee(c.erreurs.find(x => x.ecrit) || c.erreurs[0], c.score) : '« ' + c.enTrop[0] + ' » est en trop : Plumo ne l’a pas dit ! 🤫') + '</p>' + '<p class="dictee-corrige" lang="en">' + rendu + '</p>') +
+    if(r) r.innerHTML = (c.juste ? TXT('<p class="piege-bravo">✨ Parfait ! Pas une faute.</p>') : '<p class="piege-vanne">😂 ' + esc(c.erreurs.length ? A_EN().vanneDictee(c.erreurs.find(x => x.ecrit) || c.erreurs[0], c.score) : '« ' + c.enTrop[0] + TXT(' » est en trop : Plumo ne l’a pas dit ! 🤫')) + '</p>' + '<p class="dictee-corrige" lang="en">' + rendu + '</p>') +
       '<p class="piege-bon" lang="en">✅ ' + esc(ph.en) + '</p><p class="petit">🇫🇷 ' + esc(ph.fr) + '</p>' +
-      '<button class="moyen plein" data-a="dictee-suivant">' + (d.i + 1 < d.liste.length ? 'Phrase suivante →' : 'Résultat') + '</button>';
+      '<button class="moyen plein" data-a="dictee-suivant">' + (d.i + 1 < d.liste.length ? 'Phrase suivante →' : TXT('Résultat')) + '</button>';
     if(z) z.readOnly = true; const vb = $('[data-a="dictee-verifier"]'); if(vb) vb.hidden = true;
     bruit(c.juste ? 'juste' : 'faux');
   }
@@ -2301,16 +2304,16 @@
     const t = trompe; if(!t) return coinAnglais();
     if(t.i >= t.l.length){
       J().plumes += t.score; garder(); bruit('fin');
-      return poser(barre('anglais') + '<main class="centre"><div class="ami-moyen">' + ami(t.score >= 12 ? 'vexe' : 'malin') + '</div><h2>' + (t.score >= 12 ? 'Tu es le prof de Plumo ! 🎓' : 'Plumo t’a eu quelques fois… 😏') + '</h2>' +
-        '<p>' + t.score + ' points · ⭐ +' + t.score + ' plumes</p><p lang="en">🦉 « ' + (t.score >= 12 ? 'OK… you’re the teacher now.' : 'Sneaky Plumo strikes again!') + ' »</p>' +
-        '<div class="actions serrees"><button class="moyen plein" data-a="trompe">🔁 Encore</button><button class="moyen" data-a="anglais">🇬🇧 Coin anglais</button></div></main>');
+      return poser(barre('anglais') + '<main class="centre"><div class="ami-moyen">' + ami(t.score >= 12 ? 'vexe' : 'malin') + '</div><h2>' + (t.score >= 12 ? TXT('Tu es le prof de Plumo ! 🎓') : 'Plumo t’a eu quelques fois… 😏') + '</h2>' +
+        '<p>' + t.score + TXT(' points · ⭐ +') + t.score + ' plumes</p><p lang="en">🦉 « ' + (t.score >= 12 ? 'OK… you’re the teacher now.' : 'Sneaky Plumo strikes again!') + ' »</p>' +
+        TXT('<div class="actions serrees"><button class="moyen plein" data-a="trompe">🔁 Encore</button><button class="moyen" data-a="anglais">🇬🇧 Coin anglais</button></div></main>'));
     }
     const x = t.l[t.i], phrase = x.faute ? x.p.faux[x.k].en : x.p.bon;
     t.etape = 'juger';
-    poser(barre('anglais') + '<main class="piege-ecran"><p class="piege-cat">🦉 Plumo se trompe exprès · ' + (t.i + 1) + '/' + t.l.length + ' · ' + t.score + ' pts</p>' +
+    poser(barre('anglais') + TXT('<main class="piege-ecran"><p class="piege-cat">🦉 Plumo se trompe exprès · ') + (t.i + 1) + '/' + t.l.length + ' · ' + t.score + ' pts</p>' +
       '<div class="piege-haut"><div class="ami-moyen" id="ami-trompe">' + ami('malin') + '</div><div><p class="piege-consigne">Plumo veut dire : « ' + esc(x.p.fr) + ' »</p>' +
       '<p class="piege-fr" lang="en">🦉 « ' + esc(phrase) + ' » <button class="bouton-rond" data-a="trompe-ecouter" aria-label="Réécouter">🔊</button></p></div></div>' +
-      '<p class="piege-consigne">Sa phrase anglaise est…</p><div class="actions serrees"><button class="gros juste-btn" data-a="trompe-juge" data-v="juste">✅ Juste</button><button class="gros buzz-btn" data-a="trompe-juge" data-v="faux">❌ Faux !</button></div>' +
+      TXT('<p class="piege-consigne">Sa phrase anglaise est…</p><div class="actions serrees"><button class="gros juste-btn" data-a="trompe-juge" data-v="juste">✅ Juste</button><button class="gros buzz-btn" data-a="trompe-juge" data-v="faux">❌ Faux !</button></div>') +
       '<div class="piege-retour" id="trompe-retour" role="status" aria-live="polite"></div></main>');
     direPhrase(phrase, 'en');
   }
@@ -2318,19 +2321,19 @@
     const t = trompe; if(!t || t.etape !== 'juger') return; const x = t.l[t.i], R = RG(), r = $('#trompe-retour'), a = $('#ami-trompe');
     document.querySelectorAll('[data-a="trompe-juge"]').forEach(b => { b.disabled = true; });
     const ligne = (l, h) => { if(a) a.innerHTML = ami(h); direPhrase(l.en, 'en'); return '<p lang="en">🦉 « ' + esc(l.en) + ' » <small>(' + esc(l.fr) + ')</small></p>'; };
-    const suite = '<button class="moyen plein" data-a="trompe-suivant">' + (t.i + 1 < t.l.length ? 'Suivant →' : 'Résultat') + '</button>';
+    const suite = '<button class="moyen plein" data-a="trompe-suivant">' + (t.i + 1 < t.l.length ? TXT('Suivant →') : TXT('Résultat')) + '</button>';
     if(x.faute && v === 'faux'){
       t.etape = 'corriger'; t.score += 1; bruit('juste');
       const opts = melangeLocal([x.p.bon, x.p.faux[x.k].en].concat(x.p.faux.filter((f, k) => k !== x.k).map(f => f.en)).slice(0, 3));
       t.opts = opts;
-      if(r) r.innerHTML = '<p class="piege-bravo">🔔 Bien vu, il y a une faute ! Maintenant, corrige Plumo :</p><div class="piege-options">' + opts.map((o, k) => '<button class="moyen piege-opt" data-a="trompe-corrige" data-v="' + k + '" lang="en">' + esc(o) + '</button>').join('') + '</div>';
+      if(r) r.innerHTML = TXT('<p class="piege-bravo">🔔 Bien vu, il y a une faute ! Maintenant, corrige Plumo :</p><div class="piege-options">') + opts.map((o, k) => '<button class="moyen piege-opt" data-a="trompe-corrige" data-v="' + k + '" lang="en">' + esc(o) + '</button>').join('') + '</div>';
       if(a) a.innerHTML = ami('choque');
     } else if(x.faute){
       t.etape = 'fini'; bruit('faux'); noterBetisier(x.p.faux[x.k].vanne);
       if(r) r.innerHTML = ligne(R.AMI_FILOU[t.i % R.AMI_FILOU.length], 'malin') + '<p class="piege-vanne">😂 ' + esc(x.p.faux[x.k].vanne) + '</p><p class="piege-bon" lang="en">✅ ' + esc(x.p.bon) + '</p><p class="piege-regle">💡 ' + esc(x.p.regle) + '</p>' + suite;
     } else if(v === 'juste'){
       t.etape = 'fini'; t.score += 1; bruit('juste');
-      if(r) r.innerHTML = '<p class="piege-bravo">✅ Bien vu, c’était juste !</p>' + ligne({ en:'Thank you! I’m a genius.', fr:'Merci ! Je suis un génie.' }, 'fier') + suite;
+      if(r) r.innerHTML = TXT('<p class="piege-bravo">✅ Bien vu, c’était juste !</p>') + ligne({ en:'Thank you! I’m a genius.', fr:TXT('Merci ! Je suis un génie.') }, 'fier') + suite;
     } else {
       t.etape = 'fini'; bruit('faux');
       if(r) r.innerHTML = ligne(R.AMI_MALIN[t.i % R.AMI_MALIN.length], 'malin') + '<p class="piege-bon" lang="en">✅ ' + esc(x.p.bon) + '</p><p class="piege-regle">💡 ' + esc(x.p.regle) + '</p>' + suite;
@@ -2339,11 +2342,11 @@
   function corrigerTrompe(k){
     const t = trompe; if(!t || t.etape !== 'corriger') return; const x = t.l[t.i], choix = t.opts[k], r = $('#trompe-retour'), a = $('#ami-trompe');
     t.etape = 'fini'; const ok = choix === x.p.bon; if(ok) t.score += 2;
-    const l = ok ? RG().AMI_VEXE[t.i % RG().AMI_VEXE.length] : { en:'Ha! Not that one either!', fr:'Ha ! Ce n’est pas ça non plus !' };
+    const l = ok ? RG().AMI_VEXE[t.i % RG().AMI_VEXE.length] : { en:'Ha! Not that one either!', fr:TXT('Ha ! Ce n’est pas ça non plus !') };
     if(a) a.innerHTML = ami(ok ? 'vexe' : 'mdr'); direPhrase(ok ? x.p.bon : l.en, 'en');
-    if(r) r.innerHTML = (ok ? '<p class="piege-bravo">🎓 Corrigé ! +3 points</p>' : '<p class="piege-vanne">😂 Presque ! La bonne correction :</p>') +
+    if(r) r.innerHTML = (ok ? TXT('<p class="piege-bravo">🎓 Corrigé ! +3 points</p>') : '<p class="piege-vanne">😂 Presque ! La bonne correction :</p>') +
       '<p lang="en">🦉 « ' + esc(l.en) + ' » <small>(' + esc(l.fr) + ')</small></p><p class="piege-bon" lang="en">✅ ' + esc(x.p.bon) + '</p><p class="piege-regle">💡 ' + esc(x.p.regle) + '</p>' +
-      '<button class="moyen plein" data-a="trompe-suivant">' + (t.i + 1 < t.l.length ? 'Suivant →' : 'Résultat') + '</button>';
+      '<button class="moyen plein" data-a="trompe-suivant">' + (t.i + 1 < t.l.length ? TXT('Suivant →') : TXT('Résultat')) + '</button>';
     bruit(ok ? 'juste' : 'faux');
   }
 
@@ -2352,37 +2355,37 @@
     const R = RG(); if(!R) return coinAnglais();
     const l = melangeLocal(R.PAIRES).slice(0, 8).map(p => { const c = Math.random() < .5 ? p.a : p.b, o = c === p.a ? p.b : p.a;
       return { consigne:'👂 Écoute bien : qu’a dit Plumo ?', enonce:'', ecoute:c.en, lent:true, bon:c.e, bonTexte:c.e + ' ' + c.en + ' = ' + c.fr, dire:c.en,
-        faux:[{ en:o.e, vanne:'« ' + o.en + ' » au lieu de « ' + c.en + ' » : ' + p.rire }], regle:'« ' + p.a.en + ' » ' + p.a.e + ' / « ' + p.b.en + ' » ' + p.b.e + ' : réécoute-les avec 🐢.' }; });
-    questionsGo(l, { titre:'👂 Le jeu des oreilles', retour:'anglais', fin:z => finJeu(z, '👂 Tes oreilles parlent anglais !', 'oreilles') });
+        faux:[{ en:o.e, vanne:'« ' + o.en + TXT(' » au lieu de « ') + c.en + ' » : ' + p.rire }], regle:'« ' + p.a.en + ' » ' + p.a.e + ' / « ' + p.b.en + ' » ' + p.b.e + TXT(' : réécoute-les avec 🐢.') }; });
+    questionsGo(l, { titre:TXT('👂 Le jeu des oreilles'), retour:'anglais', fin:z => finJeu(z, '👂 Tes oreilles parlent anglais !', 'oreilles') });
   }
   function vraiFauxGo(){
     const R = RG(); if(!R) return coinAnglais();
     const l = melangeLocal(R.VRAI_FAUX).slice(0, 8).map(v => ({ consigne:'🦉 Plumo dit… True or false?', enonce:'« ' + v.en + ' »', ecoute:v.en, trad:v.fr, bon:v.vrai ? 'True' : 'False', dire:v.en,
-      bonTexte:(v.vrai ? 'True — c’est vrai !' : 'False — c’est faux !'), faux:[{ en:v.vrai ? 'False' : 'True', vanne:v.rire }], regle:'😂 ' + v.rire, humeurJuste:v.vrai ? 'fier' : 'mdr', humeurFaux:'malin' }));
-    questionsGo(l, { titre:'🤥 True or false?', retour:'anglais', fin:z => finJeu(z, z.bonnes >= 6 ? 'Impossible de te raconter des salades ! 🥗' : 'Plumo t’a fait avaler quelques bêtises… 😏', 'vraifaux') });
+      bonTexte:(v.vrai ? TXT('True — c’est vrai !') : TXT('False — c’est faux !')), faux:[{ en:v.vrai ? 'False' : 'True', vanne:v.rire }], regle:'😂 ' + v.rire, humeurJuste:v.vrai ? 'fier' : 'mdr', humeurFaux:'malin' }));
+    questionsGo(l, { titre:'🤥 True or false?', retour:'anglais', fin:z => finJeu(z, z.bonnes >= 6 ? TXT('Impossible de te raconter des salades ! 🥗') : TXT('Plumo t’a fait avaler quelques bêtises… 😏'), 'vraifaux') });
   }
   function finJeu(z, titre, rejouer){
     J().plumes += z.bonnes; garder(); bruit('fin');
     poser(barre('anglais') + '<main class="centre"><div class="ami-moyen">' + ami(z.bonnes >= z.liste.length - 1 ? 'fete' : 'mdr') + '</div><h2>' + esc(titre) + '</h2><p>' + z.bonnes + '/' + z.liste.length + ' · ⭐ +' + z.bonnes + ' plumes</p>' +
-      '<div class="actions serrees"><button class="moyen plein" data-a="' + rejouer + '">🔁 Encore</button><button class="moyen" data-a="anglais">🇬🇧 Coin anglais</button></div></main>');
+      '<div class="actions serrees"><button class="moyen plein" data-a="' + rejouer + TXT('">🔁 Encore</button><button class="moyen" data-a="anglais">🇬🇧 Coin anglais</button></div></main>'));
   }
 
   // ── Calendrier de l'Avent ──
   function avent(){
     const R = RG(); if(!R) return coinAnglais();
     const j = J(), ouv = R.aventOuvert(), faits = Array.isArray(j.avent) ? j.avent : [];
-    poser(barre('anglais') + '<main class="coin-anglais avent"><h2>🎄 Le calendrier de l’Avent anglais</h2>' +
-      '<p class="pieges-intro">' + (ouv ? 'Une case par jour : un mot d’hiver, une phrase, une vanne… et un petit défi !' : 'Il s’ouvre le 1er décembre ! En avant-première, tu peux ouvrir la case 1.') + '</p>' +
+    poser(barre('anglais') + TXT('<main class="coin-anglais avent"><h2>🎄 Le calendrier de l’Avent anglais</h2>') +
+      '<p class="pieges-intro">' + (ouv ? TXT('Une case par jour : un mot d’hiver, une phrase, une vanne… et un petit défi !') : TXT('Il s’ouvre le 1er décembre ! En avant-première, tu peux ouvrir la case 1.')) + '</p>' +
       '<div class="avent-grille">' + R.AVENT.map((x, k) => { const d = k + 1, ok = d <= Math.max(ouv, 1), fait = faits.includes(d);
-        return '<button class="avent-case' + (fait ? ' ouverte' : '') + '" data-a="avent-case" data-v="' + d + '"' + (ok ? '' : ' disabled') + ' aria-label="Jour ' + d + (fait ? ', ouvert' : ok ? '' : ', pas encore') + '">' + (fait ? x.e : ok ? d : '🔒') + '</button>'; }).join('') + '</div></main>');
+        return '<button class="avent-case' + (fait ? ' ouverte' : '') + '" data-a="avent-case" data-v="' + d + '"' + (ok ? '' : ' disabled') + ' aria-label="Jour ' + d + (fait ? ', ouvert' : ok ? '' : TXT(', pas encore')) + '">' + (fait ? x.e : ok ? d : '🔒') + '</button>'; }).join('') + '</div></main>');
   }
   function aventCase(d){
     const R = RG(), x = R && R.AVENT[d - 1]; if(!x || d > Math.max(R.aventOuvert(), 1)) return avent();
     const autres = melangeLocal(R.AVENT.filter(y => y !== x)).slice(0, 2).map(y => y.en), opts = melangeLocal([x.en].concat(autres));
     poser(barre('avent') + '<main class="battle-ecran avent-carte"><p class="piege-cat">🎄 Jour ' + d + '</p><div class="lecture-image" aria-hidden="true">' + x.e + '</div>' +
       '<p class="lecture-texte" lang="en">' + esc(x.en) + ' <button class="bouton-rond" data-a="dire-en" data-v="' + esc(x.en) + '" aria-label="Écouter">🔊</button></p><p class="petit">🇫🇷 ' + esc(x.fr) + '</p>' +
-      '<p class="piege-fr" lang="en">« ' + esc(x.phrase.en) + ' » <button class="bouton-rond" data-a="dire-en" data-v="' + esc(x.phrase.en) + '" aria-label="Écouter la phrase">🔊</button></p>' + traduire(x.phrase.fr) +
-      '<p class="piege-vanne">😂 ' + esc(x.vanne) + '</p><p class="piege-consigne">Petit défi : comment dit-on « ' + esc(x.fr) + ' » ?</p>' +
+      '<p class="piege-fr" lang="en">« ' + esc(x.phrase.en) + ' » <button class="bouton-rond" data-a="dire-en" data-v="' + esc(x.phrase.en) + TXT('" aria-label="Écouter la phrase">🔊</button></p>') + traduire(x.phrase.fr) +
+      '<p class="piege-vanne">😂 ' + esc(x.vanne) + TXT('</p><p class="piege-consigne">Petit défi : comment dit-on « ') + esc(x.fr) + ' » ?</p>' +
       '<div class="piege-options">' + opts.map(o => '<button class="moyen piege-opt" data-a="avent-rep" data-v="' + d + ':' + esc(o) + '" lang="en">' + esc(o) + '</button>').join('') + '</div><p class="aide" id="avent-retour" role="status"></p></main>');
     direPhrase(x.en, 'en');
   }
@@ -2391,7 +2394,7 @@
     const ok = rep === x.en, r = $('#avent-retour');
     document.querySelectorAll('.piege-opt').forEach(b => { b.disabled = true; if(b.textContent === x.en) b.classList.add('ok'); else if(b.textContent === rep) b.classList.add('ko'); });
     const j = J(); j.avent = Array.isArray(j.avent) ? j.avent : []; const neuf = !j.avent.includes(d); if(neuf){ j.avent.push(d); j.plumes += 2; } garder();
-    if(r) r.textContent = (ok ? '🎉 Yes! « ' + x.en + ' » !' : '😂 Presque ! C’était « ' + x.en + ' ».') + (neuf ? ' ⭐ +2 plumes' : '');
+    if(r) r.textContent = (ok ? '🎉 Yes! « ' + x.en + ' » !' : TXT('😂 Presque ! C’était « ') + x.en + ' ».') + (neuf ? ' ⭐ +2 plumes' : '');
     bruit(ok ? 'juste' : 'faux'); direPhrase(x.en, 'en');
   }
 
@@ -2408,12 +2411,12 @@
     const m = etatMaison(), objet = id => R.MAISON.find(x => x.id === id), carton = m.achats.filter(id => !Object.values(m.places).includes(id));
     const fente = k => { const id = m.places[k], x = id && objet(id);
       return '<button class="fente ' + k.replace(/\d$/, '') + (x ? ' pleine' : '') + '" data-a="maison-fente" data-v="' + k + '" aria-label="' + (x ? esc(x.en) : 'Place libre') + '">' + (x ? '<span class="obj">' + x.e + '</span><small lang="en">' + esc(x.en) + '</small>' : '<span class="vide">＋</span>') + '</button>'; };
-    poser(barre(piegesDispo() ? 'anglais' : 'accueil') + '<main class="maison-ecran"><h2>🏠 Ma maison</h2><p class="petit">Tes plumes : <strong>' + J().plumes + ' 🪶</strong> · Touche un objet pour entendre son nom.</p>' +
+    poser(barre(piegesDispo() ? 'anglais' : 'accueil') + TXT('<main class="maison-ecran"><h2>🏠 Ma maison</h2><p class="petit">Tes plumes : <strong>') + J().plumes + TXT(' 🪶</strong> · Touche un objet pour entendre son nom.</p>') +
       '<div class="salon-maison"><div class="murs">' + [0, 1, 2].map(i => fente('mur' + i)).join('') + '</div><div class="sols">' + [0, 1, 2, 3, 4, 5].map(i => fente('sol' + i)).join('') + '</div>' +
       '<div class="ami-maison">' + ami('content') + '</div></div>' +
       '<p class="aide" id="maison-msg" role="status" aria-live="polite">' + esc(maisonMsg) + '</p>' +
-      (carton.length ? '<p class="petit">📦 Dans le carton : ' + carton.map(id => objet(id).e).join(' ') + ' (touche une place libre pour le poser)</p>' : '') +
-      '<h3>🛒 La boutique de Plumo</h3><div class="boutique">' + R.MAISON.map(x => { const a = m.achats.includes(x.id);
+      (carton.length ? TXT('<p class="petit">📦 Dans le carton : ') + carton.map(id => objet(id).e).join(' ') + TXT(' (touche une place libre pour le poser)</p>') : '') +
+      TXT('<h3>🛒 La boutique de Plumo</h3><div class="boutique">') + R.MAISON.map(x => { const a = m.achats.includes(x.id);
         return '<button class="article' + (a ? ' achete' : '') + '" data-a="maison-acheter" data-v="' + x.id + '"' + (a || J().plumes < x.prix ? ' disabled' : '') + '><span class="obj">' + x.e + '</span><span lang="en">' + esc(x.en) + '</span><small>' + esc(x.fr) + '</small><em>' + (a ? '✓' : x.prix + ' 🪶') + '</em></button>'; }).join('') + '</div></main>');
     maisonMsg = '';
   }
@@ -2422,7 +2425,7 @@
     J().plumes -= x.prix; m.achats.push(id);
     const libre = Array.from({ length:R.PLACES[x.zone] }, (_, i) => x.zone + i).find(k => !m.places[k]); if(libre) m.places[libre] = id;
     garder(); bruit('juste'); direPhrase(x.en, 'en');
-    maisonMsg = '🦉 « ' + x.en + ' » = ' + x.fr + ' ! ' + x.rire + (libre ? '' : ' (Plus de place : il attend dans le carton 📦)');
+    maisonMsg = '🦉 « ' + x.en + ' » = ' + x.fr + ' ! ' + x.rire + (libre ? '' : TXT(' (Plus de place : il attend dans le carton 📦)'));
     maison();
   }
   function maisonFente(k){
@@ -2431,7 +2434,7 @@
       if(e) e.innerHTML = '🔊 « <span lang="en">' + esc(x.en) + '</span> » = ' + esc(x.fr) + ' <button class="petit-bouton" data-a="maison-ranger" data-v="' + k + '">📦 Ranger</button>'; return; }
     const zone = k.replace(/\d$/, ''), dispo = m.achats.find(i => !Object.values(m.places).includes(i) && R.MAISON.find(y => y.id === i).zone === zone);
     if(dispo){ m.places[k] = dispo; garder(); const x = R.MAISON.find(y => y.id === dispo); direPhrase(x.en, 'en'); maisonMsg = '🔊 « ' + x.en + ' » = ' + x.fr; return maison(); }
-    const e = $('#maison-msg'); if(e) e.textContent = 'Place libre ! Achète un objet ' + (zone === 'mur' ? 'pour le mur' : 'pour le sol') + ' dans la boutique. 🛒';
+    const e = $('#maison-msg'); if(e) e.textContent = TXT('Place libre ! Achète un objet ') + (zone === 'mur' ? TXT('pour le mur') : TXT('pour le sol')) + TXT(' dans la boutique. 🛒');
   }
 
   // ── Le bêtisier de la semaine (best-of des vannes des 7 derniers jours) ──
@@ -2443,12 +2446,12 @@
   }
   function afficherBest(){
     const b = best; if(!b) return coinAnglais();
-    if(!b.l.length) return poser(barre('anglais') + '<main class="centre"><div class="ami-moyen">' + ami('boude') + '</div><h2>📺 Le bêtisier de Plumo</h2><p>Pas encore de vannes cette semaine ! Joue un peu, trompe-toi un peu… et reviens. 😄</p><p><button class="moyen plein" data-a="anglais">🇬🇧 Coin anglais</button></p></main>');
-    if(b.i < 0) return poser(barre('anglais') + '<main class="centre tele"><div class="ecran-tele"><div class="ami-moyen">' + ami('fete') + '</div><h2>📺 Le bêtisier de Plumo</h2><p>Bienvenue dans l’émission la plus drôle du village ! Voici le top ' + b.l.length + ' de tes confusions de la semaine. Pas de honte : on rit, et on retient !</p></div><button class="gros" data-a="best-suivant">▶ Lancer l’émission</button></main>');
-    if(b.i >= b.l.length) return poser(barre('anglais') + '<main class="centre tele"><div class="ecran-tele"><div class="ami-moyen">' + ami('mdr') + '</div><h2>C’était le bêtisier de Plumo !</h2><p>Rendez-vous la semaine prochaine pour de nouvelles bêtises. 👋</p></div><p><button class="moyen plein" data-a="anglais">🇬🇧 Coin anglais</button></p></main>');
+    if(!b.l.length) return poser(barre('anglais') + '<main class="centre"><div class="ami-moyen">' + ami('boude') + TXT('</div><h2>📺 Le bêtisier de Plumo</h2><p>Pas encore de vannes cette semaine ! Joue un peu, trompe-toi un peu… et reviens. 😄</p><p><button class="moyen plein" data-a="anglais">🇬🇧 Coin anglais</button></p></main>'));
+    if(b.i < 0) return poser(barre('anglais') + '<main class="centre tele"><div class="ecran-tele"><div class="ami-moyen">' + ami('fete') + TXT('</div><h2>📺 Le bêtisier de Plumo</h2><p>Bienvenue dans l’émission la plus drôle du village ! Voici le top ') + b.l.length + TXT(' de tes confusions de la semaine. Pas de honte : on rit, et on retient !</p></div><button class="gros" data-a="best-suivant">▶ Lancer l’émission</button></main>'));
+    if(b.i >= b.l.length) return poser(barre('anglais') + '<main class="centre tele"><div class="ecran-tele"><div class="ami-moyen">' + ami('mdr') + TXT('</div><h2>C’était le bêtisier de Plumo !</h2><p>Rendez-vous la semaine prochaine pour de nouvelles bêtises. 👋</p></div><p><button class="moyen plein" data-a="anglais">🇬🇧 Coin anglais</button></p></main>'));
     const n = b.l.length - b.i, x = b.l[b.i];
     poser(barre('anglais') + '<main class="centre tele"><div class="ecran-tele"><p class="numero">N° ' + n + (n === 1 ? ' 🏆' : '') + '</p><div class="ami-moyen">' + ami(n === 1 ? 'mdr' : ['choque', 'malin', 'fier', 'surpris'][n % 4]) + '</div><p class="piege-vanne">😂 ' + esc(x.v) + '</p></div>' +
-      '<button class="gros" data-a="best-suivant">' + (n > 1 ? 'Suivant ▶' : 'Fin de l’émission') + '</button></main>');
+      '<button class="gros" data-a="best-suivant">' + (n > 1 ? TXT('Suivant ▶') : TXT('Fin de l’émission')) + '</button></main>');
     if(n === 1) bruit('fin'); else bruit('boing');
   }
 
@@ -2456,13 +2459,13 @@
   let tournoi = null;
   function tournoiMenu(){
     const noms = Array.isArray(base.famille) ? base.famille : [];
-    poser(barre('battle') + '<main class="coin-anglais"><h2>👨‍👩‍👧 Battle en famille</h2><p class="pieges-intro">2 à 4 joueurs, chacun son tour sur ce téléphone. Mêmes types de questions pour tous : pièges, répliques, oreilles, vrai ou faux.</p>' +
-      [0, 1, 2, 3].map(i => '<p><label>Joueur ' + (i + 1) + (i > 1 ? ' (facultatif)' : '') + ' : <input class="champ-pseudo" id="fam' + i + '" maxlength="12" value="' + esc(noms[i] || '') + '" placeholder="Pseudo"></label></p>').join('') +
-      '<p><button class="gros" data-a="tournoi-go">▶ C’est parti !</button></p><p class="aide" id="tournoi-msg" role="status"></p></main>');
+    poser(barre('battle') + TXT('<main class="coin-anglais"><h2>👨‍👩‍👧 Battle en famille</h2><p class="pieges-intro">2 à 4 joueurs, chacun son tour sur ce téléphone. Mêmes types de questions pour tous : pièges, répliques, oreilles, vrai ou faux.</p>') +
+      [0, 1, 2, 3].map(i => TXT('<p><label>Joueur ') + (i + 1) + (i > 1 ? TXT(' (facultatif)') : '') + ' : <input class="champ-pseudo" id="fam' + i + '" maxlength="12" value="' + esc(noms[i] || '') + '" placeholder="Pseudo"></label></p>').join('') +
+      TXT('<p><button class="gros" data-a="tournoi-go">▶ C’est parti !</button></p><p class="aide" id="tournoi-msg" role="status"></p></main>'));
   }
   function tournoiGo(){
     const noms = [0, 1, 2, 3].map(i => RG().nettoiePseudo(($('#fam' + i) || {}).value)).filter(Boolean);
-    if(noms.length < 2){ const m = $('#tournoi-msg'); if(m) m.textContent = 'Il faut au moins 2 joueurs ! 👥'; return; }
+    if(noms.length < 2){ const m = $('#tournoi-msg'); if(m) m.textContent = TXT('Il faut au moins 2 joueurs ! 👥'); return; }
     base.famille = noms; garder();
     tournoi = { noms, scores:[], i:0, graine:Math.floor(Math.random() * 1e9) }; tournoiTour();
   }
@@ -2471,12 +2474,12 @@
     if(t.i >= t.noms.length){
       const cl = t.noms.map((n, k) => ({ n, s:t.scores[k] })).sort((a, b) => b.s - a.s), ex = cl.filter(x => x.s === cl[0].s).length > 1;
       J().plumes += 3; garder(); bruit('fin');
-      return poser(barre('battle') + '<main class="centre"><div class="ami-moyen">' + ami('mdr') + '</div><h2>' + (ex ? '🤝 Égalité au sommet !' : '👑 ' + esc(cl[0].n) + ' gagne la battle !') + '</h2>' +
+      return poser(barre('battle') + '<main class="centre"><div class="ami-moyen">' + ami('mdr') + '</div><h2>' + (ex ? TXT('🤝 Égalité au sommet !') : '👑 ' + esc(cl[0].n) + TXT(' gagne la battle !')) + '</h2>' +
         '<ol class="podium">' + cl.map((x, k) => '<li>' + ['🥇', '🥈', '🥉', '🏅'][k] + ' ' + esc(x.n) + ' — ' + x.s + '/6</li>').join('') + '</ol>' +
-        '<p lang="en">🦉 « And Plumo? Plumo got zero… because Plumo was the referee! »</p><p class="petit">Et Plumo ? Zéro… parce qu’il était l’arbitre !</p>' +
+        TXT('<p lang="en">🦉 « And Plumo? Plumo got zero… because Plumo was the referee! »</p><p class="petit">Et Plumo ? Zéro… parce qu’il était l’arbitre !</p>') +
         '<div class="actions serrees"><button class="moyen plein" data-a="tournoi-go-memes">🔁 Revanche</button><button class="moyen" data-a="battle">🎤 Battles</button></div></main>');
     }
-    poser(barre('battle') + '<main class="centre"><div class="ami-moyen">' + ami('fete') + '</div><h2>📱 Passe le téléphone à ' + esc(t.noms[t.i]) + ' !</h2><p>6 questions. Les autres, pas de souffle ! 🤫</p><button class="gros" data-a="tournoi-joue">C’est moi, ' + esc(t.noms[t.i]) + ' ! ▶</button></main>');
+    poser(barre('battle') + '<main class="centre"><div class="ami-moyen">' + ami('fete') + TXT('</div><h2>📱 Passe le téléphone à ') + esc(t.noms[t.i]) + TXT(' !</h2><p>6 questions. Les autres, pas de souffle ! 🤫</p><button class="gros" data-a="tournoi-joue">C’est moi, ') + esc(t.noms[t.i]) + ' ! ▶</button></main>');
   }
   function tournoiJoue(){
     const t = tournoi; if(!t) return;
@@ -2487,10 +2490,10 @@
   // Chaque joueur répond à la même formule (mêmes types, mêmes niveaux) ; Plumo commente entre les tours et
   // charrie les réponses, jamais les joueurs. Liens vers le défi par lien, le salon en direct et la battle contre Plumo.
   let potes = null;
-  const MATIERES_POTES = [['melange', '🎲', 'Le grand mélange', 'Maths, anglais ET vannes'], ['culture', '📚', 'Culture G', 'Français, histoire-géo, SVT, physique'], ['maths', '🔢', 'Maths', 'Calcul, fractions, équations…'], ['anglais', '🇬🇧', 'Anglais', 'Pièges, oreille, vrai ou faux'], ['langlais', '🎓', 'Anglais du programme', 'De la 6e au bac, à ton niveau : grammaire, irréguliers, faux amis'], ['vannes', '🎤', 'Vannes', 'Plumo clashe : trouve la meilleure punchline']];
+  const MATIERES_POTES = [['melange', '🎲', TXT('Le grand mélange'), TXT('Maths, anglais ET vannes')], ['culture', '📚', TXT('Culture G'), TXT('Français, histoire-géo, SVT, physique')], ['maths', '🔢', TXT('Maths'), TXT('Calcul, fractions, équations…')], ['anglais', '🇬🇧', TXT('Anglais'), TXT('Pièges, oreille, vrai ou faux')], ['langlais', '🎓', TXT('Anglais du programme'), TXT('De la 6e au bac, à ton niveau : grammaire, irréguliers, faux amis')], [TXT('vannes'), '🎤', TXT('Vannes'), TXT('Plumo clashe : trouve la meilleure punchline')]];
   // Questions d'une battle : graine → toujours les mêmes pour une graine (revanche équitable).
   // Longueur : nombre de questions par joueur (mélange ; une seule matière : un peu moins).
-  const LONGUEURS_POTES = { courte:[9, 6, '⚡ Courte'], normale:[15, 10, '🔥 Normale'], marathon:[24, 16, '🏃 Marathon'] };
+  const LONGUEURS_POTES = { courte:[9, 6, TXT('⚡ Courte')], normale:[15, 10, TXT('🔥 Normale')], marathon:[24, 16, TXT('🏃 Marathon')] };
   function questionsPotes(graine, mode, niveau, longueur){
     const L = LONGUEURS_POTES[longueur] || LONGUEURS_POTES.normale, N = mode === 'melange' ? L[0] : L[1], k = Math.ceil(N / 3);
     const CP = window.CLASH_PLUS, intro = i => CP ? CP.INTROS_POTES[(graine + i * 3) % CP.INTROS_POTES.length] : '';
@@ -2501,7 +2504,7 @@
     const vannes = n => {
       if(!A) return [];
       const toutes = A.BATTLE.concat(window.CLASH ? CLASH.MANCHES : []), l = A.melanger(toutes, rnd).slice(0, n);
-      return l.map(m => ({ id:'c:' + m.ami, consigne:'🎤 Plumo te clashe : renvoie-lui la meilleure punchline !', enonce:'« ' + m.ami + ' »', ecoute:m.ami, trad:m.fr,
+      return l.map(m => ({ id:'c:' + m.ami, consigne:TXT('🎤 Plumo te clashe : renvoie-lui la meilleure punchline !'), enonce:'« ' + m.ami + ' »', ecoute:m.ami, trad:m.fr,
         bon:m.bon.en, faux:m.faux.slice(0, 3), regle:'🇫🇷 ' + m.bon.fr, dire:m.bon.en }));
     };
     if(mode === 'culture' && window.MATIERES){ const ids = ['francais', 'histoire', 'svt', 'physique'], l = ids.map((id, i) => MATIERES.serie(id, 'melange', niveau, Math.ceil(N / ids.length) + 1, graine + i * 101, 'taquin'));
@@ -2520,25 +2523,25 @@
     const noms = Array.isArray(base.famille) ? base.famille : [], A = A_EN(), niv = window.MATHS ? etatMaths().niveau : '6e';
     const dispo = MATIERES_POTES.filter(([k]) => k === 'maths' ? !!window.MATHS : k === 'melange' ? !!(window.MATHS || A) : k === 'culture' ? !!window.MATIERES : k === 'langlais' ? !!(window.MATIERES && MATIERES.trouver('langlais')) : !!A);
     const choix = dispo.some(x => x[0] === base.potesMode) ? base.potesMode : dispo[0][0];
-    poser(barre('accueil') + '<main class="coin-anglais potes"><h2>⚔️ Battle entre potes</h2>' +
-      '<p class="pieges-intro">2 à 4 joueurs sur ce téléphone, chacun son tour. Plumo pose les questions, compte les points… et charrie les mauvaises réponses. 😏</p>' +
+    poser(barre('accueil') + '<main class="coin-anglais potes"><h2>⚔️ ' + TXT('Battle entre potes') + '</h2>' +
+      TXT('<p class="pieges-intro">2 à 4 joueurs sur ce téléphone, chacun son tour. Plumo pose les questions, compte les points… et charrie les mauvaises réponses. 😏</p>') +
       '<div class="cartes-anglais choix-matiere">' + dispo.map(([k, ic, nom, txt]) => '<button class="carte-anglais' + (k === choix ? ' choisie' : '') + '" data-a="potes-matiere" data-v="' + k + '" aria-pressed="' + (k === choix) + '"><span class="ic">' + ic + '</span><strong>' + nom + '</strong><small>' + txt + '</small></button>').join('') + '</div>' +
       '<p class="choix-longueur">' + Object.keys(LONGUEURS_POTES).map(k => { const L = LONGUEURS_POTES[k], ch = (base.potesLongueur || 'normale') === k;
-        return '<button class="moyen' + (ch ? ' plein' : '') + '" data-a="potes-longueur" data-v="' + k + '" aria-pressed="' + ch + '">' + L[2] + ' · ' + (choix === 'melange' ? L[0] : L[1]) + ' questions</button>'; }).join(' ') + '</p>' +
-      (window.MATHS ? '<p><label>Niveau de maths : <select id="potes-niveau">' + MATHS.NIVEAUX.map(n => '<option' + (n === niv ? ' selected' : '') + '>' + n + '</option>').join('') + '</select></label></p>' : '') +
-      [0, 1, 2, 3].map(i => '<p><label>Joueur ' + (i + 1) + (i > 1 ? ' (facultatif)' : '') + ' : <input class="champ-pseudo" id="pote' + i + '" maxlength="12" value="' + esc(noms[i] || '') + '" placeholder="Pseudo"></label></p>').join('') +
+        return '<button class="moyen' + (ch ? ' plein' : '') + '" data-a="potes-longueur" data-v="' + k + '" aria-pressed="' + ch + '">' + L[2] + ' · ' + (choix === 'melange' ? L[0] : L[1]) + TXT(' questions</button>'); }).join(' ') + '</p>' +
+      (window.MATHS ? TXT('<p><label>Niveau de maths : <select id="potes-niveau">') + MATHS.NIVEAUX.map(n => '<option' + (n === niv ? ' selected' : '') + '>' + n + '</option>').join('') + '</select></label></p>' : '') +
+      [0, 1, 2, 3].map(i => TXT('<p><label>Joueur ') + (i + 1) + (i > 1 ? TXT(' (facultatif)') : '') + ' : <input class="champ-pseudo" id="pote' + i + '" maxlength="12" value="' + esc(noms[i] || '') + '" placeholder="Pseudo"></label></p>').join('') +
       (window.TRASH_TALK ? '<p class="choix-longueur"><button class="moyen' + (base.potesTrash ? ' plein' : '') + '" data-a="potes-trash" aria-pressed="' + !!base.potesTrash + '">🥊 Trash talk : ' + (base.potesTrash ? 'ON' : 'OFF') + '</button></p>' : '') +
-      '<p><button class="gros" data-a="potes-go">⚔️ Lancer la battle !</button></p><p class="aide" id="potes-msg" role="status"></p>' +
-      '<h3>Autres façons de battle</h3><div class="cartes-anglais">' +
-      '<button class="carte-anglais" data-a="defi-pote"><span class="ic">📨</span><strong>Défier un pote (anglais)</strong><small>Par lien : mêmes questions, on compare</small></button>' +
-      (window.MATHS ? '<button class="carte-anglais" data-a="maths-defi"><span class="ic">🔗</span><strong>Défier un pote (maths)</strong><small>Par lien, à ton niveau</small></button>' : '') +
-      '<button class="carte-anglais" data-a="salon"><span class="ic">🛸</span><strong>Salon en direct</strong><small>Chacun sur son téléphone, en même temps</small></button>' +
-      (A ? '<button class="carte-anglais" data-a="battle-go" data-v="ami"><span class="ic">🦉</span><strong>Contre Plumo</strong><small>3 manches de vannes en anglais</small></button>' : '') +
+      TXT('<p><button class="gros" data-a="potes-go">⚔️ Lancer la battle !</button></p><p class="aide" id="potes-msg" role="status"></p>') +
+      TXT('<h3>Autres façons de battle</h3><div class="cartes-anglais">') +
+      TXT('<button class="carte-anglais" data-a="defi-pote"><span class="ic">📨</span><strong>Défier un pote (anglais)</strong><small>Par lien : mêmes questions, on compare</small></button>') +
+      (window.MATHS ? TXT('<button class="carte-anglais" data-a="maths-defi"><span class="ic">🔗</span><strong>Défier un pote (maths)</strong><small>Par lien, à ton niveau</small></button>') : '') +
+      TXT('<button class="carte-anglais" data-a="salon"><span class="ic">🛸</span><strong>Salon en direct</strong><small>Chacun sur son téléphone, en même temps</small></button>') +
+      (A ? TXT('<button class="carte-anglais" data-a="battle-go" data-v="ami"><span class="ic">🦉</span><strong>Contre Plumo</strong><small>3 manches de vannes en anglais</small></button>') : '') +
       '</div></main>');
   }
   function potesGo(){
     const noms = [0, 1, 2, 3].map(i => RG().nettoiePseudo(($('#pote' + i) || {}).value)).filter(Boolean);
-    if(noms.length < 2){ const m = $('#potes-msg'); if(m) m.textContent = 'Il faut au moins 2 joueurs ! 👥'; return; }
+    if(noms.length < 2){ const m = $('#potes-msg'); if(m) m.textContent = TXT('Il faut au moins 2 joueurs ! 👥'); return; }
     const nv = $('#potes-niveau'), niveau = nv && window.MATHS && MATHS.NIVEAUX.includes(nv.value) ? nv.value : (window.MATHS ? etatMaths().niveau : '6e');
     base.famille = noms; garder();
     const modes = MATIERES_POTES.map(x => x[0]).filter(k => k === 'maths' ? !!window.MATHS : k === 'melange' ? true : k === 'culture' ? !!window.MATIERES : !!A_EN());
@@ -2549,11 +2552,11 @@
   function commentairePotes(p){
     const fait = p.noms.slice(0, p.i).map((n, k) => ({ n, s:p.scores[k] })).sort((a, b) => b.s - a.s), TT = window.TRASH_TALK;
     if(p.trash && TT) return esc(fait.length ? TT.choisir(TT.TOUR, { n:p.noms[p.i], t:fait[0].n, s:fait[0].s, total:p.liste ? p.liste.length : 9 }, memoireVannes()) : TT.choisir(TT.PREMIER, { n:p.noms[p.i] }, memoireVannes()));
-    if(!fait.length) return 'Premier à passer : pas de pression… enfin si, un peu. 😏';
+    if(!fait.length) return TXT('Premier à passer : pas de pression… enfin si, un peu. 😏');
     const t = fait[0], total = p.liste ? p.liste.length : 9;
-    const l = [esc(t.n) + ' mène avec ' + t.s + ' point' + (t.s > 1 ? 's' : '') + '. Qui va le faire tomber de son trône ? 👑',
-      'Score à battre : ' + t.s + '/' + total + '. Plumo a déjà sorti le pop-corn. 🍿',
-      t.s === total ? esc(t.n) + ' a fait un sans-faute. Il faudra un miracle… ou un sans-faute. 😱' : 'Le record est à ' + t.s + '. Franchement, c’est jouable. 🔥'];
+    const l = [esc(t.n) + TXT(' mène avec ') + t.s + ' point' + (t.s > 1 ? 's' : '') + TXT('. Qui va le faire tomber de son trône ? 👑'),
+      TXT('Score à battre : ') + t.s + '/' + total + TXT('. Plumo a déjà sorti le pop-corn. 🍿'),
+      t.s === total ? esc(t.n) + TXT(' a fait un sans-faute. Il faudra un miracle… ou un sans-faute. 😱') : TXT('Le record est à ') + t.s + TXT('. Franchement, c’est jouable. 🔥')];
     return l[(p.i + p.graine) % l.length];
   }
   function potesTour(){
@@ -2562,55 +2565,55 @@
     if(p.i >= p.noms.length){
       const cl = p.noms.map((n, k) => ({ n, s:p.scores[k] })).sort((a, b) => b.s - a.s), ex = cl.filter(x => x.s === cl[0].s).length > 1, total = p.liste.length;
       J().plumes += 3; garder(); bruit('fin');
-      const titres = ['👑 Roi ou reine de la battle', '🥈 Presque sur le trône', '🥉 Sur le podium', '🛟 Revanche obligatoire'];
-      return poser(barre('potes') + '<main class="centre potes-fin"><div class="ami-moyen">' + ami('fete') + '</div><h2>' + (ex ? '🤝 Égalité au sommet !' : '👑 ' + esc(cl[0].n) + ' gagne la battle !') + '</h2>' +
+      const titres = [TXT('👑 Roi ou reine de la battle'), TXT('🥈 Presque sur le trône'), TXT('🥉 Sur le podium'), '🛟 Revanche obligatoire'];
+      return poser(barre('potes') + '<main class="centre potes-fin"><div class="ami-moyen">' + ami('fete') + '</div><h2>' + (ex ? TXT('🤝 Égalité au sommet !') : '👑 ' + esc(cl[0].n) + TXT(' gagne la battle !')) + '</h2>' +
         '<ol class="podium">' + cl.map((x, k) => '<li>' + ['🥇', '🥈', '🥉', '🏅'][k] + ' <strong>' + esc(x.n) + '</strong> — ' + x.s + '/' + total + ' <small>' + titres[k > 0 && k === cl.length - 1 ? 3 : Math.min(k, 2)] + '</small></li>').join('') + '</ol>' +
-        '<p>🦉 ' + (p.trash && window.TRASH_TALK ? esc(TRASH_TALK.choisir(ex ? TRASH_TALK.EGALITE : TRASH_TALK.FIN, { g:cl[0].n, d:cl[cl.length - 1].n }, memoireVannes())) : ex ? 'Égalité ! Plumo exige une revanche, il n’a pas fini son pop-corn.' : 'Bien joué ' + esc(cl[0].n) + ' ! Les autres : Plumo a noté toutes vos réponses ratées… pour la revanche. 😏') + '</p>' +
-        '<div class="actions serrees"><button class="moyen plein" data-a="potes-revanche">🔁 Revanche (nouvelles questions)</button><button class="moyen" data-a="potes">⚔️ Changer de battle</button></div></main>');
+        '<p>🦉 ' + (p.trash && window.TRASH_TALK ? esc(TRASH_TALK.choisir(ex ? TRASH_TALK.EGALITE : TRASH_TALK.FIN, { g:cl[0].n, d:cl[cl.length - 1].n }, memoireVannes())) : ex ? TXT('Égalité ! Plumo exige une revanche, il n’a pas fini son pop-corn.') : TXT('Bien joué ') + esc(cl[0].n) + TXT(' ! Les autres : Plumo a noté toutes vos réponses ratées… pour la revanche. 😏')) + '</p>' +
+        TXT('<div class="actions serrees"><button class="moyen plein" data-a="potes-revanche">🔁 Revanche (nouvelles questions)</button><button class="moyen" data-a="potes">⚔️ Changer de battle</button></div></main>'));
     }
     const nom = MATIERES_POTES.find(x => x[0] === p.mode) || MATIERES_POTES[0];
     poser(barre('potes') + '<main class="centre potes-tour"><div class="ami-moyen">' + ami('malin') + '</div>' +
       '<p class="piege-cat">' + nom[1] + ' ' + nom[2] + (p.mode === 'melange' || p.mode === 'maths' ? ' · maths ' + esc(p.niveau) : '') + ' · joueur ' + (p.i + 1) + '/' + p.noms.length + '</p>' +
-      '<h2>📱 Passe le téléphone à ' + esc(p.noms[p.i]) + ' !</h2><p>' + commentairePotes(p) + '</p><p class="petit">' + p.liste.length + ' questions. Les autres : pas de souffle ! 🤫</p>' +
-      '<button class="gros" data-a="potes-joue">C’est moi, ' + esc(p.noms[p.i]) + ' ! ▶</button></main>');
+      TXT('<h2>📱 Passe le téléphone à ') + esc(p.noms[p.i]) + ' !</h2><p>' + commentairePotes(p) + '</p><p class="petit">' + p.liste.length + TXT(' questions. Les autres : pas de souffle ! 🤫</p>') +
+      TXT('<button class="gros" data-a="potes-joue">C’est moi, ') + esc(p.noms[p.i]) + ' ! ▶</button></main>');
   }
   function potesJoue(){
     const p = potes; if(!p) return potesMenu();
     // Chaque joueur a ses propres questions (même formule), pour que personne ne profite du tour d'avant.
     const liste = questionsPotes(p.graine + p.i * 7919, p.mode, p.niveau, p.longueur);
     questionsGo(liste, { titre:'⚔️ ' + p.noms[p.i], retour:'potes', trash:p.trash, sujet:p.mode === 'maths' ? 'maths' : p.mode === 'vannes' ? 'anglais' : undefined,
-      bravo:() => { const B = window.CLASH_PLUS ? CLASH_PLUS.BRAVO_POTES : ['Bravo ! 🎉']; return B[Math.floor(Math.random() * B.length)]; },
+      bravo:() => { const B = window.CLASH_PLUS ? CLASH_PLUS.BRAVO_POTES : [TXT('Bravo ! 🎉')]; return B[Math.floor(Math.random() * B.length)]; },
       fin:z => { p.scores[p.i] = z.bonnes; p.i++; potesTour(); } });
   }
 
   // ── Défi entre potes par lien (sans serveur) ──
   let defiRecu = null, defiCree = null;
   function defiPote(){
-    poser(barre('battle') + '<main class="coin-anglais"><h2>📨 Défier un pote</h2><p class="pieges-intro">Tu joues 8 questions, puis tu envoies un lien à ton pote : il joue les MÊMES questions et compare son score. Pas de compte, rien n’est enregistré sur internet : tout est dans le lien.</p>' +
-      '<p><label>Ton pseudo (pas ton vrai nom complet) : <input class="champ-pseudo" id="pseudo" maxlength="12" value="' + esc(base.pseudo || '') + '"></label></p><p><button class="gros" data-a="defi-pote-go">▶ Jouer mon défi</button></p></main>');
+    poser(barre('battle') + TXT('<main class="coin-anglais"><h2>📨 Défier un pote</h2><p class="pieges-intro">Tu joues 8 questions, puis tu envoies un lien à ton pote : il joue les MÊMES questions et compare son score. Pas de compte, rien n’est enregistré sur internet : tout est dans le lien.</p>') +
+      TXT('<p><label>Ton pseudo (pas ton vrai nom complet) : <input class="champ-pseudo" id="pseudo" maxlength="12" value="') + esc(base.pseudo || '') + TXT('"></label></p><p><button class="gros" data-a="defi-pote-go">▶ Jouer mon défi</button></p></main>'));
   }
   // m : niveau de maths (« 6e »…« Tle ») pour un défi de maths ; absent : défi d'anglais.
   const questionsBattle = (graine, n, m) => m && window.MATHS && MATHS.NIVEAUX.includes(m) ? MATHS.questionsSalon(graine, n, m) : window.SALON.questionsMixtes(graine, n);
   function defiPoteGo(recu, maths){
     const p = RG().nettoiePseudo(($('#pseudo') || {}).value || base.pseudo) || 'Moi'; base.pseudo = p; garder();
     const graine = recu ? recu.s : Math.floor(Math.random() * 1e9), n = recu ? recu.n : 8, m = recu ? recu.m : maths;
-    questionsGo(questionsBattle(graine, n, m), { titre:(recu ? '📨 Défi de ' + recu.p : '📨 Mon défi') + (m ? ' · maths ' + m : ''), retour:m ? 'maths' : 'battle', prof:!!m, lang:m ? 'fr' : undefined, fin:z => {
+    questionsGo(questionsBattle(graine, n, m), { titre:(recu ? TXT('📨 Défi de ') + recu.p : TXT('📨 Mon défi')) + (m ? ' · maths ' + m : ''), retour:m ? 'maths' : 'battle', prof:!!m, lang:m ? 'fr' : undefined, fin:z => {
       J().plumes += z.bonnes; garder(); bruit('fin');
       // Revanche : nouveau défi avec de nouvelles questions… si on veut ; ici, on renvoie son score sur les MÊMES questions.
       const code = RG().coderDefi({ s:graine, n, sc:z.bonnes, p, m }), lien = location.origin + location.pathname + '?defi=' + code;
-      defiCree = { lien, texte:p + ' te défie sur Ami des mots ! Score à battre : ' + z.bonnes + '/' + n + ' 🦉' };
-      const comp = recu ? (z.bonnes > recu.sc ? '🏆 Tu bats ' + esc(recu.p) + ' (' + z.bonnes + ' contre ' + recu.sc + ') !' : z.bonnes === recu.sc ? '🤝 Égalité avec ' + esc(recu.p) + ' (' + z.bonnes + '/' + n + ') !' : '😅 ' + esc(recu.p) + ' gagne cette fois (' + recu.sc + ' contre ' + z.bonnes + ')… revanche !') : '';
+      defiCree = { lien, texte:p + TXT(' te défie sur Ami des mots ! Score à battre : ') + z.bonnes + '/' + n + ' 🦉' };
+      const comp = recu ? (z.bonnes > recu.sc ? '🏆 Tu bats ' + esc(recu.p) + ' (' + z.bonnes + ' contre ' + recu.sc + ') !' : z.bonnes === recu.sc ? TXT('🤝 Égalité avec ') + esc(recu.p) + ' (' + z.bonnes + '/' + n + ') !' : '😅 ' + esc(recu.p) + TXT(' gagne cette fois (') + recu.sc + ' contre ' + z.bonnes + ')… revanche !') : '';
       poser(barre('battle') + '<main class="centre"><div class="ami-moyen">' + ami(recu && z.bonnes > recu.sc ? 'fete' : 'mdr') + '</div><h2>' + (comp || 'Ton score : ' + z.bonnes + '/' + n) + '</h2>' +
-        '<p>Envoie le lien à ' + (recu ? esc(recu.p) : 'ton pote') + ' : il joue les mêmes questions et compare !</p>' +
-        '<div class="actions serrees"><button class="moyen plein" data-a="defi-partager">📤 Envoyer le défi</button><button class="moyen" data-a="defi-copier">📋 Copier le lien</button></div>' +
-        '<p class="lien-defi"><input readonly id="lien-defi" value="' + esc(lien) + '" aria-label="Lien du défi"></p><p class="aide" id="defi-msg" role="status"></p>' +
+        TXT('<p>Envoie le lien à ') + (recu ? esc(recu.p) : TXT('ton pote')) + TXT(' : il joue les mêmes questions et compare !</p>') +
+        TXT('<div class="actions serrees"><button class="moyen plein" data-a="defi-partager">📤 Envoyer le défi</button><button class="moyen" data-a="defi-copier">📋 Copier le lien</button></div>') +
+        '<p class="lien-defi"><input readonly id="lien-defi" value="' + esc(lien) + TXT('" aria-label="Lien du défi"></p><p class="aide" id="defi-msg" role="status"></p>') +
         '<p><button class="moyen" data-a="battle">🎤 Battles</button></p></main>');
     } });
   }
   function ecranDefiRecu(d){
     defiRecu = d;
-    poser(barre('accueil') + '<main class="centre"><div class="ami-moyen">' + ami('malin') + '</div><h2>🎤 ' + esc(d.p) + ' te défie !</h2><p>Score à battre : <strong>' + d.sc + '/' + d.n + '</strong>. Mêmes questions pour vous deux : pièges, répliques, oreilles, vrai ou faux.</p>' +
-      '<p><label>Ton pseudo : <input class="champ-pseudo" id="pseudo" maxlength="12" value="' + esc(base.pseudo || '') + '"></label></p><button class="gros" data-a="defi-relever">🔥 Relever le défi</button></main>');
+    poser(barre('accueil') + '<main class="centre"><div class="ami-moyen">' + ami('malin') + '</div><h2>🎤 ' + esc(d.p) + TXT(' te défie !</h2><p>Score à battre : <strong>') + d.sc + '/' + d.n + TXT('</strong>. Mêmes questions pour vous deux : pièges, répliques, oreilles, vrai ou faux.</p>') +
+      '<p><label>Ton pseudo : <input class="champ-pseudo" id="pseudo" maxlength="12" value="' + esc(base.pseudo || '') + TXT('"></label></p><button class="gros" data-a="defi-relever">🔥 Relever le défi</button></main>'));
   }
 
 
@@ -2641,30 +2644,30 @@
     rap = { manche:0, ligne:-1, couplet:0, score:0, foule:50, choisi:[] }; lancerBeat(); afficherRap();
   }
   function scene(contenu){
-    return '<main class="rap-scene"><div class="projecteurs" aria-hidden="true"></div><div class="applaudimetre" role="meter" aria-label="Applaudimètre" aria-valuemin="0" aria-valuemax="100" aria-valuenow="' + rap.foule + '"><i style="width:' + rap.foule + '%"></i><span>📣 Le public</span></div>' +
+    return TXT('<main class="rap-scene"><div class="projecteurs" aria-hidden="true"></div><div class="applaudimetre" role="meter" aria-label="Applaudimètre" aria-valuemin="0" aria-valuemax="100" aria-valuenow="') + rap.foule + '"><i style="width:' + rap.foule + TXT('%"></i><span>📣 Le public</span></div>') +
       contenu + '<div class="foule" aria-hidden="true">🙋🧑‍🦱👧🙋‍♂️🧒👦🙋‍♀️🧑👩‍🦰🧔</div></main>';
   }
   function afficherRap(){
     const r = rap, R = RG(); if(!r) return coinAnglais();
     if(r.manche >= R.RAP.length){
       arreterBeat(); const gagne = r.score >= 4; J().plumes += r.score * 2; if(gagne){ const e = etatAnglais(); e.victoires++; } garder(); bruit('fin');
-      return poser(barre('battle') + scene('<div class="rap-centre"><div class="ami-moyen">' + ami(gagne ? 'vexe' : 'fier') + '</div><h2>' + (gagne ? '🏆 Champion du micro !' : '🎤 Plumo garde le micro… pour cette fois !') + '</h2>' +
+      return poser(barre('battle') + scene('<div class="rap-centre"><div class="ami-moyen">' + ami(gagne ? 'vexe' : 'fier') + '</div><h2>' + (gagne ? TXT('🏆 Champion du micro !') : TXT('🎤 Plumo garde le micro… pour cette fois !')) + '</h2>' +
         '<p>' + r.score + '/6 rimes parfaites · ⭐ +' + r.score * 2 + ' plumes</p><p lang="en">🦉 « ' + (gagne ? 'OK… you win. Mic drop. 🎤⬇️' : 'Plumo is still the king! But you’re getting close…') + ' »</p>' +
         '<div class="actions serrees"><button class="moyen plein" data-a="rap">🔁 Revanche</button><button class="moyen" data-a="battle">🎤 Battles</button></div></div>'));
     }
     const m = R.RAP[r.manche];
     if(r.ligne < 4){ // Plumo rappe son couplet, ligne par ligne
       const l = r.ligne < 0 ? null : m.ami[r.ligne];
-      poser(barre('battle') + scene('<div class="rap-centre"><p class="piege-cat">🎤 Manche ' + (r.manche + 1) + '/3 · Plumo rappe</p><div class="ami-moyen micro-ami">' + ami(r.ligne % 2 ? 'fier' : 'malin') + '</div>' +
-        (l ? '<p class="rap-ligne" lang="en">' + esc(l[0]) + '</p>' + traduire(l[1]) : '<p class="rap-ligne">🎶 Le DJ lance le son…</p>') +
-        '<button class="gros" data-a="rap-suivant">' + (r.ligne < 3 ? 'Ligne suivante ▶' : 'À toi de répondre ! 🎤') + '</button></div>'));
+      poser(barre('battle') + scene(TXT('<div class="rap-centre"><p class="piege-cat">🎤 Manche ') + (r.manche + 1) + TXT('/3 · Plumo rappe</p><div class="ami-moyen micro-ami">') + ami(r.ligne % 2 ? 'fier' : 'malin') + '</div>' +
+        (l ? '<p class="rap-ligne" lang="en">' + esc(l[0]) + '</p>' + traduire(l[1]) : TXT('<p class="rap-ligne">🎶 Le DJ lance le son…</p>')) +
+        '<button class="gros" data-a="rap-suivant">' + (r.ligne < 3 ? TXT('Ligne suivante ▶') : TXT('À toi de répondre ! 🎤')) + '</button></div>'));
       if(l) direPhrase(l[0], 'en', 1.05);
       return;
     }
     const c = m.toi[r.couplet]; r.opts = melangeLocal([c.bon].concat(c.faux.map(f => f.m)));
     poser(barre('battle') + scene('<div class="rap-centre"><p class="piege-cat">🎤 À toi ! Rime ' + (r.manche * 2 + r.couplet + 1) + '/6 · ' + r.score + ' parfaites</p><div class="ami-moyen micro-ami">' + ami('surpris') + '</div>' +
       '<p class="rap-ligne" lang="en">' + esc(c.a[0]) + '</p><p class="rap-ligne trou" lang="en">' + esc(c.b).replace('___', '<span class="trou-mot">___</span>') + '</p>' + traduire(c.a[1] + ' / ' + c.bfr) +
-      '<p class="piege-consigne">Choisis le mot qui RIME et qui a du SENS :</p><div class="piege-options rap-mots">' + r.opts.map((o, k) => '<button class="moyen piege-opt" data-a="rap-rime" data-v="' + k + '" lang="en">' + esc(o) + '</button>').join('') + '</div>' +
+      TXT('<p class="piege-consigne">Choisis le mot qui RIME et qui a du SENS :</p><div class="piege-options rap-mots">') + r.opts.map((o, k) => '<button class="moyen piege-opt" data-a="rap-rime" data-v="' + k + '" lang="en">' + esc(o) + '</button>').join('') + '</div>' +
       '<div class="piege-retour" id="rap-retour" role="status" aria-live="polite"></div></div>'));
     direPhrase(c.a[0], 'en', 1.05);
   }
@@ -2688,18 +2691,18 @@
   const connexionSalon = () => CONFIG.SERVEUR ? window.SALON.connecterPhp(CONFIG.SERVEUR) : window.SALON.connecter(CONFIG.SALON_URL, CONFIG.SALON_CLE);
   function salonAccueil(){
     quitterSalon();
-    if(!salonPret()) return poser(barre('battle') + '<main class="coin-anglais"><h2>🛸 Le salon des battles en direct</h2><p class="pieges-intro">Le direct n’est pas encore branché sur ce site (il faut le serveur des parents : voir SALON-EN-LIGNE.md).</p><p>En attendant, défie tes potes avec un lien : c’est la même battle, chacun de son côté !</p><p><button class="gros" data-a="defi-pote">📨 Défier un pote par lien</button></p></main>');
-    poser(barre('battle') + '<main class="coin-anglais"><h2>🛸 Le salon des battles</h2><p class="pieges-intro">Retrouve tes potes ou ta famille dans un salon, puis battle en direct : pièges, répliques, oreilles, vrai ou faux !</p>' +
-      '<p><label>Ton pseudo (pas ton vrai nom complet) : <input class="champ-pseudo" id="pseudo" maxlength="12" value="' + esc(base.pseudo || '') + '"></label></p>' +
-      '<div class="cartes-anglais"><button class="carte-anglais" data-a="salon-creer" data-v="prive"><span class="ic">🔒</span><strong>Salon privé</strong><small>Tu partages un code avec tes potes</small></button>' +
-      '<div class="carte-anglais"><span class="ic">🔑</span><strong>J’ai un code</strong><input class="champ-code" id="code-salon" maxlength="5" autocapitalize="characters" placeholder="ABCDE" aria-label="Code du salon"><button class="moyen plein" data-a="salon-rejoindre">Entrer</button></div>' +
-      '<button class="carte-anglais" data-a="salon-public"><span class="ic">🌍</span><strong>Salons publics</strong><small>Avec d’autres joueurs : réactions toutes faites seulement</small></button></div>' +
-      '<p class="aide" id="salon-msg" role="status"></p><p class="petit">🔒 Rien n’est enregistré sur le serveur. Pas de photo, pas de vrai nom.' + (base.salonChat ? ' Le chat est activé pour les salons privés.' : ' Le chat écrit est désactivé (activable par un parent).') + '</p></main>');
+    if(!salonPret()) return poser(barre('battle') + TXT('<main class="coin-anglais"><h2>🛸 Le salon des battles en direct</h2><p class="pieges-intro">Le direct n’est pas encore branché sur ce site (il faut le serveur des parents : voir SALON-EN-LIGNE.md).</p><p>En attendant, défie tes potes avec un lien : c’est la même battle, chacun de son côté !</p><p><button class="gros" data-a="defi-pote">📨 Défier un pote par lien</button></p></main>'));
+    poser(barre('battle') + TXT('<main class="coin-anglais"><h2>🛸 Le salon des battles</h2><p class="pieges-intro">Retrouve tes potes ou ta famille dans un salon, puis battle en direct : pièges, répliques, oreilles, vrai ou faux !</p>') +
+      TXT('<p><label>Ton pseudo (pas ton vrai nom complet) : <input class="champ-pseudo" id="pseudo" maxlength="12" value="') + esc(base.pseudo || '') + '"></label></p>' +
+      TXT('<div class="cartes-anglais"><button class="carte-anglais" data-a="salon-creer" data-v="prive"><span class="ic">🔒</span><strong>Salon privé</strong><small>Tu partages un code avec tes potes</small></button>') +
+      TXT('<div class="carte-anglais"><span class="ic">🔑</span><strong>J’ai un code</strong><input class="champ-code" id="code-salon" maxlength="5" autocapitalize="characters" placeholder="ABCDE" aria-label="Code du salon"><button class="moyen plein" data-a="salon-rejoindre">Entrer</button></div>') +
+      TXT('<button class="carte-anglais" data-a="salon-public"><span class="ic">🌍</span><strong>Salons publics</strong><small>Avec d’autres joueurs : réactions toutes faites seulement</small></button></div>') +
+      TXT('<p class="aide" id="salon-msg" role="status"></p><p class="petit">🔒 Rien n’est enregistré sur le serveur. Pas de photo, pas de vrai nom.') + (base.salonChat ? TXT(' Le chat est activé pour les salons privés.') : TXT(' Le chat écrit est désactivé (activable par un parent).')) + '</p></main>');
   }
   function pseudoSalon(){ const p = RG().nettoiePseudo(($('#pseudo') || {}).value || base.pseudo); if(p){ base.pseudo = p; garder(); } return p; }
   function quitterSalon(){ if(salon){ try{ salon.canal && salon.canal.quitter(); salon.lobby && salon.lobby.quitter(); salon.cnx && salon.cnx.fermer(); }catch(e){} clearInterval(salon.chrono); salon = null; } }
   function ouvrirSalon(code, publicS){
-    const S = window.SALON, p = pseudoSalon(); if(!p){ const m = $('#salon-msg'); if(m) m.textContent = 'Choisis d’abord un pseudo ! 🙂'; return; }
+    const S = window.SALON, p = pseudoSalon(); if(!p){ const m = $('#salon-msg'); if(m) m.textContent = TXT('Choisis d’abord un pseudo ! 🙂'); return; }
     if(!S.codeValide(code)){ const m = $('#salon-msg'); if(m) m.textContent = 'Le code fait 5 lettres (ex. KTRZB).'; return; }
     quitterSalon();
     const id = Math.random().toString(36).slice(2, 10), cnx = connexionSalon();
@@ -2708,7 +2711,7 @@
       rejoint:() => { salon.canal.suivre({ id, p, c:salon.couleur, t:salon.entree, pub:salon.public }); },
       presence:pr => { if(!salon) return; salon.joueurs = pr; majLobbyPublic(); if(!salon.partie) afficherSalle(); else majScores(); },
       message:(ev, d) => recevoirSalon(ev, d),
-      erreur:() => { const m = $('#salle-msg'); if(m) m.textContent = '⚠️ Connexion perdue. Vérifie internet.'; }
+      erreur:() => { const m = $('#salle-msg'); if(m) m.textContent = TXT('⚠️ Connexion perdue. Vérifie internet.'); }
     });
     afficherSalle();
   }
@@ -2723,14 +2726,14 @@
     const S = window.SALON; if(!salon) return salonAccueil();
     const l = listeJoueurs(), hote = estHote(), chat = !salon.public && base.salonChat;
     poser(barre('salon') + '<main class="salle"><h2>🛸 Salon <span class="code-salon">' + salon.code + '</span>' + (salon.public ? ' 🌍' : ' 🔒') + '</h2>' +
-      (salon.public ? '' : '<p class="petit">Donne ce code à tes potes, ou <button class="petit-bouton" data-a="salon-inviter">📤 envoie l’invitation</button></p>') +
+      (salon.public ? '' : TXT('<p class="petit">Donne ce code à tes potes, ou <button class="petit-bouton" data-a="salon-inviter">📤 envoie l’invitation</button></p>')) +
       '<div class="vaisseau">' + l.map((j, k) => '<button class="joueur-salon' + (salon.muets.has(j.id) ? ' muet' : '') + '" data-a="salon-muet" data-v="' + esc(j.id) + '" aria-label="' + esc(j.p) + (salon.muets.has(j.id) ? ' (muet)' : '') + '" style="--d:' + (k * .3) + 's">' +
         '<span class="avatar">' + ami(k === 0 ? 'fier' : 'content', { couleur:j.c % 6, immobile:true }) + '</span><span class="nom">' + (k === 0 ? '👑 ' : '') + esc(j.p) + (j.id === salon.id ? ' (toi)' : '') + '</span><span class="bulle-reaction" id="r-' + esc(j.id) + '"></span></button>').join('') + '</div>' +
-      '<p class="aide" id="salle-msg" role="status">' + (l.length < 2 ? 'En attente d’au moins un autre joueur…' : l.length + ' joueurs dans le salon') + '</p>' +
+      '<p class="aide" id="salle-msg" role="status">' + (l.length < 2 ? TXT('En attente d’au moins un autre joueur…') : l.length + TXT(' joueurs dans le salon')) + '</p>' +
       '<div class="reactions">' + S.REACTIONS.map(r => '<button class="reaction" data-a="salon-reaction" data-v="' + r.id + '" title="' + esc(r.fr) + '" lang="en">' + r.e + ' ' + esc(r.en) + '</button>').join('') + '</div>' +
       (chat ? '<div class="chat-salon"><ul id="chat-liste">' + salon.messages.map(m => '<li><strong>' + esc(m.p) + ' :</strong> ' + esc(m.t) + '</li>').join('') + '</ul><p><input id="chat-texte" maxlength="80" placeholder="Message (sois sympa !)" aria-label="Message"> <button class="moyen" data-a="salon-chat">Envoyer</button></p></div>' : '') +
-      (hote ? '<p><button class="gros" data-a="salon-lancer"' + (l.length < 2 ? ' disabled' : '') + '>▶ Lancer la battle d’anglais (6 questions)</button></p>' + (window.MATHS ? '<p><button class="moyen" data-a="salon-lancer" data-v="' + etatMaths().niveau + '"' + (l.length < 2 ? ' disabled' : '') + '>🔢 Battle de maths (' + etatMaths().niveau + ')</button></p>' : '') : '<p class="petit">👑 ' + esc(l[0] ? l[0].p : '') + ' lancera la battle.</p>') +
-      '<p class="petit">Touche un joueur pour le rendre muet. 🔇</p></main>');
+      (hote ? '<p><button class="gros" data-a="salon-lancer"' + (l.length < 2 ? ' disabled' : '') + TXT('>▶ Lancer la battle d’anglais (6 questions)</button></p>') + (window.MATHS ? '<p><button class="moyen" data-a="salon-lancer" data-v="' + etatMaths().niveau + '"' + (l.length < 2 ? ' disabled' : '') + TXT('>🔢 Battle de maths (') + etatMaths().niveau + ')</button></p>' : '') : '<p class="petit">👑 ' + esc(l[0] ? l[0].p : '') + TXT(' lancera la battle.</p>')) +
+      TXT('<p class="petit">Touche un joueur pour le rendre muet. 🔇</p></main>'));
   }
   function recevoirSalon(ev, d){
     if(!salon || !d || typeof d !== 'object') return;
@@ -2767,7 +2770,7 @@
     document.querySelectorAll('.piege-opt').forEach((b, i) => { b.disabled = true; if(P.opts[i] === q.bon) b.classList.add('ok'); else if(i === k) b.classList.add('ko'); });
     const f = !ok && k >= 0 && q.faux.find(x => x.en === choix), r = $('#qz-retour'), a = $('#ami-qz');
     if(a) a.innerHTML = ami(ok ? 'fete' : 'mdr');
-    if(r) r.innerHTML = (ok ? '<p class="piege-bravo">Yes! 🎉 +' + window.SALON.points(true, ms, 15000) + '</p>' : '<p class="piege-vanne">😂 ' + esc(k < 0 ? 'Trop tard ! Plumo a eu le temps de faire une sieste. 😴' : (f && f.vanne) || 'Presque !') + '</p>') + '<p class="piege-bon" lang="en">✅ ' + esc(q.bonTexte || q.bon) + '</p><p class="petit">En attente des autres joueurs…</p>';
+    if(r) r.innerHTML = (ok ? '<p class="piege-bravo">Yes! 🎉 +' + window.SALON.points(true, ms, 15000) + '</p>' : '<p class="piege-vanne">😂 ' + esc(k < 0 ? TXT('Trop tard ! Plumo a eu le temps de faire une sieste. 😴') : (f && f.vanne) || 'Presque !') + '</p>') + '<p class="piege-bon" lang="en">✅ ' + esc(q.bonTexte || q.bon) + TXT('</p><p class="petit">En attente des autres joueurs…</p>');
     bruit(ok ? 'juste' : 'faux'); if(f && f.vanne) noterBetisier(f.vanne);
   }
   function majScores(){
@@ -2779,18 +2782,18 @@
     clearInterval(salon.chrono); const P = salon.partie, cl = listeJoueurs().map(j => ({ j, s:P.scores[j.id] || 0 })).sort((a, b) => b.s - a.s);
     const moi = cl.findIndex(x => x.j.id === salon.id); J().plumes += Math.max(1, 4 - moi); if(moi === 0){ etatAnglais().victoires++; } garder(); bruit('fin');
     salon.partie = null; majLobbyPublic();
-    poser(barre('salon') + '<main class="centre salle"><div class="ami-moyen">' + ami(moi === 0 ? 'fete' : 'mdr') + '</div><h2>' + (moi === 0 ? '👑 Tu gagnes la battle !' : '🏁 Battle terminée !') + '</h2>' +
+    poser(barre('salon') + '<main class="centre salle"><div class="ami-moyen">' + ami(moi === 0 ? 'fete' : 'mdr') + '</div><h2>' + (moi === 0 ? TXT('👑 Tu gagnes la battle !') : TXT('🏁 Battle terminée !')) + '</h2>' +
       '<ol class="podium">' + cl.map((x, k) => '<li>' + (['🥇', '🥈', '🥉'][k] || '🏅') + ' ' + esc(x.j.p) + ' — ' + x.s + ' pts</li>').join('') + '</ol>' +
       '<div class="reactions">' + window.SALON.REACTIONS.map(r => '<button class="reaction" data-a="salon-reaction" data-v="' + r.id + '" lang="en">' + r.e + ' ' + esc(r.en) + '</button>').join('') + '</div><p class="aide" id="salle-msg" role="status"></p>' +
-      '<div class="actions serrees"><button class="moyen plein" data-a="salon-retour">🛸 Retour au salon</button><button class="moyen" data-a="salon-quitter">🚪 Quitter</button></div></main>');
+      TXT('<div class="actions serrees"><button class="moyen plein" data-a="salon-retour">🛸 Retour au salon</button><button class="moyen" data-a="salon-quitter">🚪 Quitter</button></div></main>'));
   }
   function salonsPublics(){
-    if(!salonPret()) return salonAccueil(); const p = pseudoSalon(); if(!p){ const m = $('#salon-msg'); if(m) m.textContent = 'Choisis d’abord un pseudo ! 🙂'; return; }
+    if(!salonPret()) return salonAccueil(); const p = pseudoSalon(); if(!p){ const m = $('#salon-msg'); if(m) m.textContent = TXT('Choisis d’abord un pseudo ! 🙂'); return; }
     quitterSalon(); const cnx = connexionSalon(), id = 'v' + Math.random().toString(36).slice(2, 9);
     salon = { cnx, lobbyVue:true }; const rendre = pr => { if(!salon || !salon.lobbyVue) return; const l = Object.values(pr || {}).filter(x => x && window.SALON.codeValide(x.code) && !x.joue && x.n < 8);
-      poser(barre('salon') + '<main class="coin-anglais"><h2>🌍 Salons publics</h2><p class="petit">Dans les salons publics, on communique seulement avec des réactions toutes faites. 🛡️</p>' +
-        (l.length ? '<div class="cartes-anglais">' + l.map(x => '<button class="carte-anglais" data-a="salon-entrer-public" data-v="' + x.code + '"><span class="ic">🛸</span><strong>' + esc(x.p || '?') + '</strong><small>' + x.n + ' joueur' + (x.n > 1 ? 's' : '') + '</small></button>').join('') + '</div>' : '<p>Aucun salon public ouvert pour l’instant.</p>') +
-        '<p><button class="gros" data-a="salon-creer" data-v="public">🌍 Ouvrir un salon public</button></p></main>'); };
+      poser(barre('salon') + TXT('<main class="coin-anglais"><h2>🌍 Salons publics</h2><p class="petit">Dans les salons publics, on communique seulement avec des réactions toutes faites. 🛡️</p>') +
+        (l.length ? '<div class="cartes-anglais">' + l.map(x => '<button class="carte-anglais" data-a="salon-entrer-public" data-v="' + x.code + '"><span class="ic">🛸</span><strong>' + esc(x.p || '?') + '</strong><small>' + x.n + ' joueur' + (x.n > 1 ? 's' : '') + '</small></button>').join('') + '</div>' : TXT('<p>Aucun salon public ouvert pour l’instant.</p>')) +
+        TXT('<p><button class="gros" data-a="salon-creer" data-v="public">🌍 Ouvrir un salon public</button></p></main>')); };
     salon.lobby = cnx.rejoindre(window.SALON.PUBLIC, id, { presence:rendre }); rendre({});
   }
 
@@ -2823,7 +2826,7 @@
     if(z.i >= z.liste.length) return z.fin(z);
     const q = z.liste[z.i]; z.repondu = false; z.options = A_EN().melanger([q.bon].concat(q.faux.map(f => f.en)));
     poser(barre(z.retour || 'anglais') + '<main class="piege-ecran"><p class="piege-cat">' + esc(z.titre) + ' · ' + (z.i + 1) + '/' + z.liste.length + '</p>' +
-      (q.contexte ? '<details class="contexte-exo" open><summary>📄 Énoncé de l’exercice</summary><p>' + esc(q.contexte).replace(/\n/g, '<br>') + '</p></details>' : '') +
+      (q.contexte ? TXT('<details class="contexte-exo" open><summary>📄 Énoncé de l’exercice</summary><p>') + esc(q.contexte).replace(/\n/g, '<br>') + '</p></details>' : '') +
       '<div class="piege-haut"><div class="ami-moyen" id="ami-qz">' + (q.image ? image(q.image, 'pic-moyenne') : z.prof ? profPi('content') : ami('content')) + '</div>' +
       '<div><p class="piege-consigne">' + esc(q.consigne) + '</p><p class="piege-fr">' + esc(q.enonce || '') + (q.ecoute ? ' <button class="bouton-rond" data-a="qz-ecouter" aria-label="Écouter">🔊</button>' + (q.lent ? ' <button class="bouton-rond" data-a="qz-lent" aria-label="Écouter lentement">🐢</button>' : '') : '') + '</p>' + (q.trad ? traduire(q.trad) : '') + '</div></div>' +
       '<div class="piege-options">' + z.options.map((o, i) => '<button class="moyen piege-opt" data-a="qz-rep" data-v="' + i + '" lang="' + (z.lang || q.lang || 'en') + '">' + esc(o) + '</button>').join('') + '</div>' +
@@ -2903,14 +2906,14 @@
     z.derniereVanne = (!juste && f && f.vanne ? String(f.vanne) : juste ? bravoTrash : '').slice(0, 220);
     const bandeHtml = bande ? '<div class="bande-potes" role="group" aria-label="La bande de Plumo"><p class="bande-entree">' + esc(bande.entree) + '</p>' +
       bande.potes.map((p, k) => '<p class="pote" style="animation-delay:' + (k * 0.45).toFixed(2) + 's"><span class="pote-ic" aria-hidden="true">' + (window.BANDE && BANDE.svg(p.id) || p.ic) + '</span><span><strong>' + esc(p.nom) + '</strong> ' + esc(p.dit) + '</span></p>').join('') + '</div>' : '';
-    if(r) r.innerHTML = (raccrochage ? '<p class="raccroche">' + esc(raccrochage) + '</p>' : '') + bandeHtml + (juste && bande ? '<p class="piege-bravo">🏆 ' + esc(z.suite + ' d’affilée !') + '</p>' : juste ? '<p class="piege-bravo">' + esc(bravoTrash || (fr_ ? (z.bravo ? z.bravo() : 'Bravo ! 🎉') : 'Yes! 🎉')) + '</p>' : '<p class="piege-vanne">' + (z.prof ? '🦝 ' : '😂 ') + esc(f && f.vanne ? f.vanne : 'Presque !') + '</p>') +
-      ((!juste && f && f.vanne) || (juste && bravoTrash) ? '<p class="avis-vanne"><button class="petit-bouton" data-a="qz-avis" data-v="1">😂 ' + (fr_ ? 'Trop drôle' : 'Funny') + '</button> <button class="petit-bouton" data-a="qz-avis" data-v="-1">🙄 ' + (fr_ ? 'Pas drôle' : 'Not funny') + '</button></p>' : '') +
+    if(r) r.innerHTML = (raccrochage ? '<p class="raccroche">' + esc(raccrochage) + '</p>' : '') + bandeHtml + (juste && bande ? '<p class="piege-bravo">🏆 ' + esc(z.suite + TXT(' d’affilée !')) + '</p>' : juste ? '<p class="piege-bravo">' + esc(bravoTrash || (fr_ ? (z.bravo ? z.bravo() : TXT('Bravo ! 🎉')) : 'Yes! 🎉')) + '</p>' : '<p class="piege-vanne">' + (z.prof ? '🦝 ' : '😂 ') + esc(f && f.vanne ? f.vanne : 'Presque !') + '</p>') +
+      ((!juste && f && f.vanne) || (juste && bravoTrash) ? '<p class="avis-vanne"><button class="petit-bouton" data-a="qz-avis" data-v="1">😂 ' + (fr_ ? TXT('Trop drôle') : 'Funny') + '</button> <button class="petit-bouton" data-a="qz-avis" data-v="-1">🙄 ' + (fr_ ? TXT('Pas drôle') : 'Not funny') + '</button></p>' : '') +
       '<p class="piege-bon" lang="' + (fr_ ? 'fr' : 'en') + '">✅ ' + esc(q.bonTexte || q.bon) + '</p>' + (q.regle ? '<p class="piege-regle">💡 ' + esc(q.regle) + '</p>' : '') +
-      '<button class="moyen plein" data-a="qz-suivant">' + (z.i + 1 < z.liste.length ? 'Suivant →' : 'Voir le résultat') + '</button>';
+      '<button class="moyen plein" data-a="qz-suivant">' + (z.i + 1 < z.liste.length ? TXT('Suivant →') : TXT('Voir le résultat')) + '</button>';
     bruit(juste ? 'juste' : 'faux'); if(!juste && niveauHumour() > 0) bruit('boing');
     if(q.dire) direPhrase(q.dire, 'en');
   }
-  const qPiege = p => ({ consigne:'Comment dit-on en anglais ?', enonce:'🇫🇷 ' + p.fr, bon:p.bon, faux:p.faux, regle:p.regle, dire:p.bon,
+  const qPiege = p => ({ consigne:TXT('Comment dit-on en anglais ?'), enonce:'🇫🇷 ' + p.fr, bon:p.bon, faux:p.faux, regle:p.regle, dire:p.bon,
     apres:juste => { PIEGES.noter(etatPieges(), p.id, juste); if(!juste) noterErreur('piege:' + p.id); } });
 
   // ── Parcours par niveaux + examen ──
@@ -2918,23 +2921,23 @@
     qz = null;
     if(!piegesDispo() || !window.PARCOURS) return pieges();
     const e = etatAnglais(), prog = PARCOURS.progression(statsAnglais(), e.niveaux);
-    poser(barre('anglais') + '<main class="coin-anglais parcours"><h2>🧭 Mon parcours d’anglais</h2><p class="pieges-intro">Trois niveaux. Chaque étape se fait en jouant ; à la fin, un petit examen.</p>' +
-      prog.map(n => '<section class="niveau' + (n.ouvert ? '' : ' ferme') + (n.valide ? ' valide' : '') + '"><h3>' + n.icone + ' Niveau ' + n.n + ' · ' + esc(n.titre) + (n.valide ? ' 🎓' : n.ouvert ? '' : ' 🔒') + '</h3>' +
+    poser(barre('anglais') + TXT('<main class="coin-anglais parcours"><h2>🧭 Mon parcours d’anglais</h2><p class="pieges-intro">Trois niveaux. Chaque étape se fait en jouant ; à la fin, un petit examen.</p>') +
+      prog.map(n => '<section class="niveau' + (n.ouvert ? '' : ' ferme') + (n.valide ? ' valide' : '') + '"><h3>' + n.icone + TXT(' Niveau ') + n.n + ' · ' + esc(n.titre) + (n.valide ? ' 🎓' : n.ouvert ? '' : ' 🔒') + '</h3>' +
         (n.ouvert ? '<ul>' + n.etapes.map(x => '<li class="' + (x.ok ? 'ok' : '') + '"><button class="etape" data-a="' + x.action + '">' + x.icone + ' ' + esc(x.texte) + '<span>' + (x.ok ? '✅' : x.fait + '/' + x.n) + '</span></button></li>').join('') + '</ul>' +
-          (n.valide ? '<p class="petit">Examen réussi ! 🎓</p>' : n.pret ? '<button class="gros" data-a="examen" data-v="' + n.n + '">🎓 Passer l’examen du niveau ' + n.n + '</button>' : '<p class="petit">Termine les étapes pour débloquer l’examen.</p>')
-          : '<p class="petit">Réussis l’examen du niveau ' + (n.n - 1) + ' pour ouvrir celui-ci.</p>') + '</section>').join('') + '</main>');
+          (n.valide ? TXT('<p class="petit">Examen réussi ! 🎓</p>') : n.pret ? '<button class="gros" data-a="examen" data-v="' + n.n + TXT('">🎓 Passer l’examen du niveau ') + n.n + '</button>' : TXT('<p class="petit">Termine les étapes pour débloquer l’examen.</p>'))
+          : TXT('<p class="petit">Réussis l’examen du niveau ') + (n.n - 1) + TXT(' pour ouvrir celui-ci.</p>')) + '</section>').join('') + '</main>');
   }
   function examenGo(n){
     const e = etatAnglais(), prog = PARCOURS.progression(statsAnglais(), e.niveaux), niv = prog.find(x => x.n === n);
     if(!niv || !niv.pret || niv.valide) return parcours();
     const liste = PARCOURS.examen(n, PIEGES, A_EN()).map(q => Object.assign({}, q, { apres:juste => { if(!juste) noterErreur('examen:' + n); } }));
-    questionsGo(liste, { titre:'🎓 Examen du niveau ' + n, retour:'parcours', fin:z => {
+    questionsGo(liste, { titre:TXT('🎓 Examen du niveau ') + n, retour:'parcours', fin:z => {
       const ok = z.bonnes >= PARCOURS.REUSSITE;
       if(ok){ const et = etatAnglais(); if(!et.niveaux.includes(n)) et.niveaux.push(n); J().plumes += 10; garder(); bruit('fin'); }
-      poser(barre('parcours') + '<main class="centre"><div class="ami-moyen">' + ami(ok ? 'fete' : 'content') + '</div><h2>' + (ok ? '🎓 Niveau ' + n + ' réussi !' : 'Presque !') + '</h2>' +
-        '<p>' + z.bonnes + '/' + z.liste.length + ' bonnes réponses (il en faut ' + PARCOURS.REUSSITE + ').</p>' +
-        (ok ? '<p>⭐ +10 plumes. ' + (n < 3 ? 'Le niveau ' + (n + 1) + ' est ouvert !' : 'Tu as terminé tout le parcours ! 🏆') + '</p>' : '<p>Fais ta révision du jour et retente ta chance : les questions changent à chaque fois.</p>') +
-        '<div class="actions serrees"><button class="moyen plein" data-a="parcours">🧭 Mon parcours</button>' + (ok ? '' : '<button class="moyen" data-a="revision">🔁 Révision</button>') + '</div></main>');
+      poser(barre('parcours') + '<main class="centre"><div class="ami-moyen">' + ami(ok ? 'fete' : 'content') + '</div><h2>' + (ok ? TXT('🎓 Niveau ') + n + TXT(' réussi !') : 'Presque !') + '</h2>' +
+        '<p>' + z.bonnes + '/' + z.liste.length + TXT(' bonnes réponses (il en faut ') + PARCOURS.REUSSITE + ').</p>' +
+        (ok ? '<p>⭐ +10 plumes. ' + (n < 3 ? 'Le niveau ' + (n + 1) + TXT(' est ouvert !') : TXT('Tu as terminé tout le parcours ! 🏆')) + '</p>' : TXT('<p>Fais ta révision du jour et retente ta chance : les questions changent à chaque fois.</p>')) +
+        '<div class="actions serrees"><button class="moyen plein" data-a="parcours">🧭 Mon parcours</button>' + (ok ? '' : TXT('<button class="moyen" data-a="revision">🔁 Révision</button>')) + '</div></main>');
     } });
   }
 
@@ -2958,12 +2961,12 @@
     if(hq.length) liste.push(M(hq)[0]);
     // Rien de dû ? Des pièges nouveaux pour avancer.
     if(liste.length < 6) for(const p of PIEGES.seance(etatPieges(), 6)) if(liste.length < 6 && !liste.some(q => q.bon === p.bon)) liste.push(qPiege(p));
-    questionsGo(M(liste).slice(0, 8), { titre:'🔁 Révision du jour', retour:'anglais', fin:z => {
+    questionsGo(M(liste).slice(0, 8), { titre:TXT('🔁 Révision du jour'), retour:'anglais', fin:z => {
       const r = etatAnglais(), auj = Math.floor(Date.now() / 864e5); if(!r.revisions.includes(auj)) r.revisions.push(auj);
       J().plumes += z.bonnes; garder(); bruit('fin');
       const sj = serieRevisions();
-      poser(barre('anglais') + '<main class="centre"><div class="ami-moyen">' + ami('fete') + '</div><h2>🔁 Révision faite !</h2><p>' + z.bonnes + '/' + z.liste.length + ' · ⭐ +' + z.bonnes + ' plumes</p>' +
-        (sj > 1 ? '<p class="battle-score">🔥 ' + sj + ' jours de suite</p>' : '<p>Reviens demain : 5 minutes par jour, c’est le secret pour retenir.</p>') +
+      poser(barre('anglais') + '<main class="centre"><div class="ami-moyen">' + ami('fete') + TXT('</div><h2>🔁 Révision faite !</h2><p>') + z.bonnes + '/' + z.liste.length + ' · ⭐ +' + z.bonnes + ' plumes</p>' +
+        (sj > 1 ? '<p class="battle-score">🔥 ' + sj + TXT(' jours de suite</p>') : TXT('<p>Reviens demain : 5 minutes par jour, c’est le secret pour retenir.</p>')) +
         '<div class="actions serrees"><button class="moyen plein" data-a="anglais">🇬🇧 Coin anglais</button><button class="moyen" data-a="parcours">🧭 Mon parcours</button></div></main>');
     } });
   }
@@ -2971,7 +2974,7 @@
     const autres = motsOuverts(base.cible).filter(x => x !== e && MOTS[x] && MOTS[e] && MOTS[x].theme === MOTS[e].theme);
     const l = A_EN().melanger(autres.length >= 2 ? autres : motsOuverts(base.cible).filter(x => x !== e)).slice(0, 2);
     const nom = x => nomMot(x);
-    return { consigne:'Comment dit-on en anglais ?', image:e, enonce:traduction(e) ? '🇫🇷 ' + traduction(e) : '', bon:nom(e), faux:l.map(x => ({ en:nom(x) })), dire:nom(e),
+    return { consigne:TXT('Comment dit-on en anglais ?'), image:e, enonce:traduction(e) ? '🇫🇷 ' + traduction(e) : '', bon:nom(e), faux:l.map(x => ({ en:nom(x) })), dire:nom(e),
       vanneDe:choix => { const x = l.find(y => nom(y) === choix); return x ? blague(x, e) : 'Presque !'; }, apres:juste => noter(e, juste) };
   }
   const qHistoire = (h, q) => ({ consigne:h.icone + ' ' + h.titre, enonce:q.q, trad:q.fr, bon:q.bon, faux:q.faux, dire:q.bon });
@@ -2982,8 +2985,8 @@
     lecture = null;
     if(!piegesDispo() || !window.HISTOIRES) return pieges();
     const e = etatAnglais();
-    poser(barre('anglais') + '<main class="coin-anglais"><h2>📖 Mini-histoires</h2><p class="pieges-intro">Écoute, lis, et réponds à 2 petites questions.</p><div class="cartes-anglais">' +
-      HISTOIRES.liste.map(h => '<button class="carte-anglais" data-a="histoire-go" data-v="' + h.id + '"><span class="ic">' + h.icone + '</span><strong lang="en">' + esc(h.titre) + '</strong><small>' + esc(h.fr) + '</small><em>' + (e.histoires.includes(h.id) ? '✅ lue' : '▶ à lire') + '</em></button>').join('') + '</div></main>');
+    poser(barre('anglais') + TXT('<main class="coin-anglais"><h2>📖 Mini-histoires</h2><p class="pieges-intro">Écoute, lis, et réponds à 2 petites questions.</p><div class="cartes-anglais">') +
+      HISTOIRES.liste.map(h => '<button class="carte-anglais" data-a="histoire-go" data-v="' + h.id + '"><span class="ic">' + h.icone + '</span><strong lang="en">' + esc(h.titre) + '</strong><small>' + esc(h.fr) + '</small><em>' + (e.histoires.includes(h.id) ? '✅ lue' : TXT('▶ à lire')) + '</em></button>').join('') + '</div></main>');
   }
   function histoireGo(id){ const h = window.HISTOIRES && HISTOIRES.liste.find(x => x.id === id); if(!h) return histoires(); lecture = { h, i:0 }; afficherLigne(); }
   function afficherLigne(){
@@ -2992,7 +2995,7 @@
     if(L.i >= h.lignes.length){
       return questionsGo(h.questions.map(q => qHistoire(h, q)), { titre:h.icone + ' ' + h.titre, retour:'histoires', fin:z => {
         const e = etatAnglais(); const neuve = !e.histoires.includes(h.id); if(neuve) e.histoires.push(h.id); J().plumes += z.bonnes + (neuve ? 2 : 0); garder(); bruit('fin');
-        poser(barre('histoires') + '<main class="centre"><div class="ami-moyen">' + ami('fete') + '</div><h2>' + h.icone + ' The end!</h2><p>' + z.bonnes + '/' + z.liste.length + ' bonnes réponses' + (neuve ? ' · ⭐ +' + (z.bonnes + 2) + ' plumes' : '') + '</p>' +
+        poser(barre('histoires') + '<main class="centre"><div class="ami-moyen">' + ami('fete') + '</div><h2>' + h.icone + ' The end!</h2><p>' + z.bonnes + '/' + z.liste.length + TXT(' bonnes réponses') + (neuve ? ' · ⭐ +' + (z.bonnes + 2) + ' plumes' : '') + '</p>' +
           '<div class="actions serrees"><button class="moyen plein" data-a="histoires">📖 Autres histoires</button><button class="moyen" data-a="anglais">🇬🇧 Coin anglais</button></div></main>');
       } });
     }
@@ -3000,7 +3003,7 @@
     poser(barre('histoires') + '<main class="battle-ecran lecture"><p class="piege-cat">' + h.icone + ' <span lang="en">' + esc(h.titre) + '</span> · ' + (L.i + 1) + '/' + h.lignes.length + '</p>' +
       '<div class="lecture-image" aria-hidden="true">' + em + '</div>' +
       '<p class="lecture-texte" lang="en">' + esc(en) + ' <button class="bouton-rond" data-a="ligne-ecouter" aria-label="Écouter">🔊</button></p>' + traduire(fr) +
-      '<div class="actions serrees">' + (L.i ? '<button class="moyen" data-a="ligne-avant">←</button>' : '') + '<button class="moyen plein" data-a="ligne-suivante">' + (L.i + 1 < h.lignes.length ? 'Suite →' : 'Les questions →') + '</button></div></main>');
+      '<div class="actions serrees">' + (L.i ? '<button class="moyen" data-a="ligne-avant">←</button>' : '') + '<button class="moyen plein" data-a="ligne-suivante">' + (L.i + 1 < h.lignes.length ? 'Suite →' : TXT('Les questions →')) + '</button></div></main>');
     direPhrase(en, 'en');
   }
 
@@ -3017,20 +3020,20 @@
     const l = PARCOURS.REPETER, ph = l[i]; if(!ph) return repeter();
     rep1 = { i };
     const fait = etatAnglais().repete.includes(i);
-    poser(barre('anglais') + '<main class="battle-ecran repeter"><p class="piege-cat">🗣️ Répète après Plumo · ' + etatAnglais().repete.length + '/' + l.length + ' phrases dites</p>' +
+    poser(barre('anglais') + TXT('<main class="battle-ecran repeter"><p class="piege-cat">🗣️ Répète après Plumo · ') + etatAnglais().repete.length + '/' + l.length + ' phrases dites</p>' +
       '<div class="piege-haut"><div class="ami-moyen">' + ami('content') + '</div><div><p class="piege-fr" lang="en">« ' + esc(ph.en) + ' »</p>' + traduire(ph.fr) + '</div></div>' +
       '<div class="actions serrees"><button class="moyen" data-a="repeter-ecouter">🔊 Écouter</button><button class="moyen" data-a="repeter-lent">🐢 Lentement</button></div>' +
-      '<p><button class="gros micro" id="btn-micro" data-a="repeter-micro">🎤 À moi de le dire</button></p>' +
-      '<p class="aide" id="rep-etat">' + (fait ? '✅ Déjà dite. Tu peux t’entraîner encore !' : 'Écoute, puis appuie sur 🎤 et dis la phrase.') + '</p>' +
-      '<div class="actions serrees" id="rep-apres" hidden><button class="moyen" data-a="me-reecouter">👂 Me réécouter</button><button class="moyen" data-a="repeter-ecouter">🦉 Plumo</button><button class="moyen plein" data-a="repeter-bien">👍 Bien dit !</button></div>' +
-      '<p class="petit">🔒 Ta voix reste sur cet appareil : elle n’est ni gardée ni envoyée.</p>' +
+      TXT('<p><button class="gros micro" id="btn-micro" data-a="repeter-micro">🎤 À moi de le dire</button></p>') +
+      '<p class="aide" id="rep-etat">' + (fait ? TXT('✅ Déjà dite. Tu peux t’entraîner encore !') : TXT('Écoute, puis appuie sur 🎤 et dis la phrase.')) + '</p>' +
+      TXT('<div class="actions serrees" id="rep-apres" hidden><button class="moyen" data-a="me-reecouter">👂 Me réécouter</button><button class="moyen" data-a="repeter-ecouter">🦉 Plumo</button><button class="moyen plein" data-a="repeter-bien">👍 Bien dit !</button></div>') +
+      TXT('<p class="petit">🔒 Ta voix reste sur cet appareil : elle n’est ni gardée ni envoyée.</p>') +
       '<p><button class="moyen" data-a="repeter-suivant">Phrase suivante →</button></p></main>');
     direEcoute(ph.en, 'en');
   }
   async function enregistrerPhrase(){
     const r = rep1; if(!r) return;
     const ph = PARCOURS.REPETER[r.i], etat = $('#rep-etat'), btn = $('#btn-micro'), apres = $('#rep-apres');
-    const sansMicro = () => { if(etat) etat.textContent = 'Pas de micro ici : dis-la à voix haute, puis touche « 👍 Bien dit ! ».'; if(apres) apres.hidden = false; };
+    const sansMicro = () => { if(etat) etat.textContent = TXT('Pas de micro ici : dis-la à voix haute, puis touche « 👍 Bien dit ! ».'); if(apres) apres.hidden = false; };
     if(!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia || !window.MediaRecorder) return sansMicro();
     try{
       arreterMicro();
@@ -3040,11 +3043,11 @@
       rec.onstop = () => {
         flux.getTracks().forEach(p => p.stop()); if(!micro || !rep1) return;
         micro.url = URL.createObjectURL(new Blob(morceaux, { type:rec.mimeType || 'audio/webm' }));
-        if(btn){ btn.classList.remove('enregistre'); btn.textContent = '🎤 Encore une fois'; }
-        if(apres) apres.hidden = false; if(etat) etat.textContent = 'Écoute-toi, puis Plumo : c’est pareil ?';
+        if(btn){ btn.classList.remove('enregistre'); btn.textContent = TXT('🎤 Encore une fois'); }
+        if(apres) apres.hidden = false; if(etat) etat.textContent = TXT('Écoute-toi, puis Plumo : c’est pareil ?');
         const a = new Audio(micro.url); a.onended = () => setTimeout(() => direEcoute(ph.en, 'en'), 300); a.play().catch(() => {});
       };
-      rec.start(); if(btn){ btn.classList.add('enregistre'); btn.textContent = '⏺ J’écoute…'; }
+      rec.start(); if(btn){ btn.classList.add('enregistre'); btn.textContent = TXT('⏺ J’écoute…'); }
       if(etat) etat.textContent = 'Vas-y, dis : « ' + ph.en + ' »';
       setTimeout(() => { if(rec.state === 'recording') rec.stop(); }, Math.min(7000, 2500 + ph.en.length * 70));
     }catch(err){ sansMicro(); }
@@ -3057,10 +3060,10 @@
     invente = invente || { v:0, a:0, l:0 };
     const I = PARCOURS.INVENTE, ph = PARCOURS.inventer(invente.v, invente.a, invente.l);
     const rangee = (cle, liste, titre) => '<p class="piege-consigne">' + titre + '</p><div class="puces">' + liste.map((x, k) => '<button class="puce' + (invente[cle] === k ? ' choisie' : '') + '" data-a="invente-choix" data-v="' + cle + ':' + k + '" aria-pressed="' + (invente[cle] === k) + '" lang="en">' + esc(x.en) + '</button>').join('') + '</div>';
-    poser(barre('battle') + '<main class="battle-ecran invente"><h2>✍️ Invente ta vanne pour Plumo</h2>' +
-      rangee('v', I.verbes, '1. Ce que fait Plumo') + rangee('a', I.animaux, '2. Comme qui ?') + rangee('l', I.lieux, '3. Où ça ?') +
+    poser(barre('battle') + TXT('<main class="battle-ecran invente"><h2>✍️ Invente ta vanne pour Plumo</h2>') +
+      rangee('v', I.verbes, '1. Ce que fait Plumo') + rangee('a', I.animaux, TXT('2. Comme qui ?')) + rangee('l', I.lieux, '3. Où ça ?') +
       '<div class="bulle-ami"><p class="piege-fr" lang="en">« ' + esc(ph.en) + ' »</p><p class="petit">🇫🇷 ' + esc(ph.fr) + '</p></div>' +
-      '<div class="actions serrees"><button class="moyen plein" data-a="invente-dire">🎤 Plumo, écoute ça !</button><button class="moyen" data-a="invente-garder">😂 Je la garde</button></div>' +
+      TXT('<div class="actions serrees"><button class="moyen plein" data-a="invente-dire">🎤 Plumo, écoute ça !</button><button class="moyen" data-a="invente-garder">😂 Je la garde</button></div>') +
       '<p class="aide" id="invente-retour" role="status" aria-live="polite"></p></main>');
   }
 
@@ -3070,7 +3073,7 @@
   let vannesIA = null, vannesIAMsg = '', vannesIAEnCours = false;
   async function demanderVannesIA(theme, ton){
     if(!CONFIG.API_VANNES || !plus() || vannesIAEnCours) return;
-    vannesIAEnCours = true; vannesIAMsg = '⏳ Plumo réfléchit à des vannes…'; revoirVannesIA();
+    vannesIAEnCours = true; vannesIAMsg = TXT('⏳ Plumo réfléchit à des vannes…'); revoirVannesIA();
     try{
       const r = await fetch(CONFIG.API_VANNES, { method:'POST', cache:'no-store', headers:{ 'Content-Type':'application/json' }, body:JSON.stringify({ code:base.abo.code, theme, ton }) });
       const d = await r.json().catch(() => ({}));
@@ -3079,28 +3082,28 @@
         const avis = l.map(t => ({ t, a:window.JUGE ? JUGE.juger(t) : { ok:false, raisons:['juge absent'] } }));
         vannesIA = avis.filter(x => x.a.ok).map(x => x.t);
         const refus = avis.length - vannesIA.length;
-        vannesIAMsg = vannesIA.length ? '🦉 ' + vannesIA.length + ' proposition(s). À vous de choisir !' + (refus ? ' (Le juge en a déjà retiré ' + refus + '.)' : '') : '🤖 Aucune proposition n’a passé le juge. Réessayez.';
+        vannesIAMsg = vannesIA.length ? '🦉 ' + vannesIA.length + TXT(' proposition(s). À vous de choisir !') + (refus ? TXT(' (Le juge en a déjà retiré ') + refus + '.)' : '') : TXT('🤖 Aucune proposition n’a passé le juge. Réessayez.');
       }
-      else vannesIAMsg = d && d.erreur === 'quota' ? '⏰ C’est tout pour aujourd’hui (' + (d.max || 5) + ' demandes par jour).' : d && d.erreur === 'plus_requis' ? '✨ Réservé aux abonnés Plus.' : '😴 Le générateur ne répond pas. Réessayez plus tard.';
-    }catch(e){ vannesIAMsg = '📡 Pas de connexion : réessayez plus tard.'; }
+      else vannesIAMsg = d && d.erreur === 'quota' ? TXT('⏰ C’est tout pour aujourd’hui (') + (d.max || 5) + ' demandes par jour).' : d && d.erreur === 'plus_requis' ? TXT('✨ Réservé aux abonnés Plus.') : TXT('😴 Le générateur ne répond pas. Réessayez plus tard.');
+    }catch(e){ vannesIAMsg = TXT('📡 Pas de connexion : réessayez plus tard.'); }
     vannesIAEnCours = false; if($('#vannes-ia')) revoirVannesIA();
   }
   function revoirVannesIA(){ tableauParents(); const h = $('#vannes-ia'); if(h && h.scrollIntoView) h.scrollIntoView({ block:'start' }); }
   function parents(){
     porteParents = { a:6 + Math.floor(Math.random() * 4), b:6 + Math.floor(Math.random() * 4) };
-    poser(barre('anglais') + '<main class="centre"><h2>👪 Espace parents</h2><p>Pour entrer : combien font ' + porteParents.a + ' × ' + porteParents.b + ' ?</p>' +
-      '<p><input id="porte-parents" type="number" inputmode="numeric" aria-label="Résultat" class="champ-court"> <button class="moyen plein" data-a="parents-ouvrir">Entrer</button></p><p class="aide" id="porte-msg" role="status"></p></main>');
+    poser(barre('anglais') + TXT('<main class="centre"><h2>👪 Espace parents</h2><p>Pour entrer : combien font ') + porteParents.a + ' × ' + porteParents.b + ' ?</p>' +
+      TXT('<p><input id="porte-parents" type="number" inputmode="numeric" aria-label="Résultat" class="champ-court"> <button class="moyen plein" data-a="parents-ouvrir">Entrer</button></p><p class="aide" id="porte-msg" role="status"></p></main>'));
   }
   function libelleErreur(k){
     const [t, x] = [k.slice(0, k.indexOf(':')), k.slice(k.indexOf(':') + 1)];
-    if(t === 'mot'){ const [m, b] = x.split('>'); if(MOTS[m] && MOTS[b]) return 'Confond ' + b + ' « ' + nomMot(b) + ' » avec ' + m + ' « ' + nomMot(m) + ' »'; }
-    if(t === 'piege' && window.PIEGES){ const p = PIEGES.liste.find(y => y.id === x); if(p) return 'Piège : « ' + p.fr + ' » → ' + p.bon; }
-    if(t === 'maths' && window.MATHS){ for(const n of MATHS.NIVEAUX){ const c = MATHS.chapitresDe(n).find(y => y[0] === x); if(c) return 'Maths ' + n + ' : ' + c[2]; } }
+    if(t === 'mot'){ const [m, b] = x.split('>'); if(MOTS[m] && MOTS[b]) return 'Confond ' + b + ' « ' + nomMot(b) + TXT(' » avec ') + m + ' « ' + nomMot(m) + ' »'; }
+    if(t === 'piege' && window.PIEGES){ const p = PIEGES.liste.find(y => y.id === x); if(p) return TXT('Piège : « ') + p.fr + ' » → ' + p.bon; }
+    if(t === 'maths' && window.MATHS){ for(const n of MATHS.NIVEAUX){ const c = MATHS.chapitresDe(n).find(y => y[0] === x); if(c) return TXT('Maths ') + n + ' : ' + c[2]; } }
     if(t === 'epr' && window.EPREUVES){ const a = EPREUVES.ANNALES.find(y => y.ref === x); return 'Examens blancs : ' + (a ? a.titre : x); }
     if(t === 'mat' && window.MATIERES){ const [id, c] = x.split(':'), m = MATIERES.trouver(id), ch = m && m.chapitres.find(y => y.id === c); if(ch) return m.nom + ' : ' + ch.nom; }
-    if(t === 'sciences' && window.SCIENCES){ const q = SCIENCES.parId(x); if(q) return 'Sciences : ' + q.q; }
-    if(t === 'dictee'){ const [e, a] = x.split('>'); return 'Dictée : écrit « ' + e + ' » au lieu de « ' + a + ' »'; }
-    if(t === 'examen') return 'Erreurs à l’examen du niveau ' + x;
+    if(t === 'sciences' && window.SCIENCES){ const q = SCIENCES.parId(x); if(q) return TXT('Sciences : ') + q.q; }
+    if(t === 'dictee'){ const [e, a] = x.split('>'); return TXT('Dictée : écrit « ') + e + TXT(' » au lieu de « ') + a + ' »'; }
+    if(t === 'examen') return TXT('Erreurs à l’examen du niveau ') + x;
     return null;
   }
   // v5.75 : résumé des 7 derniers jours (tout reste sur l'appareil).
@@ -3109,7 +3112,7 @@
     const jr = J().journal || {}, jours = []; for(let k = 6; k >= 0; k--) jours.push(jour(-k));
     const somme = cle => jours.reduce((t, d) => t + ((jr[d] || {})[cle] || 0), 0);
     const actifs = jours.filter(d => jr[d] && Object.keys(jr[d]).length).length, min = somme('min');
-    const mat = [['mots', '🖼️', 'Mots'], ['anglais', '🇬🇧', 'Anglais'], ['maths', '🔢', 'Maths'], ['francais', '📝', 'Français'], ['histoire', '🏛️', 'Histoire-géo'], ['svt', '🧬', 'SVT'], ['physique', '⚗️', 'Physique-chimie'], ['medecine', '🩺', 'Médecine'], ['droit', '⚖️', 'Droit'], ['astro', '🔭', 'Astrophysique'], ['sciences', '🚀', 'Sciences'], ['langlais', '🎓', 'Anglais du programme'], ['lespagnol', '🇪🇸', 'Espagnol'], ['lallemand', '🇩🇪', 'Allemand'], ['philo', '🤔', 'Philosophie'], ['ses', '📈', 'SES'], ['hggsp', '🌐', 'HGGSP'], ['hlp', '📜', 'HLP'], ['nsi', '💻', 'NSI']].map(([k, ic, nom]) => {
+    const mat = [['mots', '🖼️', TXT('Mots')], ['anglais', '🇬🇧', TXT('Anglais')], ['maths', '🔢', TXT('Maths')], ['francais', '📝', TXT('Français')], ['histoire', '🏛️', TXT('Histoire-géo')], ['svt', '🧬', TXT('SVT')], ['physique', '⚗️', TXT('Physique-chimie')], ['medecine', '🩺', TXT('Médecine')], ['droit', '⚖️', TXT('Droit')], ['astro', '🔭', 'Astrophysique'], ['sciences', '🚀', TXT('Sciences')], ['langlais', '🎓', TXT('Anglais du programme')], ['lespagnol', '🇪🇸', TXT('Espagnol')], ['lallemand', '🇩🇪', TXT('Allemand')], ['philo', '🤔', TXT('Philosophie')], ['ses', '📈', 'SES'], ['hggsp', '🌐', 'HGGSP'], ['hlp', '📜', 'HLP'], ['nsi', '💻', 'NSI']].map(([k, ic, nom]) => {
       const b = somme(k + '+'), e = somme(k + '-'), n = b + e; return n ? '<li><span>' + ic + ' ' + nom + '</span><strong>' + b + '/' + n + ' (' + Math.round(b / n * 100) + ' %)</strong></li>' : ''; }).join('');
     const barres = jours.map(d => { const x = jr[d] || {}, n = Object.keys(x).filter(k => /[+-]$/.test(k)).reduce((t, k) => t + x[k], 0);
       return '<span class="jour-barre" title="' + d + ' : ' + n + ' réponses"><i style="height:' + Math.min(100, n * 3) + '%"></i><small>' + ['D', 'L', 'M', 'M', 'J', 'V', 'S'][new Date(d + 'T12:00').getDay()] + '</small></span>'; }).join('');
@@ -3120,45 +3123,45 @@
     const bonnes = js => js.reduce((t, d) => { const x = jr[d] || {}; return t + Object.keys(x).filter(k => /\+$/.test(k)).reduce((u, k) => u + x[k], 0); }, 0);
     const rN = reps(jours), rA = reps(avant), tN = rN ? Math.round(bonnes(jours) / rN * 100) : null, tA = rA ? Math.round(bonnes(avant) / rA * 100) : null;
     const evol = rA ? '<p class="petit">' + (rN >= rA ? '⬆️ ' : '⬇️ ') + esc(tt('semaine_avant', rN, rA)) + (tN != null && tA != null ? ', ' + esc(tt('reussite', tN, tA)) : '') + '.</p>' : '';
-    const faibles = [['anglais', 'l’anglais'], ['maths', 'les maths'], ['francais', 'le français'], ['histoire', 'l’histoire-géo'], ['svt', 'la SVT'], ['physique', 'la physique-chimie'], ['langlais', 'l’anglais du programme'], ['philo', 'la philo'], ['ses', 'les SES'], ['hggsp', 'la HGGSP'], ['hlp', 'la HLP'], ['nsi', 'la NSI']]
+    const faibles = [['anglais', 'l’anglais'], ['maths', TXT('les maths')], ['francais', TXT('le français')], ['histoire', TXT('l’histoire-géo')], ['svt', TXT('la SVT')], ['physique', TXT('la physique-chimie')], ['langlais', TXT('l’anglais du programme')], ['philo', TXT('la philo')], ['ses', TXT('les SES')], ['hggsp', TXT('la HGGSP')], ['hlp', TXT('la HLP')], ['nsi', TXT('la NSI')]]
       .map(([k, nom]) => { const b = somme(k + '+'), n = b + somme(k + '-'); return { nom, n, t:n ? b / n : 1 }; }).filter(x => x.n >= 5).sort((a, b) => a.t - b.t)[0];
     const conseil = faibles && faibles.t < .6 ? '<p class="aide">' + esc(tt('conseil', faibles.nom, Math.round(faibles.t * 100))) + '</p>' : '';
     const N = (J().matieres || {}).notes || {}, notes = Object.entries(N).slice(-8);
     const notesHtml = notes.length ? '<h3>' + esc(tt('notes_titre')) + '</h3><ul class="pieges-cats">' + notes.map(([k, v]) => '<li><span>' + esc(k.replace(/^blanc-/, 'Examen blanc ').replace(/-/g, ' · ')) + '</span><strong>' + String(v).replace('.', ',') + '/20</strong></li>').join('') + '</ul>' : '';
-    bilanTexte = 'Bilan Ami des mots de la semaine : ' + actifs + ' jour(s) de jeu, environ ' + min + ' min, ' + rN + ' réponses' + (tN != null ? ' (' + tN + ' % de réussite)' : '') + '.' + (faibles && faibles.t < .6 ? ' À retravailler : ' + faibles.nom + '.' : '');
-    return '<h3>📅 Cette semaine</h3><p class="pieges-intro"><strong>' + actifs + ' jour' + (actifs > 1 ? 's' : '') + '</strong> de jeu sur 7 · <strong>' + min + ' min</strong> environ</p>' + evol + conseil +
+    bilanTexte = TXT('Bilan Ami des mots de la semaine : ') + actifs + TXT(' jour(s) de jeu, environ ') + min + ' min, ' + rN + TXT(' réponses') + (tN != null ? ' (' + tN + TXT(' % de réussite)') : '') + '.' + (faibles && faibles.t < .6 ? ' À retravailler : ' + faibles.nom + '.' : '');
+    return '<h3>📅 Cette semaine</h3><p class="pieges-intro"><strong>' + actifs + ' jour' + (actifs > 1 ? 's' : '') + TXT('</strong> de jeu sur 7 · <strong>') + min + ' min</strong> environ</p>' + evol + conseil +
       '<div class="semaine-barres" aria-hidden="true">' + barres + '</div>' +
-      (mat ? '<ul class="pieges-cats">' + mat + '</ul>' : '<p class="petit">Pas encore de réponses cette semaine.</p>') +
+      (mat ? '<ul class="pieges-cats">' + mat + '</ul>' : TXT('<p class="petit">Pas encore de réponses cette semaine.</p>')) +
       notesHtml + '<p><button class="moyen" data-a="bilan-partager">' + esc(tt('partager_bilan')) + '</button></p><p class="aide" id="bilan-msg" role="status" aria-live="polite"></p>' +
-      (av.length ? '<h3>😂 Ce qui fait rire (ou pas)</h3><ul class="pieges-cats">' + top(1).map(x => '<li><span>😂 ' + esc(x.t) + '</span></li>').join('') + top(-1).map(x => '<li><span>🙄 ' + esc(x.t) + '</span></li>').join('') + '</ul>' : '');
+      (av.length ? TXT('<h3>😂 Ce qui fait rire (ou pas)</h3><ul class="pieges-cats">') + top(1).map(x => '<li><span>😂 ' + esc(x.t) + '</span></li>').join('') + top(-1).map(x => '<li><span>🙄 ' + esc(x.t) + '</span></li>').join('') + '</ul>' : '');
   }
   function tableauParents(){
     const e = etatAnglais(), s = statsAnglais(), nv = window.PARCOURS ? PARCOURS.niveauActuel(e.niveaux) : 0;
     const err = Object.entries(J().erreurs || {}).map(([k, n]) => [libelleErreur(k), n]).filter(x => x[0]).sort((a, b) => b[1] - a[1]).slice(0, 6);
     const der = e.revisions.length ? new Date(e.revisions[e.revisions.length - 1] * 864e5).toLocaleDateString('fr-FR') : 'jamais';
     const ligne = (ic, t, v) => '<li><span>' + ic + ' ' + t + '</span><strong>' + v + '</strong></li>';
-    poser(barre('anglais') + '<main class="coin-anglais parents"><h2>👪 Espace parents</h2>' +
-      '<p class="pieges-intro">Niveau réussi : <strong>' + (nv ? nv + ' / 3' : 'pas encore') + '</strong> · Révisions : <strong>' + e.revisions.length + ' jour' + (e.revisions.length > 1 ? 's' : '') + '</strong> (dernière : ' + der + ', série : ' + serieRevisions() + ')</p>' +
-      '<ul class="pieges-cats">' + ligne('📚', 'Mots anglais bien connus', s.mots) + ligne('🪤', 'Pièges déjoués', s.pieges + '/' + (window.PIEGES ? PIEGES.liste.length : 0)) + ligne('☕', 'Situations réussies', s.situations + '/' + A_EN().SITUATIONS.length) +
-        ligne('📖', 'Histoires lues', s.histoires + '/' + (window.HISTOIRES ? HISTOIRES.liste.length : 0)) + ligne('✍️', 'Phrases parfaites en dictée', s.dictees) + ligne('🗣️', 'Phrases dites à voix haute', s.repete) + ligne('🎤', 'Battles gagnées', s.victoires) + '</ul>' +
+    poser(barre('anglais') + TXT('<main class="coin-anglais parents"><h2>👪 Espace parents</h2>') +
+      TXT('<p class="pieges-intro">Niveau réussi : <strong>') + (nv ? nv + ' / 3' : TXT('pas encore')) + TXT('</strong> · Révisions : <strong>') + e.revisions.length + ' jour' + (e.revisions.length > 1 ? 's' : '') + TXT('</strong> (dernière : ') + der + TXT(', série : ') + serieRevisions() + ')</p>' +
+      '<ul class="pieges-cats">' + ligne('📚', TXT('Mots anglais bien connus'), s.mots) + ligne('🪤', TXT('Pièges déjoués'), s.pieges + '/' + (window.PIEGES ? PIEGES.liste.length : 0)) + ligne('☕', TXT('Situations réussies'), s.situations + '/' + A_EN().SITUATIONS.length) +
+        ligne('📖', TXT('Histoires lues'), s.histoires + '/' + (window.HISTOIRES ? HISTOIRES.liste.length : 0)) + ligne('✍️', TXT('Phrases parfaites en dictée'), s.dictees) + ligne('🗣️', TXT('Phrases dites à voix haute'), s.repete) + ligne('🎤', TXT('Battles gagnées'), s.victoires) + '</ul>' +
       resumeSemaine() +
-      '<h3>🔎 Ce qui coince</h3>' + (err.length ? '<ul class="pieges-cats">' + err.map(([t, n]) => ligne('•', esc(t), n + '×')).join('') + '</ul><p class="petit">Astuce : la révision du jour reprend ces points automatiquement.</p>' : '<p>Rien de particulier pour l’instant. 👍</p>') +
-      '<h3>🤖 Le juge de vannes de Plumo</h3><p class="petit">Plumo garde les vannes qui font rire (😂) et retire celles qui tombent à plat (🙄). Il refuse toute vanne qui vise la personne (insulte, physique, gros mot, violence, infos perso).</p>' +
-      '<ul class="pieges-cats">' + (() => { const sc = J().notesVannes || {}, v = Object.values(sc); return '<li><span>😂 Vannes favorites</span><strong>' + v.filter(x => x >= 2).length + '</strong></li><li><span>🗑️ Vannes retirées</span><strong>' + v.filter(x => window.JUGE && x <= JUGE.SEUIL).length + '</strong></li>'; })() + '</ul>' +
-      '<h3>😂 Les vannes de la famille</h3><p class="petit">Plumo les ressortira de temps en temps. Écrivez {f} pour le mauvais mot et {j} pour le bon (facultatif). Restez gentils : on taquine la confusion, pas la personne !</p>' +
+      TXT('<h3>🔎 Ce qui coince</h3>') + (err.length ? '<ul class="pieges-cats">' + err.map(([t, n]) => ligne('•', esc(t), n + '×')).join('') + TXT('</ul><p class="petit">Astuce : la révision du jour reprend ces points automatiquement.</p>') : TXT('<p>Rien de particulier pour l’instant. 👍</p>')) +
+      TXT('<h3>🤖 Le juge de vannes de Plumo</h3><p class="petit">Plumo garde les vannes qui font rire (😂) et retire celles qui tombent à plat (🙄). Il refuse toute vanne qui vise la personne (insulte, physique, gros mot, violence, infos perso).</p>') +
+      '<ul class="pieges-cats">' + (() => { const sc = J().notesVannes || {}, v = Object.values(sc); return TXT('<li><span>😂 Vannes favorites</span><strong>') + v.filter(x => x >= 2).length + TXT('</strong></li><li><span>🗑️ Vannes retirées</span><strong>') + v.filter(x => window.JUGE && x <= JUGE.SEUIL).length + '</strong></li>'; })() + '</ul>' +
+      TXT('<h3>😂 Les vannes de la famille</h3><p class="petit">Plumo les ressortira de temps en temps. Écrivez {f} pour le mauvais mot et {j} pour le bon (facultatif). Restez gentils : on taquine la confusion, pas la personne !</p>') +
       '<p><input id="vanne-famille" maxlength="140" placeholder="Ex. : « {f} » ? Même tonton Marcel n’aurait pas osé ! C’était « {j} »." class="champ-long"> <button class="moyen" data-a="vanne-famille-ajout">Ajouter</button></p>' +
       (jugeMsg ? '<p class="aide" role="status">' + esc(jugeMsg) + '</p>' : '') +
       '<ul class="pieges-cats">' + (J().vannesFamille || []).map((v, k) => '<li><span>' + esc(v) + '</span><button class="petit-bouton" data-a="vanne-famille-suppr" data-v="' + k + '" aria-label="Supprimer">🗑️</button></li>').join('') + '</ul>' +
-      (CONFIG.API_VANNES ? '<h3 id="vannes-ia">✨ Plumo propose des vannes (IA)</h3>' + (plus()
-        ? '<p class="petit">L’IA propose, le juge de Plumo trie, et c’est vous qui choisissez : rien n’arrive dans le jeu sans votre accord.</p>' +
+      (CONFIG.API_VANNES ? TXT('<h3 id="vannes-ia">✨ Plumo propose des vannes (IA)</h3>') + (plus()
+        ? TXT('<p class="petit">L’IA propose, le juge de Plumo trie, et c’est vous qui choisissez : rien n’arrive dans le jeu sans votre accord.</p>') +
           '<p><select id="vannes-ia-theme" aria-label="Thème">' + THEMES.map(th => '<option value="' + th + '">' + esc(t('th_' + th)) + '</option>').join('') + '<option value="anglais">🇬🇧 Coin anglais</option></select> ' +
-          '<select id="vannes-ia-ton" aria-label="Ton"><option value="tout-doux">Tout doux</option><option value="normal" selected>Taquin</option><option value="corse">Corsé (ados)</option></select> ' +
+          TXT('<select id="vannes-ia-ton" aria-label="Ton"><option value="tout-doux">Tout doux</option><option value="normal" selected>Taquin</option><option value="corse">Corsé (ados)</option></select> ') +
           '<button class="moyen" data-a="vannes-ia"' + (vannesIAEnCours ? ' disabled' : '') + '>✨ Proposer 6 vannes</button></p>' +
           (vannesIAMsg ? '<p class="aide" role="status">' + esc(vannesIAMsg) + '</p>' : '') +
           (vannesIA && vannesIA.length ? '<ul class="pieges-cats">' + vannesIA.map((v, k) => '<li><span>' + esc(v) + '</span><span><button class="petit-bouton" data-a="vanne-ia-garder" data-v="' + k + '" aria-label="Garder">✅</button> <button class="petit-bouton" data-a="vanne-ia-non" data-v="' + k + '" aria-label="Jeter">❌</button></span></li>').join('') + '</ul>' : '')
-        : '<p class="petit">✨ Avec Plus, Plumo peut vous proposer des vannes inventées par l’IA, que vous validez une à une.</p>') : '') +
-      '<h3>🛸 Salon des battles</h3><p><label><input type="checkbox" id="salon-chat"' + (base.salonChat ? ' checked' : '') + ' data-a="salon-chat-reglage"> Autoriser le chat écrit dans les salons PRIVÉS (entre potes qui ont le code). Les salons publics restent en réactions toutes faites.</label></p>' +
-      '<p class="petit">🔒 Ces informations restent sur cet appareil. <a href="legal.html#confidentialite">' + esc(tt('donnees')) + '</a> · <a href="legal.html#cgv">' + esc(tt('cgv')) + '</a></p></main>');
+        : TXT('<p class="petit">✨ Avec Plus, Plumo peut vous proposer des vannes inventées par l’IA, que vous validez une à une.</p>')) : '') +
+      TXT('<h3>🛸 Salon des battles</h3><p><label><input type="checkbox" id="salon-chat"') + (base.salonChat ? ' checked' : '') + TXT(' data-a="salon-chat-reglage"> Autoriser le chat écrit dans les salons PRIVÉS (entre potes qui ont le code). Les salons publics restent en réactions toutes faites.</label></p>') +
+      TXT('<p class="petit">🔒 Ces informations restent sur cet appareil. <a href="legal.html#confidentialite">') + esc(tt('donnees')) + '</a> · <a href="legal.html#cgv">' + esc(tt('cgv')) + '</a></p></main>');
   }
 
   // Leçon : 5 mots nouveaux d'un même thème, présentés puis joués 10 fois.
@@ -3226,9 +3229,9 @@
     const noms = { auto:'Auto', normal:'Normal', ultra:'💎 Ultra' };
     return '<section class="reglage-graphismes"><h3>🎨 ' + (en ? 'Graphics' : 'Graphismes') + '</h3><div class="reglage"><span><span class="petit">' +
       (en ? 'Ultra: animated nebula, sparkle explosions, 3D tilt; in the 3D worlds, sun rays, soft shadows and a cinema look. '
-        : 'Ultra : fond animé, explosions d’étincelles, images en relief ; dans les mondes 3D, rayons de soleil, ombres douces et rendu cinéma. ') +
-      (c === 'auto' ? (en ? (puissant ? 'This device is powerful: Ultra is on.' : 'This device is modest: Normal is used.') : (puissant ? 'Cet appareil est puissant : Ultra est activé.' : 'Cet appareil est modeste : Normal est utilisé.')) : '') +
-      (G.mouvementReduit() ? (en ? ' Your system asks for fewer animations: effects stay off.' : ' Ton système demande moins d’animations : les effets restent coupés.') : '') +
+        : TXT('Ultra : fond animé, explosions d’étincelles, images en relief ; dans les mondes 3D, rayons de soleil, ombres douces et rendu cinéma. ')) +
+      (c === 'auto' ? (en ? (puissant ? 'This device is powerful: Ultra is on.' : 'This device is modest: Normal is used.') : (puissant ? TXT('Cet appareil est puissant : Ultra est activé.') : TXT('Cet appareil est modeste : Normal est utilisé.'))) : '') +
+      (G.mouvementReduit() ? (en ? ' Your system asks for fewer animations: effects stay off.' : TXT(' Ton système demande moins d’animations : les effets restent coupés.')) : '') +
       '</span></span><span class="choix-graphismes">' + G.CHOIX.map(k => '<button class="moyen' + (k === c ? ' plein' : '') + '" data-a="graphismes" data-v="' + k + '" aria-pressed="' + (k === c) + '">' + esc(noms[k]) + '</button>').join('') + '</span></div></section>';
   }
   function reglageVoix(){
@@ -3236,28 +3239,28 @@
     const pref = voixPreferees();
     const blocs = langues.map(l => {
       const liste = voixClassees(l);
-      const opts = liste.length ? liste.map((v, i) => '<option value="' + esc(v.name) + '"' + ((pref[l] ? pref[l] === v.name : i === 0) ? ' selected' : '') + '>' + esc(v.name) + (i === 0 ? (en ? ' ★ best' : ' ★ la meilleure') : '') + '</option>').join('')
-        : '<option value="">' + (en ? 'Phone voice (default)' : 'Voix du téléphone (par défaut)') + '</option>';
+      const opts = liste.length ? liste.map((v, i) => '<option value="' + esc(v.name) + '"' + ((pref[l] ? pref[l] === v.name : i === 0) ? ' selected' : '') + '>' + esc(v.name) + (i === 0 ? (en ? ' ★ best' : TXT(' ★ la meilleure')) : '') + '</option>').join('')
+        : '<option value="">' + (en ? 'Phone voice (default)' : TXT('Voix du téléphone (par défaut)')) + '</option>';
       return '<div class="reglage reglage-voix"><label><span>' + esc(LANGUES_APPRENDRE[l] || l) + '</span> <select data-voix="' + esc(l) + '">' + opts + '</select></label>' +
-        '<button class="moyen" data-a="essai-voix" data-v="' + esc(l) + '">🔊 ' + (en ? 'Try' : 'Essayer') + '</button></div>';
+        '<button class="moyen" data-a="essai-voix" data-v="' + esc(l) + '">🔊 ' + (en ? 'Try' : TXT('Essayer')) + '</button></div>';
     }).join('');
-    return '<section class="reglage-voix-bloc"><h3>🗣️ ' + (en ? 'Plumo’s voice' : 'La voix de Plumo') + '</h3>' + blocs +
+    return '<section class="reglage-voix-bloc"><h3>🗣️ ' + (en ? 'Plumo’s voice' : TXT('La voix de Plumo')) + '</h3>' + blocs +
       '<p class="petit">' + (en ? 'Robot voice? On a PC, open the app in Microsoft Edge (natural voices) or Chrome (Google voices). On Android: Settings › Text-to-speech › Google engine, then install the high-quality voice.'
-        : 'Voix de robot ? Sur PC, ouvre l’appli dans Microsoft Edge (voix « Natural ») ou Chrome (voix Google). Sur Android : Paramètres › Synthèse vocale › moteur Google, puis installe la voix « haute qualité ». Les mots anglais, eux, sont de vrais enregistrements.') + '</p></section>';
+        : TXT('Voix de robot ? Sur PC, ouvre l’appli dans Microsoft Edge (voix « Natural ») ou Chrome (voix Google). Sur Android : Paramètres › Synthèse vocale › moteur Google, puis installe la voix « haute qualité ». Les mots anglais, eux, sont de vrais enregistrements.')) + '</p></section>';
   }
   function reglages(){
     poser(barre('accueil') + '<main class="texte"><h2>⚙️ ' + esc(t('reglages')) + '</h2>' +
       '<div class="reglage reglage-facile"><span><strong>📖 ' + esc(t('facile')) + '</strong><span class="petit">' + esc(t('facile_aide')) + '</span></span><button class="moyen' + (facile() ? ' plein' : '') + '" data-a="facile" aria-pressed="' + facile() + '">' + esc(facile() ? t('oui') : t('non')) + '</button></div>' +
       '<div class="reglage"><span>🔔 ' + esc(t('son')) + '</span><button class="moyen' + (base.son ? ' plein' : '') + '" data-a="son" aria-pressed="' + base.son + '">' + esc(base.son ? t('oui') : t('non')) + '</button></div>' +
-      '<section class="reglage-humour"><h3>😂 ' + (base.ui === 'en' ? 'Plumo’s joke level' : 'Le niveau des blagues de Plumo') + '</h3><p class="petit">' + (base.ui === 'en' ? 'Plumo only teases himself, the words or the situation — never the player.' : 'Plumo se moque de lui-même, des mots ou de la situation — jamais du joueur.') + '</p>' +
-        (facile() ? '<p class="petit">📖 ' + (base.ui === 'en' ? 'Easy reading is on: Plumo stays “gentle”, with short jokes.' : 'Lecture facile activée : Plumo reste « Tout doux », avec des vannes courtes.') + '</p>' : '') + '<div class="choix-humour">' +
-      ['Tout doux','Taquin','Piquant','Corsé 🪶'].map((nom, i) => '<button class="moyen' + (niveauHumour() === i ? ' plein' : '') + '" data-a="humour" data-v="' + i + '" aria-pressed="' + (niveauHumour() === i) + '">' + (base.ui === 'en' ? ['Gentle','Playful','Spicy','Extra cheeky 🪶'][i] : nom) + '</button>').join('') +
-      '</div><p class="petit">' + (base.ui === 'en' ? 'Even the spiciest level stays kind.' : 'Même le niveau le plus corsé reste bienveillant.') + '</p>' +
-      '<h3 class="langue-blagues-titre">🗣️ ' + (base.ui === 'en' ? 'Language of the jokes' : 'Langue des blagues') + '</h3><p class="petit">' + (base.ui === 'en' ? 'Choose the language Plumo uses for jokes and spoken feedback.' : 'Choisis la langue utilisée par Plumo pour ses blagues et ses commentaires vocaux.') + '</p><div class="choix-humour choix-langue-blagues">' +
+      '<section class="reglage-humour"><h3>😂 ' + (base.ui === 'en' ? 'Plumo’s joke level' : TXT('Le niveau des blagues de Plumo')) + '</h3><p class="petit">' + (base.ui === 'en' ? 'Plumo only teases himself, the words or the situation — never the player.' : TXT('Plumo se moque de lui-même, des mots ou de la situation — jamais du joueur.')) + '</p>' +
+        (facile() ? '<p class="petit">📖 ' + (base.ui === 'en' ? 'Easy reading is on: Plumo stays “gentle”, with short jokes.' : TXT('Lecture facile activée : Plumo reste « Tout doux », avec des vannes courtes.')) + '</p>' : '') + '<div class="choix-humour">' +
+      [TXT('Tout doux'),TXT('Taquin'),TXT('Piquant'),TXT('Corsé 🪶')].map((nom, i) => '<button class="moyen' + (niveauHumour() === i ? ' plein' : '') + '" data-a="humour" data-v="' + i + '" aria-pressed="' + (niveauHumour() === i) + '">' + (base.ui === 'en' ? ['Gentle','Playful','Spicy','Extra cheeky 🪶'][i] : nom) + '</button>').join('') +
+      '</div><p class="petit">' + (base.ui === 'en' ? 'Even the spiciest level stays kind.' : TXT('Même le niveau le plus corsé reste bienveillant.')) + '</p>' +
+      '<h3 class="langue-blagues-titre">🗣️ ' + (base.ui === 'en' ? 'Language of the jokes' : TXT('Langue des blagues')) + '</h3><p class="petit">' + (base.ui === 'en' ? 'Choose the language Plumo uses for jokes and spoken feedback.' : TXT('Choisis la langue utilisée par Plumo pour ses blagues et ses commentaires vocaux.')) + '</p><div class="choix-humour choix-langue-blagues">' +
       '<button class="moyen' + (langueBlagues() === 'fr' ? ' plein' : '') + '" data-a="langue-blagues" data-v="fr" aria-pressed="' + (langueBlagues() === 'fr') + '">🇫🇷 Français</button>' +
       '<button class="moyen' + (langueBlagues() === 'en' ? ' plein' : '') + '" data-a="langue-blagues" data-v="en" aria-pressed="' + (langueBlagues() === 'en') + '">🇬🇧 English</button>' +
       '</div>' +
-      (CONFIG.API_VANNES_DIRECT ? '<div class="reglage"><span><strong>🤖 ' + (base.ui === 'en' ? 'Jokes written live by AI' : 'Vannes inventées en direct par l’IA') + '</strong><span class="petit">' + (base.ui === 'en' ? 'A brand-new joke for each mistake. Only the question and the answers are sent, nothing personal.' : 'Une vanne toute neuve à chaque erreur. Seules la question et les réponses partent au serveur, rien de personnel.') + '</span></span><button class="moyen' + (J().vannesIA !== false ? ' plein' : '') + '" data-a="vannes-ia-direct" aria-pressed="' + (J().vannesIA !== false) + '">' + esc(J().vannesIA !== false ? t('oui') : t('non')) + '</button></div>' : '') +
+      (CONFIG.API_VANNES_DIRECT ? '<div class="reglage"><span><strong>🤖 ' + (base.ui === 'en' ? 'Jokes written live by AI' : TXT('Vannes inventées en direct par l’IA')) + '</strong><span class="petit">' + (base.ui === 'en' ? 'A brand-new joke for each mistake. Only the question and the answers are sent, nothing personal.' : TXT('Une vanne toute neuve à chaque erreur. Seules la question et les réponses partent au serveur, rien de personnel.')) + '</span></span><button class="moyen' + (J().vannesIA !== false ? ' plein' : '') + '" data-a="vannes-ia-direct" aria-pressed="' + (J().vannesIA !== false) + '">' + esc(J().vannesIA !== false ? t('oui') : t('non')) + '</button></div>' : '') +
       '</section>' +
       (CONFIG.MODE_PAYANT ? '<h3>✨ ' + esc(t('plus')) + '</h3>' + (plus()
         ? '<p>' + esc(t('abo_actif', droits ? new Date(droits.fin).toLocaleDateString(base.ui) : '')) + '</p>' + (CONFIG.LIEN_GESTION ? '<p><a class="moyen" href="' + esc(CONFIG.LIEN_GESTION) + '" target="_blank" rel="noopener">' + esc(t('gerer_abo')) + '</a></p>' : '')
@@ -3393,7 +3396,7 @@
       '<path d="M30 22 L60 10 L90 22 L60 34 Z" fill="#1f1757"/><path d="M84 24 L88 40" stroke="#ffc93c" stroke-width="3"/><circle cx="88" cy="42" r="3" fill="#ffc93c"/>' +
       '<text x="60" y="27" font-size="10" text-anchor="middle" fill="#ffc93c" font-weight="900">π</text></svg>';
   }
-  const TONS_PROF = [['doux', '🧸 Tout doux'], ['taquin', '😏 Taquin'], ['sanspitie', '🔥 Cash (ados)']].concat(window.TRASH_TALK ? [['trash', '🥊 Trash talk']] : []);
+  const TONS_PROF = [['doux', TXT('🧸 Tout doux')], ['taquin', TXT('😏 Taquin')], ['sanspitie', TXT('🔥 Cash (ados)')]].concat(window.TRASH_TALK ? [['trash', '🥊 Trash talk']] : []);
   function etatMaths(){
     const j = J(), o = j.maths && typeof j.maths === 'object' ? j.maths : {}, M = window.MATHS;
     const niveau = M && M.NIVEAUX.includes(o.niveau) ? o.niveau : '6e', ton = TONS_PROF.some(x => x[0] === o.ton) ? o.ton : 'taquin';
@@ -3414,23 +3417,23 @@
     const e = etatMaths(), niv = M.carte.niveaux[e.niveau], doms = [];
     for(const c of niv.chapitres){ let d = doms.find(x => x.d === c[1]); if(!d) doms.push(d = { d:c[1], l:[] }); d.l.push(c); }
     const etoiles = id => { const s = e.chap[id]; if(!s || !s.n) return ''; const p = s.ok / s.n; return s.n >= 10 && p >= .9 ? '⭐⭐⭐' : p >= .7 ? '⭐⭐' : '⭐'; };
-    poser(barre('accueil') + '<main class="coin-anglais coin-maths"><div class="prof-entete"><div class="ami-moyen">' + profPi('fier') + '</div><div><h2>🔢 Le coin maths de Prof Pi</h2>' +
-      '<p class="pieges-intro">Trompe-toi : je vanne. Réussis : je m’incline. Programme ' + esc(M.carte.annee) + '.</p></div></div>' +
+    poser(barre('accueil') + '<main class="coin-anglais coin-maths"><div class="prof-entete"><div class="ami-moyen">' + profPi('fier') + TXT('</div><div><h2>🔢 Le coin maths de Prof Pi</h2>') +
+      TXT('<p class="pieges-intro">Trompe-toi : je vanne. Réussis : je m’incline. Programme ') + esc(M.carte.annee) + '.</p></div></div>' +
       '<div class="onglets-niveaux" role="tablist">' + M.NIVEAUX.map(n => '<button role="tab" aria-selected="' + (n === e.niveau) + '" class="onglet' + (n === e.niveau ? ' actif' : '') + '" data-a="maths-niveau" data-v="' + n + '">' + n + '</button>').join('') + '</div>' +
       '<p class="petit">📚 ' + esc(niv.nom) + ' — ' + esc(niv.note || '') + '</p>' +
-      '<p class="ton-prof">Ton de Prof Pi : ' + TONS_PROF.map(([k, l]) => '<button class="petit-bouton' + (k === e.ton ? ' actif' : '') + '" data-a="maths-ton" data-v="' + k + '" aria-pressed="' + (k === e.ton) + '">' + l + '</button>').join(' ') + '</p>' +
-      '<div class="actions serrees"><button class="moyen plein" data-a="maths-melange">🔁 Entraînement mélangé</button>' +
+      TXT('<p class="ton-prof">Ton de Prof Pi : ') + TONS_PROF.map(([k, l]) => '<button class="petit-bouton' + (k === e.ton ? ' actif' : '') + '" data-a="maths-ton" data-v="' + k + '" aria-pressed="' + (k === e.ton) + '">' + l + '</button>').join(' ') + '</p>' +
+      TXT('<div class="actions serrees"><button class="moyen plein" data-a="maths-melange">🔁 Entraînement mélangé</button>') +
         (niv.examen && M.EXAMENS[niv.examen] ? '<button class="moyen" data-a="maths-examen">📝 ' + esc(M.EXAMENS[niv.examen].titre) + (e.examens[e.niveau] != null ? ' (' + window.MATHS.nb(e.examens[e.niveau], 1) + '/20)' : '') + '</button>' : '') +
-        '<button class="moyen" data-a="maths-defi">🔗 Défier un pote</button></div>' +
+        TXT('<button class="moyen" data-a="maths-defi">🔗 Défier un pote</button></div>') +
       // v5.75 : les chapitres rangés par domaine, en blocs côte à côte (plus de longue colonne à moitié vide).
       '<div class="domaines">' + doms.map(d => '<section class="domaine"><h3>' + esc(d.d) + ' <small>' + d.l.length + '</small></h3><div class="liste-chap">' + d.l.map(c => M.disponible(c[0])
         ? '<button class="chap" data-a="maths-chap" data-v="' + esc(c[0]) + '"><span>' + esc(c[2]) + '</span><em>' + (etoiles(c[0]) || '▶ 10') + '</em></button>'
         : '<div class="chap bientot" aria-disabled="true"><span>' + esc(c[2]) + '</span><em>🛠️</em></div>').join('') + '</div></section>').join('') + '</div>' +
       (() => { const l = (Array.isArray(annalesMaths[e.niveau]) ? annalesMaths[e.niveau] : []).filter(x => x && /^https:\/\/(www\.)?(education\.gouv\.fr|eduscol\.education\.(gouv\.)?fr)\//.test(x.lien)).slice(0, 20);
-        return l.length ? '<h3>📄 Sujets officiels (sur le site du ministère)</h3><ul class="pieges-cats">' + l.map(x => '<li><a href="' + esc(x.lien) + '" target="_blank" rel="noopener noreferrer">' + esc((x.session ? x.session + ' — ' : '') + x.titre) + '</a></li>').join('') + '</ul>' : ''; })() +
-      '<p class="petit">👥 Battle en direct : ouvre le salon des battles et choisis « maths ».</p></main>', 'maths');
+        return l.length ? TXT('<h3>📄 Sujets officiels (sur le site du ministère)</h3><ul class="pieges-cats">') + l.map(x => '<li><a href="' + esc(x.lien) + '" target="_blank" rel="noopener noreferrer">' + esc((x.session ? x.session + ' — ' : '') + x.titre) + '</a></li>').join('') + '</ul>' : ''; })() +
+      TXT('<p class="petit">👥 Battle en direct : ouvre le salon des battles et choisis « maths ».</p></main>'), 'maths');
   }
-  const BRAVO_PROF = ['Bravo ! Prof Pi range sa vanne… pour l’instant. 😏', 'Juste ! Prof Pi est vexé de ne rien trouver à redire.', 'Exact ! Même ma calculatrice applaudit. 👏', 'Parfait. Je note… et je surveille. 🦝'];
+  const BRAVO_PROF = [TXT('Bravo ! Prof Pi range sa vanne… pour l’instant. 😏'), TXT('Juste ! Prof Pi est vexé de ne rien trouver à redire.'), TXT('Exact ! Même ma calculatrice applaudit. 👏'), TXT('Parfait. Je note… et je surveille. 🦝')];
   function mathsSerie(cible, n, titre, fin){
     const M = window.MATHS, e = etatMaths(), liste = M.serie(cible, n, Math.floor(Math.random() * 1e9), e.ton);
     if(!liste.length) return mathsAccueil();
@@ -3440,10 +3443,10 @@
   }
   function finJeuMaths(z, titre, note){
     const p = z.bonnes / z.liste.length; J().plumes += z.bonnes; garder(); bruit('fin');
-    const mot = p === 1 ? 'Sans faute. Prof Pi pose sa craie et applaudit. 👏' : p >= .7 ? 'Solide ! Prof Pi n’a presque rien à vanner. 😏' : p >= .4 ? 'Ça vient ! Prof Pi a eu de quoi rigoler, mais tu progresses.' : 'Prof Pi a vidé tout son stock de vannes. On recommence, tu vas le faire taire !';
+    const mot = p === 1 ? TXT('Sans faute. Prof Pi pose sa craie et applaudit. 👏') : p >= .7 ? TXT('Solide ! Prof Pi n’a presque rien à vanner. 😏') : p >= .4 ? TXT('Ça vient ! Prof Pi a eu de quoi rigoler, mais tu progresses.') : TXT('Prof Pi a vidé tout son stock de vannes. On recommence, tu vas le faire taire !');
     poser(barre('maths') + '<main class="centre"><div class="ami-moyen">' + profPi(p >= .7 ? 'fier' : 'mdr') + '</div><h2>' + esc(titre) + '</h2>' +
       '<p class="gros-score">' + z.bonnes + '/' + z.liste.length + (note != null ? ' · ' + window.MATHS.nb(note, 1) + '/20' : '') + '</p><p>' + esc(mot) + '</p><p>🪶 +' + z.bonnes + ' plumes</p>' +
-      '<div class="actions serrees"><button class="moyen plein" data-a="maths-melange">🔁 Encore</button><button class="moyen" data-a="maths">🔢 Coin maths</button></div></main>');
+      TXT('<div class="actions serrees"><button class="moyen plein" data-a="maths-melange">🔁 Encore</button><button class="moyen" data-a="maths">🔢 Coin maths</button></div></main>'));
   }
   function mathsExamen(){
     const M = window.MATHS, e = etatMaths(), niv = M.carte.niveaux[e.niveau], ex = niv.examen && M.EXAMENS[niv.examen]; if(!ex) return mathsAccueil();
@@ -3463,26 +3466,26 @@
   function matieresAccueil(){
     qz = null; const M = window.MATIERES; if(!M) return accueil();
     const c = (a, v, ic, t1, t2) => '<button class="carte-anglais" data-a="' + a + '"' + (v ? ' data-v="' + v + '"' : '') + '><span class="ic">' + ic + '</span><strong>' + t1 + '</strong><small>' + t2 + '</small></button>';
-    poser(barre('accueil') + '<main class="coin-anglais matieres-ecran"><h2>📚 Matières</h2><p class="pieges-intro">Le programme de la 6e au bac, avec Plumo qui vanne les erreurs (jamais toi) et t’explique la bonne réponse.</p>' +
+    poser(barre('accueil') + TXT('<main class="coin-anglais matieres-ecran"><h2>📚 Matières</h2><p class="pieges-intro">Le programme de la 6e au bac, avec Plumo qui vanne les erreurs (jamais toi) et t’explique la bonne réponse.</p>') +
       (window.EPREUVES ? ongletsExamens('matieres') : '') +
       '<div class="cartes-anglais">' +
-        ((J().carnet || []).length ? c('carnet-erreurs', '', '🎯', 'Mes erreurs (' + J().carnet.length + ')', 'Les questions ratées, à revoir avant un contrôle : une bonne réponse les retire') : '') +
-        c('matiere', 'francais', '📝', 'Français', 'Conjugaison, orthographe, grammaire, figures de style, littérature') +
-        (M.trouver('lespagnol') ? c('matiere', 'lespagnol', '🇪🇸', 'Espagnol (LVB, 5e → bac)', 'Ser ou estar, passé, subjonctif, faux amis') : '') +
-        (M.trouver('lallemand') ? c('matiere', 'lallemand', '🇩🇪', 'Allemand (LVB, 5e → bac)', 'Cas, place du verbe, parfait, Konjunktiv II') : '') +
-        (M.trouver('philo') ? c('matiere', 'philo', '🤔', 'Philosophie (Tle)', 'Auteurs, notions, méthode de la dissertation') : '') +
-        (M.trouver('ses') ? c('matiere', 'ses', '📈', 'SES (spécialité 1re, Tle)', 'Marchés, monnaie, inégalités, mobilité sociale') : '') +
-        (M.trouver('hggsp') ? c('matiere', 'hggsp', '🌐', 'HGGSP (spécialité 1re, Tle)', 'Puissance, ONU, espace, mémoire, environnement') : '') +
-        (M.trouver('hlp') ? c('matiere', 'hlp', '📜', 'HLP (spécialité 1re, Tle)', 'Parole, représentations du monde, recherche de soi') : '') +
-        (M.trouver('nsi') ? c('matiere', 'nsi', '💻', 'NSI (spécialité 1re, Tle)', 'Binaire, Python, réseaux, SQL, algorithmes') : '') +
-        (M.trouver('langlais') ? c('matiere', 'langlais', '🇬🇧', 'Anglais (6e → bac)', 'Grammaire, verbes irréguliers, faux amis, axes du bac, compréhension') : '') +
-        (window.MATHS ? c('maths', '', '🔢', 'Maths', 'De la 6e au bac, avec Prof Pi') : '') +
-        c('matiere', 'histoire', '🏛️', 'Histoire-géo & EMC', 'Repères, géographie, citoyenneté') +
-        c('matiere', 'svt', '🧬', 'SVT', 'Le vivant, le corps humain, la Terre, la génétique') +
-        c('matiere', 'physique', '⚗️', 'Physique-chimie', 'Matière, électricité, vitesse, énergie') +
-        (window.SCIENCES ? c('sciences', '', '🚀', 'Sciences rigolotes', 'Planètes, fusées, médecine… avec des clashs') : '') +
-      '</div>' + (M.trouver('medecine') ? '<section class="domaine"><h3>🎓 Après le bac</h3><div class="cartes-anglais">' +
-        c('matiere', 'medecine', '🩺', 'Médecine', 'Anatomie, physiologie, études de santé') + c('matiere', 'droit', '⚖️', 'Droit', 'Institutions, bases du droit, métiers') +
+        ((J().carnet || []).length ? c('carnet-erreurs', '', '🎯', 'Mes erreurs (' + J().carnet.length + ')', TXT('Les questions ratées, à revoir avant un contrôle : une bonne réponse les retire')) : '') +
+        c('matiere', 'francais', '📝', TXT('Français'), TXT('Conjugaison, orthographe, grammaire, figures de style, littérature')) +
+        (M.trouver('lespagnol') ? c('matiere', 'lespagnol', '🇪🇸', TXT('Espagnol (LVB, 5e → bac)'), TXT('Ser ou estar, passé, subjonctif, faux amis')) : '') +
+        (M.trouver('lallemand') ? c('matiere', 'lallemand', '🇩🇪', TXT('Allemand (LVB, 5e → bac)'), TXT('Cas, place du verbe, parfait, Konjunktiv II')) : '') +
+        (M.trouver('philo') ? c('matiere', 'philo', '🤔', TXT('Philosophie (Tle)'), TXT('Auteurs, notions, méthode de la dissertation')) : '') +
+        (M.trouver('ses') ? c('matiere', 'ses', '📈', TXT('SES (spécialité 1re, Tle)'), TXT('Marchés, monnaie, inégalités, mobilité sociale')) : '') +
+        (M.trouver('hggsp') ? c('matiere', 'hggsp', '🌐', TXT('HGGSP (spécialité 1re, Tle)'), TXT('Puissance, ONU, espace, mémoire, environnement')) : '') +
+        (M.trouver('hlp') ? c('matiere', 'hlp', '📜', TXT('HLP (spécialité 1re, Tle)'), TXT('Parole, représentations du monde, recherche de soi')) : '') +
+        (M.trouver('nsi') ? c('matiere', 'nsi', '💻', TXT('NSI (spécialité 1re, Tle)'), TXT('Binaire, Python, réseaux, SQL, algorithmes')) : '') +
+        (M.trouver('langlais') ? c('matiere', 'langlais', '🇬🇧', TXT('Anglais (6e → bac)'), TXT('Grammaire, verbes irréguliers, faux amis, axes du bac, compréhension')) : '') +
+        (window.MATHS ? c('maths', '', '🔢', TXT('Maths'), TXT('De la 6e au bac, avec Prof Pi')) : '') +
+        c('matiere', 'histoire', '🏛️', TXT('Histoire-géo & EMC'), TXT('Repères, géographie, citoyenneté')) +
+        c('matiere', 'svt', '🧬', TXT('SVT'), TXT('Le vivant, le corps humain, la Terre, la génétique')) +
+        c('matiere', 'physique', '⚗️', TXT('Physique-chimie'), TXT('Matière, électricité, vitesse, énergie')) +
+        (window.SCIENCES ? c('sciences', '', '🚀', TXT('Sciences rigolotes'), TXT('Planètes, fusées, médecine… avec des clashs')) : '') +
+      '</div>' + (M.trouver('medecine') ? TXT('<section class="domaine"><h3>🎓 Après le bac</h3><div class="cartes-anglais">') +
+        c('matiere', 'medecine', '🩺', TXT('Médecine'), TXT('Anatomie, physiologie, études de santé')) + c('matiere', 'droit', '⚖️', TXT('Droit'), TXT('Institutions, bases du droit, métiers')) +
         c('matiere', 'astro', '🔭', 'Astrophysique', 'Étoiles, galaxies, calculs d’astrophysicien') + '</div></section>' : '') + '</main>');
   }
   function matiereAccueil(id){
@@ -3497,15 +3500,15 @@
     // v5.83 : la référence du programme officiel du niveau, avec le lien vers éduscol.
     const O = window.EPREUVES && EPREUVES.OFFICIEL, ref = O && ({ '6e':0, '5e':1, '4e':1, '3e':1, '2nde':2, '1re':2, 'Tle':2 })[e.niveau], pr = O && ref != null ? O.programmes[ref] : null;
     poser(barre('matieres') + '<main class="coin-anglais coin-maths matiere-ecran"><h2>' + m.ic + ' ' + esc(m.nom) + '</h2>' +
-      (pr ? '<p class="petit ref-programme">📜 Programme officiel (' + esc(pr[0]) + ') : ' + esc(pr[2]) + ' · <a href="' + esc(pr[1]) + '" target="_blank" rel="noopener">voir sur éduscol</a></p>' : '') +
+      (pr ? '<p class="petit ref-programme">📜 Programme officiel (' + esc(pr[0]) + ') : ' + esc(pr[2]) + ' · <a href="' + esc(pr[1]) + TXT('" target="_blank" rel="noopener">voir sur éduscol</a></p>') : '') +
       '<div class="onglets-niveaux" role="tablist">' + niveaux.map(n => { const vide = !M.chapitres(id, n).length;
         return '<button role="tab" aria-selected="' + (n === e.niveau) + '" class="onglet' + (n === e.niveau ? ' actif' : '') + (vide ? ' vide' : '') + '" data-a="matiere-niveau" data-v="' + id + '|' + n + '">' + n + '</button>'; }).join('') + '</div>' +
-      '<p class="ton-prof">Ton de Plumo : ' + TONS_PROF.map(([k, l]) => '<button class="petit-bouton' + (k === ton ? ' actif' : '') + '" data-a="maths-ton-matiere" data-v="' + id + '|' + k + '" aria-pressed="' + (k === ton) + '">' + l + '</button>').join(' ') + '</p>' +
-      (chs.length ? '<div class="actions serrees"><button class="moyen plein" data-a="matiere-melange" data-v="' + id + '">🔁 Entraînement mélangé</button>' +
+      TXT('<p class="ton-prof">Ton de Plumo : ') + TONS_PROF.map(([k, l]) => '<button class="petit-bouton' + (k === ton ? ' actif' : '') + '" data-a="maths-ton-matiere" data-v="' + id + '|' + k + '" aria-pressed="' + (k === ton) + '">' + l + '</button>').join(' ') + '</p>' +
+      (chs.length ? '<div class="actions serrees"><button class="moyen plein" data-a="matiere-melange" data-v="' + id + TXT('">🔁 Entraînement mélangé</button>') +
         (ex ? '<button class="moyen" data-a="matiere-examen" data-v="' + id + '">📝 ' + esc(ex) + (e.notes[id + '-' + e.niveau] != null ? ' (' + String(e.notes[id + '-' + e.niveau]).replace('.', ',') + '/20)' : '') + '</button>' : '') + '</div>' +
         '<div class="domaines">' + doms.map(d => '<section class="domaine"><h3>' + esc(d.d) + ' <small>' + d.l.length + '</small></h3><div class="liste-chap">' +
           d.l.map(c => '<button class="chap" data-a="matiere-chap" data-v="' + id + '|' + c.id + '"><span>' + esc(c.nom) + '</span><em>' + (etoiles(c.id) || '▶ 10') + '</em></button>').join('') + '</div></section>').join('') + '</div>'
-        : '<p class="pieges-intro">🛠️ Cette matière arrive bientôt pour la ' + esc(e.niveau) + '. Choisis un autre niveau.</p>') +
+        : TXT('<p class="pieges-intro">🛠️ Cette matière arrive bientôt pour la ') + esc(e.niveau) + TXT('. Choisis un autre niveau.</p>')) +
       '</main>', 'matieres');
   }
   // Une série de questions d'une matière. fin(z) facultatif (examens).
@@ -3518,25 +3521,25 @@
   }
   function finMatiere(z, titre, id, note){
     const p = z.bonnes / z.liste.length; J().plumes += z.bonnes; garder(); bruit('fin');
-    const mot = p === 1 ? 'Sans faute ! Plumo range ses vannes, il n’en a pas eu besoin. 👏' : p >= .7 ? 'Solide ! Plumo a cherché la petite bête… pas trouvée. 😏' : p >= .4 ? 'Ça vient ! Plumo a bien rigolé, mais tu progresses.' : 'Plumo a vidé tout son stock de vannes. On recommence ? 💪';
+    const mot = p === 1 ? TXT('Sans faute ! Plumo range ses vannes, il n’en a pas eu besoin. 👏') : p >= .7 ? TXT('Solide ! Plumo a cherché la petite bête… pas trouvée. 😏') : p >= .4 ? TXT('Ça vient ! Plumo a bien rigolé, mais tu progresses.') : TXT('Plumo a vidé tout son stock de vannes. On recommence ? 💪');
     poser(barre('matiere') + '<main class="centre"><div class="ami-moyen">' + ami(p >= .7 ? 'fete' : 'malin') + '</div><h2>' + esc(titre) + '</h2>' +
       (note != null ? '<p class="note-examen">' + String(note).replace('.', ',') + ' / 20</p>' : '<p class="score">' + z.bonnes + ' / ' + z.liste.length + '</p>') + '<p>' + mot + '</p>' +
-      '<div class="actions serrees"><button class="moyen plein" data-a="matiere-melange" data-v="' + esc(id) + '">🔁 Encore</button><button class="moyen" data-a="matiere" data-v="' + esc(id) + '">📚 ' + esc((window.MATIERES.trouver(id) || {}).nom || '') + '</button></div></main>');
+      '<div class="actions serrees"><button class="moyen plein" data-a="matiere-melange" data-v="' + esc(id) + TXT('">🔁 Encore</button><button class="moyen" data-a="matiere" data-v="') + esc(id) + '">📚 ' + esc((window.MATIERES.trouver(id) || {}).nom || '') + '</button></div></main>');
   }
   // ── v5.78 : Brevet & bac blancs et annales, construits comme les vrais sujets 2026 (js/epreuves.js) ──
   let blanc = null;
-  const ongletsExamens = actif => '<div class="onglets-matieres" role="tablist">' + [['matieres', '📖 Réviser'], ['examens', '📝 Blancs'], ['annales', '🗂️ Annales'], ['officiel', '🏛️ Officiel']].map(([a, l]) =>
+  const ongletsExamens = actif => '<div class="onglets-matieres" role="tablist">' + [['matieres', TXT('📖 Réviser')], ['examens', TXT('📝 Blancs')], ['annales', TXT('🗂️ Annales')], ['officiel', TXT('🏛️ Officiel')]].map(([a, l]) =>
     '<button class="onglet' + (a === actif ? ' actif' : '') + '" role="tab" aria-selected="' + (a === actif) + '"' + (a === actif ? '' : ' data-a="' + a + '"') + '>' + l + '</button>').join('') + '</div>';
   const virg = n => String(n).replace('.', ',');
-  const mentionDe = m => m >= 16 ? 'Mention très bien 🏆' : m >= 14 ? 'Mention bien 🥈' : m >= 12 ? 'Mention assez bien 🥉' : m >= 10 ? 'Admis ✅' : 'Pas encore… mais tu sais maintenant où ça coince 💪';
-  const verdictAmi = m => m >= 16 ? 'Plumo range ses vannes au placard : il n’en a pas eu besoin. Respect. 🫡' : m >= 12 ? 'Solide ! Plumo a cherché la petite bête… il a trouvé une fourmi, pas plus.' : m >= 8 ? 'Ça se joue à pas grand-chose. Plumo a ri, mais il a aussi pris des notes pour t’aider.' : 'Plumo a vidé son stock de vannes. Bonne nouvelle : il ne reste que des progrès à faire. 💪';
+  const mentionDe = m => m >= 16 ? TXT('Mention très bien 🏆') : m >= 14 ? 'Mention bien 🥈' : m >= 12 ? 'Mention assez bien 🥉' : m >= 10 ? 'Admis ✅' : TXT('Pas encore… mais tu sais maintenant où ça coince 💪');
+  const verdictAmi = m => m >= 16 ? TXT('Plumo range ses vannes au placard : il n’en a pas eu besoin. Respect. 🫡') : m >= 12 ? TXT('Solide ! Plumo a cherché la petite bête… il a trouvé une fourmi, pas plus.') : m >= 8 ? TXT('Ça se joue à pas grand-chose. Plumo a ri, mais il a aussi pris des notes pour t’aider.') : TXT('Plumo a vidé son stock de vannes. Bonne nouvelle : il ne reste que des progrès à faire. 💪');
   function examensAccueil(){
     qz = null; blanc = null; const E = window.EPREUVES, e = etatMatieres(); if(!E) return matieresAccueil();
-    poser(barre('matieres') + '<main class="coin-anglais matieres-ecran"><h2>📝 Brevet & bac blancs</h2><p class="pieges-intro">Construits comme les vrais sujets 2026 : mêmes parties, mêmes types d’exercices, même barème. Une note sur 20 par épreuve, puis la moyenne avec les coefficients officiels. Et Plumo qui vanne chaque erreur. 😏</p>' +
+    poser(barre('matieres') + TXT('<main class="coin-anglais matieres-ecran"><h2>📝 Brevet & bac blancs</h2><p class="pieges-intro">Construits comme les vrais sujets 2026 : mêmes parties, mêmes types d’exercices, même barème. Une note sur 20 par épreuve, puis la moyenne avec les coefficients officiels. Et Plumo qui vanne chaque erreur. 😏</p>') +
       ongletsExamens('examens') + '<div class="cartes-anglais">' + Object.entries(E.BLANCS).filter(([k, x]) => !x.tle && !x.techno && !x.pro && !/^(oral-dnb|oral-eaf|grand-oral)$/.test(k)).map(([k, x]) => '<button class="carte-anglais" data-a="examen-go" data-v="' + k + '"><span class="ic">' + x.ic + '</span><strong>' + esc(x.titre) + '</strong><small>' + esc(x.niveau) + ' · ' +
-        x.epreuves.map(p => esc(E.EPREUVES[p[0]].titre)).join(', ') + (e.notes['blanc-' + k] != null ? ' · dernière note : ' + virg(e.notes['blanc-' + k]) + '/20' : '') + '</small></button>').join('') + '</div>' +
-      (E.SPES ? '<section class="domaine"><h3>🎒 Terminale : spécialités et philosophie</h3><div class="cartes-anglais"><button class="carte-anglais" data-a="bac-tle"><span class="ic">🎓</span><strong>Bac blanc de terminale</strong><small>2 spécialités au choix + philosophie, coefficients officiels' +
-        (e.notes['blanc-bac-tle'] != null ? ' · dernière note : ' + virg(e.notes['blanc-bac-tle']) + '/20' : '') + '</small></button>' +
+        x.epreuves.map(p => esc(E.EPREUVES[p[0]].titre)).join(', ') + (e.notes['blanc-' + k] != null ? TXT(' · dernière note : ') + virg(e.notes['blanc-' + k]) + '/20' : '') + '</small></button>').join('') + '</div>' +
+      (E.SPES ? TXT('<section class="domaine"><h3>🎒 Terminale : spécialités et philosophie</h3><div class="cartes-anglais"><button class="carte-anglais" data-a="bac-tle"><span class="ic">🎓</span><strong>Bac blanc de terminale</strong><small>2 spécialités au choix + philosophie, coefficients officiels') +
+        (e.notes['blanc-bac-tle'] != null ? TXT(' · dernière note : ') + virg(e.notes['blanc-bac-tle']) + '/20' : '') + '</small></button>' +
         Object.entries(E.BLANCS).filter(([, x]) => x.tle).map(([k, x]) => '<button class="carte-anglais" data-a="examen-go" data-v="' + k + '"><span class="ic">' + x.ic + '</span><strong>' + esc(x.titre) + '</strong><small>' + esc(E.EPREUVES[x.epreuves[0][0]].officiel) +
           (e.notes['blanc-' + k] != null ? ' · ' + virg(e.notes['blanc-' + k]) + '/20' : '') + '</small></button>').join('') + '</div></section>' : '') +
       (E.BLANCS['grand-oral'] ? '<section class="domaine"><h3>🎤 Les oraux</h3><div class="cartes-anglais">' + ['oral-dnb', 'oral-eaf', 'grand-oral'].map(k => { const x = E.BLANCS[k], ep = E.EPREUVES[x.epreuves[0][0]];
@@ -3551,23 +3554,23 @@
   function bacTerminale(){
     const E = window.EPREUVES; if(!E || !E.SPES) return examensAccueil();
     const choix = (Array.isArray(base.speChoix) ? base.speChoix : []).filter(x => E.SPES.includes(x)).slice(0, 2);
-    poser(barre('examens') + '<main class="coin-anglais matieres-ecran"><h2>🎓 Bac blanc de terminale</h2><p class="pieges-intro">Choisis tes 2 spécialités (' + choix.length + '/2). La philosophie s’ajoute automatiquement. Coefficients officiels : 16 par spécialité, 8 pour la philo.</p>' +
-      '<div class="cartes-anglais choix-matiere">' + E.SPES.map(id => { const ch = choix.includes(id); return '<button class="carte-anglais' + (ch ? ' choisie' : '') + '" data-a="bac-tle-spe" data-v="' + id + '" aria-pressed="' + ch + '"><span class="ic">' + (ch ? '✅' : '📘') + '</span><strong>' + esc(E.EPREUVES[id].titre.replace('Spécialité ', '')) + '</strong><small>' + esc(E.EPREUVES[id].duree) + '</small></button>'; }).join('') + '</div>' +
-      '<p><button class="gros" data-a="bac-tle-go"' + (choix.length === 2 ? '' : ' disabled') + '>▶ Commencer le bac blanc</button></p></main>');
+    poser(barre('examens') + TXT('<main class="coin-anglais matieres-ecran"><h2>🎓 Bac blanc de terminale</h2><p class="pieges-intro">Choisis tes 2 spécialités (') + choix.length + TXT('/2). La philosophie s’ajoute automatiquement. Coefficients officiels : 16 par spécialité, 8 pour la philo.</p>') +
+      '<div class="cartes-anglais choix-matiere">' + E.SPES.map(id => { const ch = choix.includes(id); return '<button class="carte-anglais' + (ch ? ' choisie' : '') + '" data-a="bac-tle-spe" data-v="' + id + '" aria-pressed="' + ch + '"><span class="ic">' + (ch ? '✅' : '📘') + '</span><strong>' + esc(E.EPREUVES[id].titre.replace(TXT('Spécialité '), '')) + '</strong><small>' + esc(E.EPREUVES[id].duree) + '</small></button>'; }).join('') + '</div>' +
+      '<p><button class="gros" data-a="bac-tle-go"' + (choix.length === 2 ? '' : ' disabled') + TXT('>▶ Commencer le bac blanc</button></p></main>'));
   }
   // v5.83 : espace « Officiel » — liens vers tous les programmes et toutes les annales du ministère.
   function officielAccueil(){
     qz = null; const E = window.EPREUVES; if(!E || !E.OFFICIEL) return matieresAccueil();
     const liste = l => '<div class="cartes-anglais">' + l.map(([t, u, d]) => '<a class="carte-anglais lien-carte" href="' + esc(u) + '" target="_blank" rel="noopener"><span class="ic">🔗</span><strong>' + esc(t) + '</strong><small>' + esc(d) + '</small></a>').join('') + '</div>';
-    poser(barre('matieres') + '<main class="coin-anglais matieres-ecran"><h2>🏛️ Programmes et annales officiels</h2><p class="pieges-intro">Les textes officiels et tous les vrais sujets, directement sur les sites du ministère (éduscol et education.gouv.fr). Les sujets jumeaux de Plumo sont dans les onglets Blancs et Annales.</p>' +
-      ongletsExamens('officiel') + '<section class="domaine"><h3>📚 Programmes scolaires</h3>' + liste(E.OFFICIEL.programmes) + '</section><section class="domaine"><h3>🗂️ Toutes les annales officielles</h3>' + liste(E.OFFICIEL.annales) + '</section></main>');
+    poser(barre('matieres') + TXT('<main class="coin-anglais matieres-ecran"><h2>🏛️ Programmes et annales officiels</h2><p class="pieges-intro">Les textes officiels et tous les vrais sujets, directement sur les sites du ministère (éduscol et education.gouv.fr). Les sujets jumeaux de Plumo sont dans les onglets Blancs et Annales.</p>') +
+      ongletsExamens('officiel') + '<section class="domaine"><h3>📚 Programmes scolaires</h3>' + liste(E.OFFICIEL.programmes) + TXT('</section><section class="domaine"><h3>🗂️ Toutes les annales officielles</h3>') + liste(E.OFFICIEL.annales) + '</section></main>');
   }
   function annalesAccueil(){
     qz = null; blanc = null; const E = window.EPREUVES, e = etatMatieres(); if(!E) return matieresAccueil();
-    const groupe = (t, l) => '<section class="domaine"><h3>' + t + '</h3><div class="cartes-anglais">' + l.map(a => '<div class="carte-annale"><button class="carte-anglais" data-a="annale-go" data-v="' + a.id + '"><span class="ic">🗂️</span><strong>' + esc(a.titre) + '</strong><small>Jumeau du sujet ' + esc(a.ref) +
-      (e.notes['annale-' + a.id] != null ? ' · ta note : ' + virg(e.notes['annale-' + a.id]) + '/20' : '') + '</small></button><a class="lien-officiel" href="' + esc(a.url) + '" target="_blank" rel="noopener">📄 Sujet officiel (PDF)</a></div>').join('') + '</div></section>';
-    poser(barre('matieres') + '<main class="coin-anglais matieres-ecran"><h2>🗂️ Annales 2026</h2><p class="pieges-intro">Pour chaque vrai sujet 2026 : un sujet jumeau construit pareil, avec d’autres nombres et d’autres textes. Le vrai sujet officiel est à côté, sur le site du ministère.</p>' +
-      ongletsExamens('annales') + '<div class="domaines">' + groupe('🎓 Brevet 2026', E.ANNALES.filter(a => /^dnb/.test(a.id))) + groupe('🎒 Bac 2026 · épreuves anticipées de 1re', E.ANNALES.filter(a => !/^dnb/.test(a.id) && !a.tle)) + groupe('🎓 Bac 2026 · terminale : spécialités et philo', E.ANNALES.filter(a => a.tle)) + '</div></main>');
+    const groupe = (t, l) => '<section class="domaine"><h3>' + t + '</h3><div class="cartes-anglais">' + l.map(a => '<div class="carte-annale"><button class="carte-anglais" data-a="annale-go" data-v="' + a.id + '"><span class="ic">🗂️</span><strong>' + esc(a.titre) + TXT('</strong><small>Jumeau du sujet ') + esc(a.ref) +
+      (e.notes['annale-' + a.id] != null ? TXT(' · ta note : ') + virg(e.notes['annale-' + a.id]) + '/20' : '') + '</small></button><a class="lien-officiel" href="' + esc(a.url) + '" target="_blank" rel="noopener">📄 Sujet officiel (PDF)</a></div>').join('') + '</div></section>';
+    poser(barre('matieres') + TXT('<main class="coin-anglais matieres-ecran"><h2>🗂️ Annales 2026</h2><p class="pieges-intro">Pour chaque vrai sujet 2026 : un sujet jumeau construit pareil, avec d’autres nombres et d’autres textes. Le vrai sujet officiel est à côté, sur le site du ministère.</p>') +
+      ongletsExamens('annales') + '<div class="domaines">' + groupe('🎓 Brevet 2026', E.ANNALES.filter(a => /^dnb/.test(a.id))) + groupe(TXT('🎒 Bac 2026 · épreuves anticipées de 1re'), E.ANNALES.filter(a => !/^dnb/.test(a.id) && !a.tle)) + groupe(TXT('🎓 Bac 2026 · terminale : spécialités et philo'), E.ANNALES.filter(a => a.tle)) + '</div></main>');
   }
   // Une épreuve (ou une annale) se joue avec le moteur de questions ; chaque question rapporte ses points.
   function jouerEpreuve(ep, retour, fin){
@@ -3592,9 +3595,9 @@
         '<div class="actions serrees"><button class="moyen plein" data-a="examen-go" data-v="' + ex.k + '">🔁 Un autre sujet</button><button class="moyen" data-a="annales">🗂️ Les annales</button></div></main>');
     }
     const [id] = ex.x.epreuves[ex.i], ep = E.construire(id, ex.graine + ex.i * 7919); ex.ep = ep;
-    poser(barre('examens') + '<main class="centre"><div class="ami-moyen">' + ami('malin') + '</div><p class="piege-cat">' + esc(ex.x.titre) + ' · épreuve ' + (ex.i + 1) + '/' + ex.x.epreuves.length + '</p><h2>' + esc(ep.titre) + '</h2>' +
-      '<p>⏱️ Au vrai examen : ' + esc(ep.duree) + '<br>📋 Barème officiel : ' + esc(ep.officiel) + '</p><p>' + ep.liste.length + ' questions dans l’appli. Prends ton temps : c’est le jour J pour de faux. 📝</p>' +
-      (ep.nonNote ? '<p class="petit">✍️ ' + esc(ep.nonNote).replace(/\n/g, '<br>') + '</p>' : '') + '<button class="gros" data-a="examen-suite">C’est parti ▶</button></main>');
+    poser(barre('examens') + '<main class="centre"><div class="ami-moyen">' + ami('malin') + '</div><p class="piege-cat">' + esc(ex.x.titre) + TXT(' · épreuve ') + (ex.i + 1) + '/' + ex.x.epreuves.length + '</p><h2>' + esc(ep.titre) + '</h2>' +
+      '<p>⏱️ Au vrai examen : ' + esc(ep.duree) + TXT('<br>📋 Barème officiel : ') + esc(ep.officiel) + '</p><p>' + ep.liste.length + TXT(' questions dans l’appli. Prends ton temps : c’est le jour J pour de faux. 📝</p>') +
+      (ep.nonNote ? '<p class="petit">✍️ ' + esc(ep.nonNote).replace(/\n/g, '<br>') + '</p>' : '') + TXT('<button class="gros" data-a="examen-suite">C’est parti ▶</button></main>'));
   }
   function blancSuite(){
     const ex = blanc; if(!ex || !ex.ep) return examensAccueil();
@@ -3604,31 +3607,31 @@
   function annaleGo(id){
     const E = window.EPREUVES, a = E && E.annale(id, Math.floor(Math.random() * 1e9)); if(!a) return annalesAccueil();
     annaleEnCours = a;
-    poser(barre('annales') + '<main class="centre"><div class="ami-moyen">' + ami('malin') + '</div><p class="piege-cat">🗂️ Annales · jumeau du sujet ' + esc(a.ref) + '</p><h2>' + esc(a.titre) + '</h2>' +
-      '<p>Même construction que le vrai sujet, avec d’autres nombres et d’autres textes. ' + a.liste.length + ' questions, notées sur 20.</p><p><a class="lien-officiel" href="' + esc(a.url) + '" target="_blank" rel="noopener">📄 Voir le sujet officiel (PDF)</a></p>' +
-      '<button class="gros" data-a="annale-suite">C’est parti ▶</button></main>');
+    poser(barre('annales') + '<main class="centre"><div class="ami-moyen">' + ami('malin') + TXT('</div><p class="piege-cat">🗂️ Annales · jumeau du sujet ') + esc(a.ref) + '</p><h2>' + esc(a.titre) + '</h2>' +
+      TXT('<p>Même construction que le vrai sujet, avec d’autres nombres et d’autres textes. ') + a.liste.length + TXT(' questions, notées sur 20.</p><p><a class="lien-officiel" href="') + esc(a.url) + TXT('" target="_blank" rel="noopener">📄 Voir le sujet officiel (PDF)</a></p>') +
+      TXT('<button class="gros" data-a="annale-suite">C’est parti ▶</button></main>'));
   }
   function annaleSuite(){
     const a = annaleEnCours; if(!a) return annalesAccueil();
     jouerEpreuve(a, 'annales', note => { etatMatieres().notes['annale-' + a.id] = note; J().plumes += Math.round(note); garder(); bruit('fin');
       poser(barre('annales') + '<main class="centre examen-fin"><div class="ami-moyen">' + ami(note >= 10 ? 'fete' : 'malin') + '</div><h2>🗂️ ' + esc(a.titre) + '</h2><p class="note-examen">' + virg(note) + ' / 20</p><p><strong>' + mentionDe(note) + '</strong></p><p>🦉 ' + verdictAmi(note) + '</p>' +
-        '<p><a class="lien-officiel" href="' + esc(a.url) + '" target="_blank" rel="noopener">📄 Maintenant, attaque le vrai sujet officiel (PDF)</a></p>' +
+        '<p><a class="lien-officiel" href="' + esc(a.url) + TXT('" target="_blank" rel="noopener">📄 Maintenant, attaque le vrai sujet officiel (PDF)</a></p>') +
         '<div class="actions serrees"><button class="moyen plein" data-a="annale-go" data-v="' + esc(a.id) + '">🔁 Un autre jumeau</button><button class="moyen" data-a="annales">🗂️ Les annales</button></div></main>'); });
   }
 
   // ── Coin sciences : espace, fusées, corps humain et médecine — avec des clashs quand on se trompe ──
   function sciencesAccueil(){
     qz = null; const SC = window.SCIENCES; if(!SC) return accueil();
-    poser(barre('accueil') + '<main class="coin-anglais coin-sciences"><h2>🚀 Le labo des sciences</h2><p class="pieges-intro">Planètes, fusées, corps humain, médecine. Ici, les mauvaises réponses se font démonter… mais les explications restent sérieuses.</p>' +
+    poser(barre('accueil') + TXT('<main class="coin-anglais coin-sciences"><h2>🚀 Le labo des sciences</h2><p class="pieges-intro">Planètes, fusées, corps humain, médecine. Ici, les mauvaises réponses se font démonter… mais les explications restent sérieuses.</p>') +
       '<div class="cartes-anglais">' + SC.THEMES.map(t => '<button class="carte-anglais" data-a="sciences-theme" data-v="' + t.id + '"><strong>' + t.e + ' ' + esc(t.titre) + '</strong><span>' + esc(t.sous) + '</span></button>').join('') +
-      '<button class="carte-anglais" data-a="sciences-theme" data-v="tout"><strong>🎲 Tout mélangé</strong><span>10 questions</span></button></div></main>', 'sciences');
+      TXT('<button class="carte-anglais" data-a="sciences-theme" data-v="tout"><strong>🎲 Tout mélangé</strong><span>10 questions</span></button></div></main>'), 'sciences');
   }
   function sciencesGo(theme){
     const SC = window.SCIENCES; if(!SC) return accueil();
     const ton = etatMaths().ton, liste = SC.serie(theme, 10, Math.floor(Math.random() * 1e9), ton), t = SC.THEMES.find(x => x.id === theme);
-    questionsGo(liste, { titre:(t ? t.e + ' ' + t.titre : '🎲 Sciences'), retour:'sciences', lang:'fr', humeurFaux:'mdr',
+    questionsGo(liste, { titre:(t ? t.e + ' ' + t.titre : TXT('🎲 Sciences')), retour:'sciences', lang:'fr', humeurFaux:'mdr',
       onReponse:(juste, q) => { if(!juste) noterErreur('sciences:' + q.id); },
-      fin:z => { J().plumes += z.bonnes; garder(); bruit('fin'); poser(barre('sciences') + '<main class="centre"><div class="ami-moyen">' + ami(z.bonnes >= 8 ? 'fete' : 'mdr') + '</div><h2>🔬 Résultat du labo</h2><p class="gros-score">' + z.bonnes + '/' + z.liste.length + '</p><p>' + (z.bonnes >= 8 ? 'Le labo s’incline : prix Nobel de la récré ! 🏅' : 'Le labo a bien rigolé. Revanche ?') + '</p><p>🪶 +' + z.bonnes + ' plumes</p><div class="actions serrees"><button class="moyen plein" data-a="sciences-theme" data-v="' + esc(theme) + '">🔁 Encore</button><button class="moyen" data-a="sciences">🚀 Labo</button></div></main>'); } });
+      fin:z => { J().plumes += z.bonnes; garder(); bruit('fin'); poser(barre('sciences') + '<main class="centre"><div class="ami-moyen">' + ami(z.bonnes >= 8 ? 'fete' : 'mdr') + TXT('</div><h2>🔬 Résultat du labo</h2><p class="gros-score">') + z.bonnes + '/' + z.liste.length + '</p><p>' + (z.bonnes >= 8 ? TXT('Le labo s’incline : prix Nobel de la récré ! 🏅') : TXT('Le labo a bien rigolé. Revanche ?')) + '</p><p>🪶 +' + z.bonnes + ' plumes</p><div class="actions serrees"><button class="moyen plein" data-a="sciences-theme" data-v="' + esc(theme) + TXT('">🔁 Encore</button><button class="moyen" data-a="sciences">🚀 Labo</button></div></main>')); } });
   }
 
   // ── Ami des mots Plus ─────────────────────────────────────────────
@@ -3806,7 +3809,7 @@
       case 'clash-libre-envoyer': {
         if(!clashL) return clashLibre();
         const x = $('#cl-texte'), t = x ? String(x.value).trim() : '', jg = window.VANNES_LIBRES.juger(t);
-        if(!jg.ok){ const m = $('#cl-msg'); if(m) m.textContent = '🛑 Le juge de Plumo refuse : ' + jg.raisons.join(', ') + '.'; return; }
+        if(!jg.ok){ const m = $('#cl-msg'); if(m) m.textContent = TXT('🛑 Le juge de Plumo refuse : ') + jg.raisons.join(', ') + '.'; return; }
         return clashLibreEnvoyer({ fr:t });
       }
       case 'clash-libre-reaction': return clashLibreReaction(v);
@@ -3814,10 +3817,10 @@
       case 'clash-libre-paquet': return clashPaquet();
       case 'clash-libre-ajouter': {
         const fr = $('#cl-fr') ? $('#cl-fr').value : '', en = $('#cl-en') ? $('#cl-en').value : '', m = $('#cl-paquet-msg');
-        if(m) m.textContent = CONFIG.API_VANNE_JUGE ? '🤖 L’IA réfléchit…' : '';
+        if(m) m.textContent = CONFIG.API_VANNE_JUGE ? TXT('🤖 L’IA réfléchit…') : '';
         return ajouterAuPaquet(fr, en).then(r => { paquetMsg = r.msg; if(r.ok) return clashPaquet(); const z = $('#cl-paquet-msg'); if(z) z.textContent = r.msg; });
       }
-      case 'clash-libre-retirer': { const p = paquet(); if(p[+v]){ p.splice(+v, 1); base.clashPerso = p; garder(); paquetMsg = '🗑️ Retirée du paquet.'; } return clashPaquet(); }
+      case 'clash-libre-retirer': { const p = paquet(); if(p[+v]){ p.splice(+v, 1); base.clashPerso = p; garder(); paquetMsg = TXT('🗑️ Retirée du paquet.'); } return clashPaquet(); }
       case 'clash-libre-garder': {
         if(!clashL || !clashL.vanne) return; const b = document.querySelector('[data-a="clash-libre-garder"]'); if(b) b.disabled = true;
         return ajouterAuPaquet(clashL.vanne.fr, '').then(r => { const z = $('#cl-garde'); if(z) z.textContent = r.msg; });
@@ -3827,7 +3830,7 @@
       case 'maths-niveau': if(window.MATHS && MATHS.NIVEAUX.includes(v)){ etatMaths().niveau = v; garder(); } return mathsAccueil();
       case 'maths-ton': if(TONS_PROF.some(x => x[0] === v)){ etatMaths().ton = v; garder(); } return mathsAccueil();
       case 'maths-chap': { const c = window.MATHS && MATHS.disponible(v) && MATHS.carte.niveaux[etatMaths().niveau].chapitres.find(x => x[0] === v); return c ? mathsSerie(v, 10, '🔢 ' + c[2]) : mathsAccueil(); }
-      case 'maths-melange': return mathsSerie(etatMaths().niveau, 10, '🔁 Maths ' + etatMaths().niveau);
+      case 'maths-melange': return mathsSerie(etatMaths().niveau, 10, TXT('🔁 Maths ') + etatMaths().niveau);
       case 'maths-examen': return mathsExamen();
       case 'maths-defi': return defiPoteGo(null, etatMaths().niveau);
       case 'sciences': return sciencesAccueil();
@@ -3836,7 +3839,7 @@
       case 'invente': return inventeGo();
       case 'invente-choix': { const [c, k] = String(v).split(':'); if(invente && ['v', 'a', 'l'].includes(c)) invente[c] = Number(k) || 0; return inventeGo(); }
       case 'invente-dire': { const ph = invente && PARCOURS.inventer(invente.v, invente.a, invente.l); if(ph){ direEcoute(ph.en, 'en'); const aie = A_EN().AIE[Math.floor(Math.random() * A_EN().AIE.length)]; const r = $('#invente-retour'); if(r) r.textContent = '🦉 « ' + aie.en + ' » (' + aie.fr + ')'; bruit('juste'); } return; }
-      case 'invente-garder': { const ph = invente && PARCOURS.inventer(invente.v, invente.a, invente.l); if(ph){ const j = J(); j.fousRires = Array.isArray(j.fousRires) ? j.fousRires : []; const vv = ph.en + ' (' + ph.fr + ')'; if(!j.fousRires.some(x => x.v === vv)) j.fousRires = [{ v:vv, e:'🦉' }].concat(j.fousRires).slice(0, 60); garder(); const r = $('#invente-retour'); if(r) r.textContent = '✓ Rangée dans tes fous rires !'; } return; }
+      case 'invente-garder': { const ph = invente && PARCOURS.inventer(invente.v, invente.a, invente.l); if(ph){ const j = J(); j.fousRires = Array.isArray(j.fousRires) ? j.fousRires : []; const vv = ph.en + ' (' + ph.fr + ')'; if(!j.fousRires.some(x => x.v === vv)) j.fousRires = [{ v:vv, e:'🦉' }].concat(j.fousRires).slice(0, 60); garder(); const r = $('#invente-retour'); if(r) r.textContent = TXT('✓ Rangée dans tes fous rires !'); } return; }
       case 'parcours': return parcours();
       case 'trompe': return amiTrompe();
       case 'trompe-juge': return jugerTrompe(v);
@@ -3853,7 +3856,7 @@
       case 'maison': return maison();
       case 'maison-acheter': return maisonAcheter(v);
       case 'maison-fente': return maisonFente(v);
-      case 'maison-ranger': { const m = etatMaison(); delete m.places[v]; garder(); maisonMsg = '📦 Rangé dans le carton.'; return maison(); }
+      case 'maison-ranger': { const m = etatMaison(); delete m.places[v]; garder(); maisonMsg = TXT('📦 Rangé dans le carton.'); return maison(); }
       case 'betisier': return betisier();
       case 'best-suivant': if(best){ best.i++; } return afficherBest();
       case 'matieres': return matieresAccueil();
@@ -3889,8 +3892,8 @@
       case 'defi-pote': return defiPote();
       case 'defi-pote-go': return defiPoteGo(null);
       case 'defi-relever': return defiPoteGo(defiRecu);
-      case 'defi-partager': { if(!defiCree) return; if(navigator.share) navigator.share({ title:'Ami des mots', text:defiCree.texte, url:defiCree.lien }).catch(() => {}); else { const m = $('#defi-msg'); if(m) m.textContent = 'Copie le lien et envoie-le à ton pote. 📋'; } return; }
-      case 'defi-copier': { if(!defiCree) return; const m = $('#defi-msg'); try{ navigator.clipboard.writeText(defiCree.lien).then(() => { if(m) m.textContent = '📋 Lien copié !'; }, () => { if(m) m.textContent = 'Sélectionne le lien et copie-le.'; }); }catch(e){ if(m) m.textContent = 'Sélectionne le lien et copie-le.'; } const i = $('#lien-defi'); if(i) i.select(); return; }
+      case 'defi-partager': { if(!defiCree) return; if(navigator.share) navigator.share({ title:'Ami des mots', text:defiCree.texte, url:defiCree.lien }).catch(() => {}); else { const m = $('#defi-msg'); if(m) m.textContent = TXT('Copie le lien et envoie-le à ton pote. 📋'); } return; }
+      case 'defi-copier': { if(!defiCree) return; const m = $('#defi-msg'); try{ navigator.clipboard.writeText(defiCree.lien).then(() => { if(m) m.textContent = TXT('📋 Lien copié !'); }, () => { if(m) m.textContent = TXT('Sélectionne le lien et copie-le.'); }); }catch(e){ if(m) m.textContent = TXT('Sélectionne le lien et copie-le.'); } const i = $('#lien-defi'); if(i) i.select(); return; }
       case 'rap': return rapGo();
       case 'rap-suivant': if(rap){ rap.ligne++; rap.fini = false; } return afficherRap();
       case 'rap-rime': return rimeRap(Number(v));
@@ -3908,17 +3911,17 @@
       case 'salon-reaction': if(salon && salon.canal) salon.canal.envoyer('reaction', { id:salon.id, r:String(v) }); return;
       case 'salon-chat': { if(!salon || salon.public || !base.salonChat) return; const z = $('#chat-texte'), f = window.SALON.filtrer(z && z.value); if(f.texte){ salon.canal.envoyer('chat', { id:salon.id, t:f.texte }); z.value = ''; } return; }
       case 'salon-muet': if(salon && v && v !== salon.id){ if(salon.muets.has(v)) salon.muets.delete(v); else salon.muets.add(v); afficherSalle(); } return;
-      case 'salon-inviter': { if(!salon) return; const lien = location.origin + location.pathname + '?salon=' + salon.code; if(navigator.share) navigator.share({ title:'Ami des mots', text:'Rejoins mon salon de battle ! Code : ' + salon.code, url:lien }).catch(() => {}); else toastSalon('Code : ' + salon.code + ' — lien : ' + lien); return; }
+      case 'salon-inviter': { if(!salon) return; const lien = location.origin + location.pathname + '?salon=' + salon.code; if(navigator.share) navigator.share({ title:'Ami des mots', text:TXT('Rejoins mon salon de battle ! Code : ') + salon.code, url:lien }).catch(() => {}); else toastSalon('Code : ' + salon.code + ' — lien : ' + lien); return; }
       case 'salon-chat-reglage': base.salonChat = !!($('#salon-chat') || {}).checked; garder(); return;
       case 'vanne-famille-ajout': { const z = $('#vanne-famille'), t = String(z && z.value || '').replace(/[<>]/g, '').trim().slice(0, 140); if(!t) return;
         const avis = window.JUGE ? JUGE.juger(t) : { ok:true, raisons:[] };
-        if(!avis.ok){ jugeMsg = '🤖 Plumo refuse cette vanne (' + avis.raisons.join(', ') + ') : on taquine la confusion, jamais la personne. 🙂'; return tableauParents(); }
-        const j = J(); j.vannesFamille = (Array.isArray(j.vannesFamille) ? j.vannesFamille : []).concat(t).slice(0, 30); garder(); jugeMsg = '✅ Vanne acceptée par le juge de Plumo !'; return tableauParents(); }
+        if(!avis.ok){ jugeMsg = '🤖 Plumo refuse cette vanne (' + avis.raisons.join(', ') + TXT(') : on taquine la confusion, jamais la personne. 🙂'); return tableauParents(); }
+        const j = J(); j.vannesFamille = (Array.isArray(j.vannesFamille) ? j.vannesFamille : []).concat(t).slice(0, 30); garder(); jugeMsg = TXT('✅ Vanne acceptée par le juge de Plumo !'); return tableauParents(); }
       case 'vannes-ia': { const th = $('#vannes-ia-theme'), to = $('#vannes-ia-ton'); demanderVannesIA(th ? th.value : 'animaux', to ? to.value : 'normal'); return; }
       case 'vanne-ia-garder': case 'vanne-ia-non': { const k = Number(v), x = vannesIA && vannesIA[k]; if(!x) return;
         vannesIA.splice(k, 1);
-        if(b.dataset.a === 'vanne-ia-garder' && (!window.JUGE || JUGE.juger(x).ok)){ const j = J(); j.vannesFamille = (Array.isArray(j.vannesFamille) ? j.vannesFamille : []).concat(x).slice(0, 30); garder(); vannesIAMsg = '✅ Gardée ! Plumo la ressortira de temps en temps.'; }
-        else vannesIAMsg = '🗑️ Jetée.';
+        if(b.dataset.a === 'vanne-ia-garder' && (!window.JUGE || JUGE.juger(x).ok)){ const j = J(); j.vannesFamille = (Array.isArray(j.vannesFamille) ? j.vannesFamille : []).concat(x).slice(0, 30); garder(); vannesIAMsg = TXT('✅ Gardée ! Plumo la ressortira de temps en temps.'); }
+        else vannesIAMsg = TXT('🗑️ Jetée.');
         return revoirVannesIA(); }
       case 'vanne-famille-suppr': { const j = J(); if(Array.isArray(j.vannesFamille)) j.vannesFamille.splice(Number(v), 1); garder(); return tableauParents(); }
       case 'examen': return examenGo(Number(v));
@@ -3936,16 +3939,16 @@
       case 'repeter-ecouter': if(rep1) direEcoute(PARCOURS.REPETER[rep1.i].en, 'en'); return;
       case 'repeter-lent': if(rep1) direEcoute(PARCOURS.REPETER[rep1.i].en, 'en', .6); return;
       case 'repeter-micro': return enregistrerPhrase();
-      case 'repeter-bien': { if(rep1){ const e = etatAnglais(); if(!e.repete.includes(rep1.i)){ e.repete.push(rep1.i); J().plumes += 1; garder(); } const s2 = $('#rep-etat'); if(s2) s2.textContent = '✅ Bravo ! Phrase suivante ?'; bruit('juste'); } return; }
+      case 'repeter-bien': { if(rep1){ const e = etatAnglais(); if(!e.repete.includes(rep1.i)){ e.repete.push(rep1.i); J().plumes += 1; garder(); } const s2 = $('#rep-etat'); if(s2) s2.textContent = TXT('✅ Bravo ! Phrase suivante ?'); bruit('juste'); } return; }
       case 'repeter-suivant': { const l = PARCOURS.REPETER, e = etatAnglais(); let i = l.findIndex((x, k) => !e.repete.includes(k) && (!rep1 || k !== rep1.i)); if(i < 0) i = rep1 ? (rep1.i + 1) % l.length : 0; return afficherRepeter(i); }
       case 'parents': return parents();
       case 'bilan-partager': {
-        const m = $('#bilan-msg'), txt = bilanTexte || 'Bilan Ami des mots';
-        if(navigator.share) return navigator.share({ title:'Bilan Ami des mots', text:txt }).catch(() => {});
+        const m = $('#bilan-msg'), txt = bilanTexte || TXT('Bilan Ami des mots');
+        if(navigator.share) return navigator.share({ title:TXT('Bilan Ami des mots'), text:txt }).catch(() => {});
         if(navigator.clipboard) return navigator.clipboard.writeText(txt).then(() => { if(m) m.textContent = tt('bilan_copie'); }, () => { if(m) m.textContent = txt; });
         if(m) m.textContent = txt; return;
       }
-      case 'parents-ouvrir': { const z = $('#porte-parents'); if(porteParents && z && Number(z.value) === porteParents.a * porteParents.b) return tableauParents(); const m = $('#porte-msg'); if(m) m.textContent = 'Ce n’est pas ça. Demande à un adulte ! 😉'; return; }
+      case 'parents-ouvrir': { const z = $('#porte-parents'); if(porteParents && z && Number(z.value) === porteParents.a * porteParents.b) return tableauParents(); const m = $('#porte-msg'); if(m) m.textContent = TXT('Ce n’est pas ça. Demande à un adulte ! 😉'); return; }
       case 'battle-rep': return repondreBattle(Number(v));
       case 'battle-suivant': if(battle){ battle.i++; } return afficherBattle();
       case 'battle-ecouter': if(battle && battle.manches[battle.i]) direEcoute(battle.manches[battle.i].ami, 'en'); return;
@@ -3996,7 +3999,7 @@
       case 'qz-avis': { const t = qz && qz.derniereVanne; if(t){ const j = J(); j.avisVannes = (Array.isArray(j.avisVannes) ? j.avisVannes : []).filter(x => x.t !== t).concat({ t, v:v === '1' ? 1 : -1, d:jour() }).slice(-150); garder();
           document.querySelectorAll('[data-a="qz-avis"]').forEach(x => { x.disabled = true; if(x.dataset.v === v) x.classList.add('plein'); }); } return; }
       case 'garder-vanne': { const m = partie && partie.dernierModele; if(m){ const j = J(); j.vannesAimees = (Array.isArray(j.vannesAimees) ? j.vannesAimees : []).filter(x => x !== m).concat(m).slice(-100); if(window.JUGE) j.notesVannes = JUGE.noter(j.notesVannes, m, 2); } return garderVanne(); }
-      case 'pas-drole': { const m = partie && partie.dernierModele; if(m){ const j = J(); j.pasDrole = (Array.isArray(j.pasDrole) ? j.pasDrole : []).filter(x => x !== m).concat(m).slice(-200); if(window.JUGE) j.notesVannes = JUGE.noter(j.notesVannes, m, -3); garder(); } const pd = $('#pas-drole'); if(pd){ pd.textContent = '✓ ' + (base.ui === 'en' ? 'Noted' : 'Noté, Plumo la range au placard'); pd.disabled = true; } return; }
+      case 'pas-drole': { const m = partie && partie.dernierModele; if(m){ const j = J(); j.pasDrole = (Array.isArray(j.pasDrole) ? j.pasDrole : []).filter(x => x !== m).concat(m).slice(-200); if(window.JUGE) j.notesVannes = JUGE.noter(j.notesVannes, m, -3); garder(); } const pd = $('#pas-drole'); if(pd){ pd.textContent = '✓ ' + (base.ui === 'en' ? 'Noted' : TXT('Noté, Plumo la range au placard')); pd.disabled = true; } return; }
       case 'oublier-vanne': { const j = J(), i = Number(v); if(Array.isArray(j.fousRires) && Number.isInteger(i)){ j.fousRires.splice(i, 1); garder(); } return fousRires(); }
       case 'trophees': return ecranTrophees();
       case 'vestiaire': return vestiaire();
@@ -4033,7 +4036,7 @@
       case 'essai-voix': {
         const sel = document.querySelector('select[data-voix="' + v + '"]');
         if(sel){ const p = voixPreferees(); if(sel.value) p[v] = sel.value; else delete p[v]; try{ localStorage.setItem('ami-voix', JSON.stringify(p)); }catch(e){} }
-        return direPhrase(v === 'fr' ? 'Salut ! Moi, c’est Plumo. Tu m’entends bien ?' : v === 'en' ? 'Hi! I am Plumo. Can you hear me?' : (t('a_ombre') || 'Plumo'), v, 1);
+        return direPhrase(v === 'fr' ? TXT('Salut ! Moi, c’est Plumo. Tu m’entends bien ?') : v === 'en' ? 'Hi! I am Plumo. Can you hear me?' : (t('a_ombre') || 'Plumo'), v, 1);
       }
       case 'vannes-ia-direct': J().vannesIA = J().vannesIA === false; garder(); return reglages();
       case 'graphismes': if(window.GRAPHISMES) GRAPHISMES.definir(v); return reglages();

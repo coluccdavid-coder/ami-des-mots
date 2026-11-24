@@ -21,7 +21,7 @@ function page(langue, config, avant){
   w.TextEncoder = TextEncoder; w.TextDecoder = TextDecoder;
   w.__fetch = []; w.fetch = async (u) => { w.__fetch.push(String(u)); return { ok:true, json:async () => (w.__reponse || { actif:false }) }; };
   if(avant) avant(w);
-  for(const f of ['js/donnees.js', 'js/voix.js', 'js/phrases-enregistrees.js', 'js/textes.js', 'js/textes-plus.js', 'js/articulation.js', 'js/genres.js', 'js/confusions.js', 'js/vannes.js', 'js/pieges.js', 'js/anglais.js', 'js/clash.js', 'js/histoires.js', 'js/blagues-en.js', 'js/parcours.js', 'js/rigolade.js', 'js/clash-plus.js', 'js/salon.js', 'js/juge.js', 'js/vannes-libres.js', 'js/maths.js', 'js/sciences.js', 'js/trash-talk.js', 'js/bande-images.js', 'js/bande-plumo.js', 'js/achats.js', 'js/rappels.js', 'js/epreuves.js', 'js/epreuves-spe.js', 'js/epreuves-plus.js', 'js/epreuves-oraux.js', 'js/epreuves-pro.js', 'js/matieres.js', 'js/mat-francais.js', 'js/mat-histoire.js', 'js/mat-svt-pc.js', 'js/mat-sup.js', 'js/mat-anglais.js', 'js/mat-renfort.js', 'js/mat-langues.js', 'js/mat-specialites.js', 'js/vannes-cash.js', 'js/vannes-ironie.js', 'js/vannes-mots.js', 'js/offre.js', 'js/jeu.js']) w.eval(lire(f));
+  for(const f of ['js/donnees.js', 'js/voix.js', 'js/phrases-enregistrees.js', 'js/textes.js', 'js/textes-plus.js', 'js/textes-ecrans.js', 'js/articulation.js', 'js/genres.js', 'js/confusions.js', 'js/vannes.js', 'js/pieges.js', 'js/anglais.js', 'js/clash.js', 'js/histoires.js', 'js/blagues-en.js', 'js/parcours.js', 'js/rigolade.js', 'js/clash-plus.js', 'js/salon.js', 'js/juge.js', 'js/vannes-libres.js', 'js/maths.js', 'js/sciences.js', 'js/trash-talk.js', 'js/bande-images.js', 'js/bande-plumo.js', 'js/achats.js', 'js/rappels.js', 'js/epreuves.js', 'js/epreuves-spe.js', 'js/epreuves-plus.js', 'js/epreuves-oraux.js', 'js/epreuves-pro.js', 'js/matieres.js', 'js/mat-francais.js', 'js/mat-histoire.js', 'js/mat-svt-pc.js', 'js/mat-sup.js', 'js/mat-anglais.js', 'js/mat-renfort.js', 'js/mat-langues.js', 'js/mat-specialites.js', 'js/vannes-cash.js', 'js/vannes-ironie.js', 'js/vannes-mots.js', 'js/offre.js', 'js/jeu.js']) w.eval(lire(f));
   return w;
 }
 // Certificats d'abonnement comme les signe le serveur (même format que serveur/functions/ami-abonnement).
@@ -1138,8 +1138,9 @@ await test('langues : seules les langues activées sont visibles, les autres res
   const choix = d.querySelector('#cible');
   assert.ok(choix, 'le sélecteur de langue doit être présent');
   // v5.99.2 : « J'apprends » = langues enseignées à l'école (sauf celle qu'on parle) ; « Je parle » = français + ces langues.
-  assert.deepStrictEqual(Array.from(choix.options).map(o => o.value), ['en', 'es', 'de', 'it', 'pt', 'ar']);
-  assert.deepStrictEqual(Array.from(d.querySelector('#ui').options).map(o => o.value), ['fr', 'en', 'es', 'de', 'it', 'pt', 'ar']);
+  assert.deepStrictEqual(Array.from(choix.options).map(o => o.value), ['en', 'es', 'de', 'it', 'pt']);
+  assert.deepStrictEqual(Array.from(d.querySelector('#ui').options).map(o => o.value), ['fr', 'en', 'es', 'de', 'it', 'pt'], 'v5.99.3 : arabe retiré des listes pour l’instant');
+  assert.ok(w.TEXTES.ar && w.MOTS['🐱'].ar, 'l’arabe reste dans les données');
   assert.ok(w.TEXTES.uk && w.TEXTES.ja && w.TEXTES.tr && w.TEXTES.pl, 'les langues retirées des listes restent dans les données');
   assert.strictEqual(w.MOTS['🐱'].ko, '고양이', 'le coréen reste conservé dans les données');
   assert.strictEqual(w.MOTS['🐱'].ar, 'قطة', 'larabe reste conservé dans les données');
@@ -2304,6 +2305,29 @@ await test('v5.99.2 : une langue d’interface retirée de la liste reste choisi
   const w2 = page('en'); assert.ok(!Array.from(w2.document.querySelector('#cible').options).some(o => o.value === 'en'));
   assert.ok(Array.from(w2.document.querySelector('#cible').options).some(o => o.value === 'fr'));
   assert.notStrictEqual(w2.AmiDesMots.base.cible, 'en');
+});
+
+await test('v5.99.3 : écrans traduits — en espagnol et en allemand, les écrans principaux n’affichent plus de phrases françaises', () => {
+  const ecrans = ['porte-mots', 'anglais', 'pieges', 'situations', 'battle', 'potes', 'clash-libre', 'matieres', 'maths', 'sciences', 'defi-pote', 'salon', 'parcours', 'histoires'];
+  const FR = /\b(?:tu|ton|tes|les|des|une|avec|pour|dans|réponse|joueurs?|vannes?|pièges?|matières?)\b/i;
+  for(const lang of ['es', 'de']){
+    const w = page(lang), d = w.document, trouves = [];
+    for(const a of ecrans){
+      const x = d.createElement('button'); x.dataset.a = a; d.body.appendChild(x); try{ x.click(); }catch(e){} x.remove();
+      const m = d.querySelector('main'); if(!m) continue;
+      // Les phrases françaises restantes (au moins 4 mots) qui ne sont pas du contenu d'apprentissage.
+      for(const el of m.querySelectorAll('h2, h3, p, small, strong, button, label')){
+        if(el.closest('[lang="fr"], .piege-fr, .contexte-exo')) continue;
+        const txt = [...el.childNodes].filter(n => n.nodeType === 3).map(n => n.textContent).join(' ').trim();
+        if(txt.split(/\s+/).length >= 4 && FR.test(txt) && /[éèàçù]|\b(?:le|la|et|de)\b/.test(txt)) trouves.push(a + ' : ' + txt.slice(0, 70));
+      }
+    }
+    assert.ok(trouves.length <= 3, lang + ' : ' + trouves.length + ' phrases françaises\n' + trouves.slice(0, 15).join('\n'));
+  }
+  // Traductions : 5 langues, balises intactes.
+  const T = page('es').TRAD_ECRANS, balises = s => (s.match(/<[^>]*>/g) || []).filter(b => !/aria-label|<option/.test(b)).join('|');
+  assert.ok(Object.keys(T).length >= 500);
+  for(const [fr, v] of Object.entries(T)){ assert.strictEqual(v.length, 5, fr); for(const x of v.slice(1)) assert.strictEqual(balises(x), balises(fr), fr.slice(0, 60)); }
 });
 
 console.log(`\n${ok} réussi(s), ${ko} échoué(s)`);
