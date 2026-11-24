@@ -15,7 +15,7 @@
       const r = await fetch(reglages.api, { method:'POST', cache:'no-store', headers:{ 'Content-Type':'application/json' },
         body:JSON.stringify({ code:reglages.code(), plateforme:Capacitor.getPlatform() === 'ios' ? 'apple' : 'google', produit, jeton }) });
       const d = await r.json().catch(() => null);
-      return d && typeof d.actif === 'boolean' ? d : null;
+      return d && (typeof d.actif === 'boolean' || (d.plumes && typeof d.plumes === 'object')) ? d : null;
     }catch(e){ return null; }
   }
   // Le jeton à vérifier : jeton d'achat Google (purchaseId) ou n° de transaction Apple.
@@ -24,21 +24,25 @@
     reglages = options;
     if(pret || !natif()) return false;
     const { store, ProductType } = CdvPurchase, p = plateforme();
-    store.register(Object.keys(PRODUITS).map(k => ({ id:PRODUITS[k], platform:p, type:k === 'a_vie' ? ProductType.NON_CONSUMABLE : ProductType.PAID_SUBSCRIPTION })));
+    store.register(Object.keys(PRODUITS).map(k => ({ id:PRODUITS[k], platform:p, type:k === 'a_vie' ? ProductType.NON_CONSUMABLE : ProductType.PAID_SUBSCRIPTION }))
+      // v5.99 : packs de plumes magiques = produits consommables (rachetables) ; le serveur crédite chaque achat une seule fois.
+      .concat((options.packs || []).map(id => ({ id, platform:p, type:ProductType.CONSUMABLE }))));
     // Rattache l'achat au code AMI du joueur (empreinte, pas le code lui-même).
     store.applicationUsername = () => reglages.compte ? reglages.compte() : '';
     // Validation par NOTRE serveur (pas de service tiers).
     store.validator = async (recu, rappel) => {
       const t = (recu.transactions || [])[recu.transactions ? recu.transactions.length - 1 : 0] || recu, produit = ((t.products || [])[0] || {}).id || '';
       const d = await verifierAuServeur(produit, jetonDe(t));
-      if(d && d.actif){ reglages.certificat(d); rappel({ ok:true, data:{ id:produit, latest_receipt:true, transaction:recu.nativeData || {} } }); }
+      if(d && d.plumes && PACKS.includes(produit)){ if(reglages.plumes) reglages.plumes(d.plumes); rappel({ ok:true, data:{ id:produit, latest_receipt:true, transaction:recu.nativeData || {} } }); }
+      else if(d && d.actif){ reglages.certificat(d); rappel({ ok:true, data:{ id:produit, latest_receipt:true, transaction:recu.nativeData || {} } }); }
       else rappel({ ok:false, code:6778003, message:'Achat non confirmé par le serveur' });
     };
     store.when().approved(t => t.verify()).verified(r => r.finish());
     await store.initialize([p]);
     pret = true; return true;
   }
-  const produitDe = formule => pret ? CdvPurchase.store.get(PRODUITS[formule], plateforme()) : null;
+  const PACKS = ['plumes_petit', 'plumes_moyen', 'plumes_grand'];
+  const produitDe = formule => pret ? CdvPurchase.store.get(PRODUITS[formule] || (PACKS.includes(formule) ? formule : ''), plateforme()) : null;
   function prix(formule){ const x = produitDe(formule); return x && x.pricing && x.pricing.price ? x.pricing.price : ''; }
   async function acheter(formule){
     const x = produitDe(formule), o = x && x.getOffer && x.getOffer();
@@ -47,5 +51,5 @@
     return err ? { ok:false, raison:err.message || 'annule' } : { ok:true };
   }
   async function restaurer(){ if(!pret) return false; await CdvPurchase.store.restorePurchases(); return true; }
-  window.ACHATS = { PRODUITS, natif, init, prix, acheter, restaurer };
+  window.ACHATS = { PRODUITS, PACKS, natif, init, prix, acheter, restaurer };
 })();

@@ -103,3 +103,21 @@ CREATE TABLE IF NOT EXISTS ami_visites (
   n INT NOT NULL DEFAULT 0,
   PRIMARY KEY (jour, evenement, plateforme)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- v5.99 : plumes magiques (crédits d'IA). Solde acheté + quota du mois inclus dans Plus.
+CREATE TABLE IF NOT EXISTS ami_credits (
+  code VARCHAR(20) NOT NULL PRIMARY KEY,
+  solde INT NOT NULL DEFAULT 0,
+  mois CHAR(7) NOT NULL,
+  quota_utilise INT NOT NULL DEFAULT 0,
+  maj DATETIME NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+-- Chaque achat ou geste commercial n'est crédité qu'une fois (référence unique : paiement Stripe, achat Google / Apple).
+CREATE TABLE IF NOT EXISTS ami_credits_mouvements (
+  reference VARCHAR(190) NOT NULL PRIMARY KEY,
+  code VARCHAR(20) NOT NULL,
+  plumes INT NOT NULL,
+  motif VARCHAR(60) NOT NULL,
+  cree DATETIME NOT NULL,
+  KEY (code)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;

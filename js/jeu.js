@@ -63,12 +63,12 @@
 
 
   // Avec le serveur PHP, l'abonnement et les vannes IA passent par lui (sauf adresse donnée à part).
-  if(CONFIG.SERVEUR){ const b = String(CONFIG.SERVEUR).replace(/\/?$/, '/'); if(!CONFIG.API_ABONNEMENT) CONFIG.API_ABONNEMENT = b + 'abonnement.php'; if(!CONFIG.API_VANNES) CONFIG.API_VANNES = b + 'vannes.php'; if(!CONFIG.API_VANNES_DIRECT) CONFIG.API_VANNES_DIRECT = b + 'vannes-direct.php'; if(!CONFIG.API_VANNE_JUGE) CONFIG.API_VANNE_JUGE = b + 'vanne-juge.php'; if(!CONFIG.API_CADEAU) CONFIG.API_CADEAU = b + 'cadeau.php'; if(!CONFIG.API_MAGASIN) CONFIG.API_MAGASIN = b + 'magasin.php'; if(!CONFIG.API_VISITE) CONFIG.API_VISITE = b + 'visite.php'; }
+  if(CONFIG.SERVEUR){ const b = String(CONFIG.SERVEUR).replace(/\/?$/, '/'); if(!CONFIG.API_ABONNEMENT) CONFIG.API_ABONNEMENT = b + 'abonnement.php'; if(!CONFIG.API_VANNES) CONFIG.API_VANNES = b + 'vannes.php'; if(!CONFIG.API_VANNES_DIRECT) CONFIG.API_VANNES_DIRECT = b + 'vannes-direct.php'; if(!CONFIG.API_VANNE_JUGE) CONFIG.API_VANNE_JUGE = b + 'vanne-juge.php'; if(!CONFIG.API_CADEAU) CONFIG.API_CADEAU = b + 'cadeau.php'; if(!CONFIG.API_MAGASIN) CONFIG.API_MAGASIN = b + 'magasin.php'; if(!CONFIG.API_VISITE) CONFIG.API_VISITE = b + 'visite.php'; if(!CONFIG.API_PLUMES) CONFIG.API_PLUMES = b + 'plumes.php'; }
 
   // js/offre.js (fabriqué par le coin admin) : on ne garde que les réglages connus, au bon format.
   // Il ne peut que dire ce qui est réservé à Plus, jamais ouvrir Plus.
   function offreLue(o){
-    const FORMULES_CONNUES = ['mensuel', 'annuel', 'famille', 'a_vie'];
+    const FORMULES_CONNUES = ['mensuel', 'annuel', 'famille', 'a_vie'], PACKS_CONNUS = ['plumes_petit', 'plumes_moyen', 'plumes_grand'];
     const r = {}; if(!o || typeof o !== 'object') return r;
     const liste = x => Array.isArray(x) ? x.filter(e => typeof e === 'string' && /^[a-z0-9_-]{1,30}$/.test(e)) : null;
     if(typeof o.MODE_PAYANT === 'boolean') r.MODE_PAYANT = o.MODE_PAYANT;
@@ -81,6 +81,11 @@
     if(Array.isArray(o.FORMULES)) r.FORMULES = o.FORMULES.filter(f => f && FORMULES_CONNUES.includes(f.id)).slice(0, 4).map(f => ({ id:f.id,
       prix:typeof f.prix === 'string' ? f.prix.slice(0, 20) : '', essai:typeof f.essai === 'string' ? f.essai.slice(0, 40) : '', magasin:f.magasin === true,
       lien:typeof f.lien === 'string' && /^https:\/\/buy\.stripe\.com\/[A-Za-z0-9_\/?=&.-]{1,200}$/.test(f.lien) ? f.lien : '' }));
+    // v5.99 : plumes magiques (crédits d'IA). Le solde n'est jamais lu ici : il vient du serveur (plumes.php).
+    if(o.CREDITS && typeof o.CREDITS === 'object') r.CREDITS = { actif:o.CREDITS.actif === true, quota_plus:Number.isInteger(o.CREDITS.quota_plus) && o.CREDITS.quota_plus >= 0 ? o.CREDITS.quota_plus : 0,
+      packs:(Array.isArray(o.CREDITS.packs) ? o.CREDITS.packs : []).filter(x => x && PACKS_CONNUS.includes(x.id) && Number.isInteger(x.plumes) && x.plumes > 0).slice(0, 3).map(x => ({ id:x.id, plumes:x.plumes,
+        prix:typeof x.prix === 'string' ? x.prix.slice(0, 20) : '', magasin:x.magasin === true,
+        lien:typeof x.lien === 'string' && /^https:\/\/buy\.stripe\.com\/[A-Za-z0-9_\/?=&.-]{1,200}$/.test(x.lien) ? x.lien : '' })) };
     return r;
   }
 
@@ -1781,7 +1786,7 @@
       const en = base.ui === 'en';
       poser(barre('accueil') + '<main class="centre atelier-phrases">' +
         '<div class="ami-moyen ami-3d">'+ami('content')+'</div><h2>💬 '+(en?'Sentence workshop':'Atelier des phrases')+'</h2>' +
-        '<p>'+(en?'Carefully reviewed sentence activities are currently available in French and English. Word games remain available in all 16 languages.':'Les phrases relues sont disponibles pour le moment en français et en anglais. Les jeux de mots restent disponibles dans les 16 langues.')+'</p>' +
+        '<p>'+(en?'Carefully reviewed sentence activities are currently available in French and English. Word games remain available in the other languages.':'Les phrases relues sont disponibles pour le moment en français et en anglais. Les jeux de mots restent disponibles dans les autres langues.')+'</p>' +
         '<button class="moyen plein" data-a="accueil">'+(en?'Back':'Retour')+'</button></main>');
       return;
     }
@@ -2042,7 +2047,7 @@
   async function jugerParIA(fr, en){
     if(!CONFIG.API_VANNE_JUGE || typeof fetch !== 'function') return null;
     try{
-      const r = await fetch(CONFIG.API_VANNE_JUGE, { method:'POST', cache:'no-store', headers:{ 'Content-Type':'application/json' }, body:JSON.stringify({ fr, en }) });
+      const r = await fetch(CONFIG.API_VANNE_JUGE, { method:'POST', cache:'no-store', headers:{ 'Content-Type':'application/json' }, body:JSON.stringify({ fr, en, ...codePlumes() }) });
       if(!r.ok) return null;
       const d = await r.json(); return d && typeof d.garder === 'boolean' ? d : null;
     }catch(e){ return null; }
@@ -3280,6 +3285,46 @@
   // Rien de personnel ne part : ni prénom, ni code, ni voix — seulement la question et les réponses.
   // v5.98 : toute vanne écrite par l'IA est signalée (« 🤖 ») : le joueur sait quand il lit une IA.
   const MARQUE_IA = '🤖 ';
+  // v5.99 : plumes magiques. Allumées dans l'admin, chaque vanne de l'IA coûte une plume : le jeu envoie alors le code
+  // (jamais de prénom). Sans plumes, le serveur répond 402 et Plumo garde ses vannes à lui : rien n'est bloqué.
+  // Toujours relus par offreLue (comme les formules) : un pack inconnu, négatif ou hors Stripe n'apparaît jamais.
+  const reglagesPlumes = () => offreLue({ CREDITS:CONFIG.CREDITS }).CREDITS || { actif:false, quota_plus:0, packs:[] };
+  const plumesActives = () => !!(reglagesPlumes().actif && CONFIG.API_PLUMES);
+  const codePlumes = () => plumesActives() ? { code:base.abo.code } : {};
+  async function soldePlumes(){
+    if(!plumesActives() || typeof fetch !== 'function') return null;
+    try{ const r = await fetch(CONFIG.API_PLUMES, { method:'POST', cache:'no-store', headers:{ 'Content-Type':'application/json' }, body:JSON.stringify({ code:base.abo.code }) });
+      const d = r.ok ? await r.json() : null; return d && d.actif ? d : null; }catch(e){ return null; }
+  }
+  function blocPlumes(){
+    if(!plumesActives()) return '';
+    return '<section class="plumes-ia"><h3>🪶 ' + esc(tt('plumes_titre')) + '</h3><p class="petit">' + esc(tt('plumes_aide', reglagesPlumes().quota_plus)) + '</p>' +
+      '<p id="plumes-solde" role="status" aria-live="polite">…</p>' +
+      (reglagesPlumes().packs.length ? '<p><button class="moyen" data-a="plumes">🪶 ' + esc(tt('plumes_acheter')) + '</button></p>' : '') + '</section>';
+  }
+  async function afficherSolde(){
+    const z = document.getElementById('plumes-solde'); if(!z) return;
+    const d = await soldePlumes(); if(!document.body.contains(z)) return;
+    z.textContent = d ? tt('plumes_solde', d.solde, d.quota ? d.quota_restant : null) : t('hors_ligne');
+    if(d && (d.solde > 0 || d.quota_restant > 0)){ delete base.plumesVides; iaEnPanne = 0; garder(); }
+  }
+  // Achat de plumes : derrière une question pour adultes (les enfants ne sont jamais poussés à acheter).
+  let portePlumes = null;
+  function ecranPlumes(ouvert){
+    if(!plumesActives()) return ecranPlus();
+    if(!ouvert){ portePlumes = { a:6 + Math.floor(Math.random() * 4), b:6 + Math.floor(Math.random() * 4) };
+      return poser(barre('plus') + '<main class="centre"><h2>🪶 ' + esc(tt('plumes_titre')) + '</h2><p>' + esc(tt('plumes_adulte', portePlumes.a, portePlumes.b)) + '</p>' +
+        '<p><input id="porte-plumes" type="number" inputmode="numeric" aria-label="' + esc(tt('plumes_resultat')) + '" class="champ-court"> <button class="moyen plein" data-a="plumes-ouvrir">OK</button></p><p class="aide" id="porte-plumes-msg" role="status"></p></main>'); }
+    const natif = achatsNatifs(), packs = reglagesPlumes().packs.filter(p => natif ? p.magasin : p.lien);
+    const carte = p => { const prix = (natif && ACHATS.prix(p.id)) || p.prix || '';
+      const corps = '<strong>🪶 ' + p.plumes + '</strong>' + (prix ? '<span class="prix-formule">' + esc(prix) + '</span>' : '') + '<small>' + esc(tt('plumes_vannes', p.plumes)) + '</small>';
+      return natif ? '<button class="carte-formule" data-a="plumes-acheter" data-v="' + p.id + '">' + corps + '</button>'
+        : '<a class="carte-formule" href="' + esc(p.lien + (p.lien.includes('?') ? '&' : '?') + 'client_reference_id=' + encodeURIComponent(base.abo.code)) + '" rel="noopener">' + corps + '</a>'; };
+    poser(barre('plus') + '<main class="centre plus"><h2>🪶 ' + esc(tt('plumes_titre')) + '</h2><p id="plumes-solde" role="status" aria-live="polite">…</p>' +
+      (packs.length ? '<div class="formules">' + packs.map(carte).join('') + '</div>' : '<p>' + esc(t('bientot')) + '</p>') +
+      '<p class="aide" id="achat-etat" role="status" aria-live="polite"></p><p class="petit">' + esc(tt('plumes_regles')) + ' · <a href="legal.html#cgv">' + esc(tt('cgv')) + '</a></p></main>');
+    afficherSolde();
+  }
   const cacheIA = new Map(), recentes = [];
   let iaEnPanne = 0;
   const cleIA = (bonne, fausse) => String(bonne) + '\u0001' + String(fausse);
@@ -3302,8 +3347,9 @@
     const ctl = typeof AbortController === 'function' ? new AbortController() : null, minuteur = setTimeout(() => ctl && ctl.abort(), 9000);
     try{
       const r = await fetch(CONFIG.API_VANNES_DIRECT, { method:'POST', cache:'no-store', headers:{ 'Content-Type':'application/json' }, signal:ctl ? ctl.signal : undefined,
-        body:JSON.stringify({ sujet, question:String(question || '').slice(0, 220), bonne:String(texteB).slice(0, 90), fausses:manquent.map(f => String(f).slice(0, 90)), ton, langue:langue || 'fr', deja:recentes.slice(-30), ...goutsHumour() }) });
+        body:JSON.stringify({ sujet, question:String(question || '').slice(0, 220), bonne:String(texteB).slice(0, 90), fausses:manquent.map(f => String(f).slice(0, 90)), ton, langue:langue || 'fr', deja:recentes.slice(-30), ...codePlumes(), ...goutsHumour() }) });
       if(r.status === 429 || r.status === 503) iaEnPanne = Date.now() + 10 * 60 * 1000;
+      if(r.status === 402){ iaEnPanne = Date.now() + 30 * 60 * 1000; base.plumesVides = jour(); garder(); }
       const d = r.ok ? await r.json() : null, v = d && d.vannes;
       items.forEach(x => { const t = v && typeof v[x.texte] === 'string' ? v[x.texte].trim() : '';
         // Le juge de Plumo relit chaque vanne de l'IA ; une vanne déjà dite est jetée.
@@ -3614,12 +3660,14 @@
         : '<p class="gros desactive" aria-disabled="true">' + esc(t('bientot')) + '</p>') +
       '<p class="aide" id="achat-etat" role="status" aria-live="polite"></p>' +
       (natif ? '<p><button class="moyen" data-a="plus-restaurer">🔄 ' + esc(tt('restaurer')) + '</button></p>' : (CONFIG.LIEN_GESTION ? '<p class="petit"><a href="' + esc(CONFIG.LIEN_GESTION) + '" rel="noopener">' + esc(tt('gerer')) + '</a></p>' : '')) +
+      blocPlumes() +
       '<p class="petit">' + esc(t('gratuit_reste')) + '</p>' +
       (CONFIG.API_CADEAU ? '<details class="deja"><summary>🎁 ' + esc(tt('cadeau_ai')) + '</summary><form id="form-cadeau" class="form"><label>' + esc(tt('cadeau_code')) +
         '<input id="cadeau" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="CADEAU-XXXX-XXXX"></label><button class="moyen plein" type="submit">' + esc(tt('utiliser')) + '</button><p id="cadeau-etat" role="status"></p></form></details>' : '') +
       (CONFIG.API_ABONNEMENT ? '<details class="deja"><summary>' + esc(t('deja_abonne')) + '</summary><form id="form-code" class="form"><label>' + esc(t('code_abo')) +
         '<input id="code" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="AMI-XXXX-XXXX-XXXX"></label><button class="moyen plein" type="submit">' + esc(t('verifier')) + '</button><p id="code-etat" role="status"></p></form></details>' : '') +
       '<p class="petit"><a href="legal.html#cgv">' + esc(tt('cgv')) + '</a></p></main>');
+    afficherSolde();
     const f = $('#form-code');
     if(f) f.addEventListener('submit', async ev => {
       ev.preventDefault();
@@ -3951,6 +3999,9 @@
       case 'nouveau-joueur': return base.joueurs.length >= CONFIG.JOUEURS_GRATUITS && !plus() && !(base.joueurs.length === 1 && !base.joueurs[0].nom) ? ecranPlus('reglages') : formJoueur(null);
       case 'plus': return ecranPlus(v || 'accueil');
       case 'plus-acheter': if(achatsNatifs()) return acheterPlus(v); return;
+      case 'plumes': return ecranPlumes(false);
+      case 'plumes-ouvrir': { const x = Number(($('#porte-plumes') || {}).value); if(portePlumes && x === portePlumes.a * portePlumes.b) return ecranPlumes(true); const m = $('#porte-plumes-msg'); if(m) m.textContent = tt('plumes_rate'); return; }
+      case 'plumes-acheter': if(achatsNatifs()) return acheterPlus(v); return;
       case 'plus-restaurer': if(achatsNatifs()){ const e = $('#achat-etat'); if(e) e.textContent = '…'; return ACHATS.restaurer().then(() => { const z = $('#achat-etat'); if(z && !plus()) z.textContent = tt('rien_restaurer'); }); } return;
       case 'modifier-joueur': return formJoueur(Number(v));
       case 'supprimer-joueur':
@@ -4023,7 +4074,7 @@
     .then(d => { droits = d; if(d) redessiner(); return rafraichir(retourPaiement); })
     .then(() => offreServeur()).then(chg => { if(chg) redessiner(); })
     // v5.94 : achats dans l'appli (Google Play / App Store) ; chaque achat est vérifié par le serveur.
-    .then(() => { if(CONFIG.MODE_PAYANT && achatsNatifs()) return ACHATS.init({ api:CONFIG.API_MAGASIN, code:() => base.abo.code, compte:() => fnv1a('ami|' + base.abo.code),
+    .then(() => { if(CONFIG.MODE_PAYANT && achatsNatifs()) return ACHATS.init({ api:CONFIG.API_MAGASIN, code:() => base.abo.code, compte:() => fnv1a('ami|' + base.abo.code), plumes:() => afficherSolde(), packs:(plumesActives() ? reglagesPlumes().packs.filter(p => p.magasin).map(p => p.id) : []),
       certificat:async d => { if(await appliquerCertificat(d, base.abo.code) && !partie) accueil(); } }).catch(() => {}); });
   // Le webhook Stripe peut arriver quelques secondes après le retour.
   if(retourPaiement) [5000, 15000, 40000].forEach(ms => setTimeout(() => { if(!plus()) rafraichir(true); }, ms));

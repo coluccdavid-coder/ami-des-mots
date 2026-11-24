@@ -37,6 +37,7 @@ par l'IA, veille des programmes de maths. Il tourne sur un hébergement mutualis
 | `offre.php` | Donne au jeu l'offre réglée dans l'admin, signée (rien de secret) |
 | `cadeau.php` / `magasin.php` | Codes cadeaux ; achats Google Play / App Store vérifiés auprès des stores |
 | `visite.php` | Fréquentation anonyme (v5.95) : totaux par jour, sans cookie ni identifiant ni IP gardée ; visible dans l'admin (📈) |
+| `plumes.php` | Solde de plumes magiques d'un code (v5.99) ; les plumes se règlent dans l'admin (docs/ADMIN.md) |
 
 ## Sécurité
 - Aucun secret dans le dépôt ni dans le navigateur : clés Stripe, Claude et clé privée restent dans `config-ami.php` et le `.pem`, hors du site.

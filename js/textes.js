@@ -21,7 +21,7 @@ fr:{
   a_partir:n => `À ${n} plumes`, porte:"Plumo le porte", mettre:"Lui mettre", enlever:"Lui enlever", nouveau:"Nouveau dans le vestiaire !",
   verrou:"Version complète", verrou_aide:"Ce thème fait partie de la version complète.",
   peu_de_mots:"Pas encore assez de mots dans ce thème pour cette langue.", sans_voix:"Pas encore de voix pour ce mot.",
-  apropos:"À propos", apropos_texte:"Ami des mots est un jeu pour apprendre et réviser des mots en images, dans 16 langues. C'est un jeu : il ne soigne rien et ne remplace aucun professionnel. Rien n'est envoyé : vos progrès restent sur cet appareil, sans compte et sans publicité.",
+  apropos:"À propos", apropos_texte:"Ami des mots est un jeu pour apprendre et réviser des mots en images. C'est un jeu : il ne soigne rien et ne remplace aucun professionnel. Rien n'est envoyé : vos progrès restent sur cet appareil, sans compte et sans publicité.",
   effacer_progres:"Effacer mes progrès", confirmer:"Touchez encore pour confirmer"
 },
 en:{
@@ -38,7 +38,7 @@ en:{
   a_partir:n => `At ${n} feathers`, porte:"Plumo is wearing it", mettre:"Put it on", enlever:"Take it off", nouveau:"New in the wardrobe!",
   verrou:"Full version", verrou_aide:"This theme is part of the full version.",
   peu_de_mots:"Not enough words in this theme for this language yet.", sans_voix:"No voice for this word yet.",
-  apropos:"About", apropos_texte:"Ami des mots is a game to learn and review words in pictures, in 16 languages. It is a game: it does not treat anything and does not replace any professional. Nothing is sent: your progress stays on this device, with no account and no ads.",
+  apropos:"About", apropos_texte:"Ami des mots is a game to learn and review words in pictures. It is a game: it does not treat anything and does not replace any professional. Nothing is sent: your progress stays on this device, with no account and no ads.",
   effacer_progres:"Erase my progress", confirmer:"Tap again to confirm"
 },
 es:{
@@ -55,7 +55,7 @@ es:{
   a_partir:n => `Con ${n} plumas`, porte:"Plumo lo lleva puesto", mettre:"Ponérselo", enlever:"Quitárselo", nouveau:"¡Novedad en el armario!",
   verrou:"Versión completa", verrou_aide:"Este tema forma parte de la versión completa.",
   peu_de_mots:"Aún no hay suficientes palabras en este tema para este idioma.", sans_voix:"Aún no hay voz para esta palabra.",
-  apropos:"Acerca de", apropos_texte:"Ami des mots es un juego para aprender y repasar palabras con imágenes, en 16 idiomas. Es un juego: no cura nada y no sustituye a ningún profesional. No se envía nada: tu progreso se queda en este dispositivo, sin cuenta y sin publicidad.",
+  apropos:"Acerca de", apropos_texte:"Ami des mots es un juego para aprender y repasar palabras con imágenes. Es un juego: no cura nada y no sustituye a ningún profesional. No se envía nada: tu progreso se queda en este dispositivo, sin cuenta y sin publicidad.",
   effacer_progres:"Borrar mi progreso", confirmer:"Toca otra vez para confirmar"
 },
 it:{
@@ -72,7 +72,7 @@ it:{
   a_partir:n => `Con ${n} piume`, porte:"Plumo lo indossa", mettre:"Mettiglielo", enlever:"Toglieglielo", nouveau:"Novità nel guardaroba!",
   verrou:"Versione completa", verrou_aide:"Questo tema fa parte della versione completa.",
   peu_de_mots:"Non ci sono ancora abbastanza parole in questo tema per questa lingua.", sans_voix:"Ancora nessuna voce per questa parola.",
-  apropos:"Informazioni", apropos_texte:"Ami des mots è un gioco per imparare e ripassare parole con le immagini, in 16 lingue. È un gioco: non cura niente e non sostituisce nessun professionista. Non viene inviato niente: i tuoi progressi restano su questo dispositivo, senza account e senza pubblicità.",
+  apropos:"Informazioni", apropos_texte:"Ami des mots è un gioco per imparare e ripassare parole con le immagini. È un gioco: non cura niente e non sostituisce nessun professionista. Non viene inviato niente: i tuoi progressi restano su questo dispositivo, senza account e senza pubblicità.",
   effacer_progres:"Cancella i miei progressi", confirmer:"Tocca di nuovo per confermare"
 },
 pt:{
@@ -89,7 +89,7 @@ pt:{
   a_partir:n => `Com ${n} penas`, porte:"O Plumo está a usá-lo", mettre:"Vestir-lho", enlever:"Tirar-lho", nouveau:"Novidade no guarda-roupa!",
   verrou:"Versão completa", verrou_aide:"Este tema faz parte da versão completa.",
   peu_de_mots:"Ainda não há palavras suficientes neste tema para esta língua.", sans_voix:"Ainda não há voz para esta palavra.",
-  apropos:"Sobre", apropos_texte:"Ami des mots é um jogo para aprender e rever palavras com imagens, em 16 línguas. É um jogo: não trata nada e não substitui nenhum profissional. Nada é enviado: o teu progresso fica neste aparelho, sem conta e sem publicidade.",
+  apropos:"Sobre", apropos_texte:"Ami des mots é um jogo para aprender e rever palavras com imagens. É um jogo: não trata nada e não substitui nenhum profissional. Nada é enviado: o teu progresso fica neste aparelho, sem conta e sem publicidade.",
   effacer_progres:"Apagar o meu progresso", confirmer:"Toca outra vez para confirmar"
 },
 de:{
@@ -106,7 +106,7 @@ de:{
   a_partir:n => `Ab ${n} Federn`, porte:"Plumo trägt es", mettre:"Anziehen", enlever:"Ausziehen", nouveau:"Neu im Kleiderschrank!",
   verrou:"Vollversion", verrou_aide:"Dieses Thema gehört zur Vollversion.",
   peu_de_mots:"Für diese Sprache gibt es in diesem Thema noch nicht genug Wörter.", sans_voix:"Für dieses Wort gibt es noch keine Stimme.",
-  apropos:"Über", apropos_texte:"Ami des mots ist ein Spiel, um Wörter mit Bildern zu lernen und zu wiederholen, in 16 Sprachen. Es ist ein Spiel: Es heilt nichts und ersetzt keine Fachkraft. Nichts wird gesendet: Dein Fortschritt bleibt auf diesem Gerät, ohne Konto und ohne Werbung.",
+  apropos:"Über", apropos_texte:"Ami des mots ist ein Spiel, um Wörter mit Bildern zu lernen und zu wiederholen. Es ist ein Spiel: Es heilt nichts und ersetzt keine Fachkraft. Nichts wird gesendet: Dein Fortschritt bleibt auf diesem Gerät, ohne Konto und ohne Werbung.",
   effacer_progres:"Meinen Fortschritt löschen", confirmer:"Zum Bestätigen noch einmal tippen"
 },
 ar:{
@@ -123,7 +123,7 @@ ar:{
   a_partir:n => `عند ${n} ريشة`, porte:"آمي يرتديه", mettre:"ألبسه إياه", enlever:"انزعه عنه", nouveau:"جديد في الخزانة!",
   verrou:"النسخة الكاملة", verrou_aide:"هذا الموضوع جزء من النسخة الكاملة.",
   peu_de_mots:"لا توجد بعد كلمات كافية في هذا الموضوع لهذه اللغة.", sans_voix:"لا يوجد صوت لهذه الكلمة بعد.",
-  apropos:"حول اللعبة", apropos_texte:"«Ami des mots» لعبة لتعلّم الكلمات ومراجعتها بالصور، في 16 لغة. إنها لعبة: لا تعالج شيئًا ولا تحلّ محلّ أي مختص. لا يُرسل أي شيء: يبقى تقدّمك على هذا الجهاز، بلا حساب ولا إعلانات.",
+  apropos:"حول اللعبة", apropos_texte:"«Ami des mots» لعبة لتعلّم الكلمات ومراجعتها بالصور. إنها لعبة: لا تعالج شيئًا ولا تحلّ محلّ أي مختص. لا يُرسل أي شيء: يبقى تقدّمك على هذا الجهاز، بلا حساب ولا إعلانات.",
   effacer_progres:"محو تقدّمي", confirmer:"اضغط مرة أخرى للتأكيد"
 },
 tr:{
@@ -140,7 +140,7 @@ tr:{
   a_partir:n => `${n} tüyde`, porte:"Plumo takıyor", mettre:"Tak", enlever:"Çıkar", nouveau:"Dolapta yeni bir şey var!",
   verrou:"Tam sürüm", verrou_aide:"Bu konu tam sürümün bir parçası.",
   peu_de_mots:"Bu konuda bu dil için henüz yeterli kelime yok.", sans_voix:"Bu kelimenin henüz sesi yok.",
-  apropos:"Hakkında", apropos_texte:"Ami des mots, 16 dilde resimlerle kelime öğrenmek ve tekrar etmek için bir oyundur. Bu bir oyundur: hiçbir şeyi tedavi etmez ve hiçbir uzmanın yerini tutmaz. Hiçbir şey gönderilmez: ilerlemen bu cihazda kalır, hesap ve reklam yoktur.",
+  apropos:"Hakkında", apropos_texte:"Ami des mots, resimlerle kelime öğrenmek ve tekrar etmek için bir oyundur. Bu bir oyundur: hiçbir şeyi tedavi etmez ve hiçbir uzmanın yerini tutmaz. Hiçbir şey gönderilmez: ilerlemen bu cihazda kalır, hesap ve reklam yoktur.",
   effacer_progres:"İlerlememi sil", confirmer:"Onaylamak için tekrar dokun"
 },
 pl:{
@@ -157,7 +157,7 @@ pl:{
   a_partir:n => `Od ${n} piórek`, porte:"Plumo to nosi", mettre:"Załóż mu", enlever:"Zdejmij mu", nouveau:"Nowość w szafie!",
   verrou:"Pełna wersja", verrou_aide:"Ten temat należy do pełnej wersji.",
   peu_de_mots:"W tym temacie nie ma jeszcze dość słów w tym języku.", sans_voix:"To słowo nie ma jeszcze nagrania.",
-  apropos:"O grze", apropos_texte:"Ami des mots to gra do nauki i powtarzania słów z obrazkami, w 16 językach. To gra: niczego nie leczy i nie zastępuje żadnego specjalisty. Nic nie jest wysyłane: twoje postępy zostają na tym urządzeniu, bez konta i bez reklam.",
+  apropos:"O grze", apropos_texte:"Ami des mots to gra do nauki i powtarzania słów z obrazkami. To gra: niczego nie leczy i nie zastępuje żadnego specjalisty. Nic nie jest wysyłane: twoje postępy zostają na tym urządzeniu, bez konta i bez reklam.",
   effacer_progres:"Usuń moje postępy", confirmer:"Dotknij jeszcze raz, aby potwierdzić"
 },
 uk:{
@@ -174,7 +174,7 @@ uk:{
   a_partir:n => `Від ${n} пір'їн`, porte:"Амі це носить", mettre:"Вдягти", enlever:"Зняти", nouveau:"Новинка в шафі!",
   verrou:"Повна версія", verrou_aide:"Ця тема входить до повної версії.",
   peu_de_mots:"У цій темі ще замало слів цією мовою.", sans_voix:"Для цього слова ще немає голосу.",
-  apropos:"Про гру", apropos_texte:"Ami des mots — гра, щоб вивчати й повторювати слова з картинками, 16 мовами. Це гра: вона нічого не лікує і не замінює жодного фахівця. Нічого не надсилається: твій поступ залишається на цьому пристрої, без облікового запису й без реклами.",
+  apropos:"Про гру", apropos_texte:"Ami des mots — гра, щоб вивчати й повторювати слова з картинками. Це гра: вона нічого не лікує і не замінює жодного фахівця. Нічого не надсилається: твій поступ залишається на цьому пристрої, без облікового запису й без реклами.",
   effacer_progres:"Стерти мій поступ", confirmer:"Торкнися ще раз, щоб підтвердити"
 },
 ja:{
@@ -191,7 +191,7 @@ ja:{
   a_partir:n => `はね${n}まいで`, porte:"アミがつけています", mettre:"つける", enlever:"はずす", nouveau:"クローゼットに新しいものが！",
   verrou:"完全版", verrou_aide:"このテーマは完全版に入っています。",
   peu_de_mots:"この言語では、このテーマのことばがまだ足りません。", sans_voix:"このことばの音声はまだありません。",
-  apropos:"このゲームについて", apropos_texte:"Ami des mots は、16の言語で、絵を見ながらことばを覚えたり復習したりするゲームです。ゲームなので、治療はせず、専門家の代わりにもなりません。何も送信されません。記録はこの端末だけに残り、アカウントも広告もありません。",
+  apropos:"このゲームについて", apropos_texte:"Ami des mots は、絵を見ながらことばを覚えたり復習したりするゲームです。ゲームなので、治療はせず、専門家の代わりにもなりません。何も送信されません。記録はこの端末だけに残り、アカウントも広告もありません。",
   effacer_progres:"記録をけす", confirmer:"もう一度押すと確定します"
 }
 };
@@ -214,7 +214,7 @@ fr:{
   gratuit_reste:"La version gratuite reste gratuite : 3 thèmes, 3 jeux, le défi du jour et la révision.",
   deja_abonne:"J'ai déjà un abonnement", code_abo:"Code d'abonnement", code_aide:"Notez ce code : il permet de retrouver l'abonnement sur un autre appareil.", verifier:"Vérifier",
   abo_actif:d => `Abonnement actif${d ? ` (jusqu'au ${d})` : ''}. Merci !`, abo_inconnu:"Code introuvable ou abonnement terminé.", hors_ligne:"Vérification impossible pour l'instant. Réessayez plus tard.", gerer_abo:"Gérer ou résilier l'abonnement", decouvrir_plus:"Découvrir Ami des mots Plus",
-  apropos_texte:"Ami des mots est un jeu pour apprendre et réviser des mots en images, dans 16 langues. C'est un jeu : il ne soigne rien et ne remplace aucun professionnel. Sans compte et sans publicité : vos progrès restent sur cet appareil. Pour l'abonnement, seul un code anonyme est vérifié ; le paiement est géré par Stripe."
+  apropos_texte:"Ami des mots est un jeu pour apprendre et réviser des mots en images. C'est un jeu : il ne soigne rien et ne remplace aucun professionnel. Sans compte et sans publicité : vos progrès restent sur cet appareil. Pour l'abonnement, seul un code anonyme est vérifié ; le paiement est géré par Stripe."
 },
 en:{
   bonjour:n => `Hello ${n}!`, changer_joueur:"Switch player", qui_joue:"Who's playing?", ajouter_joueur:"Add a player", modifier_joueur:"Edit player",
@@ -231,7 +231,7 @@ en:{
   gratuit_reste:"The free version stays free: 3 themes, 3 games, the daily challenge and review.",
   deja_abonne:"I already have a subscription", code_abo:"Subscription code", code_aide:"Write this code down: it restores the subscription on another device.", verifier:"Check",
   abo_actif:d => `Subscription active${d ? ` (until ${d})` : ''}. Thank you!`, abo_inconnu:"Code not found or subscription ended.", hors_ligne:"Can't check right now. Please try again later.", gerer_abo:"Manage or cancel the subscription", decouvrir_plus:"Discover Ami des mots Plus",
-  apropos_texte:"Ami des mots is a game for learning and reviewing words with pictures, in 16 languages. It is a game: it doesn't treat anything and doesn't replace any professional. No account and no ads: your progress stays on this device. For the subscription, only an anonymous code is checked; payment is handled by Stripe."
+  apropos_texte:"Ami des mots is a game for learning and reviewing words with pictures. It is a game: it doesn't treat anything and doesn't replace any professional. No account and no ads: your progress stays on this device. For the subscription, only an anonymous code is checked; payment is handled by Stripe."
 },
 es:{
   bonjour:n => `¡Hola, ${n}!`, changer_joueur:"Cambiar de jugador", qui_joue:"¿Quién juega?", ajouter_joueur:"Añadir un jugador", modifier_joueur:"Editar jugador",
@@ -248,7 +248,7 @@ es:{
   gratuit_reste:"La versión gratuita sigue siendo gratuita: 3 temas, 3 juegos, el reto del día y el repaso.",
   deja_abonne:"Ya tengo una suscripción", code_abo:"Código de suscripción", code_aide:"Apunta este código: sirve para recuperar la suscripción en otro dispositivo.", verifier:"Comprobar",
   abo_actif:d => `Suscripción activa${d ? ` (hasta el ${d})` : ''}. ¡Gracias!`, abo_inconnu:"Código no encontrado o suscripción terminada.", hors_ligne:"No se puede comprobar ahora. Inténtalo más tarde.", gerer_abo:"Gestionar o cancelar la suscripción", decouvrir_plus:"Descubrir Ami des mots Plus",
-  apropos_texte:"Ami des mots es un juego para aprender y repasar palabras con imágenes, en 16 idiomas. Es un juego: no cura nada ni sustituye a ningún profesional. Sin cuenta y sin publicidad: tu progreso se queda en este dispositivo. Para la suscripción solo se comprueba un código anónimo; el pago lo gestiona Stripe."
+  apropos_texte:"Ami des mots es un juego para aprender y repasar palabras con imágenes. Es un juego: no cura nada ni sustituye a ningún profesional. Sin cuenta y sin publicidad: tu progreso se queda en este dispositivo. Para la suscripción solo se comprueba un código anónimo; el pago lo gestiona Stripe."
 },
 it:{
   bonjour:n => `Ciao ${n}!`, changer_joueur:"Cambia giocatore", qui_joue:"Chi gioca?", ajouter_joueur:"Aggiungi un giocatore", modifier_joueur:"Modifica giocatore",
@@ -265,7 +265,7 @@ it:{
   gratuit_reste:"La versione gratuita resta gratuita: 3 temi, 3 giochi, la sfida del giorno e il ripasso.",
   deja_abonne:"Ho già un abbonamento", code_abo:"Codice di abbonamento", code_aide:"Annota questo codice: serve a ritrovare l'abbonamento su un altro dispositivo.", verifier:"Verifica",
   abo_actif:d => `Abbonamento attivo${d ? ` (fino al ${d})` : ''}. Grazie!`, abo_inconnu:"Codice non trovato o abbonamento scaduto.", hors_ligne:"Impossibile verificare ora. Riprova più tardi.", gerer_abo:"Gestisci o disdici l'abbonamento", decouvrir_plus:"Scopri Ami des mots Plus",
-  apropos_texte:"Ami des mots è un gioco per imparare e ripassare parole con le immagini, in 16 lingue. È un gioco: non cura nulla e non sostituisce alcun professionista. Senza account e senza pubblicità: i tuoi progressi restano su questo dispositivo. Per l'abbonamento si verifica solo un codice anonimo; il pagamento è gestito da Stripe."
+  apropos_texte:"Ami des mots è un gioco per imparare e ripassare parole con le immagini. È un gioco: non cura nulla e non sostituisce alcun professionista. Senza account e senza pubblicità: i tuoi progressi restano su questo dispositivo. Per l'abbonamento si verifica solo un codice anonimo; il pagamento è gestito da Stripe."
 },
 pt:{
   bonjour:n => `Olá, ${n}!`, changer_joueur:"Mudar de jogador", qui_joue:"Quem joga?", ajouter_joueur:"Adicionar um jogador", modifier_joueur:"Editar jogador",
@@ -282,7 +282,7 @@ pt:{
   gratuit_reste:"A versão gratuita continua gratuita: 3 temas, 3 jogos, o desafio do dia e a revisão.",
   deja_abonne:"Já tenho uma subscrição", code_abo:"Código de subscrição", code_aide:"Guarde este código: permite recuperar a subscrição noutro dispositivo.", verifier:"Verificar",
   abo_actif:d => `Subscrição ativa${d ? ` (até ${d})` : ''}. Obrigado!`, abo_inconnu:"Código não encontrado ou subscrição terminada.", hors_ligne:"Não é possível verificar agora. Tente mais tarde.", gerer_abo:"Gerir ou cancelar a subscrição", decouvrir_plus:"Descobrir o Ami des mots Plus",
-  apropos_texte:"Ami des mots é um jogo para aprender e rever palavras com imagens, em 16 línguas. É um jogo: não trata nada nem substitui nenhum profissional. Sem conta e sem publicidade: o seu progresso fica neste dispositivo. Para a subscrição só se verifica um código anónimo; o pagamento é gerido pela Stripe."
+  apropos_texte:"Ami des mots é um jogo para aprender e rever palavras com imagens. É um jogo: não trata nada nem substitui nenhum profissional. Sem conta e sem publicidade: o seu progresso fica neste dispositivo. Para a subscrição só se verifica um código anónimo; o pagamento é gerido pela Stripe."
 },
 de:{
   bonjour:n => `Hallo ${n}!`, changer_joueur:"Spieler wechseln", qui_joue:"Wer spielt?", ajouter_joueur:"Spieler hinzufügen", modifier_joueur:"Spieler bearbeiten",
@@ -299,7 +299,7 @@ de:{
   gratuit_reste:"Die kostenlose Version bleibt kostenlos: 3 Themen, 3 Spiele, die Tagesaufgabe und das Wiederholen.",
   deja_abonne:"Ich habe schon ein Abo", code_abo:"Abo-Code", code_aide:"Notiere diesen Code: Damit findest du das Abo auf einem anderen Gerät wieder.", verifier:"Prüfen",
   abo_actif:d => `Abo aktiv${d ? ` (bis ${d})` : ''}. Danke!`, abo_inconnu:"Code nicht gefunden oder Abo beendet.", hors_ligne:"Prüfen gerade nicht möglich. Versuch es später noch einmal.", gerer_abo:"Abo verwalten oder kündigen", decouvrir_plus:"Ami des mots Plus entdecken",
-  apropos_texte:"Ami des mots ist ein Spiel, um Wörter mit Bildern zu lernen und zu wiederholen, in 16 Sprachen. Es ist ein Spiel: Es behandelt nichts und ersetzt keine Fachkraft. Ohne Konto und ohne Werbung: Dein Fortschritt bleibt auf diesem Gerät. Für das Abo wird nur ein anonymer Code geprüft; die Zahlung läuft über Stripe."
+  apropos_texte:"Ami des mots ist ein Spiel, um Wörter mit Bildern zu lernen und zu wiederholen. Es ist ein Spiel: Es behandelt nichts und ersetzt keine Fachkraft. Ohne Konto und ohne Werbung: Dein Fortschritt bleibt auf diesem Gerät. Für das Abo wird nur ein anonymer Code geprüft; die Zahlung läuft über Stripe."
 },
 ar:{
   bonjour:n => `مرحبًا ${n}!`, changer_joueur:"تغيير اللاعب", qui_joue:"من يلعب؟", ajouter_joueur:"إضافة لاعب", modifier_joueur:"تعديل اللاعب",
@@ -316,7 +316,7 @@ ar:{
   gratuit_reste:"تبقى النسخة المجانية مجانية: 3 مواضيع و3 ألعاب وتحدّي اليوم والمراجعة.",
   deja_abonne:"لديّ اشتراك بالفعل", code_abo:"رمز الاشتراك", code_aide:"احتفظ بهذا الرمز: يسمح باستعادة الاشتراك على جهاز آخر.", verifier:"تحقّق",
   abo_actif:d => `الاشتراك فعّال${d ? ` (حتى ${d})` : ''}. شكرًا!`, abo_inconnu:"الرمز غير موجود أو انتهى الاشتراك.", hors_ligne:"لا يمكن التحقق الآن. حاول لاحقًا.", gerer_abo:"إدارة الاشتراك أو إلغاؤه", decouvrir_plus:"اكتشف Ami des mots Plus",
-  apropos_texte:"Ami des mots لعبة لتعلّم الكلمات ومراجعتها بالصور، بـ16 لغة. إنها لعبة: لا تعالج شيئًا ولا تحلّ محل أي مختص. بلا حساب وبلا إعلانات: يبقى تقدّمك على هذا الجهاز. للاشتراك يُتحقَّق فقط من رمز مجهول الهوية، والدفع تديره Stripe."
+  apropos_texte:"Ami des mots لعبة لتعلّم الكلمات ومراجعتها بالصور. إنها لعبة: لا تعالج شيئًا ولا تحلّ محل أي مختص. بلا حساب وبلا إعلانات: يبقى تقدّمك على هذا الجهاز. للاشتراك يُتحقَّق فقط من رمز مجهول الهوية، والدفع تديره Stripe."
 },
 tr:{
   bonjour:n => `Merhaba ${n}!`, changer_joueur:"Oyuncu değiştir", qui_joue:"Kim oynuyor?", ajouter_joueur:"Oyuncu ekle", modifier_joueur:"Oyuncuyu düzenle",
@@ -333,7 +333,7 @@ tr:{
   gratuit_reste:"Ücretsiz sürüm ücretsiz kalır: 3 tema, 3 oyun, günün görevi ve tekrar.",
   deja_abonne:"Zaten aboneliğim var", code_abo:"Abonelik kodu", code_aide:"Bu kodu not al: aboneliği başka bir cihazda geri getirmeye yarar.", verifier:"Kontrol et",
   abo_actif:d => `Abonelik etkin${d ? ` (${d} tarihine kadar)` : ''}. Teşekkürler!`, abo_inconnu:"Kod bulunamadı ya da abonelik sona erdi.", hors_ligne:"Şu anda kontrol edilemiyor. Daha sonra tekrar dene.", gerer_abo:"Aboneliği yönet veya iptal et", decouvrir_plus:"Ami des mots Plus'ı keşfet",
-  apropos_texte:"Ami des mots, 16 dilde resimlerle kelime öğrenmek ve tekrar etmek için bir oyundur. Bu bir oyundur: hiçbir şeyi tedavi etmez ve hiçbir uzmanın yerini tutmaz. Hesap yok, reklam yok: ilerlemen bu cihazda kalır. Abonelik için yalnızca anonim bir kod kontrol edilir; ödemeyi Stripe yönetir."
+  apropos_texte:"Ami des mots, resimlerle kelime öğrenmek ve tekrar etmek için bir oyundur. Bu bir oyundur: hiçbir şeyi tedavi etmez ve hiçbir uzmanın yerini tutmaz. Hesap yok, reklam yok: ilerlemen bu cihazda kalır. Abonelik için yalnızca anonim bir kod kontrol edilir; ödemeyi Stripe yönetir."
 },
 pl:{
   bonjour:n => `Cześć, ${n}!`, changer_joueur:"Zmień gracza", qui_joue:"Kto gra?", ajouter_joueur:"Dodaj gracza", modifier_joueur:"Edytuj gracza",
@@ -350,7 +350,7 @@ pl:{
   gratuit_reste:"Wersja darmowa pozostaje darmowa: 3 tematy, 3 gry, wyzwanie dnia i powtórki.",
   deja_abonne:"Mam już subskrypcję", code_abo:"Kod subskrypcji", code_aide:"Zapisz ten kod: pozwala odzyskać subskrypcję na innym urządzeniu.", verifier:"Sprawdź",
   abo_actif:d => `Subskrypcja aktywna${d ? ` (do ${d})` : ''}. Dziękujemy!`, abo_inconnu:"Nie znaleziono kodu lub subskrypcja wygasła.", hors_ligne:"Nie można teraz sprawdzić. Spróbuj później.", gerer_abo:"Zarządzaj subskrypcją lub ją anuluj", decouvrir_plus:"Poznaj Ami des mots Plus",
-  apropos_texte:"Ami des mots to gra do nauki i powtarzania słów z obrazkami, w 16 językach. To gra: niczego nie leczy i nie zastępuje żadnego specjalisty. Bez konta i bez reklam: twoje postępy zostają na tym urządzeniu. W przypadku subskrypcji sprawdzany jest tylko anonimowy kod; płatności obsługuje Stripe."
+  apropos_texte:"Ami des mots to gra do nauki i powtarzania słów z obrazkami. To gra: niczego nie leczy i nie zastępuje żadnego specjalisty. Bez konta i bez reklam: twoje postępy zostają na tym urządzeniu. W przypadku subskrypcji sprawdzany jest tylko anonimowy kod; płatności obsługuje Stripe."
 },
 uk:{
   bonjour:n => `Привіт, ${n}!`, changer_joueur:"Змінити гравця", qui_joue:"Хто грає?", ajouter_joueur:"Додати гравця", modifier_joueur:"Змінити гравця",
@@ -367,7 +367,7 @@ uk:{
   gratuit_reste:"Безкоштовна версія залишається безкоштовною: 3 теми, 3 ігри, завдання дня й повторення.",
   deja_abonne:"У мене вже є підписка", code_abo:"Код підписки", code_aide:"Запиши цей код: він дає змогу відновити підписку на іншому пристрої.", verifier:"Перевірити",
   abo_actif:d => `Підписка активна${d ? ` (до ${d})` : ''}. Дякуємо!`, abo_inconnu:"Код не знайдено або підписка завершилася.", hors_ligne:"Зараз неможливо перевірити. Спробуй пізніше.", gerer_abo:"Керувати підпискою або скасувати її", decouvrir_plus:"Відкрити Ami des mots Plus",
-  apropos_texte:"Ami des mots — це гра, щоб вивчати й повторювати слова з малюнками, 16 мовами. Це гра: вона нічого не лікує й не замінює жодного фахівця. Без облікового запису й без реклами: твій поступ залишається на цьому пристрої. Для підписки перевіряється лише анонімний код; оплатою займається Stripe."
+  apropos_texte:"Ami des mots — це гра, щоб вивчати й повторювати слова з малюнками. Це гра: вона нічого не лікує й не замінює жодного фахівця. Без облікового запису й без реклами: твій поступ залишається на цьому пристрої. Для підписки перевіряється лише анонімний код; оплатою займається Stripe."
 },
 ja:{
   bonjour:n => `こんにちは、${n}さん！`, changer_joueur:"プレイヤーを変える", qui_joue:"だれが遊ぶ？", ajouter_joueur:"プレイヤーを追加", modifier_joueur:"プレイヤーを編集",
@@ -384,7 +384,7 @@ ja:{
   gratuit_reste:"無料版はずっと無料：3つのテーマ、3つのゲーム、今日のチャレンジと復習。",
   deja_abonne:"すでに登録しています", code_abo:"登録コード", code_aide:"このコードを控えておいてください。別の端末で登録を復元できます。", verifier:"確認",
   abo_actif:d => `登録中${d ? `（${d}まで）` : ''}。ありがとうございます！`, abo_inconnu:"コードが見つからないか、登録が終了しています。", hors_ligne:"今は確認できません。あとでもう一度お試しください。", gerer_abo:"登録の管理・解約", decouvrir_plus:"Ami des mots Plus を見る",
-  apropos_texte:"Ami des mots は、16の言語で、絵を見ながらことばを覚えて復習するゲームです。これはゲームで、何かを治療するものでも、専門家の代わりになるものでもありません。アカウントも広告もなく、進み具合はこの端末に残ります。登録については匿名のコードだけを確認し、支払いは Stripe が扱います。"
+  apropos_texte:"Ami des mots は、絵を見ながらことばを覚えて復習するゲームです。これはゲームで、何かを治療するものでも、専門家の代わりになるものでもありません。アカウントも広告もなく、進み具合はこの端末に残ります。登録については匿名のコードだけを確認し、支払いは Stripe が扱います。"
 }
 };
 for(const l in V2) if(window.TEXTES[l]) Object.assign(window.TEXTES[l], V2[l]);

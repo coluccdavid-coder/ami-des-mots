@@ -13,3 +13,6 @@ Aucune donnée personnelle n'est envoyée à l'IA : ni prénom, ni code Plus, ni
 
 Modèles par défaut : un modèle rapide pour les vannes, un plus fort pour la veille (`anthropic_modele`, `anthropic_modele_veille`).
 Coût : surveiller la console Anthropic les premières semaines ; y fixer une limite de dépense mensuelle.
+
+## Plumes magiques (v5.99)
+Allumées dans l'admin, chaque vanne écrite par l'IA coûte une plume (le tri du Clash libre aussi). Quota mensuel inclus dans Plus, packs en vente (Stripe, Google Play, App Store). Sans plumes, Plumo reprend ses vannes. Mise en route : docs/ADMIN.md.

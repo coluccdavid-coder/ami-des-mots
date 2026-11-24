@@ -59,12 +59,16 @@ try {
     $code = (string) ($obj['client_reference_id'] ?? '');
     $pi = is_array($obj['payment_intent'] ?? null) ? ($obj['payment_intent']['id'] ?? '') : (string) ($obj['payment_intent'] ?? '');
     $client = is_array($obj['customer'] ?? null) ? ($obj['customer']['id'] ?? '') : (string) ($obj['customer'] ?? '');
-    if (preg_match(AMI_FORMAT_CODE, $code) && $pi !== '') ami_inscrire_droit($db, $code, $client !== '' ? $client : 'stripe', $pi, 'a_vie', AMI_FIN_A_VIE);
+    // v5.99 : un pack de plumes magiques (prix Stripe réglé dans l'admin) crédite des plumes, il n'ouvre JAMAIS Plus « à vie ».
+    $pack = ami_stripe_pack((string) ($obj['id'] ?? ''), (array) ($obj['metadata'] ?? []));
+    if ($pack) { if (preg_match(AMI_FORMAT_CODE, $code) && $pi !== '') ami_credits_ajouter($db, $code, (int) $pack['plumes'], 'stripe:' . $pi, 'achat ' . $pack['id']); }
+    elseif (preg_match(AMI_FORMAT_CODE, $code) && $pi !== '') ami_inscrire_droit($db, $code, $client !== '' ? $client : 'stripe', $pi, 'a_vie', AMI_FIN_A_VIE);
   }
   // Remboursement d'un paiement « à vie » : l'accès s'arrête.
   if ($type === 'charge.refunded' && !empty($obj['refunded'])) {
     $pi = is_array($obj['payment_intent'] ?? null) ? ($obj['payment_intent']['id'] ?? '') : (string) ($obj['payment_intent'] ?? '');
     if ($pi !== '') $db->prepare("UPDATE ami_abonnements SET statut = 'rembourse', maj = ? WHERE abonnement = ? AND statut = 'a_vie'")->execute([ami_maintenant(), $pi]);
+    if ($pi !== '') ami_credits_annuler($db, 'stripe:' . $pi);   // v5.99 : pack de plumes remboursé
   }
 
   if ($type === 'customer.subscription.updated' || $type === 'customer.subscription.deleted') {
@@ -119,4 +123,17 @@ function enregistrer_abonnement(PDO $db, string $code, string $client, string $a
     }
     $db->commit(); return 'ok';
   } catch (Throwable $e) { $db->rollBack(); throw $e; }
+}
+
+// v5.99 : la session Stripe est-elle l'achat d'un pack de plumes ? (prix Stripe « price_… » réglé dans l'admin, ou métadonnée ami_pack)
+function ami_stripe_pack(string $session, array $meta): ?array {
+  $packs = ami_credits_reglages()['packs']; if (!$packs) return null;
+  if (isset($meta['ami_pack'], $packs[$meta['ami_pack']])) return $packs[$meta['ami_pack']];
+  if ($session === '') return null;
+  [$st, $r] = ami_http('GET', ami_base('stripe_api', 'https://api.stripe.com') . '/v1/checkout/sessions/' . rawurlencode($session) . '/line_items?limit=10', ['Authorization: Bearer ' . (ami_config()['stripe_secret'] ?? '')]);
+  if ($st !== 200) throw new RuntimeException('Stripe line_items ' . $st);   // le webhook sera renvoyé par Stripe
+  $l = json_decode($r, true);
+  foreach ((array) ($l['data'] ?? []) as $x) { $prix = (string) ($x['price']['id'] ?? '');
+    foreach ($packs as $p) if ($prix !== '' && ($p['stripe_prix'] ?? '') === $prix) return $p; }
+  return null;
 }
