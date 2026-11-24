@@ -7,7 +7,7 @@ Le jeu marche ensuite hors connexion (sauf salon, abonnement et IA qui demandent
 
 ## 2. Le vrai fichier Android (APK, Play Store)
 L'appli est fabriquée **par GitHub** (pas besoin d'Android Studio) avec Capacitor : le jeu est embarqué dans l'appli,
-il marche hors connexion, la voix utilise le moteur du téléphone, le micro est demandé pour « Répète après Ami ».
+il marche hors connexion, la voix utilise le moteur du téléphone, le micro est demandé pour « Répète après Plumo ».
 1. Pousse ton code sur GitHub (branche `main`).
 2. GitHub → onglet **Actions** → **Appli Android** → **Run workflow**.
 3. Après ~10 minutes : en bas de la page de l'exécution, **Artifacts → ami-des-mots-android** (zip avec `app-debug.apk`).

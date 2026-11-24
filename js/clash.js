@@ -1,6 +1,6 @@
-// Ami des mots — clashs de la battle de vannes (contre Ami ou en famille).
-// Ami se vante en anglais ; on choisit la réplique juste ET drôle. Les mauvaises répliques contiennent une erreur
-// classique d'anglais (la vanne explique laquelle) ou tombent à côté. Les clashs visent Ami (ses plumes, ses vantardises),
+// Ami des mots — clashs de la battle de vannes (contre Plumo ou en famille).
+// Plumo se vante en anglais ; on choisit la réplique juste ET drôle. Les mauvaises répliques contiennent une erreur
+// classique d'anglais (la vanne explique laquelle) ou tombent à côté. Les clashs visent Plumo (ses plumes, ses vantardises),
 // jamais le joueur ni sa famille. Tout est original.
 (function(){
   'use strict';
@@ -9,14 +9,14 @@
     M('I am the best singer in the forest!', 'Je suis le meilleur chanteur de la forêt !',
       'Best singer? Even the frogs asked you to stop!', 'Meilleur chanteur ? Même les grenouilles t’ont demandé d’arrêter !',
       'Even the frogs asked you to stopping!', 'Après « to », le verbe reste nu : « to stop ». Ton « stopping » chante faux ! 🐸',
-      'Frogs are green.', 'Vrai… mais Ami attend une réplique, pas un cours de biologie ! 🐸'),
+      'Frogs are green.', 'Vrai… mais Plumo attend une réplique, pas un cours de biologie ! 🐸'),
     M('My nest is bigger than your house!', 'Mon nid est plus grand que ta maison !',
       'Your nest is so small that a mouse said “no thanks”!', 'Ton nid est si petit qu’une souris a dit « non merci » !',
       'Your nest is so small that a mouse say “no thanks”!', 'La souris l’a dit HIER : au passé, « said ». « say », c’est maintenant. 🐭',
       'I have a red bike.', 'Joli vélo, mais on parlait de nids ! 🚲'),
     M('I never make mistakes in English!', 'Je ne fais jamais de fautes en anglais !',
       'Really? Yesterday you said “I goed to the park”!', 'Vraiment ? Hier tu as dit « I goed to the park » !',
-      'Really? Yesterday you say “I goed to the park”!', 'Hier = passé : « you said ». Tu viens de faire la faute que tu reprochais à Ami ! 😅',
+      'Really? Yesterday you say “I goed to the park”!', 'Hier = passé : « you said ». Tu viens de faire la faute que tu reprochais à Plumo ! 😅',
       'The park is closed today.', 'Peut-être, mais ce n’est pas une vanne ! 🌳'),
     M('I can fly higher than a plane!', 'Je vole plus haut qu’un avion !',
       'Higher than a plane? You can’t even reach the top shelf!', 'Plus haut qu’un avion ? Tu n’atteins même pas l’étagère du haut !',
@@ -25,10 +25,10 @@
     M('Everybody in the village loves my jokes!', 'Tout le village adore mes blagues !',
       'They laugh because they are polite!', 'Ils rient parce qu’ils sont polis !',
       'They laughs because they are polite!', '« They » ne prend jamais de s : « they laugh ». Le s est parti rire ailleurs ! 😂',
-      'I like pizza with cheese.', 'Miam… mais Ami attend une vanne, pas ton menu ! 🍕'),
+      'I like pizza with cheese.', 'Miam… mais Plumo attend une vanne, pas ton menu ! 🍕'),
     M('I am so smart, I know all the words!', 'Je suis tellement malin que je connais tous les mots !',
       'All the words? Then spell “hippopotamus”, Mister Genius!', 'Tous les mots ? Alors épelle « hippopotamus », Monsieur Génie !',
-      'Then spell “hippopotamus”, Mister Genious!', '« genius » s’écrit sans o : g-e-n-i-u-s. Le génie, c’était peut-être Ami… 🦛',
+      'Then spell “hippopotamus”, Mister Genious!', '« genius » s’écrit sans o : g-e-n-i-u-s. Le génie, c’était peut-être Plumo… 🦛',
       'Hippos live in Africa.', 'C’est vrai, mais ce n’est pas un clash ! 🦛'),
     M('My dance moves are legendary!', 'Mes pas de danse sont légendaires !',
       'Legendary? You dance like a fridge on roller skates!', 'Légendaires ? Tu danses comme un frigo en rollers !',
@@ -37,7 +37,7 @@
     M('I wake up earlier than the sun!', 'Je me lève avant le soleil !',
       'Earlier than the sun? You snore until lunchtime!', 'Avant le soleil ? Tu ronfles jusqu’à midi !',
       'You snores until lunchtime!', 'Avec « you », pas de s : « you snore ». Le s ronfle encore ! 😴',
-      'Lunch is at noon.', 'Exact, mais Ami ne s’est pas vexé du tout ! 🕛'),
+      'Lunch is at noon.', 'Exact, mais Plumo ne s’est pas vexé du tout ! 🕛'),
     M('I am the strongest owl in the world!', 'Je suis le hibou le plus fort du monde !',
       'Strongest? A feather knocked you over last week!', 'Le plus fort ? Une plume t’a renversé la semaine dernière !',
       'A feather knocked you over next week!', '« next week » = la semaine PROCHAINE. Pour ce qui est passé : « last week ». 📅',
@@ -73,7 +73,7 @@
     M('I am faster than the internet!', 'Je suis plus rapide qu’internet !',
       'Faster than the internet? You still haven’t finished yesterday’s homework!', 'Plus rapide qu’internet ? Tu n’as toujours pas fini les devoirs d’hier !',
       'You still haven’t finish yesterday’s homework!', 'Après « haven’t », le participe : « finished », avec -ed. 📝',
-      'My homework is easy.', 'Tant mieux ! Mais Ami n’a même pas tremblé. 📝'),
+      'My homework is easy.', 'Tant mieux ! Mais Plumo n’a même pas tremblé. 📝'),
     M('My bedroom is the tidiest in the village!', 'Ma chambre est la mieux rangée du village !',
       'The tidiest? Your socks have their own postcode!', 'La mieux rangée ? Tes chaussettes ont leur propre code postal !',
       'Your socks has their own postcode!', '« socks », c’est plusieurs chaussettes : « have », pas « has ». 🧦',
@@ -91,7 +91,7 @@
       'Even the scarecrow looks more good than you!', '« good » a un comparatif à lui : « better ». « more good », ça fait peur aux corbeaux ! 🌾',
       'Scarecrows live in fields.', 'C’est vrai, mais l’épouvantail ne rigole pas ! 🌾')
   ];
-  // Quand on rate sa réplique, Ami contre-attaque (sur la réplique ratée, jamais sur le joueur).
+  // Quand on rate sa réplique, Plumo contre-attaque (sur la réplique ratée, jamais sur le joueur).
   const RIPOSTES = [
     { en:'Ha! Missed! Try again, champion!', fr:'Ha ! Raté ! Réessaie, champion !' },
     { en:'Is that a clash or a lullaby?', fr:'C’est un clash ou une berceuse ?' },
@@ -103,8 +103,8 @@
     { en:'That reply needs a little nap!', fr:'Cette réplique a besoin d’une petite sieste !' }
   ];
   // Réactions du public : premier coup, puis séries.
-  const FOULE = ['OHHHH! 🔥', 'BOOM! 💥', 'Le public est debout ! 🙌', 'Quelle punchline ! 🎤', 'Ami cherche ses plumes par terre ! 🪶'];
-  const SERIE = { 2:'🔥 Série de 2 : Ami commence à transpirer !', 3:'💥 Série de 3 : Ami est KO debout !', 4:'🏆 Série de 4 : légende du clash !' };
+  const FOULE = ['OHHHH! 🔥', 'BOOM! 💥', 'Le public est debout ! 🙌', 'Quelle punchline ! 🎤', 'Plumo cherche ses plumes par terre ! 🪶'];
+  const SERIE = { 2:'🔥 Série de 2 : Plumo commence à transpirer !', 3:'💥 Série de 3 : Plumo est KO debout !', 4:'🏆 Série de 4 : légende du clash !' };
   // Énergie du public pour une manche (applaudimètre) : 100 du premier coup, puis moins.
   const energie = essais => essais === 0 ? 100 : essais === 1 ? 55 : 25;
   window.CLASH = { MANCHES, RIPOSTES, FOULE, SERIE, energie };

@@ -8,15 +8,15 @@
   function questionsMixtes(graine, n){
     const R = window.RIGOLADE, P = window.PIEGES, A = window.ANGLAIS, rnd = R.hasardGraine(graine);
     const tirer = l => l[Math.floor(rnd() * l.length)];
-    // Questions « qu'a dit Ami ? » retirées seulement si JEUX_ECOUTE_CACHE.
+    // Questions « qu'a dit Plumo ? » retirées seulement si JEUX_ECOUTE_CACHE.
     const types = ['piege', 'battle', 'vf'].concat(window.CONFIG_JEU && CONFIG_JEU.JEUX_ECOUTE_CACHE ? [] : ['oreille']), vus = new Set(), out = [];
     for(let i = 0; out.length < n && i < n * 20; i++){
       const t = types[out.length % types.length]; let q = null;
       if(t === 'piege' && P){ const p = tirer(P.liste); q = { id:'p:' + p.id, consigne:'Comment dit-on en anglais ?', enonce:'🇫🇷 ' + p.fr, bon:p.bon, faux:p.faux.slice(0, 2), regle:p.regle, dire:p.bon }; }
-      if(t === 'battle' && A){ const b = tirer(A.BATTLE); q = { id:'b:' + b.ami, consigne:'🦉 Ami se vante : choisis la meilleure réplique !', enonce:'« ' + b.ami + ' »', ecoute:b.ami, bon:b.bon.en, faux:b.faux, regle:'🇫🇷 ' + b.bon.fr, dire:b.bon.en }; }
+      if(t === 'battle' && A){ const b = tirer(A.BATTLE); q = { id:'b:' + b.ami, consigne:'🦉 Plumo se vante : choisis la meilleure réplique !', enonce:'« ' + b.ami + ' »', ecoute:b.ami, bon:b.bon.en, faux:b.faux, regle:'🇫🇷 ' + b.bon.fr, dire:b.bon.en }; }
       if(t === 'vf' && R){ const v = tirer(R.VRAI_FAUX); q = { id:'v:' + v.en, consigne:'True or false?', enonce:'« ' + v.en + ' »', ecoute:v.en, trad:v.fr, bon:v.vrai ? 'True' : 'False', faux:[{ en:v.vrai ? 'False' : 'True', vanne:v.rire }], regle:'😂 ' + v.rire, dire:v.en }; }
       if(t === 'oreille' && R){ const p = tirer(R.PAIRES), cible = rnd() < .5 ? p.a : p.b, autre = cible === p.a ? p.b : p.a;
-        q = { id:'o:' + cible.en, consigne:'👂 Écoute : qu’a dit Ami ?', enonce:'', ecoute:cible.en, bon:cible.e, bonTexte:cible.e + ' ' + cible.en + ' = ' + cible.fr, faux:[{ en:autre.e, vanne:'« ' + autre.en + ' » au lieu de « ' + cible.en + ' » : ' + p.rire }], dire:cible.en }; }
+        q = { id:'o:' + cible.en, consigne:'👂 Écoute : qu’a dit Plumo ?', enonce:'', ecoute:cible.en, bon:cible.e, bonTexte:cible.e + ' ' + cible.en + ' = ' + cible.fr, faux:[{ en:autre.e, vanne:'« ' + autre.en + ' » au lieu de « ' + cible.en + ' » : ' + p.rire }], dire:cible.en }; }
       if(q && !vus.has(q.id)){ vus.add(q.id); out.push(q); }
     }
     return out;

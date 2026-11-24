@@ -1,8 +1,8 @@
 // Ami des mots — le coin anglais (pour les francophones) : battle de vannes, situations de la vie, dictée rigolote.
 // Toutes les phrases et traductions sont écrites et vérifiées à la main : ne pas en inventer.
-// Règle d'or : on taquine Ami ou la confusion, jamais l'enfant. Les vannes de la battle visent Ami (qui adore ça).
+// Règle d'or : on taquine Plumo ou la confusion, jamais l'enfant. Les vannes de la battle visent Plumo (qui adore ça).
 (function(){
-  // ── BATTLE DE VANNES ── Ami se vante en anglais ; l'enfant choisit LA réplique juste et drôle.
+  // ── BATTLE DE VANNES ── Plumo se vante en anglais ; l'enfant choisit LA réplique juste et drôle.
   // Chaque mauvaise réplique : soit une faute (la vanne explique), soit hors sujet (la vanne le dit gentiment).
   const BATTLE = [
     { ami:'I’m the fastest bird in the village!', fr:'Je suis l’oiseau le plus rapide du village !',
@@ -12,7 +12,7 @@
     { ami:'I can read one hundred books a day!', fr:'Je peux lire cent livres par jour !',
       bon:{ en:'Sure, and I can ride my bike to the moon!', fr:'Bien sûr, et moi je vais sur la Lune à vélo !' },
       faux:[{ en:'Sure, and I can to ride my bike to the moon!', vanne:'Après « can », jamais de « to » : I can ride. Le « to » est parti tout seul dans la fusée ! 🚀' },
-            { en:'Yes, it’s Tuesday.', vanne:'« Yes, it’s Tuesday » : Ami cherche encore le rapport avec les livres… 📅' }] },
+            { en:'Yes, it’s Tuesday.', vanne:'« Yes, it’s Tuesday » : Plumo cherche encore le rapport avec les livres… 📅' }] },
     { ami:'My feathers are more beautiful than your hair!', fr:'Mes plumes sont plus belles que tes cheveux !',
       bon:{ en:'Your feathers look like a pillow after a pillow fight!', fr:'Tes plumes ressemblent à un oreiller après une bataille de polochons !' },
       faux:[{ en:'Your feathers looks like a pillow after a pillow fight!', vanne:'« feathers », c’est plusieurs plumes : elles « look », sans s ! 🪶' },
@@ -20,19 +20,19 @@
     { ami:'I never make mistakes in English.', fr:'Je ne fais jamais de fautes en anglais.',
       bon:{ en:'Never? Yesterday you said “a elephant”!', fr:'Jamais ? Hier, tu as dit « a elephant » !' },
       faux:[{ en:'Never? Yesterday you say “a elephant”!', vanne:'« Yesterday » = hier : le verbe doit voyager dans le passé, « you said » ! ⏳' },
-            { en:'Good morning, teacher.', vanne:'Très poli… mais Ami attendait une réplique, pas un bonjour ! 🦉' }] },
+            { en:'Good morning, teacher.', vanne:'Très poli… mais Plumo attendait une réplique, pas un bonjour ! 🦉' }] },
     { ami:'I’m so clever, I know every word!', fr:'Je suis tellement malin que je connais tous les mots !',
       bon:{ en:'OK, clever owl: how do you say “chocolatine”?', fr:'D’accord, chouette maligne : comment dit-on « chocolatine » ?' },
       faux:[{ en:'OK, clever owl: how you say “chocolatine”?', vanne:'Il manque un petit mot : how DO you say…? Sans lui, la question tombe à plat ! 🥐' },
-            { en:'My cat is orange.', vanne:'Joli chat… mais Ami attendait une réplique ! 🐈' }] },
+            { en:'My cat is orange.', vanne:'Joli chat… mais Plumo attendait une réplique ! 🐈' }] },
     { ami:'I sing better than a rock star!', fr:'Je chante mieux qu’une rock star !',
       bon:{ en:'When you sing, even the dogs cover their ears!', fr:'Quand tu chantes, même les chiens se bouchent les oreilles !' },
       faux:[{ en:'When you sing, even the dogs covers their ears!', vanne:'« the dogs » : plusieurs chiens, donc « cover », sans s ! 🐶🐶' },
-            { en:'Where is the station?', vanne:'Tu demandes la gare au milieu d’une battle ? Ami est perdu ! 🚉' }] },
+            { en:'Where is the station?', vanne:'Tu demandes la gare au milieu d’une battle ? Plumo est perdu ! 🚉' }] },
     { ami:'I’m the king of this village!', fr:'Je suis le roi de ce village !',
       bon:{ en:'The king? You can’t even find your own feathers!', fr:'Le roi ? Tu ne retrouves même pas tes propres plumes !' },
       faux:[{ en:'The king? You can’t even to find your own feathers!', vanne:'Après « can’t », pas de « to » : you can’t find. Le « to » s’est perdu avec les plumes ! 🪶' },
-            { en:'I am agree.', vanne:'« I am agree » : un piège ! On dit « I agree »… et en plus, tu viens d’être d’accord avec Ami ! 😂' }] },
+            { en:'I am agree.', vanne:'« I am agree » : un piège ! On dit « I agree »… et en plus, tu viens d’être d’accord avec Plumo ! 😂' }] },
     { ami:'I wake up very early every day.', fr:'Je me lève très tôt tous les jours.',
       bon:{ en:'Owls sleep all day! You wake up at dinner time!', fr:'Les chouettes dorment toute la journée ! Tu te réveilles à l’heure du dîner !' },
       faux:[{ en:'Owls sleeps all day! You wake up at dinner time!', vanne:'« Owls » : plusieurs chouettes, donc « sleep », sans s ! 🦉🦉' },
@@ -40,9 +40,9 @@
     { ami:'I’m the best dancer in the world!', fr:'Je suis le meilleur danseur du monde !',
       bon:{ en:'You dance like a penguin on ice skates!', fr:'Tu danses comme un pingouin en patins à glace !' },
       faux:[{ en:'You dance like a penguin on ice skate!', vanne:'Deux pieds, deux patins : « skates », avec un s ! ⛸️⛸️' },
-            { en:'It’s raining today.', vanne:'La météo, c’est sympa… mais Ami veut une réplique, pas un bulletin ! 🌧️' }] }
+            { en:'It’s raining today.', vanne:'La météo, c’est sympa… mais Plumo veut une réplique, pas un bulletin ! 🌧️' }] }
   ];
-  // Réactions d'Ami quand la réplique fait mouche (il adore perdre… presque).
+  // Réactions de Plumo quand la réplique fait mouche (il adore perdre… presque).
   const AIE = [
     { en:'Ouch! Good one!', fr:'Aïe ! Bien envoyé !' },
     { en:'Ha ha! You got me!', fr:'Ha ha ! Tu m’as eu !' },
@@ -120,7 +120,7 @@
               { en:'Yes, I’m nine.', vanne:'Ton âge ne remplit pas l’assiette ! On te demande si tu veux encore des pâtes. 🍝' }] } ] }
   ];
 
-  // ── DICTÉE RIGOLOTE ── Ami dit une phrase, on l'écrit. Beaucoup d'homophones (même son, autre sens).
+  // ── DICTÉE RIGOLOTE ── Plumo dit une phrase, on l'écrit. Beaucoup d'homophones (même son, autre sens).
   const DICTEE = [
     { en:'I can see the sea.', fr:'Je vois la mer.' },
     { en:'My son likes the sun.', fr:'Mon fils aime le soleil.' },
@@ -179,7 +179,7 @@
   }
   // Vanne pour une erreur de dictée : homophone (avec le sens), mot oublié, ou orthographe.
   function vanneDictee(e, score){
-    if(score !== undefined && score < 50) return 'Oups, Ami a dit une autre phrase ! Réécoute avec 🐢 « Lentement », mot par mot. 👂';
+    if(score !== undefined && score < 50) return 'Oups, Plumo a dit une autre phrase ! Réécoute avec 🐢 « Lentement », mot par mot. 👂';
     if(!e) return '';
     const t = e.ecrit, j = e.attendu;
     if(!t) return '« ' + j + ' » a disparu : il s’est caché sous la table ! 🙈';

@@ -1,6 +1,6 @@
 <?php
 // Ami des mots — l'IA trie les vannes qu'on ajoute au paquet du Clash libre (v5.87).
-// Le juge d'Ami (règles) a déjà dit oui dans le jeu ; ici Claude repère ce que les règles ne voient pas :
+// Le juge de Plumo (règles) a déjà dit oui dans le jeu ; ici Claude repère ce que les règles ne voient pas :
 // moquerie déguisée sur le physique, la famille, l'origine, la religion, le genre, un handicap ou l'argent, harcèlement,
 // sous-entendu sexuel, violence, personne réelle visée, données personnelles, langage codé. Il vérifie aussi l'anglais.
 // POST { fr, en } → { garder:true|false, raison:"…", en_corrige:"…"|null }

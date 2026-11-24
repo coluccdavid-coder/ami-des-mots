@@ -1,5 +1,5 @@
 // Ami des mots — réglages du projet Android généré par Capacitor (lancé par la fabrique GitHub, après « cap add android »).
-//  · micro (Répète après Ami) et moteur de voix du téléphone ;
+//  · micro (Répète après Plumo) et moteur de voix du téléphone ;
 //  · numéro de version tiré de package.json (5.44.0 → 54400) ;
 //  · signature de la version Play Store si les secrets AMI_KEYSTORE… sont fournis (jamais dans le dépôt).
 'use strict';

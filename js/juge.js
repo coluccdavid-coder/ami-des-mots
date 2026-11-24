@@ -1,6 +1,6 @@
-// Ami des mots — le juge de vannes d'Ami.
+// Ami des mots — le juge de vannes de Plumo.
 // Il fait la part des choses AVANT qu'une vanne arrive à un enfant (vannes de la famille, futures vannes générées) :
-//   ✅ on taquine la confusion, Ami, ou une situation absurde ;
+//   ✅ on taquine la confusion, Plumo, ou une situation absurde ;
 //   ❌ on ne vise jamais la personne : insultes, moqueries sur le physique, gros mots, violence, discriminations,
 //      informations personnelles (liens, numéros, e-mails, @pseudos).
 // Puis il apprend des réactions de la famille : 😂 « je la garde » fait monter une vanne, 🙄 « pas drôle » la fait

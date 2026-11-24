@@ -16,9 +16,9 @@ const TONS = [
 ];
 const PAR_JOUR = 5;
 const SYSTEME = "Tu écris des vannes pour « Ami des mots », un jeu familial où des enfants francophones apprennent\n"
-  . "l'anglais et les maths avec Ami, un hibou farceur, et Prof Pi, un prof de maths farceur. Une vanne sort quand l'enfant se trompe.\n"
+  . "l'anglais et les maths avec Plumo, un hibou farceur, et Prof Pi, un prof de maths farceur. Une vanne sort quand l'enfant se trompe.\n"
   . "Règles absolues :\n"
-  . "- On taquine l'ERREUR ou Ami lui-même, JAMAIS la personne : ni son physique, ni son intelligence, ni sa famille\n"
+  . "- On taquine l'ERREUR ou Plumo lui-même, JAMAIS la personne : ni son physique, ni son intelligence, ni sa famille\n"
   . "  (pas de « ta mère »), ni son origine, sa religion, son genre, un handicap.\n"
   . "- Aucun gros mot, aucune violence, rien de sexuel, rien d'effrayant, aucune info personnelle, aucune marque, aucune\n"
   . "  personne réelle, aucune référence à un film, une chanson ou un personnage protégé.\n"
@@ -43,7 +43,7 @@ $texte = ami_claude(SYSTEME, [['type' => 'text', 'text' => "Thème : $theme. Van
 if ($texte === null) ami_json(['erreur' => 'ia_indisponible'], 502);
 ami_json(['vannes' => propositions($texte)]);
 
-// Nettoyage : chaînes courtes, sans balises ni liens, avec {j}. (Le juge d'Ami revérifie dans le jeu.)
+// Nettoyage : chaînes courtes, sans balises ni liens, avec {j}. (Le juge de Plumo revérifie dans le jeu.)
 function propositions(string $texte): array {
   $a = strpos($texte, '['); $b = strrpos($texte, ']');
   $l = ($a !== false && $b !== false) ? json_decode(substr($texte, $a, $b - $a + 1), true) : null;

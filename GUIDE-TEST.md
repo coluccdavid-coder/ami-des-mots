@@ -1,4 +1,4 @@
-# Ami des Mots v5.3 — guide de test
+# Plumo des Mots v5.3 — guide de test
 
 ## 1. Préparer le projet
 - Décompresser l'archive dans un dossier.
@@ -132,7 +132,7 @@ Ne pas utiliser de vrais paiements pendant les essais. Pour tester l'abonnement,
 ## Nouveauté v5.16 — humour renforcé
 - Faire des erreurs dans chaque thème : animaux, manger, maison, habits, nature, ville, musique, atelier.
 - Vérifier que la vanne cite bien le mot attendu et le mot sélectionné lorsque disponibles.
-- Tester les 4 niveaux : le niveau 4 est plus piquant mais continue de se moquer d'Ami, pas du joueur.
+- Tester les 4 niveaux : le niveau 4 est plus piquant mais continue de se moquer de Plumo, pas du joueur.
 - Changer plusieurs fois de niveau et refaire les mêmes exercices pour vérifier l'aléatoire.
 - Tester français et anglais, y compris lorsque la langue apprise est différente de la langue des blagues.
 
@@ -145,12 +145,12 @@ Ne pas utiliser de vrais paiements pendant les essais. Pour tester l'abonnement,
 - En cas d'image manquante, vérifier qu'un emoji de secours reste affiché et sélectionnable.
 
 
-## Nouveauté v5.18 — direction artistique Ami Arcade
+## Nouveauté v5.18 — direction artistique Plumo Arcade
 - Accueil : vérifier les boutons colorés, leurs reflets et le fond étoilé.
 - PC : vérifier que le plateau de jeu occupe l'espace sans étirer les images.
 - Mobile : vérifier que les choix restent visibles, tactiles et sans débordement horizontal.
-- Bonne réponse : la carte doit rebondir et Ami doit faire sa petite danse.
-- Mauvaise réponse : le choix doit trembler et Ami réagir ; la bulle BD doit rester lisible.
+- Bonne réponse : la carte doit rebondir et Plumo doit faire sa petite danse.
+- Mauvaise réponse : le choix doit trembler et Plumo réagir ; la bulle BD doit rester lisible.
 - Activer la préférence système « réduire les animations » : les animations décoratives doivent se couper.
 
 

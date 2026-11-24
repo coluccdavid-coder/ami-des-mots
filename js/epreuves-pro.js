@@ -9,15 +9,15 @@
   const bloc = (titre, pts, contexte, l, r, n) => ({ titre, pts, contexte, questions:QS(tirer(r, l, n)) });
 
   const PSE = [
-    ['Le numéro d’urgence européen est :', '112', [['118', 'Ça, ce sont des renseignements. En urgence, c’est le 112.'], ['3615', 'Ça date du Minitel. Ami a des souvenirs.']], 'Aussi : 15 SAMU, 18 pompiers, 17 police, 114 par SMS pour les personnes sourdes ou malentendantes.'],
+    ['Le numéro d’urgence européen est :', '112', [['118', 'Ça, ce sont des renseignements. En urgence, c’est le 112.'], ['3615', 'Ça date du Minitel. Plumo a des souvenirs.']], 'Aussi : 15 SAMU, 18 pompiers, 17 police, 114 par SMS pour les personnes sourdes ou malentendantes.'],
     ['Le SAMU se joint au :', '15', [['18', 'Le 18, ce sont les pompiers.'], ['17', 'Le 17, c’est la police.']], 'Urgence médicale : 15.'],
-    ['Face à un accident, l’ordre des actions est :', 'Protéger, alerter, secourir', [['Secourir, protéger, alerter', 'D’abord se protéger et protéger les autres, sinon il y a deux victimes.'], ['Alerter, filmer, partir', 'Filmer n’aide personne. Ami fronce les sourcils.']], 'PAS : protéger, alerter, secourir.'],
+    ['Face à un accident, l’ordre des actions est :', 'Protéger, alerter, secourir', [['Secourir, protéger, alerter', 'D’abord se protéger et protéger les autres, sinon il y a deux victimes.'], ['Alerter, filmer, partir', 'Filmer n’aide personne. Plumo fronce les sourcils.']], 'PAS : protéger, alerter, secourir.'],
     ['Un EPI, c’est :', 'Un équipement de protection individuelle (gants, casque, lunettes…)', [['Un engin de chantier', 'Non : c’est ce qu’on porte pour se protéger.'], ['Une épreuve d’examen', 'Cette réponse est partie faire un tour et elle a oublié de revenir.']], 'Il protège le travailleur d’un risque.'],
-    ['Les TMS sont :', 'Des troubles musculosquelettiques liés aux gestes répétés ou aux mauvaises postures', [['Des transports en commun', 'Ami a vérifié trois fois : c’est toujours non. Mais c’était audacieux.'], ['Des tests médicaux de sport', 'Celle-là, même un GPS en panne ne l’aurait pas choisie.']], 'Première cause de maladie professionnelle en France.'],
+    ['Les TMS sont :', 'Des troubles musculosquelettiques liés aux gestes répétés ou aux mauvaises postures', [['Des transports en commun', 'Plumo a vérifié trois fois : c’est toujours non. Mais c’était audacieux.'], ['Des tests médicaux de sport', 'Celle-là, même un GPS en panne ne l’aurait pas choisie.']], 'Première cause de maladie professionnelle en France.'],
     ['Le document unique d’évaluation des risques (DUERP) est obligatoire :', 'Dans toute entreprise qui a au moins un salarié', [['Seulement dans les usines chimiques', 'Toutes les entreprises avec des salariés sont concernées.'], ['Jamais', 'Si, il est obligatoire.']], 'L’employeur doit évaluer les risques.'],
-    ['La durée légale du travail en France est de :', '35 heures par semaine', [['48 heures', '48 heures est une durée MAXIMALE, pas la durée légale.'], ['20 heures', 'Bien tenté ! Ami donne 10 pour le courage et 0 pour le résultat.']], 'Au-delà : heures supplémentaires.'],
+    ['La durée légale du travail en France est de :', '35 heures par semaine', [['48 heures', '48 heures est une durée MAXIMALE, pas la durée légale.'], ['20 heures', 'Bien tenté ! Plumo donne 10 pour le courage et 0 pour le résultat.']], 'Au-delà : heures supplémentaires.'],
     ['Le tri sélectif sert surtout à :', 'Recycler les matériaux et réduire les déchets', [['Remplir plus vite la poubelle', 'Cette réponse a pris le mauvais train. Direction : nulle part, terminus : raté.'], ['Rien du tout', 'Il permet de valoriser les déchets.']], 'Développement durable.'],
-    ['Le sommeil est important car il permet :', 'La récupération physique et la mémorisation', [['De grandir de 10 cm par nuit', 'Ami aimerait bien.'], ['De ne plus jamais manger', 'Ami a failli tomber de sa branche. Il s’est rattrapé de justesse.']], 'Rythmes biologiques.']
+    ['Le sommeil est important car il permet :', 'La récupération physique et la mémorisation', [['De grandir de 10 cm par nuit', 'Plumo aimerait bien.'], ['De ne plus jamais manger', 'Plumo a failli tomber de sa branche. Il s’est rattrapé de justesse.']], 'Rythmes biologiques.']
   ];
   function pseConso(r){
     const P = un(r, [60, 1000, 2000]), h = un(r, [2, 5, 10]), prix = un(r, [0.2, 0.25]), kwh = P * h / 1000;
@@ -30,10 +30,10 @@
   }
   const ECO_DROIT = [
     ['Un CDI est :', 'Un contrat de travail à durée indéterminée', [['Un contrat de 6 mois maximum', 'Ça ressemble plutôt à un CDD.'], ['Un diplôme', 'Réponse originale, ça oui. Juste, pas du tout.']], 'Forme normale du contrat de travail.'],
-    ['Un litige entre un salarié et son employeur se règle devant :', 'Le conseil de prud’hommes', [['Le Conseil constitutionnel', 'Lui vérifie les lois, pas les contrats de travail.'], ['La mairie', 'Cette réponse sort tout droit d’un rêve bizarre. Réveille-toi, Ami t’attend.']], 'Juridiction du travail.'],
-    ['La période d’essai permet :', 'À l’employeur et au salarié de vérifier que le poste convient', [['De travailler sans être payé', 'Non : elle est payée.'], ['De ne jamais être embauché', 'Raté ! Mais Ami garde cette réponse pour son bêtisier préféré.']], 'Rupture plus simple pendant cette période.'],
+    ['Un litige entre un salarié et son employeur se règle devant :', 'Le conseil de prud’hommes', [['Le Conseil constitutionnel', 'Lui vérifie les lois, pas les contrats de travail.'], ['La mairie', 'Cette réponse sort tout droit d’un rêve bizarre. Réveille-toi, Plumo t’attend.']], 'Juridiction du travail.'],
+    ['La période d’essai permet :', 'À l’employeur et au salarié de vérifier que le poste convient', [['De travailler sans être payé', 'Non : elle est payée.'], ['De ne jamais être embauché', 'Raté ! Mais Plumo garde cette réponse pour son bêtisier préféré.']], 'Rupture plus simple pendant cette période.'],
     ['Une convention collective :', 'Fixe des règles propres à une branche professionnelle', [['Est une fête d’entreprise', 'Là, la réponse a confondu la carte et le territoire. Et la carte était à l’envers.'], ['Remplace le Code du travail', 'Elle le complète, souvent en mieux pour le salarié.']], 'Négociée entre syndicats et employeurs.'],
-    ['Une micro-entreprise est :', 'Un régime simplifié pour un entrepreneur individuel', [['Une entreprise de moins de 1 cm', 'Ami rit, mais non.'], ['Une multinationale', 'Ami a sorti sa loupe : aucune trace de bonne réponse ici.']], 'Formalités et comptabilité allégées.'],
+    ['Une micro-entreprise est :', 'Un régime simplifié pour un entrepreneur individuel', [['Une entreprise de moins de 1 cm', 'Plumo rit, mais non.'], ['Une multinationale', 'Plumo a sorti sa loupe : aucune trace de bonne réponse ici.']], 'Formalités et comptabilité allégées.'],
     ['Le chiffre d’affaires, c’est :', 'Le total des ventes sur une période', [['Le bénéfice', 'Le bénéfice, c’est après avoir retiré les charges.'], ['Le salaire du patron', 'Cette réponse a de l’imagination. Beaucoup trop, même.']], 'CA = prix × quantités vendues.']
   ];
   function gestionFacture(r){
@@ -48,17 +48,17 @@
   const FR_PRO = [
     ['Pour exprimer une opposition, on utilise :', 'Pourtant', [['Donc', 'Donc annonce une conséquence.'], ['De plus', 'De plus ajoute un argument.']], 'Pourtant, cependant, néanmoins…'],
     ['Dans un texte argumentatif, la thèse est :', 'L’opinion que l’auteur défend', [['Un exemple', 'L’exemple illustre un argument.'], ['La conclusion du livre', 'Pas loin… enfin si, très loin. À peu près à l’autre bout du pays.']], 'Thèse → arguments → exemples.'],
-    ['« Il court comme le vent. » Procédé ?', 'Une comparaison', [['Une métaphore', 'Il y a « comme » : c’est une comparaison.'], ['Une hyperbole', 'Ami applaudit l’effort, puis il pose ses ailes sur sa tête.']], 'Outil de comparaison : comme.'],
+    ['« Il court comme le vent. » Procédé ?', 'Une comparaison', [['Une métaphore', 'Il y a « comme » : c’est une comparaison.'], ['Une hyperbole', 'Plumo applaudit l’effort, puis il pose ses ailes sur sa tête.']], 'Outil de comparaison : comme.'],
     ['« Les dossiers que j’ai ___ » :', 'remplis', [['rempli', 'Le COD « que » (les dossiers) est placé avant : accord au masculin pluriel.'], ['remplir', 'Il faut un participe passé.']], 'Accord avec le COD placé avant l’auxiliaire avoir.'],
     ['Un écrit professionnel doit être :', 'Clair, précis et adapté au destinataire', [['Le plus long possible', 'Non : concis.'], ['Écrit en langage SMS', 'Pas au travail, ni à l’examen !']], 'Registre courant ou soutenu.'],
     ['Un personnage de roman qui évolue tout au long du récit suit :', 'Un itinéraire romanesque', [['Une recette', 'Cette réponse mériterait un prix. Le prix de la plus belle sortie de route.'], ['Un sommaire', 'Cette réponse est partie faire un tour et elle a oublié de revenir.']], 'Évolution, épreuves, transformation.']
   ];
   const HG_PRO = [
-    ['La Ve République est fondée en :', '1958', [['1945', '1945, c’est la fin de la Seconde Guerre mondiale.'], ['1981', 'Ami a vérifié trois fois : c’est toujours non. Mais c’était audacieux.']], 'Constitution de 1958.'],
-    ['Les femmes votent pour la première fois en France en :', '1945', [['1918', 'Celle-là, même un GPS en panne ne l’aurait pas choisie.'], ['1968', 'Bien tenté ! Ami donne 10 pour le courage et 0 pour le résultat.']], 'Droit de vote accordé en 1944, premier vote en 1945.'],
-    ['Une firme transnationale est :', 'Une entreprise qui a des activités dans plusieurs pays', [['Une petite boutique de quartier', 'Cette réponse a pris le mauvais train. Direction : nulle part, terminus : raté.'], ['Un pays', 'Ami a failli tomber de sa branche. Il s’est rattrapé de justesse.']], 'Acteur majeur de la mondialisation.'],
+    ['La Ve République est fondée en :', '1958', [['1945', '1945, c’est la fin de la Seconde Guerre mondiale.'], ['1981', 'Plumo a vérifié trois fois : c’est toujours non. Mais c’était audacieux.']], 'Constitution de 1958.'],
+    ['Les femmes votent pour la première fois en France en :', '1945', [['1918', 'Celle-là, même un GPS en panne ne l’aurait pas choisie.'], ['1968', 'Bien tenté ! Plumo donne 10 pour le courage et 0 pour le résultat.']], 'Droit de vote accordé en 1944, premier vote en 1945.'],
+    ['Une firme transnationale est :', 'Une entreprise qui a des activités dans plusieurs pays', [['Une petite boutique de quartier', 'Cette réponse a pris le mauvais train. Direction : nulle part, terminus : raté.'], ['Un pays', 'Plumo a failli tomber de sa branche. Il s’est rattrapé de justesse.']], 'Acteur majeur de la mondialisation.'],
     ['Le conteneur a favorisé :', 'La mondialisation des échanges par la mer', [['La fin du commerce', 'C’est l’inverse.'], ['Les voyages dans l’espace', 'Réponse originale, ça oui. Juste, pas du tout.']], 'Transport maritime massifié.'],
-    ['La laïcité est fondée sur la loi de :', '1905', [['1789', 'Cette réponse sort tout droit d’un rêve bizarre. Réveille-toi, Ami t’attend.'], ['1958', 'Raté ! Mais Ami garde cette réponse pour son bêtisier préféré.']], 'Séparation des Églises et de l’État.'],
+    ['La laïcité est fondée sur la loi de :', '1905', [['1789', 'Cette réponse sort tout droit d’un rêve bizarre. Réveille-toi, Plumo t’attend.'], ['1958', 'Raté ! Mais Plumo garde cette réponse pour son bêtisier préféré.']], 'Séparation des Églises et de l’État.'],
     ['L’ONU a été créée en :', '1945', [['1919', 'La SDN, c’était 1919.'], ['1989', 'Là, la réponse a confondu la carte et le territoire. Et la carte était à l’envers.']], 'Pour maintenir la paix.']
   ];
   function mathsPro(r){
@@ -77,7 +77,7 @@
   const LV_PRO = [
     ['« Could you send me the invoice? »', 'Pourriez-vous m’envoyer la facture ?', [['Pourriez-vous m’envoyer l’invitation ?', '« Invoice », c’est la facture, pas l’invitation.'], ['Vous avez reçu la facture.', 'C’est une question polie, avec « could ».']], 'Invoice = facture.'],
     ['« The meeting is scheduled for Monday. »', 'La réunion est prévue lundi.', [['La réunion est annulée lundi.', '« Scheduled » = prévu.'], ['La réunion a eu lieu lundi.', 'Non : elle est à venir.']], 'Schedule = planifier.'],
-    ['« I look forward to hearing from you. »', 'Dans l’attente de votre réponse.', [['Je regarde devant moi.', 'Expression figée de fin de courrier.'], ['Je vous entends mal.', 'Ami a sorti sa loupe : aucune trace de bonne réponse ici.']], 'Formule de politesse professionnelle.'],
+    ['« I look forward to hearing from you. »', 'Dans l’attente de votre réponse.', [['Je regarde devant moi.', 'Expression figée de fin de courrier.'], ['Je vous entends mal.', 'Plumo a sorti sa loupe : aucune trace de bonne réponse ici.']], 'Formule de politesse professionnelle.'],
     ['« Safety first! »', 'La sécurité avant tout !', [['Le salaire d’abord !', 'Safety = sécurité.'], ['Premier secours !', 'Cette réponse a de l’imagination. Beaucoup trop, même.']], 'Consigne de sécurité.']
   ];
 

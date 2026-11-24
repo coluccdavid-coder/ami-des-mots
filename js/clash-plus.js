@@ -1,6 +1,6 @@
 // Ami des mots — v5.69 : beaucoup plus de clashs, de « vrai ou faux » et de commentaires pour les battles.
-// Même règles que clash.js : Ami se vante en anglais ; la bonne réplique est juste ET drôle ; une mauvaise contient
-// une erreur d'anglais classique (expliquée par la vanne), l'autre tombe à côté. On clashe Ami, jamais le joueur.
+// Même règles que clash.js : Plumo se vante en anglais ; la bonne réplique est juste ET drôle ; une mauvaise contient
+// une erreur d'anglais classique (expliquée par la vanne), l'autre tombe à côté. On clashe Plumo, jamais le joueur.
 (function(){
   'use strict';
   const M = (ami, fr, bonEn, bonFr, f1, v1, f2, v2) => ({ ami, fr, bon:{ en:bonEn, fr:bonFr }, faux:[{ en:f1, vanne:v1 }, { en:f2, vanne:v2 }] });
@@ -12,7 +12,7 @@
     M('My feathers are softer than a cloud!', 'Mes plumes sont plus douces qu’un nuage !',
       'Softer than a cloud? They look like an old toothbrush!', 'Plus douces qu’un nuage ? On dirait une vieille brosse à dents !',
       'They look like a old toothbrush!', 'Devant une voyelle, « a » devient « an » : « an old ». Ta brosse à dents perd ses poils ! 🪥',
-      'I like clouds when it rains.', 'Joli… mais Ami attendait une punchline, pas un bulletin météo ! ☁️'),
+      'I like clouds when it rains.', 'Joli… mais Plumo attendait une punchline, pas un bulletin météo ! ☁️'),
     M('I can read a whole book in one minute!', 'Je lis un livre entier en une minute !',
       'One minute? You only read the cover!', 'Une minute ? Tu as seulement lu la couverture !',
       'You only readed the cover!', '« Read » est irrégulier : au passé il s’écrit pareil, « read ». « Readed » n’existe pas ! 📕',
@@ -28,7 +28,7 @@
     M('I never lose at hide and seek!', 'Je ne perds jamais à cache-cache !',
       'Never? We found you in one second, your eyes are huge!', 'Jamais ? On t’a trouvé en une seconde, tes yeux sont énormes !',
       'We finded you in one second!', '« Find » au passé, c’est « found ». « Finded », personne ne l’a jamais trouvé ! 🔎',
-      'Hide and seek is a game.', 'Merci pour l’info… Ami se cache encore de ta réplique. 🙈'),
+      'Hide and seek is a game.', 'Merci pour l’info… Plumo se cache encore de ta réplique. 🙈'),
     M('I am a genius at maths!', 'Je suis un génie des maths !',
       'Genius? You count your feathers on your toes!', 'Un génie ? Tu comptes tes plumes sur tes orteils !',
       'You counts your feathers on your toes!', 'Avec « you », pas de -s : « you count ». Ton -s est en trop, compte encore ! 🧮',
@@ -104,7 +104,7 @@
     M('My house is the cleanest in town!', 'Ma maison est la plus propre de la ville !',
       'Cleanest? Even the dust is on holiday there!', 'La plus propre ? Même la poussière y passe ses vacances !',
       'Even the dust are on holiday there!', '« Dust » est singulier : « the dust is ». Ta grammaire a besoin d’un coup de balai ! 🧹',
-      'I clean my room on Sunday.', 'Bravo… mais Ami attendait une punchline, pas ton planning ! 🧽'),
+      'I clean my room on Sunday.', 'Bravo… mais Plumo attendait une punchline, pas ton planning ! 🧽'),
     M('I can speak ten languages!', 'Je parle dix langues !',
       'Ten? You only say “hoot” in ten different voices!', 'Dix ? Tu dis juste « hou » avec dix voix différentes !',
       'You only say “hoot” in ten different voice!', 'Après « ten », il faut le pluriel : « voices ». Il te manque une voix ! 🗣️',
@@ -213,7 +213,7 @@
   // Vrai ou faux : des faits vrais et surprenants (ou franchement faux) pour apprendre en rigolant.
   const VF = [
     { en:'Octopuses have three hearts.', fr:'Les pieuvres ont trois cœurs.', vrai:true, rire:'Trois cœurs… et pas un seul pour aimer les devoirs ! 🐙' },
-    { en:'A snail can sleep for three years.', fr:'Un escargot peut dormir trois ans.', vrai:true, rire:'Le roi de la grasse matinée, c’est lui. Même Ami est jaloux. 🐌' },
+    { en:'A snail can sleep for three years.', fr:'Un escargot peut dormir trois ans.', vrai:true, rire:'Le roi de la grasse matinée, c’est lui. Même Plumo est jaloux. 🐌' },
     { en:'Penguins can fly.', fr:'Les manchots savent voler.', vrai:false, rire:'Ils nagent comme des fusées, mais dans les airs : zéro décollage ! 🐧' },
     { en:'Honey never goes bad.', fr:'Le miel ne se gâte jamais.', vrai:true, rire:'On a trouvé du miel vieux de 3 000 ans encore mangeable. Pas sûr qu’il soit croustillant. 🍯' },
     { en:'Bananas grow on trees.', fr:'Les bananes poussent sur des arbres.', vrai:false, rire:'Piège ! Le bananier est une herbe géante, pas un arbre. 🍌' },
@@ -241,14 +241,14 @@
     { en:'The heart of a blue whale is as big as a small car.', fr:'Le cœur d’une baleine bleue a la taille d’une petite voiture.', vrai:true, rire:'Pas de place de parking pour ce cœur-là ! 🐋' },
     { en:'Pluto is a planet.', fr:'Pluton est une planète.', vrai:false, rire:'Planète naine depuis 2006. Pluton boude encore. 🪐' },
     { en:'Hot water can freeze faster than cold water.', fr:'L’eau chaude peut geler plus vite que l’eau froide.', vrai:true, rire:'Ça arrive parfois, et les savants se disputent encore pourquoi ! 🧊' },
-    { en:'Owls can turn their heads all the way around.', fr:'Les hiboux peuvent tourner la tête complètement.', vrai:false, rire:'Presque : environ trois quarts de tour. Ami a vérifié, il a eu le tournis. 🦉' }
+    { en:'Owls can turn their heads all the way around.', fr:'Les hiboux peuvent tourner la tête complètement.', vrai:false, rire:'Presque : environ trois quarts de tour. Plumo a vérifié, il a eu le tournis. 🦉' }
   ];
-  // Commentaires d'Ami pendant les battles entre potes.
-  const BRAVO_POTES = ['Bien envoyé ! 🔥', 'Propre ! Le public est debout ! 📣', 'Boom ! Point pour toi ! 💥', 'Trop fort, Ami range son pop-corn. 🍿',
-    'Validé ! Prof Pi applaudit avec ses pattes. 🦝', 'Easy ! Les autres commencent à transpirer. 😅', 'Banger ! Ami écrit ton nom en lettres d’or. ✨',
-    'Joli ! Même la calculatrice est impressionnée. 🧮', 'Yes ! Ça, c’est une réponse de champion. 🏆', 'Excellent ! Ami vérifie si tu n’as pas triché… non, c’est juste toi. 😎'];
+  // Commentaires de Plumo pendant les battles entre potes.
+  const BRAVO_POTES = ['Bien envoyé ! 🔥', 'Propre ! Le public est debout ! 📣', 'Boom ! Point pour toi ! 💥', 'Trop fort, Plumo range son pop-corn. 🍿',
+    'Validé ! Prof Pi applaudit avec ses pattes. 🦝', 'Easy ! Les autres commencent à transpirer. 😅', 'Banger ! Plumo écrit ton nom en lettres d’or. ✨',
+    'Joli ! Même la calculatrice est impressionnée. 🧮', 'Yes ! Ça, c’est une réponse de champion. 🏆', 'Excellent ! Plumo vérifie si tu n’as pas triché… non, c’est juste toi. 😎'];
   const INTROS_POTES = ['Question piège, même Prof Pi a transpiré :', 'Attention, celle-là a déjà fait pleurer trois hiboux :', 'Facile… enfin, c’est ce qu’ils disent tous :',
-    'Question à 1 000 plumes (non, c’est faux, mais réponds bien) :', 'Concentration maximale, le public retient son souffle :', 'Celle-là, Ami l’a ratée hier. Ne le dis à personne :',
+    'Question à 1 000 plumes (non, c’est faux, mais réponds bien) :', 'Concentration maximale, le public retient son souffle :', 'Celle-là, Plumo l’a ratée hier. Ne le dis à personne :',
     'Question surprise ! Le chrono imaginaire est lancé :', 'Les autres regardent… ou font semblant de ne pas regarder :'];
   if(window.CLASH && Array.isArray(window.CLASH.MANCHES)){ const vus = new Set(window.CLASH.MANCHES.map(m => m.ami)); for(const m of NOUVELLES) if(!vus.has(m.ami)) window.CLASH.MANCHES.push(m); }
   if(window.RIGOLADE && Array.isArray(window.RIGOLADE.VRAI_FAUX)){ const vus = new Set(window.RIGOLADE.VRAI_FAUX.map(v => v.en)); for(const v of VF) if(!vus.has(v.en)) window.RIGOLADE.VRAI_FAUX.push(v); }

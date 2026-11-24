@@ -1,4 +1,4 @@
-// Village v5.42 : Ami says (Coach Kim), étiquettes, café et école, météo, photo.
+// Village v5.42 : Plumo says (Coach Kim), étiquettes, café et école, météo, photo.
 // Usage : node serveur.js . 8765 & node test-village542.js [dossier captures]
 const puppeteer = require('puppeteer-core');
 const dossier = process.argv[2] || '.';
@@ -9,15 +9,15 @@ const pause = ms => new Promise(r => setTimeout(r, ms));
   const w = await b.newPage(); await w.setViewport({ width:900, height:600 }); const err = []; w.on('pageerror', e => { err.push(String(e)); console.log('ERREUR PAGE', String(e)); });
   await w.goto('http://localhost:8765/monde-3d.html', { waitUntil:'load', timeout:300000 }); await w.waitForFunction(() => window.__monde, { timeout:300000 });
   await w.evaluate(() => { for(const n of __monde.residents()) n.pause = 1e9; });
-  // Ami says : un ordre « Ami says: go to the fountain » réussi, un piège sans « Ami says » où on ne bouge pas
+  // Plumo says : un ordre « Plumo says: go to the fountain » réussi, un piège sans « Plumo says » où on ne bouge pas
   const as = await w.evaluate(async () => { const M = __monde, p = M.player.position, R = M.resultatAS; M.lancerAS(); const j = M.jeuAS;
     p.set(20, 0, 20); await new Promise(r => setTimeout(r, 200));
     const avant = j.score; j.ordre = { ...M.ORDRES[1], ami:true, t0:performance.now(), dur:8000, p0:p.clone(), bouge:0 }; p.set(-1, 0, 7.5); await new Promise(r => setTimeout(r, 600));
     const o = { ami:false, dur:8000 }, f = { fige:true, ami:true, dur:4000 };
     return { s1:j.score - avant, r2:R(o, 8100, false, 0), r3:R(o, 1000, true, 2), r4:R({ ami:true, dur:8000 }, 8100, false, 0), r5:R(f, 4100, false, 0), r6:R(f, 1000, false, 1), r7:R(o, 1000, false, 0), bandeau:!document.querySelector('#amisays').hidden }; });
-  verif('Ami says : ordre réussi en vrai (aller à la fontaine) = +1', as.s1 === 1, as);
-  verif('règle : sans « Ami says », ne pas bouger = point ; bouger = Gotcha', as.r2 === 'point' && as.r3 === 'gotcha', as);
-  verif('règle : avec « Ami says », trop lent ; « freeze » tenu = point, bougé = raté ; on attend sinon', as.r4 === 'lent' && as.r5 === 'point' && as.r6 === 'bouge' && as.r7 === null, as);
+  verif('Plumo says : ordre réussi en vrai (aller à la fontaine) = +1', as.s1 === 1, as);
+  verif('règle : sans « Plumo says », ne pas bouger = point ; bouger = Gotcha', as.r2 === 'point' && as.r3 === 'gotcha', as);
+  verif('règle : avec « Plumo says », trop lent ; « freeze » tenu = point, bougé = raté ; on attend sinon', as.r4 === 'lent' && as.r5 === 'point' && as.r6 === 'bouge' && as.r7 === null, as);
   verif('bandeau de l’ordre affiché', as.bandeau, as);
   await w.evaluate(() => { const M = __monde; M.jeuAS && (M.jeuAS.n = 99); });
   await pause(2200); await w.evaluate(() => { if(document.querySelector('#dialog').style.display === 'block') document.querySelector('#closeDialog').click(); });

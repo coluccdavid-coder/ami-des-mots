@@ -13,7 +13,7 @@
   // ── Le dessin (réutilisé pour le grand et le petit hibou) ──
   function svgHibou(id){
     const u = s => s + '-' + id;
-    return '<svg class="owl-svg hibou-anime" viewBox="0 0 260 270" role="img" aria-label="Ami le hibou, ton professeur">' +
+    return '<svg class="owl-svg hibou-anime" viewBox="0 0 260 270" role="img" aria-label="Plumo le hibou, ton professeur">' +
     '<defs><linearGradient id="' + u('pl') + '" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#f6bd70"/><stop offset=".55" stop-color="#b96c43"/><stop offset="1" stop-color="#70402f"/></linearGradient>' +
     '<radialGradient id="' + u('ve') + '"><stop stop-color="#fff1cf"/><stop offset="1" stop-color="#dfb98a"/></radialGradient>' +
     '<linearGradient id="' + u('ai') + '" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#d88b50"/><stop offset="1" stop-color="#7d4937"/></linearGradient>' +
@@ -133,7 +133,7 @@
 
   // ── Réactions publiques ──
   const PHRASES = {
-    bonjour:['Hello ! Moi, c’est Ami, ton prof. On s’y met ?', 'Salut ! Prêt à faire chauffer tes neurones ?', 'Coucou ! J’ai préparé une leçon aux petits oignons.'],
+    bonjour:['Hello ! Moi, c’est Plumo, ton prof. On s’y met ?', 'Salut ! Prêt à faire chauffer tes neurones ?', 'Coucou ! J’ai préparé une leçon aux petits oignons.'],
     lecon:['C’est parti ! Aujourd’hui : ', 'Ouvre grand tes oreilles. Au programme : ', 'Leçon du jour, attention les yeux : '],
     exercice:['À toi de jouer ! Prends ton temps.', 'Je te regarde… pas de pression. Bon, un peu.', 'Réfléchis bien, je compte sur toi !'],
     chatouille:['Hi hi hi ! Arrête, ça chatouille !', 'Eh ! Mes plumes sont fragiles !', 'Ouh là, pas sous les ailes !', 'Concentre-toi sur la leçon, pas sur mes plumes ! 😄']

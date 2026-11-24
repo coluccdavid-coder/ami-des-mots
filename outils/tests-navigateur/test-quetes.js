@@ -1,4 +1,4 @@
-// Village 3D : quête « Les plumes perdues d'Ami » — indices, plumes atteignables malgré les collisions, vol final.
+// Village 3D : quête « Les plumes perdues de Plumo » — indices, plumes atteignables malgré les collisions, vol final.
 // Usage : node serveur.js . 8765 & node test-quetes.js [dossier captures]
 const puppeteer = require('puppeteer-core');
 const dossier = process.argv[2] || '.';
@@ -32,9 +32,9 @@ const pause = ms => new Promise(r => setTimeout(r, ms));
   }
   verif('les 10 plumes sont atteignables', !manquees.length, manquees);
   const fin = await w.evaluate(() => ({ voler:__monde.peutVoler, cpt:document.querySelector('#feathers').textContent, titre:document.querySelector('#dialogTitle').textContent }));
-  verif('Ami peut revoler (récompense)', fin.voler && fin.cpt.includes('10/10'), fin);
+  verif('Plumo peut revoler (récompense)', fin.voler && fin.cpt.includes('10/10'), fin);
   await w.evaluate(() => document.querySelector('#closeDialog').click());
-  // Vol plané : en gardant le bouton, Ami reste en l'air bien plus longtemps
+  // Vol plané : en gardant le bouton, Plumo reste en l'air bien plus longtemps
   const vol = await w.evaluate(async () => { const M = __monde; M.player.position.set(0, 0, 20); M.move.jump = true; let max = 0, t0 = performance.now(), air = 0;
     while(performance.now() - t0 < 2500){ await new Promise(r => setTimeout(r, 50)); max = Math.max(max, M.player.position.y); if(M.player.position.y > .1) air = performance.now() - t0; }
     M.move.jump = false; return { max:+max.toFixed(2), air:Math.round(air) }; });

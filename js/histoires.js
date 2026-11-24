@@ -3,22 +3,22 @@
 // Traductions vérifiées à la main : ne pas en inventer.
 (function(){
   const HISTOIRES = [
-    { id:'chapeau', titre:'Ami’s lost hat', fr:'Le chapeau perdu d’Ami', icone:'🎩', niv:1, lignes:[
-      ['🦉', 'This is Ami. Ami is an owl.', 'Voici Ami. Ami est un hibou.'],
-      ['🎩', 'Ami has a big blue hat.', 'Ami a un grand chapeau bleu.'],
+    { id:'chapeau', titre:'Plumo’s lost hat', fr:'Le chapeau perdu de Plumo', icone:'🎩', niv:1, lignes:[
+      ['🦉', 'This is Plumo. Plumo is an owl.', 'Voici Plumo. Plumo est un hibou.'],
+      ['🎩', 'Plumo has a big blue hat.', 'Plumo a un grand chapeau bleu.'],
       ['🌬️', 'One day, the wind is very strong.', 'Un jour, le vent est très fort.'],
       ['💨', 'Whoosh! The hat flies away!', 'Fiouu ! Le chapeau s’envole !'],
       ['🐶', 'Paco the dog sees the hat in a tree.', 'Paco le chien voit le chapeau dans un arbre.'],
       ['🐱', 'Mina the cat climbs the tree.', 'Mina la chatte grimpe dans l’arbre.'],
-      ['😊', '“Here is your hat, Ami!”', '« Voici ton chapeau, Ami ! »'],
-      ['🦉', '“Thank you, my friends!” says Ami.', '« Merci, mes amis ! » dit Ami.'] ],
+      ['😊', '“Here is your hat, Plumo!”', '« Voici ton chapeau, Plumo ! »'],
+      ['🦉', '“Thank you, my friends!” says Plumo.', '« Merci, mes amis ! » dit Plumo.'] ],
       questions:[
-        { q:'What colour is Ami’s hat?', fr:'De quelle couleur est le chapeau d’Ami ?', bon:'Blue.',
-          faux:[{ en:'Red.', vanne:'Rouge ? Ami n’a pas de casque de pompier ! 🚒 Le chapeau est blue (bleu).' },
+        { q:'What colour is Plumo’s hat?', fr:'De quelle couleur est le chapeau de Plumo ?', bon:'Blue.',
+          faux:[{ en:'Red.', vanne:'Rouge ? Plumo n’a pas de casque de pompier ! 🚒 Le chapeau est blue (bleu).' },
                 { en:'Green.', vanne:'Vert, comme une grenouille ? 🐸 Non : blue (bleu) !' }] },
         { q:'Who climbs the tree?', fr:'Qui grimpe dans l’arbre ?', bon:'Mina.',
           faux:[{ en:'Paco.', vanne:'Paco qui grimpe aux arbres ? Ce serait tout un spectacle ! 🐶 C’est Mina, la chatte.' },
-                { en:'Ami.', vanne:'Ami est un hibou : il volerait plutôt ! 🦉 C’est Mina qui grimpe.' }] } ] },
+                { en:'Plumo.', vanne:'Plumo est un hibou : il volerait plutôt ! 🦉 C’est Mina qui grimpe.' }] } ] },
     { id:'gateau', titre:'The big cake', fr:'Le gros gâteau', icone:'🎂', niv:1, lignes:[
       ['🎂', 'It’s Léa’s birthday today.', 'C’est l’anniversaire de Léa aujourd’hui.'],
       ['👨‍🍳', 'Milo makes a big chocolate cake.', 'Milo fait un gros gâteau au chocolat.'],
@@ -34,7 +34,7 @@
                 { en:'Paco’s.', vanne:'Paco aimerait bien… surtout pour le gâteau ! 🐶 Mais c’est la fête de Léa.' }] },
         { q:'Who has chocolate on his nose?', fr:'Qui a du chocolat sur le nez ?', bon:'Paco.',
           faux:[{ en:'Milo.', vanne:'Milo est innocent ! 👨‍🍳 Le coupable a quatre pattes : Paco.' },
-                { en:'Ami.', vanne:'Ami a un bec, pas un nez ! 🦉 C’est Paco.' }] } ] },
+                { en:'Plumo.', vanne:'Plumo a un bec, pas un nez ! 🦉 C’est Paco.' }] } ] },
     { id:'pluie', titre:'Max and the rain', fr:'Max et la pluie', icone:'☔', niv:1, lignes:[
       ['⏰', 'It’s seven o’clock. Max wakes up.', 'Il est sept heures. Max se réveille.'],
       ['🥣', 'He eats his breakfast: milk and cereal.', 'Il prend son petit-déjeuner : du lait et des céréales.'],
@@ -55,7 +55,7 @@
       ['🗺️', '“The treasure is under the big tree,” he says.', '« Le trésor est sous le grand arbre », dit-il.'],
       ['🌳', 'He digs under the big tree. Nothing!', 'Il creuse sous le grand arbre. Rien !'],
       ['🏠', 'He looks behind the house. Nothing!', 'Il regarde derrière la maison. Rien !'],
-      ['🦉', 'Ami flies next to him. “Turn the map, Captain!”', 'Ami vole à côté de lui. « Tourne la carte, capitaine ! »'],
+      ['🦉', 'Plumo flies next to him. “Turn the map, Captain!”', 'Plumo vole à côté de lui. « Tourne la carte, capitaine ! »'],
       ['🙃', 'The map is upside down!', 'La carte est à l’envers !'],
       ['🌱', 'The treasure is under the small tree.', 'Le trésor est sous le petit arbre.'],
       ['📚', 'Inside the box, there are… books!', 'Dans la boîte, il y a… des livres !'] ],
@@ -70,17 +70,17 @@
       ['🎤', 'Tonight, there is a concert in the village.', 'Ce soir, il y a un concert au village.'],
       ['🎸', 'Zoé plays the guitar.', 'Zoé joue de la guitare.'],
       ['🥁', 'Bob plays the drums. Boom, boom!', 'Bob joue de la batterie. Boum, boum !'],
-      ['🦉', 'Ami wants to sing too.', 'Ami veut chanter, lui aussi.'],
-      ['🙉', 'But Ami sings very, very badly.', 'Mais Ami chante très, très mal.'],
+      ['🦉', 'Plumo wants to sing too.', 'Plumo veut chanter, lui aussi.'],
+      ['🙉', 'But Plumo sings very, very badly.', 'Mais Plumo chante très, très mal.'],
       ['🐶', 'Paco covers his ears. Mina runs away!', 'Paco se bouche les oreilles. Mina s’enfuit !'],
-      ['👏', 'At the end, everybody claps. Ami is so happy!', 'À la fin, tout le monde applaudit. Ami est si content !'] ],
+      ['👏', 'At the end, everybody claps. Plumo is so happy!', 'À la fin, tout le monde applaudit. Plumo est si content !'] ],
       questions:[
         { q:'What does Bob play?', fr:'De quoi joue Bob ?', bon:'The drums.',
           faux:[{ en:'The guitar.', vanne:'La guitare, c’est Zoé ! 🎸 Bob, lui, fait boum boum : the drums.' },
-                { en:'Football.', vanne:'Un match pendant le concert ? Ami serait jaloux ! ⚽ Bob joue de la batterie : the drums.' }] },
-        { q:'How does Ami sing?', fr:'Comment chante Ami ?', bon:'Very badly.',
-          faux:[{ en:'Very well.', vanne:'Very well ? Demande donc à Mina pourquoi elle s’est enfuie ! 🐱 Ami chante very badly.' },
-                { en:'Very blue.', vanne:'Chanter « bleu » ? Joli, mais ça ne veut rien dire ! 💙 Ami chante very badly.' }] } ] }
+                { en:'Football.', vanne:'Un match pendant le concert ? Plumo serait jaloux ! ⚽ Bob joue de la batterie : the drums.' }] },
+        { q:'How does Plumo sing?', fr:'Comment chante Plumo ?', bon:'Very badly.',
+          faux:[{ en:'Very well.', vanne:'Very well ? Demande donc à Mina pourquoi elle s’est enfuie ! 🐱 Plumo chante very badly.' },
+                { en:'Very blue.', vanne:'Chanter « bleu » ? Joli, mais ça ne veut rien dire ! 💙 Plumo chante very badly.' }] } ] }
   ];
   window.HISTOIRES = { liste:HISTOIRES };
 })();

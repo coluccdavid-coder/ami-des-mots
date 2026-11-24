@@ -1,0 +1,10 @@
+Ami des mots 5.92.0
+
+🦉 Le hibou s'appelle maintenant PLUMO (l'appli reste « Ami des mots »)
+- Renommé partout : écrans, vannes, bande de potes (« Plumo, tu nous as appelés pour ça ? »), bêtisier, boutique,
+  coins de l'admin, serveur (consignes de l'IA), guides et tests — 988 remplacements.
+- Français : « d'Ami » → « de Plumo », « qu'Ami » → « que Plumo ». Turc décliné : « Plumo'nun », « Plumo'yu ».
+- « Hooty » écarté : c'est le hibou d'une série Disney (The Owl House).
+- Test navigateur du coin anglais rendu fiable (la réplique de battle peut venir des clashs).
+Vérifié : 134 tests ; suites navigateur maths-sciences 7/7, quêtes 9/9, coin anglais 7/7, hors ligne OK.
+Contient aussi les v5.84 à v5.91.

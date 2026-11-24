@@ -1,7 +1,7 @@
 <?php
 // Ami des mots — vannes écrites par Claude EN DIRECT pour la question affichée (v5.66).
 // Le jeu envoie la question, la bonne réponse, les mauvaises réponses possibles et les dernières vannes déjà dites ;
-// Claude répond une vanne neuve par mauvaise réponse. Le jeu la repasse au juge d'Ami et garde ses vannes à lui
+// Claude répond une vanne neuve par mauvaise réponse. Le jeu la repasse au juge de Plumo et garde ses vannes à lui
 // si le serveur ne répond pas vite. Aucune donnée personnelle n'est envoyée (ni prénom, ni code, ni voix).
 // POST { sujet, langue, ton:0..3, question, bonne, fausses:[…], deja:[…] } → { vannes:{ "<fausse>":"…" } }
 declare(strict_types=1);
@@ -29,13 +29,13 @@ const ANGLES = ['commentaire de match en direct', 'flash info de journal télé'
 // v5.78 : les techniques des humoristes et du trash talk de combat — des TECHNIQUES, jamais l'imitation d'une personne réelle ni la copie de ses sketches.
 const STYLES = ['stand-up observationnel (« Vous avez remarqué que… » puis une chute inattendue)', 'roast bienveillant : on démonte la RÉPONSE avec trois exagérations qui montent',
   'règle de trois : deux éléments normaux, le troisième absurde', 'pince-sans-rire : un énorme constat dit avec un calme total', 'faux expert très sérieux qui analyse la catastrophe',
-  'ego démesuré : Ami se vante comme une star', 'humour absurde et surréaliste, image visuelle précise', 'bande-annonce de film d’action pour une erreur banale',
+  'ego démesuré : Plumo se vante comme une star', 'humour absurde et surréaliste, image visuelle précise', 'bande-annonce de film d’action pour une erreur banale',
   'interview d’après-match du perdant (la réponse)', 'punchline de battle de rap propre, rimes et rythme',
-  'tchatche de stand-up : débit rapide, mots détournés, mots inventés, Ami qui se moque aussi de lui-même',
-  'chambrage de copains sur un banc : on se charrie gentiment, ça part en surenchère', 'autodérision : Ami raconte une erreur encore pire qu’il a faite',
+  'tchatche de stand-up : débit rapide, mots détournés, mots inventés, Plumo qui se moque aussi de lui-même',
+  'chambrage de copains sur un banc : on se charrie gentiment, ça part en surenchère', 'autodérision : Plumo raconte une erreur encore pire qu’il a faite',
   'conteur qui exagère tout : l’erreur devient une légende du quartier',
   'expression imagée française détournée sur la RÉPONSE (« cette réponse n’a pas la lumière à tous les étages », « elle pédale dans la semoule »…) avec une suite inattendue'];
-const STYLES_TRASH = ['conférence de presse avant un combat : Ami annonce qu’il a déjà gagné', 'face-à-face de la pesée : Ami fixe la réponse sans cligner',
+const STYLES_TRASH = ['conférence de presse avant un combat : Plumo annonce qu’il a déjà gagné', 'face-à-face de la pesée : Plumo fixe la réponse sans cligner',
   'commentateur de combat survolté au bord du ring', 'entraîneur dans le coin du ring entre deux rounds', 'champion qui brandit la ceinture devant les caméras',
   'interview d’après-combat : le vainqueur chambre, le perdant (la réponse) cherche des excuses'];
 const SYSTEME = "Tu es la voix des vannes de « Ami des mots », un jeu familial où des enfants et des ados francophones apprennent\n"
@@ -82,7 +82,7 @@ $style = $trash ? STYLES_TRASH[random_int(0, count(STYLES_TRASH) - 1)] : STYLES[
 $demande = 'Sujet : ' . SUJETS[$sujet] . ".\nQuestion : " . ($question !== '' ? $question : '(une image à nommer)') . "\nBonne réponse : $bonne\n"
   . 'Mauvaises réponses (une vanne pour chacune) : ' . json_encode($fausses, JSON_UNESCAPED_UNICODE) . "\n"
   . 'Ton : ' . TONS[$ton] . ".\nAngle imposé pour au moins une vanne : $angle.\nTechnique d'humour imposée : $style.\n"
-  . ($trash ? "Mode trash talk : Ami parle comme un champion de combat qui chambre (jamais de violence décrite, jamais la personne visée).\n" : '')
+  . ($trash ? "Mode trash talk : Plumo parle comme un champion de combat qui chambre (jamais de violence décrite, jamais la personne visée).\n" : '')
   . ($aimees ? 'Vannes qui ont fait rire ce joueur (inspire-toi du style, ne copie pas) : ' . json_encode($aimees, JSON_UNESCAPED_UNICODE) . "\n" : '')
   . ($pasdrole ? 'Vannes qui ne l’ont PAS fait rire (évite ce genre) : ' . json_encode($pasdrole, JSON_UNESCAPED_UNICODE) . "\n" : '')
   . ($langue === 'en' ? "Écris les vannes en anglais simple.\n" : "Écris les vannes en français.\n")

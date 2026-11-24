@@ -1816,3 +1816,12 @@ html.gfx-ultra main h2 .emoji-titre{ -webkit-text-fill-color:initial; }
 }
 /* v5.83 : liens officiels en cartes */
 a.lien-carte{ text-decoration:none; color:inherit; }
+/* v5.91 : la bande d'Ami débarque (3 bonnes d'affilée puis la 4e) */
+.bande-potes{display:grid;gap:10px;margin:4px 0 12px}
+.bande-entree{font-weight:900;font-size:1.1rem;color:#ffd36e;margin:0}
+.pote{display:flex;gap:10px;align-items:flex-start;margin:0;padding:10px 14px;border-radius:18px;background:rgba(255,255,255,.09);border:1px solid rgba(255,255,255,.16);animation:pote-arrive .45s cubic-bezier(.2,1.4,.4,1) both}
+.pote-ic{font-size:2rem;line-height:1;flex:0 0 auto}
+.pote strong{color:#8df5d1;margin-right:4px}
+.raccroche{font-weight:800;color:#ffd36e;margin:0 0 8px}
+@keyframes pote-arrive{from{opacity:0;transform:translateY(14px) scale(.9)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){.pote{animation:none}}

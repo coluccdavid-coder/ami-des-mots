@@ -8,21 +8,21 @@
       { id:'pieges', n:5, texte:'Déjouer 5 pièges', action:'pieges', icone:'🪤' },
       { id:'situations', n:1, texte:'Réussir 1 situation de la vie', action:'situations', icone:'☕' },
       { id:'histoires', n:1, texte:'Lire 1 histoire', action:'histoires', icone:'📖' },
-      { id:'repete', n:3, texte:'Répéter 3 phrases après Ami', action:'repeter', icone:'🎤' } ] },
+      { id:'repete', n:3, texte:'Répéter 3 phrases après Plumo', action:'repeter', icone:'🎤' } ] },
     { n:2, titre:'Premières phrases', icone:'🌿', etapes:[
       { id:'mots', n:30, texte:'Connaître 30 mots', action:'lecon', icone:'📚' },
       { id:'pieges', n:12, texte:'Déjouer 12 pièges', action:'pieges', icone:'🪤' },
       { id:'situations', n:3, texte:'Réussir 3 situations', action:'situations', icone:'☕' },
       { id:'histoires', n:3, texte:'Lire 3 histoires', action:'histoires', icone:'📖' },
       { id:'dictees', n:5, texte:'Écrire 5 phrases parfaites en dictée', action:'dictee', icone:'✍️' },
-      { id:'repete', n:8, texte:'Répéter 8 phrases après Ami', action:'repeter', icone:'🎤' } ] },
+      { id:'repete', n:8, texte:'Répéter 8 phrases après Plumo', action:'repeter', icone:'🎤' } ] },
     { n:3, titre:'Petites conversations', icone:'🌳', etapes:[
       { id:'mots', n:60, texte:'Connaître 60 mots', action:'lecon', icone:'📚' },
       { id:'pieges', n:22, texte:'Déjouer 22 pièges', action:'pieges', icone:'🪤' },
       { id:'situations', n:5, texte:'Réussir les 5 situations', action:'situations', icone:'☕' },
       { id:'histoires', n:5, texte:'Lire les 5 histoires', action:'histoires', icone:'📖' },
       { id:'dictees', n:12, texte:'Écrire 12 phrases parfaites en dictée', action:'dictee', icone:'✍️' },
-      { id:'repete', n:15, texte:'Répéter 15 phrases après Ami', action:'repeter', icone:'🎤' },
+      { id:'repete', n:15, texte:'Répéter 15 phrases après Plumo', action:'repeter', icone:'🎤' },
       { id:'victoires', n:3, texte:'Gagner 3 battles de vannes', action:'battle', icone:'🎤' } ] }
   ];
   // stats : { mots, pieges, situations, histoires, dictees, repete, victoires } ; valides : niveaux réussis à l'examen.
@@ -48,7 +48,7 @@
   }
   const REUSSITE = 6;
 
-  // Phrases utiles à répéter après Ami (enregistrées seulement sur l'appareil, puis effacées).
+  // Phrases utiles à répéter après Plumo (enregistrées seulement sur l'appareil, puis effacées).
   const REPETER = [
     { en:'Hello! My name is Léo.', fr:'Bonjour ! Je m’appelle Léo.' },
     { en:'How are you?', fr:'Comment ça va ?' },
@@ -72,7 +72,7 @@
     { en:'Good night, sleep well!', fr:'Bonne nuit, dors bien !' }
   ];
 
-  // « Invente ta vanne » : toutes les combinaisons sont justes en anglais. On taquine Ami, jamais une personne.
+  // « Invente ta vanne » : toutes les combinaisons sont justes en anglais. On taquine Plumo, jamais une personne.
   const INVENTE = {
     verbes:[ { en:'dance', fr:'danses' }, { en:'sing', fr:'chantes' }, { en:'run', fr:'cours' }, { en:'sleep', fr:'dors' }, { en:'eat', fr:'manges' } ],
     animaux:[ { en:'a penguin', fr:'un pingouin' }, { en:'a snail', fr:'un escargot' }, { en:'a sleepy cat', fr:'un chat endormi' }, { en:'a happy hippo', fr:'un hippopotame joyeux' }, { en:'a crazy chicken', fr:'une poule folle' } ],
@@ -81,7 +81,7 @@
   function inventer(v, a, l){
     const V = INVENTE.verbes[v], An = INVENTE.animaux[a], L = INVENTE.lieux[l];
     if(!V || !An || !L) return null;
-    return { en:'Ami, you ' + V.en + ' like ' + An.en + ' ' + L.en + '!', fr:'Ami, tu ' + V.fr + ' comme ' + An.fr + ' ' + L.fr + ' !' };
+    return { en:'Plumo, you ' + V.en + ' like ' + An.en + ' ' + L.en + '!', fr:'Plumo, tu ' + V.fr + ' comme ' + An.fr + ' ' + L.fr + ' !' };
   }
   window.PARCOURS = { NIVEAUX, progression, niveauActuel, examen, REUSSITE, REPETER, INVENTE, inventer, melanger };
 })();

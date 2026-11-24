@@ -1,7 +1,7 @@
 # Ami des mots
 
 Un jeu pour apprendre et réviser des mots en images, dans 16 langues, avec
-Ami le hibou. Produit **séparé** de reparole.fr : mêmes images, mêmes mots,
+Plumo le hibou. Produit **séparé** de reparole.fr : mêmes images, mêmes mots,
 même hibou, mais un jeu grand public, pas un outil de soin. reparole.fr
 n'est pas modifié.
 
@@ -35,7 +35,7 @@ n'est pas modifié.
   kabyle). Exemple visé : une famille en France qui veut transmettre le
   kabyle ou la darija à ses enfants.
 - **Récompenses** : étoiles par jeu, plumes, série de jours, objectif du
-  jour ; les plumes habillent Ami (écharpe, lunettes, nœud papillon,
+  jour ; les plumes habillent Plumo (écharpe, lunettes, nœud papillon,
   chapeau, couronne).
 - **Lecture facile** (v3.2, pensée pour les personnes dys) : un réglage par
   joueur, dans Réglages. Police Andika (lettres bien distinctes, « a »
@@ -47,7 +47,7 @@ n'est pas modifié.
   les études ne leur trouvent pas de bénéfice, l'espacement compte
   davantage. **Communication** : dire « accessible aux personnes dys »,
   jamais « soigne » ni « rééduque » la dyslexie.
-- Ami **articule** quand il parle (module de ReParole recopié).
+- Plumo **articule** quand il parle (module de ReParole recopié).
 - **Hors connexion** après la première visite (sauf les voix enregistrées).
 
 ## Graphisme (v4, « Nuit des mots »)
@@ -55,7 +55,7 @@ n'est pas modifié.
 Tout le jeu vit la nuit : une aurore qui dérive lentement, des panneaux
 de verre dépoli, des images posées sur des « autocollants » blancs qui
 brillent, des boutons en relief. Accueil : paysage vivant (aurore,
-collines, lucioles, étoile filante), Ami perché sur sa branche devant la
+collines, lucioles, étoile filante), Plumo perché sur sa branche devant la
 lune, qui cligne des yeux et suit le doigt du regard. En jeu : étincelles
 sur une bonne réponse, série « 🔥 ×3 », petite vibration sur Android.
 Victoire : rayons de lumière, étoiles, plumes qui défilent, confettis.
@@ -93,12 +93,12 @@ du tout (vide aujourd'hui).
 
 ## S'amuser et parler (v5)
 
-- **Blagues d'Ami** quand on se trompe : 12 par langue, toujours sur Ami ou
+- **Blagues de Plumo** quand on se trompe : 12 par langue, toujours sur Plumo ou
   sur le mot, **jamais sur la personne** (testé : aucun mot qui juge).
 - **Prononciation** : 🐢 écouter lentement (voix ralentie sans changer la
   hauteur) ; 👄 voir la bouche (le schéma de profil de ReParole, animé avec
-  la voix) ; 🎤 **« À toi ! »** : on écoute Ami, on s'enregistre 3 secondes,
-  on entend sa voix puis celle d'Ami pour comparer. L'enregistrement reste
+  la voix) ; 🎤 **« À toi ! »** : on écoute Plumo, on s'enregistre 3 secondes,
+  on entend sa voix puis celle de Plumo pour comparer. L'enregistrement reste
   dans la mémoire du navigateur et disparaît à la fermeture : rien n'est
   envoyé ni gardé. Sans micro : « Je l'ai dit ! ». 1 plume la première fois
   pour chaque mot.
@@ -109,7 +109,7 @@ du tout (vide aujourd'hui).
 
 ## PC : plein écran (v5)
 
-Au-delà de 1100 px : accueil en deux moitiés (le ciel d'Ami à gauche sur
+Au-delà de 1100 px : accueil en deux moitiés (le ciel de Plumo à gauche sur
 toute la hauteur, le tableau de bord à droite), grandes cartes de thèmes,
 parties sur toute la page avec une image grande à gauche.
 
@@ -329,11 +329,11 @@ Cette version ne remplace pas un test en environnement Stripe/Supabase réel.
 L'atelier est une première version pédagogique. Les phrases et leur adaptation linguistique doivent être relues par des locuteurs natifs avant extension à d'autres langues.
 
 
-## v5.3 — Le village d'Ami
+## v5.3 — Le village de Plumo
 
 - Ajout d'un village interactif qui relie huit lieux aux thèmes existants (animaux, manger, maison, nature, ville, musique, habits, atelier).
 - Les lieux affichent les thèmes disponibles dans la langue choisie, respectent les droits Gratuit/Plus et ouvrent les jeux existants sans créer de doublons de contenu.
-- Ami accueille le joueur avec des répliques contextuelles en français et en anglais ; les libellés du village sont localisés pour les 16 langues.
+- Plumo accueille le joueur avec des répliques contextuelles en français et en anglais ; les libellés du village sont localisés pour les 16 langues.
 - Les visites du jour sont mémorisées localement par joueur pour visualiser les lieux déjà explorés.
 - Correction du dernier écran de l'atelier des phrases afin d'éviter l'accès à une phrase inexistante après la dernière réussite.
 
@@ -341,9 +341,9 @@ L'atelier est une première version pédagogique. Les phrases et leur adaptation
 ## v5.4 — erreurs accompagnées et humour réglable
 
 - Une mauvaise réponse ne fait plus avancer automatiquement la question : l'écran reste en pause jusqu'au bouton « J'ai compris — continuer ».
-- Le choix erroné reste marqué en rouge et Ami affiche une plaisanterie ainsi que la bonne réponse.
+- Le choix erroné reste marqué en rouge et Plumo affiche une plaisanterie ainsi que la bonne réponse.
 - La voix lit maintenant le message complet (blague puis correction) en une seule lecture ; si la voix audio dédiée est indisponible, le navigateur tente sa voix de synthèse habituelle.
-- Quatre niveaux d'humour sont réglables dans Paramètres : Tout doux, Taquin, Piquant et Corsé. Les plaisanteries visent Ami, le mot ou la situation, jamais le joueur.
+- Quatre niveaux d'humour sont réglables dans Paramètres : Tout doux, Taquin, Piquant et Corsé. Les plaisanteries visent Plumo, le mot ou la situation, jamais le joueur.
 - Le niveau choisi est conservé par profil de joueur.
 
 
@@ -365,7 +365,7 @@ L'atelier est une première version pédagogique. Les phrases et leur adaptation
 
 ## v5.7 — choix de la langue des blagues
 
-- Ajout d'un réglage indépendant pour choisir la langue des blagues d'Ami : français ou anglais.
+- Ajout d'un réglage indépendant pour choisir la langue des blagues de Plumo : français ou anglais.
 - Le choix est mémorisé par profil, indépendamment de la langue d'interface et de la langue apprise.
 - Les quatre niveaux d'humour disposent de répliques en français et en anglais, y compris le niveau « Tout doux ».
 - La phrase annonçant la bonne réponse est également traduite dans la langue des blagues pour éviter les commentaires mélangés.
@@ -377,7 +377,7 @@ L'atelier est une première version pédagogique. Les phrases et leur adaptation
 - Refonte CSS de l'ambiance visuelle : profondeur, contraste, cartes, boutons, panneaux, progression et animations plus cohérentes.
 - Ajustements responsive pour donner plus d'espace aux écrans PC tout en conservant des cibles tactiles généreuses sur téléphone.
 - États visuels de bonne et mauvaise réponse plus lisibles.
-- Bibliothèque de blagues étoffée en français et en anglais pour les quatre niveaux d'humour ; les répliques restent dirigées vers Ami, les mots ou la situation, jamais vers le joueur.
+- Bibliothèque de blagues étoffée en français et en anglais pour les quatre niveaux d'humour ; les répliques restent dirigées vers Plumo, les mots ou la situation, jamais vers le joueur.
 - Les fonctions, profils, langues, réglages et mécanismes d'abonnement existants sont conservés.
 
 
@@ -397,27 +397,27 @@ L'atelier est une première version pédagogique. Les phrases et leur adaptation
 - Cette limitation d'affichage est réversible : les langues masquées pourront être réactivées ultérieurement sans réimporter leurs contenus.
 
 
-## v5.11 — réécriture des blagues d'Ami
+## v5.11 — réécriture des blagues de Plumo
 
 - Réécriture complète des 64 répliques d'erreur (4 niveaux × 8 blagues × 2 langues).
-- Les vannes reposent désormais sur des situations compréhensibles : précipitation, confusion, excès de confiance, dictionnaire, révision et petites maladresses d'Ami.
+- Les vannes reposent désormais sur des situations compréhensibles : précipitation, confusion, excès de confiance, dictionnaire, révision et petites maladresses de Plumo.
 - Suppression des images absurdes ou des références sans rapport avec la situation.
-- Les blagues restent auto-dérisoires : elles visent Ami et ses choix, jamais la personne qui apprend.
+- Les blagues restent auto-dérisoires : elles visent Plumo et ses choix, jamais la personne qui apprend.
 - Les quatre niveaux d'humour, le choix français/anglais et la sélection mémorisée par profil sont conservés.
 
 
-## v5.12 — humour d'Ami en trois formats
+## v5.12 — humour de Plumo en trois formats
 
 - Réécriture du répertoire de répliques en français et en anglais.
 - Trois formats sont désormais tirés au sort après une erreur : vanne éclair, petite devinette avec sa chute, et mini-histoire drôle.
 - Quatre niveaux d'humour sont conservés, avec 12 propositions par niveau et par langue (4 par format), soit 48 répliques par langue.
 - L'humour s'inspire de mécanismes classiques (calembour, double sens, question-réponse, chute absurde) sans reprendre les blagues du PDF fourni.
-- Les plaisanteries visent Ami et ses maladresses, jamais le joueur.
+- Les plaisanteries visent Plumo et ses maladresses, jamais le joueur.
 
 
 ## v5.13 — première évolution visuelle 3D
 
-- Ajout d'une nouvelle mascotte Ami en rendu 3D, intégrée localement dans `img/ami-3d.webp`.
+- Ajout d'une nouvelle mascotte Plumo en rendu 3D, intégrée localement dans `img/ami-3d.webp`.
 - La mascotte reçoit des animations CSS selon son humeur : flottement, célébration, surprise et réaction douce.
 - Conservation de la mascotte SVG dans les aperçus de costumes afin de ne pas casser le vestiaire existant.
 - Refonte visuelle transversale : profondeur, perspective, matières en relief, ombres, lueurs, particules d'ambiance et cartes plus volumétriques.
@@ -430,7 +430,7 @@ L'atelier est une première version pédagogique. Les phrases et leur adaptation
 - Réécriture des répliques d'erreur en français et en anglais.
 - Suppression des mini-histoires longues qui détournaient l'attention de la correction.
 - Trois formats conservés mais raccourcis : punchline, devinette express et mini-dialogue.
-- Répliques volontairement brèves, centrées sur les maladresses d'Ami et les jeux de mots.
+- Répliques volontairement brèves, centrées sur les maladresses de Plumo et les jeux de mots.
 - La bonne réponse reste annoncée séparément après la vanne.
 
 
@@ -438,17 +438,17 @@ L'atelier est une première version pédagogique. Les phrases et leur adaptation
 
 - Les retours des exercices à choix utilisent maintenant le mot choisi à tort ET le mot attendu.
 - Répliques personnalisées autour de la confusion réelle : « tu confonds X avec Y », ophtalmo, lunettes, zoo, cuisine ou décoration selon le contexte.
-- Quatre intensités de taquinerie, toujours dirigées vers Ami et jamais contre la personne qui joue.
+- Quatre intensités de taquinerie, toujours dirigées vers Plumo et jamais contre la personne qui joue.
 - Les exercices d'association utilisent les deux mots sélectionnés ; l'atelier de phrases garde une réplique spécifique à la construction de phrase.
 - Les langues des blagues restent indépendantes de la langue apprise.
 
 
-## v5.16 — Ami lâche les vannes
+## v5.16 — Plumo lâche les vannes
 
 - Refonte du moteur de répliques contextuelles : 8 univers (animaux, nourriture, maison, vêtements, nature, ville, musique, atelier).
 - 4 niveaux d'humour, chacun avec 4 répliques par univers et par langue (français/anglais), soit 256 variantes.
 - Chaque vanne reprend explicitement le mot choisi à tort et le mot attendu lorsque le format s'y prête.
-- Ton plus mordant, absurde et théâtral : le personnage Ami est la cible de la plaisanterie, jamais la personne qui apprend.
+- Ton plus mordant, absurde et théâtral : le personnage Plumo est la cible de la plaisanterie, jamais la personne qui apprend.
 - Tirage aléatoire pour éviter les répétitions immédiates.
 
 
@@ -460,7 +460,7 @@ L'atelier est une première version pédagogique. Les phrases et leur adaptation
 - Service worker régénéré pour prendre en compte les nouveaux fichiers CSS et JavaScript.
 
 
-## v5.18 — Ami Arcade : refonte graphique animée
+## v5.18 — Plumo Arcade : refonte graphique animée
 
 - Nouvelle direction visuelle arcade/cartoon avec halos colorés, ciel étoilé animé et plateau de jeu lumineux.
 - Cartes illustrées plus généreuses, relief renforcé, arrivée échelonnée et réactions au survol.
@@ -478,8 +478,8 @@ Décompressez l'archive puis double-cliquez sur `LANCER-TEST.bat` sous Windows. 
 
 
 ## v5.19 — correction du hibou sur l'accueil
-- La lune est replacée derrière Ami avec une pile d'affichage explicite.
-- Ami est recentré et agrandi sur le perchoir, avec une animation douce de flottement.
+- La lune est replacée derrière Plumo avec une pile d'affichage explicite.
+- Plumo est recentré et agrandi sur le perchoir, avec une animation douce de flottement.
 - Le perchoir est ajusté sur mobile et ordinateur.
 
 

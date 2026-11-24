@@ -1,5 +1,5 @@
 // Ami des mots — quêtes du village 3D.
-// « Les plumes perdues d'Ami » : le vent a emporté 10 plumes ; sans elles, Ami ne peut plus voler.
+// « Les plumes perdues de Plumo » : le vent a emporté 10 plumes ; sans elles, Plumo ne peut plus voler.
 // Chaque habitant anglophone (et Paco, Mina) donne un indice EN ANGLAIS quand on réussit son défi.
 // Les indices font pratiquer les mots de lieu : behind, under, next to, in front of, on, between…
 // Positions choisies hors des obstacles (bâtiments, fontaine, arbres) et dans la zone de jeu.
@@ -31,6 +31,6 @@
   function trouver(e, id){ if(e.trouvees.includes(id)) return false; e.trouvees.push(id); if(!e.indices.includes(id)) e.indices.push(id); return true; }
   const toutes = e => e.trouvees.length === PLUMES.length;
   window.QUETES = { PLUMES, CLE, propre, charger, garder, deDonneur, reveler, trouver, toutes,
-    BUT:'Le vent a emporté 10 plumes d’Ami : sans elles, il ne peut plus voler ! Réussis le défi d’un habitant : il te dira en anglais où une plume est cachée.',
-    RECOMPENSE:'Ami revole : saut géant et vol plané (Espace ou bouton ⤒).' };
+    BUT:'Le vent a emporté 10 plumes de Plumo : sans elles, il ne peut plus voler ! Réussis le défi d’un habitant : il te dira en anglais où une plume est cachée.',
+    RECOMPENSE:'Plumo revole : saut géant et vol plané (Espace ou bouton ⤒).' };
 })();

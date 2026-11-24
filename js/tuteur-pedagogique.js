@@ -1,4 +1,4 @@
-/* Ami des Mots — interface locale du professeur pédagogique.
+/* Plumo des Mots — interface locale du professeur pédagogique.
  * V1 du contrat : ne fabrique jamais de règle. Les aides doivent provenir
  * d'un contenu pédagogique validé transmis par le jeu.
  */

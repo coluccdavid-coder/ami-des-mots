@@ -61,22 +61,22 @@
     livraison:[
       "« {f} » ? J’ai demandé « {j} » ! Mon ventre est très surpris.",
       "Le client regarde « {f} »… il voulait « {j} ». Il le prend en photo quand même.",
-      "« {f} » au lieu de « {j} » ? Ami a lu la commande à l’envers.",
-      "Ami a livré « {f} ». Le client a dit « {j} ». Ami accuse son casque.",
+      "« {f} » au lieu de « {j} » ? Plumo a lu la commande à l’envers.",
+      "Plumo a livré « {f} ». Le client a dit « {j} ». Plumo accuse son casque.",
       "« {f} » ? Ça n’a pas du tout le goût de « {j} » !",
       "Le client voulait « {j} ». Il hésite à manger « {f} » avec une paille."
     ],
     taxi:[
-      "« {f} » ? J’ai dit « {j} » ! Le GPS d’Ami parle hibou.",
+      "« {f} » ? J’ai dit « {j} » ! Le GPS de Plumo parle hibou.",
       "Arrivée : « {f} ». Destination demandée : « {j} ». Le passager rigole.",
-      "Le passager voulait « {j} ». Ami l’a emmené à « {f} ». Visite gratuite !",
+      "Le passager voulait « {j} ». Plumo l’a emmené à « {f} ». Visite gratuite !",
       "« {f} », c’est beau, mais le passager a rendez-vous à « {j} » !",
-      "Ami a confondu « {f} » et « {j} ». Il promet de relire la carte."
+      "Plumo a confondu « {f} » et « {j} ». Il promet de relire la carte."
     ],
     lettres:[
       "« {x} » ? Ce mot n’existe pas, même chez les extraterrestres. On cherche « {j} » !",
       "« {l} » s’est invité dans « {j} ». Il n’était pas sur la liste !",
-      "Ami a épelé « {x} ». Le dictionnaire tousse.",
+      "Plumo a épelé « {x} ». Le dictionnaire tousse.",
       "« {x} »… on dirait un éternuement ! Cherche la lettre suivante de « {j} ».",
       "La lettre « {l} » fait du stop. Pas pour « {j} », désolé !"
     ]

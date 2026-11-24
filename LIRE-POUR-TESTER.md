@@ -1,4 +1,4 @@
-# Tester Ami des Mots v5.18
+# Tester Plumo des Mots v5.18
 
 ## Windows
 1. Décompressez entièrement le ZIP dans un dossier.
@@ -93,13 +93,13 @@ Le monde 3D est encore un premier quartier de démonstration : les bâtiments et
 Le sélecteur affiche uniquement français et anglais. Les traductions coréennes, arabes, kabyles et les autres contenus linguistiques ne sont pas supprimés. Le test automatise désormais ce comportement.
 
 
-## v5.31 — Les vannes d'Ami
+## v5.31 — Les vannes de Plumo
 1. Réglages → choisis un niveau d'humour, puis la langue des blagues.
 2. Dans chaque type de jeu, fais exprès une erreur : la vanne doit citer ce que tu as choisi
    (le mot, l'étiquette du vrai/faux, la lettre ou le mot fabriqué, le panier).
-3. Vérifie qu'Ami ne se moque jamais du joueur et que « C'était : … » donne la bonne réponse.
-4. Rate deux fois le même mot dans une partie : Ami doit le remarquer.
-5. Fais une série de 3 bonnes réponses puis une erreur : Ami parle de la série.
+3. Vérifie que Plumo ne se moque jamais du joueur et que « C'était : … » donne la bonne réponse.
+4. Rate deux fois le même mot dans une partie : Plumo doit le remarquer.
+5. Fais une série de 3 bonnes réponses puis une erreur : Plumo parle de la série.
 6. Avec le son : la vanne est lue tout de suite par la voix du téléphone.
 
 
@@ -112,14 +112,14 @@ Le sélecteur affiche uniquement français et anglais. Les traductions coréenne
 6. ← Retour : ferme d'abord une fenêtre ouverte, puis revient à l'accueil.
 7. Jeu principal, en apprenant l'anglais : confonds cat/dog → une astuce 💡 apparaît.
 8. Après une erreur : « 😂 Je la garde », puis Carnet → Mes fous rires.
-9. Lecture facile activée : Ami reste « Tout doux ».
+9. Lecture facile activée : Plumo reste « Tout doux ».
 10. Monde 3D : parle à Paco ou Mina → « 🎯 Défi anglais ».
 11. Coupe le réseau après une première visite : Mots City et le monde 3D démarrent.
 À vérifier sur un VRAI téléphone : fluidité de Mots City (le test automatique n'a pas de carte graphique).
 
 
 ## v5.33 — Mots City monde ouvert
-1. Monde 3D : marche avec Ami → ses pattes bougent, elles s'arrêtent droites à l'arrêt.
+1. Monde 3D : marche avec Plumo → ses pattes bougent, elles s'arrêtent droites à l'arrêt.
 2. Mots City : écran titre, choisis une tenue, ▶ Jouer.
 3. Marche, cours (Maj / 🏃), saute (Espace / ⤒) : jambes, genoux et bras bougent.
 4. Approche un scooter ou une voiture : « Monter (E) ». Conduis, puis R pour la radio.
@@ -146,7 +146,7 @@ Le sélecteur affiche uniquement français et anglais. Les traductions coréenne
 2. 📖 Quêtes : lis le but de chaque quête.
 3. Va voir Captain Finn (anneau bleu) → Petit défi → réponds « treasure » : il donne un indice en anglais.
    Va le vérifier (entre le lampadaire et le banc) : la plume est petite, près du sol.
-4. Avec 10 plumes : Ami revole (garde Espace ou ⤒ appuyé).
+4. Avec 10 plumes : Plumo revole (garde Espace ou ⤒ appuyé).
 5. Bouton « ↻ Recommencer l'aventure » pour tout rejouer depuis le début.
 
 ## v5.39 — Vannes en scènes et pièges de l'anglais
@@ -163,28 +163,28 @@ Le sélecteur affiche uniquement français et anglais. Les traductions coréenne
 1. Accueil (Français → Anglais) : **🇬🇧 Le coin anglais** → 4 cartes.
 2. **🎤 Battle** : choisis d'abord une réplique fausse (vanne), puis la bonne. 3 manches, score.
 3. **☕ Situations** : « Au café » — écoute le serveur, choisis ta réponse. Essaie « Give me hot ».
-4. **✍️ Dictée** : écris « I can sea the sea » quand Ami dit « I can see the sea » → vanne du maillot de bain.
+4. **✍️ Dictée** : écris « I can sea the sea » quand Plumo dit « I can see the sea » → vanne du maillot de bain.
 5. Village 3D : portail 🇬🇧 au nord ; **Professor Puzzle** (anneau orange) au nord-ouest.
 
 ## v5.41 — Parcours, révision, histoires, vannes 2.0, ruines
 
 1. 🇬🇧 Coin anglais : **Mon parcours** (niveau 1), **Ma révision du jour**, la **blague du jour** (« Réponse… »).
-2. **📖 Mini-histoires** : « Ami’s lost hat » jusqu’au bout, puis les 2 questions.
-3. **🗣️ Répète après Ami** : autorise le micro, dis la phrase, réécoute-toi (rien n’est envoyé).
+2. **📖 Mini-histoires** : « Plumo’s lost hat » jusqu’au bout, puis les 2 questions.
+3. **🗣️ Répète après Plumo** : autorise le micro, dis la phrase, réécoute-toi (rien n’est envoyé).
 4. **🎤 Battle** → « En famille » à deux, et « Invente ta vanne ».
-5. Jeu d’images : trompe-toi 3 fois sur la même paire → Ami s’en souvient. Touche **🙄 Pas drôle**.
+5. Jeu d’images : trompe-toi 3 fois sur la même paire → Plumo s’en souvient. Touche **🙄 Pas drôle**.
 6. **👪 Espace parents** (petit calcul) : regarde « Ce qui coince ».
 7. Village 3D : va au sud-est, passe l’arche de pierre **The lost ruins** et suis les 5 indices.
 8. Mots City : regarde passer le bus, le bus scolaire et l’ambulance.
 
 ## v5.42 — Rire et apprendre, battles entre potes, salon en ligne, coin admin
 
-1. 🇬🇧 Coin anglais → **😂 Pour rire** : Ami se trompe exprès (corrige-le !), Les oreilles d’Ami (ship/sheep), Vrai ou faux rigolo, Calendrier de l’Avent (décembre), Bêtisier, Maison d’Ami.
-2. **🎤 Battle** → **🎧 Rap battle** (son activé) : Ami rappe, tu complètes tes rimes, la foule réagit.
+1. 🇬🇧 Coin anglais → **😂 Pour rire** : Plumo se trompe exprès (corrige-le !), Les oreilles de Plumo (ship/sheep), Vrai ou faux rigolo, Calendrier de l’Avent (décembre), Bêtisier, Maison de Plumo.
+2. **🎤 Battle** → **🎧 Rap battle** (son activé) : Plumo rappe, tu complètes tes rimes, la foule réagit.
 3. **🏆 Tournoi** en famille et **🔗 Défi entre potes** : envoie le lien, ton pote rejoue les mêmes questions.
 4. **🚀 Salon en ligne** : il faut d’abord le brancher (voir SALON-EN-LIGNE.md). Deux téléphones, même code, une battle.
 5. **👪 Espace parents** : ajoute une vanne de famille. Essaie « Ta mère… » : le juge la refuse et dit pourquoi.
-6. Village 3D : parle au **Coach Kim** (« Ami says »), entre au **café** (Tom) et à **l’école** (Mr Brown), passe près des choses (étiquettes 🏷️), touche 🌦️ (neige) et 📷 (photo).
+6. Village 3D : parle au **Coach Kim** (« Plumo says »), entre au **café** (Tom) et à **l’école** (Mr Brown), passe près des choses (étiquettes 🏷️), touche 🌦️ (neige) et 📷 (photo).
 7. Mots City : passe près d’un palmier, d’un bus, d’un lieu → l’étiquette anglaise s’affiche ; touche-la pour l’entendre.
 8. **Coin admin** : ouvre `admin.html`, coche/décoche, télécharge `offre.js` (voir COIN-ADMIN.md).
 
@@ -194,5 +194,5 @@ Le sélecteur affiche uniquement français et anglais. Les traductions coréenne
 2. 3e → **📝 Brevet blanc** ; 1re → **📝 Épreuve anticipée blanche** ; Tle → **📝 Bac blanc** (note sur 20).
 3. **🔗 Défier un pote** en maths : le lien garde le niveau.
 4. Accueil → **🚀 Sciences** : planètes, fusées, corps humain, médecine. Trompe-toi : le labo te clashe.
-5. Espace parents → **✨ Ami propose des vannes (IA)** (avec Plus et le serveur branché).
+5. Espace parents → **✨ Plumo propose des vannes (IA)** (avec Plus et le serveur branché).
 6. Serveur PHP : `serveur-php/LISEZMOI.md`. Appli Android et installation : `ANDROID.md`.

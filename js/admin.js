@@ -14,7 +14,7 @@
   const COINS = [
     ['Coin anglais', [['pieges', '🪤', 'Pièges des francophones'], ['situations', '☕', 'Situations de la vie'], ['histoires', '📚', 'Histoires'], ['dictee', '✍️', 'Dictée rigolote'], ['parcours', '🗺️', 'Parcours'], ['phrases', '🧩', 'Atelier des phrases']]],
     ['Battles', [['battle', '🎤', 'Battle de vannes'], ['rap', '🎧', 'Rap battle (scène 8 temps)'], ['tournoi', '🏆', 'Tournoi en famille'], ['defi-pote', '🔗', 'Défi entre potes (lien)'], ['salon', '🚀', 'Salon en ligne (battles à distance)']]],
-    ['Pour rire', [['trompe', '🦉', 'Ami se trompe exprès'], ['oreilles', '👂', 'Les oreilles d’Ami'], ['vraifaux', '✅', 'Vrai ou faux rigolo'], ['avent', '🎄', 'Calendrier de l’Avent'], ['betisier', '📺', 'Bêtisier'], ['maison', '🏠', 'Maison d’Ami']]],
+    ['Pour rire', [['trompe', '🦉', 'Plumo se trompe exprès'], ['oreilles', '👂', 'Les oreilles de Plumo'], ['vraifaux', '✅', 'Vrai ou faux rigolo'], ['avent', '🎄', 'Calendrier de l’Avent'], ['betisier', '📺', 'Bêtisier'], ['maison', '🏠', 'Maison de Plumo']]],
     ['Maths et sciences', [['maths', '🔢', 'Coin maths (6e → Terminale)'], ['sciences', '🚀', 'Labo des sciences']]],
     ['Mondes 3D', [['village3d', '🌍', 'Village 3D'], ['motscity', '🛵', 'Mots City']]]
   ];

@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
 <meta name="theme-color" content="#171044">
 <link rel="icon" href="img/icone.svg">
-<title>Ami des Mots — Le quartier des découvertes</title>
+<title>Plumo des Mots — Le quartier des découvertes</title>
 <style>
 :root{color-scheme:dark;--gold:#ffe27a;--mint:#37e0bd;--violet:#34248d}
 *{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#11102d;color:#fff;font-family:Nunito,"Trebuchet MS",system-ui,sans-serif}
@@ -78,7 +78,7 @@ body.photo-en-cours .panel,body.photo-en-cours #controls,body.photo-en-cours #et
 <div id="mapPanel" class="panel"><div class="map-head"><b>🗺️ Le quartier</b><button id="mapClose" class="close">✕</button></div><canvas id="mapCanvas" width="260" height="220"></canvas><small>● Toi　● Habitants　✦ Plumes</small></div>
 <div id="journal" class="panel">
  <button id="journalClose" class="close" style="float:right">✕</button>
- <h2>📖 Quêtes d'Ami</h2>
+ <h2>📖 Quêtes de Plumo</h2>
  <p>Ton aventure dans le quartier des mots.</p>
  <ul id="journalList">
   <li data-step="0">🍎 Aider Léa à préparer sa tarte</li>
@@ -90,7 +90,7 @@ body.photo-en-cours .panel,body.photo-en-cours #controls,body.photo-en-cours #et
 </div>
 <button id="interact">Parler / Interagir&nbsp; E</button>
 <div id="controls">
- <button data-dir="up" aria-label="Avancer">▲</button><button data-dir="left" aria-label="Gauche">◀</button><button data-dir="down" aria-label="Reculer">▼</button><button data-dir="right" aria-label="Droite">▶</button><button data-dir="jump" aria-label="Sauter (vol plané quand Ami a ses plumes)">⤒</button>
+ <button data-dir="up" aria-label="Avancer">▲</button><button data-dir="left" aria-label="Gauche">◀</button><button data-dir="down" aria-label="Reculer">▼</button><button data-dir="right" aria-label="Droite">▶</button><button data-dir="jump" aria-label="Sauter (vol plané quand Plumo a ses plumes)">⤒</button>
 </div>
 <div id="help">🖥️ Flèches / ZQSD / WASD : marcher<br>↔ Glisser : orienter la caméra<br>⌨️ E : parler / interagir<br>🏃 Maj : courir · Espace : saut</div>
 <button id="etiquette" class="etiquette" hidden></button>
@@ -171,7 +171,7 @@ building(-9,-17,7,6,5.5,0xffc98e,'LE MARCHÉ');building(9,-17,7,6,5.8,0xf3a4a0,'
 function bench(x,z){rond(x,z,.8);const g=new THREE.Group();g.position.set(x,0,z);scene.add(g);if(KIT){const b=KIT.objets.bench.clone(true);b.scale.setScalar(5);b.rotation.y=Math.PI;b.traverse(o=>{if(o.isMesh)o.castShadow=true});g.add(b);return g}box(g,0,.65,0,2,.18,.6,wood);for(const dx of [-.7,.7])box(g,dx,.32,0,.15,.65,.5,dark);box(g,0,1, -.23,2,.55,.15,wood)}
 bench(-5,-4);bench(5,8);
 rond(0,4,2.55);const fountain=new THREE.Group();fountain.position.set(0,0,4);scene.add(fountain);const stone=mat(0xaaaec1);const basin=new THREE.Mesh(new THREE.CylinderGeometry(2.2,2.5,.45,32),stone);basin.position.y=.25;basin.receiveShadow=true;fountain.add(basin);const water=new THREE.Mesh(new THREE.CylinderGeometry(1.95,1.95,.12,32),mat(0x53c9e8,.25));water.position.y=.51;fountain.add(water);const pillar=new THREE.Mesh(new THREE.CylinderGeometry(.25,.4,1.6,16),stone);pillar.position.y=1.2;fountain.add(pillar);sphere(fountain,0,2.1,0,.55,gold);
-function makeOwl(){const g=new THREE.Group();const brown=mat(0x98603d),cream=mat(0xffe8c8),orange=mat(0xf4a33c),black=mat(0x17231f),eye=mat(0xffffff);sphere(g,0,1.25,0,.65,brown,[.78,1.12,.62]);for(const x of [-.38,.38]){const ear=new THREE.Mesh(new THREE.ConeGeometry(.19,.55,4),brown);ear.position.set(x,2.02,0);ear.rotation.z=x<0?-.3:.3;g.add(ear);sphere(g,x*.78,1.48,.48,.31,cream,[1,1,.42]);sphere(g,x*.78,1.49,.62,.2,eye);sphere(g,x*.78,1.49,.78,.105,black)}const beak=new THREE.Mesh(new THREE.ConeGeometry(.13,.24,4),orange);beak.position.set(0,1.25,.69);beak.rotation.x=Math.PI/2;g.add(beak);sphere(g,0,.9,.43,.38,cream,[.75,.8,.22]);for(const x of [-.28,.28]){const wing=sphere(g,x,1.12,0,.22,mat(0x805034),[.55,1.15,.5]);wing.rotation.z=x<0?-.45:.45}// Pattes articulées à la hanche (avant : collées au corps, Ami glissait).
+function makeOwl(){const g=new THREE.Group();const brown=mat(0x98603d),cream=mat(0xffe8c8),orange=mat(0xf4a33c),black=mat(0x17231f),eye=mat(0xffffff);sphere(g,0,1.25,0,.65,brown,[.78,1.12,.62]);for(const x of [-.38,.38]){const ear=new THREE.Mesh(new THREE.ConeGeometry(.19,.55,4),brown);ear.position.set(x,2.02,0);ear.rotation.z=x<0?-.3:.3;g.add(ear);sphere(g,x*.78,1.48,.48,.31,cream,[1,1,.42]);sphere(g,x*.78,1.49,.62,.2,eye);sphere(g,x*.78,1.49,.78,.105,black)}const beak=new THREE.Mesh(new THREE.ConeGeometry(.13,.24,4),orange);beak.position.set(0,1.25,.69);beak.rotation.x=Math.PI/2;g.add(beak);sphere(g,0,.9,.43,.38,cream,[.75,.8,.22]);for(const x of [-.28,.28]){const wing=sphere(g,x,1.12,0,.22,mat(0x805034),[.55,1.15,.5]);wing.rotation.z=x<0?-.45:.45}// Pattes articulées à la hanche (avant : collées au corps, Plumo glissait).
  const legs=[];for(const x of [-.2,.2]){const hip=new THREE.Group();hip.position.set(x,.42,.02);g.add(hip);box(hip,0,-.17,0,.09,.3,.1,orange);box(hip,0,-.32,.11,.23,.07,.28,orange);legs.push(hip)}g.userData.legs=legs;return g}
 // Petits détails vivants : lampadaires, jardinières, bancs fleuris et nuages.
 const lampMat=new THREE.MeshStandardMaterial({color:0x39445e,metalness:.55,roughness:.35});
@@ -301,7 +301,7 @@ const boardQuest=JSON.parse(localStorage.getItem('ami3d_board_quest')||'{}');
 
 // Plumes à collectionner : elles guident l'exploration et donnent un petit son de récompense.
 const pickups=[];
-// --- Quête « Les plumes perdues d'Ami » (js/quetes.js) : petites plumes posées près du sol, à chercher avec les indices ---
+// --- Quête « Les plumes perdues de Plumo » (js/quetes.js) : petites plumes posées près du sol, à chercher avec les indices ---
 const Q=window.QUETES;let etatQ=Q.charger();
 for(const pl of Q.PLUMES){
  const g=new THREE.Group();g.position.set(pl.x,pl.y,pl.z);g.scale.setScalar(.7);g.rotation.z=.9;scene.add(g);
@@ -320,7 +320,7 @@ document.querySelector('#resetAdventure').onclick=()=>{
  if(!confirm('Recommencer le quartier ? La progression et les plumes de ce monde 3D seront remises à zéro.'))return;
  mission=0;etatQ=Q.propre({});tresor={etape:0,vu:false};localStorage.removeItem('ami3d_tresor');localStorage.removeItem('ami3d_mission');localStorage.removeItem(Q.CLE);localStorage.removeItem('ami3d_metiers');appris.clear();
  pickups.forEach(p=>{p.taken=false;p.g.visible=true});
- majPlumes();updateMission();document.querySelector('#journal').style.display='none';toast('Nouvelle aventure ! Ami a ciré ses petites pattes. 🦉');
+ majPlumes();updateMission();document.querySelector('#journal').style.display='none';toast('Nouvelle aventure ! Plumo a ciré ses petites pattes. 🦉');
 };
 
 document.querySelector('#mapBtn').onclick=()=>{const m=document.querySelector('#mapPanel');m.style.display=m.style.display==='block'?'none':'block';drawMap()};
@@ -351,7 +351,7 @@ function showDialog(title,text,answers){dialogOpen=true;document.querySelector('
 function closeDialog(){dialogOpen=false;document.querySelector('#dialog').style.display='none'}
 document.querySelector('#closeDialog').onclick=closeDialog;
 function updateMission(){
- const labels=['Va parler à Léa, la marchande du marché.','Retrouve Max devant l’école et aide-le.','Rejoins Zoé près du jardin.','Va aider Milo à préparer le goûter au café.','Bravo ! Maintenant, aide Ami à retrouver ses 10 plumes (📖 Quêtes).'];
+ const labels=['Va parler à Léa, la marchande du marché.','Retrouve Max devant l’école et aide-le.','Rejoins Zoé près du jardin.','Va aider Milo à préparer le goûter au café.','Bravo ! Maintenant, aide Plumo à retrouver ses 10 plumes (📖 Quêtes).'];
  document.querySelector('#missionText').textContent=labels[mission];
  document.querySelector('#progressBar').style.width=(mission/4*100)+'%';
  if(document.querySelector('#journal').style.display==='block')rendreQuetes();
@@ -359,7 +359,7 @@ function updateMission(){
 }
 function wrong(line){sfx('bad');toast(line)}
 function reward(line){sfx('good');toast(line)}
-function finishStep(){mission=Math.min(4,mission+1);updateMission();closeDialog();reward(mission===4?'Quartier terminé ! Ami réclame une médaille… et une sieste ! 🦉':'Mission réussie ! 🌟')}
+function finishStep(){mission=Math.min(4,mission+1);updateMission();closeDialog();reward(mission===4?'Quartier terminé ! Plumo réclame une médaille… et une sieste ! 🦉':'Mission réussie ! 🌟')}
 // --- Défis anglais de Paco et Mina : une vanne qui cite l'erreur, puis la bonne réponse ---
 const PET_JOKES={
  dog:["Wouf ? Tu as dit « {f} » ? Ma truffe sentait plutôt « {j} ».","Paco a couru chercher « {f} »… il fallait rapporter « {j} » !","« {f} » ? Paco remue la queue quand même. C’était « {j} ».","Paco a enterré « {j} » dans le jardin et déterré « {f} » par erreur."],
@@ -397,21 +397,21 @@ function repondreMetier(n,c){const m=n.metier;
  showDialog(m.emoji+' '+m.nom,v.texte+' ('+m.mot.fr+')',[{label:'🔁 Réessayer',action:()=>defiMetier(n)},{label:'👋 Bye!',action:closeDialog}]);return false}
 // Indice en anglais pour la quête des plumes (une fois par donneur).
 function donnerIndice(donneur,titre,avant=''){const p=Q.reveler(etatQ,donneur);if(!p)return false;Q.garder(etatQ);sayEn(p.en);
- showDialog(titre,(avant?avant+'\n\n':'')+'🪶 Indice pour retrouver une plume d’Ami :\n🇬🇧 « '+p.en+' »\n🇫🇷 '+p.fr+'\nMot clé : '+p.mot.en+' = '+p.mot.fr,[{label:'🔊 Réécouter',action:()=>sayEn(p.en)},{label:'👍 Je cherche !',action:closeDialog}]);return true}
+ showDialog(titre,(avant?avant+'\n\n':'')+'🪶 Indice pour retrouver une plume de Plumo :\n🇬🇧 « '+p.en+' »\n🇫🇷 '+p.fr+'\nMot clé : '+p.mot.en+' = '+p.mot.fr,[{label:'🔊 Réécouter',action:()=>sayEn(p.en)},{label:'👍 Je cherche !',action:closeDialog}]);return true}
 function trouverPlume(pk){if(!Q.trouver(etatQ,pk.id))return;Q.garder(etatQ);pk.taken=true;pk.g.visible=false;etincelles(pk.g.position.x,pk.g.position.y,pk.g.position.z);majPlumes();sfx('pick');const n=etatQ.trouvees.length,p=pk.pl;sayEn(p.mot.en);
- if(Q.toutes(etatQ)){sfx('good');showDialog('🦉 Ami peut revoler !','Tu as retrouvé les '+Q.PLUMES.length+' plumes ! Merci !\n'+Q.RECOMPENSE,[{label:'🦉 Essayer !',action:closeDialog}]);return}
+ if(Q.toutes(etatQ)){sfx('good');showDialog('🦉 Plumo peut revoler !','Tu as retrouvé les '+Q.PLUMES.length+' plumes ! Merci !\n'+Q.RECOMPENSE,[{label:'🦉 Essayer !',action:closeDialog}]);return}
  toast('🪶 Plume retrouvée ('+n+'/'+Q.PLUMES.length+') · « '+p.mot.en+' » = '+p.mot.fr)}
 // Carnet de quêtes : chaque quête dit son but, sa progression et sa récompense.
 function rendreQuetes(){const ul=document.querySelector('#journalList'),esc=t=>String(t).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
  const etapes=['🍎 Aider Léa à préparer sa tarte','🏫 Aider Max à trouver l’école','🌳 Répondre à la devinette de Zoé','☕ Aider Milo au café'];
  const indices=Q.PLUMES.filter(p=>etatQ.indices.includes(p.id));
  ul.innerHTML='<li class="quete"><b>🏘️ Aide tes voisins</b> — '+Math.min(mission,4)+'/4<br><small>But : les 4 amis du quartier ont besoin de toi. Récompense : la médaille du quartier.</small><ul>'+etapes.map((t,i)=>'<li class="'+(i<mission?'done':'')+'">'+t+'</li>').join('')+'</ul></li>'
- +'<li class="quete"><b>🪶 Les plumes perdues d’Ami</b> — '+etatQ.trouvees.length+'/'+Q.PLUMES.length+'<br><small>'+esc(Q.BUT)+' Récompense : '+esc(Q.RECOMPENSE)+'</small><ul>'
+ +'<li class="quete"><b>🪶 Les plumes perdues de Plumo</b> — '+etatQ.trouvees.length+'/'+Q.PLUMES.length+'<br><small>'+esc(Q.BUT)+' Récompense : '+esc(Q.RECOMPENSE)+'</small><ul>'
  +(indices.length?indices.map(p=>'<li class="'+(etatQ.trouvees.includes(p.id)?'done':'')+'"><button class="ui-btn ecouter" data-en="'+esc(p.en)+'" aria-label="Écouter">🔊</button> « '+esc(p.en)+' »<br><small>'+esc(p.fr)+'</small></li>').join(''):'<li><small>Pas encore d’indice : va relever le défi d’un habitant à l’anneau bleu.</small></li>')+'</ul></li>'
  +'<li class="quete"><b>🇬🇧 Hello, village!</b> — '+appris.size+'/'+METIERS.liste.length+'<br><small>But : réussir le petit défi de chaque habitant qui parle anglais (anneau bleu). Chacun te donne un indice pour une plume.</small></li>'
  +'<li class="quete"><b>🏛️ Le trésor des ruines</b> — '+tresor.etape+'/5<br><small>But : au sud-est du village, suis les 5 indices en anglais de Captain Finn (through, behind, next to, up, under). Récompense : son trésor !</small>'+(tresor.etape&&tresor.etape<5?'<ul><li>Indice en cours : « '+esc(TRESOR[tresor.etape].en)+' »</li></ul>':'')+'</li>'
  +'<li class="quete"><b>🏷️ Les mots du village</b> — '+vusE.size+'/'+nbMotsE()+'<br><small>But : approche-toi des objets (fontaine, banc, arbre, café…) pour découvrir leur nom anglais. Touche l’étiquette pour l’entendre.</small></li>'
- +'<li class="quete"><b>🏃 Ami says</b><br><small>But : joue avec Coach Kim (près de la fontaine) au « Jacques a dit » anglais. Meilleur score : '+(localStorage.getItem('ami3d_amisays')||0)+'/8</small></li>'
+ +'<li class="quete"><b>🏃 Plumo says</b><br><small>But : joue avec Coach Kim (près de la fontaine) au « Jacques a dit » anglais. Meilleur score : '+(localStorage.getItem('ami3d_amisays')||0)+'/8</small></li>'
  +'<li class="quete"><b>☕ Le café et 📚 l’école</b><br><small>But : entre par les portes, commande au café avec Tom, et montre les objets de la classe à Mr Brown.'+(localStorage.getItem('ami3d_cafe')?' ✅ café':'')+(localStorage.getItem('ami3d_ecole')?' ✅ école':'')+'</small></li>'
  +'<li class="quete"><b>🐾 Paco et Mina</b> — '+((petQuest.paco?1:0)+(petQuest.mina?1:0))+'/2<br><small>But : gagner leur confiance avec un mot anglais. Ils savent aussi où sont des plumes.</small></li>';
  ul.querySelectorAll('.ecouter').forEach(b=>b.onclick=()=>sayEn(b.dataset.en))}
@@ -463,7 +463,7 @@ function majTresor(){
   if(tresor.etape>=5){if(repR.chest){repR.chest.o.visible=false;pieceR('Chest_Gold',repR.chest.x,repR.chest.z,Math.PI,1)}sayEn('You found the treasure! Well done!');
    showDialog('💰 Treasure!','🇬🇧 « You found the treasure! Well done! »\n🇫🇷 Tu as trouvé le trésor ! Bravo !\nDedans : un livre de blagues en anglais… le vrai trésor de Captain Finn ! 📚😂',[{label:'🏅 Super !',action:closeDialog}]);return}
   return indiceTresor()}
- // Au mauvais endroit : Ami relit l'indice, en taquinant la confusion.
+ // Au mauvais endroit : Plumo relit l'indice, en taquinant la confusion.
  for(const [k,t] of TRESOR.entries()){if(k===tresor.etape)continue;if(Math.hypot(p.x-t.x,p.z-t.z)<1.7&&signaleR!==k){signaleR=k;toast('🦉 That’s '+t.nom+'… Mais l’indice dit : « '+c.en+' »');}}
 }
 if(KIT?.ruines&&tresor.etape>=5&&repR.chest){repR.chest.o.visible=false;pieceR('Chest_Gold',repR.chest.x,repR.chest.z,Math.PI,1)}
@@ -509,9 +509,9 @@ amb.surAllege(n=>toast(n===1?'Ultra allégé : ombres douces retirées pour rest
 function alleger(){appliquerQualite('basse')}
 function mesurerQualite(dtBrut){if(mesureQ.fini||qualite!=='auto')return;mesureQ.n++;if(mesureQ.n<30)return;mesureQ.t+=dtBrut;if(mesureQ.n>=150){mesureQ.fini=true;if(mesureQ.t/120>.04)alleger()}}
 
-// ═══ v5.42 : Ami says, étiquettes, intérieurs, météo, photo ═══
+// ═══ v5.42 : Plumo says, étiquettes, intérieurs, météo, photo ═══
 const sayFr=t=>{try{speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(t);u.lang='fr-FR';speechSynthesis.speak(u)}catch(e){}};
-// --- Coach Kim : « Ami says… » (Jacques a dit, en anglais) ---
+// --- Coach Kim : « Plumo says… » (Jacques a dit, en anglais) ---
 const coach=npc(-5.5,10.5,'Coach Kim 🏃',0x22c55e,0xc68642,0x2a1c14,'Casual3_Female');coach.coach=true;
 coach.marker.material=new THREE.MeshStandardMaterial({color:0x4ade80,emissive:0x16a34a,emissiveIntensity:.5});coach.dot.material=coach.marker.material;
 coach.waypoints=[[-1,-1],[1,-1],[1,1],[-1,1]].map(([dx,dz])=>new THREE.Vector3(-5.5+dx,0,10.5+dz));
@@ -526,15 +526,15 @@ const ORDRES=[
  {en:'go to the café',fr:'va au café',test:()=>pres(9,19,3.2)},
  {en:'freeze',fr:'ne bouge plus',fige:true}];
 let jeuAS=null;
-function parlerCoach(){if(coach.kit)geste(coach.kit,'Cheer',1.2);sayEn('Hi! I’m Coach Kim. Let’s play Ami says!');
- showDialog('🏃 Coach Kim','🇬🇧 « Hi! I’m Coach Kim. Let’s play “Ami says”! »\n🇫🇷 Salut ! Je suis Coach Kim. On joue à « Ami says » (Jacques a dit) !\n\nRègle : fais l’action SEULEMENT si la phrase commence par « Ami says ». Sinon… ne bouge pas !',[{label:'▶ On joue !',action:()=>{closeDialog();lancerAS()}},{label:'👋 Bye!',action:closeDialog}])}
+function parlerCoach(){if(coach.kit)geste(coach.kit,'Cheer',1.2);sayEn('Hi! I’m Coach Kim. Let’s play Plumo says!');
+ showDialog('🏃 Coach Kim','🇬🇧 « Hi! I’m Coach Kim. Let’s play “Plumo says”! »\n🇫🇷 Salut ! Je suis Coach Kim. On joue à « Plumo says » (Jacques a dit) !\n\nRègle : fais l’action SEULEMENT si la phrase commence par « Plumo says ». Sinon… ne bouge pas !',[{label:'▶ On joue !',action:()=>{closeDialog();lancerAS()}},{label:'👋 Bye!',action:closeDialog}])}
 function lancerAS(){jeuAS={n:0,score:0,ordre:null};ordreAS()}
 function ordreAS(){const J=jeuAS;if(!J)return;if(J.n>=8)return finAS();
  const ami=J.n===0||Math.random()<.7,l=ORDRES.filter(o=>ami||!o.fige),o=l[Math.floor(Math.random()*l.length)];
  J.ordre={...o,ami,t0:performance.now(),dur:o.fige?4000:8000,p0:player.position.clone(),bouge:0,fait:false};J.n++;
- const txt=(ami?'Ami says: ':'')+o.en+'!';sayEn(txt);
+ const txt=(ami?'Plumo says: ':'')+o.en+'!';sayEn(txt);
  const b=document.querySelector('#amisays');b.hidden=false;document.querySelector('#amisays-ordre').textContent='🦉 « '+txt+' »';
- document.querySelector('#amisays-fr').textContent='('+(ami?'Ami dit : ':'')+o.fr+')';document.querySelector('#amisays-score').textContent='Score : '+J.score+' · '+J.n+'/8'}
+ document.querySelector('#amisays-fr').textContent='('+(ami?'Plumo dit : ':'')+o.fr+')';document.querySelector('#amisays-score').textContent='Score : '+J.score+' · '+J.n+'/8'}
 // Règle du jeu (pure, testée) : 'point', 'gotcha', 'bouge', 'lent' ou null (on attend encore).
 function resultatAS(o,t,fait,bouge){if(o.fige){if(bouge>=.4)return'bouge';return t>=o.dur?'point':null}
  if(fait)return o.ami?'point':'gotcha';if(t>=o.dur)return o.ami?'lent':'point';return null}
@@ -542,8 +542,8 @@ function majAS(){const J=jeuAS;if(!J||!J.ordre||dialogOpen)return;const o=J.ordr
  document.querySelector('#amisays-chrono').style.width=Math.max(0,100-100*t/o.dur)+'%';
  const d=player.position.distanceTo(o.p0);if(d>.4)o.bouge=d;
  const r=resultatAS(o,t,!o.fige&&o.test(),o.bouge);if(!r)return;J.ordre=null;
- if(r==='point'){J.score++;sfx('good');toast(o.fige?'🧊 Parfait, une vraie statue !':o.ami?'✅ Good job! (Bien joué !)':'✅ Bravo, tu n’as pas bougé : Ami n’avait pas dit « Ami says » !')}
- else if(r==='gotcha'){sfx('bad');sayEn('Gotcha! Ami didn’t say “Ami says”!');toast('😂 Gotcha! Ami n’a pas dit « Ami says » !')}
+ if(r==='point'){J.score++;sfx('good');toast(o.fige?'🧊 Parfait, une vraie statue !':o.ami?'✅ Good job! (Bien joué !)':'✅ Bravo, tu n’as pas bougé : Plumo n’avait pas dit « Plumo says » !')}
+ else if(r==='gotcha'){sfx('bad');sayEn('Gotcha! Plumo didn’t say “Plumo says”!');toast('😂 Gotcha! Plumo n’a pas dit « Plumo says » !')}
  else if(r==='bouge'){sfx('bad');toast('😂 Tu as bougé ! « freeze » = on ne bouge plus !')}
  else{sfx('bad');toast('⏰ Too slow! (Trop lent !) « '+o.en+' » = '+o.fr)}
  setTimeout(ordreAS,1600)}
@@ -642,7 +642,7 @@ function majMeteo(dt){if(!precip.visible)return;const p=precip.geometry.attribut
  precip.position.set(c.x,0,c.z);p.needsUpdate=true}
 
 // --- Mode photo : une photo du village avec une légende en anglais (reste sur l'appareil) ---
-const LEGENDES=[['Me and Ami in the village!','Moi et Ami au village !'],['Look at my new friends!','Regarde mes nouveaux amis !'],['Hello from the lost ruins!','Bonjour des ruines perdues !'],['Best day ever!','Le plus beau jour de ma vie !'],['I love English!','J’adore l’anglais !']];
+const LEGENDES=[['Me and Plumo in the village!','Moi et Plumo au village !'],['Look at my new friends!','Regarde mes nouveaux amis !'],['Hello from the lost ruins!','Bonjour des ruines perdues !'],['Best day ever!','Le plus beau jour de ma vie !'],['I love English!','J’adore l’anglais !']];
 document.querySelector('#photoBtn').onclick=()=>showDialog('📷 Mode photo','Choisis ta légende en anglais :',LEGENDES.map(l=>({label:l[0],action:()=>{closeDialog();prendrePhoto(l)}})));
 function prendrePhoto(l){document.body.classList.add('photo-en-cours');requestAnimationFrame(()=>{amb.rendre();const src=renderer.domElement,c=document.createElement('canvas');c.width=src.width;c.height=src.height;const x=c.getContext('2d');x.drawImage(src,0,0);
  const h=Math.round(c.height*.14);x.fillStyle='rgba(30,26,75,.85)';x.fillRect(0,c.height-h,c.width,h);x.fillStyle='#fff';x.font='900 '+Math.round(h*.38)+'px system-ui';x.textAlign='center';x.fillText('“'+l[0]+'”',c.width/2,c.height-h*.5);
@@ -868,7 +868,7 @@ for(const n of residents){
   n.torso.rotation.z=moving?Math.sin(n.walk*2)*.025:Math.sin(performance.now()*.001+n.phase)*.018;
   n.g.position.y=moving?Math.abs(Math.sin(n.walk*2))*.035:Math.sin(performance.now()*.0018+n.phase)*.025;
  }
-for(const c of clouds){c.position.x+=dt*.35;if(c.position.x>42)c.position.x=-42}for(const p of pickups){if(p.taken)continue;p.g.rotation.y+=dt*.8;p.g.position.y=p.pl.y+Math.sin(performance.now()*.002+p.g.position.x)*.05;const d=player.position.distanceTo(p.g.position);if(d<1.5)trouverPlume(p);else if(d<6&&!p.signale&&etatQ.indices.includes(p.id)){p.signale=true;toast('👀 Ami sent une de ses plumes tout près…')}}
+for(const c of clouds){c.position.x+=dt*.35;if(c.position.x>42)c.position.x=-42}for(const p of pickups){if(p.taken)continue;p.g.rotation.y+=dt*.8;p.g.position.y=p.pl.y+Math.sin(performance.now()*.002+p.g.position.x)*.05;const d=player.position.distanceTo(p.g.position);if(d<1.5)trouverPlume(p);else if(d<6&&!p.signale&&etatQ.indices.includes(p.id)){p.signale=true;toast('👀 Plumo sent une de ses plumes tout près…')}}
 wordBoard.rotation.y=Math.sin(performance.now()*.0007)*.025;
 for(const p of portails){const t=performance.now()*.002+p.g.position.z;p.ic.position.y=(p.icY||4.5)+Math.sin(t)*.15;p.voile.material.opacity=.12+Math.sin(t*1.7)*.06+(active===p?.2:0);p.sol.rotation.z+=dt*.6}
 // Les compagnons ont leurs propres rondes, pauses, oreilles et queues animées.
