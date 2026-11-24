@@ -42,7 +42,12 @@
     for(const c of chs){ let d = doms.find(x => x.d === c.dom); if(!d) doms.push(d = { d:c.dom, l:[] }); d.l.push(c); }
     const etoiles = cid => { const s = e.chap[id + ':' + cid]; if(!s || !s.n) return ''; const p = s.ok / s.n; return s.n >= 10 && p >= .9 ? '⭐⭐⭐' : p >= .7 ? '⭐⭐' : '⭐'; };
     const ex = m.examens && m.examens[e.niveau], note = e.notes[id + '-' + e.niveau];
-    poser('gb-accueil', '<h2>' + m.ic + ' ' + esc(m.nom) + '</h2><p class="petit">' + esc(G.NOMS[e.niveau] + ' · ' + G.ETAPES[e.niveau]) + '</p>' +
+    // v6.2 : le programme officiel de la matière, partie par partie, avec les chapitres qui le couvrent.
+    const prog = (G.PROGRAMME || {})[id] || [], nomCh = c => (m.chapitres.find(x => x.id === c) || {}).nom || c;
+    const officiel = prog.length ? '<details class="programme-officiel"><summary>📜 Official programme (national curriculum, GCSE & A level content)</summary><ul class="pieges-cats">' +
+      prog.map(([t, st, chs]) => '<li><strong>' + esc(t) + '</strong> <small>(' + esc(st) + ')</small><br>✅ ' + chs.map(c => '<button class="lien" data-a="gb-chap" data-v="' + id + '|' + esc(c) + '">' + esc(nomCh(c)) + '</button>').join(' · ') + '</li>').join('') +
+      '</ul><p class="petit"><a href="' + esc(G.OFFICIEL.programmes[0][1]) + '" target="_blank" rel="noopener">National curriculum on gov.uk</a> · the new curriculum is due to be taught from September 2028.</p></details>' : '';
+    poser('gb-accueil', '<h2>' + m.ic + ' ' + esc(m.nom) + '</h2><p class="petit">' + esc(G.NOMS[e.niveau] + ' · ' + G.ETAPES[e.niveau]) + '</p>' + officiel +
       '<div class="onglets-niveaux" role="tablist">' + G.NIVEAUX.map(n => { const vide = !G.chapitres(id, n).length;
         return '<button role="tab" aria-selected="' + (n === e.niveau) + '" class="onglet' + (n === e.niveau ? ' actif' : '') + (vide ? ' vide' : '') + '" data-a="gb-matiere-niveau" data-v="' + id + '|' + n + '">' + n + '</button>'; }).join('') + '</div>' +
       '<p class="ton-prof">Plumo’s tone: ' + TONS.map(([k, l]) => '<button class="petit-bouton' + (k === e.ton ? ' actif' : '') + '" data-a="gb-ton" data-v="' + id + '|' + k + '" aria-pressed="' + (k === e.ton) + '">' + l + '</button>').join(' ') + '</p>' +
@@ -80,9 +85,11 @@
       return carte('gb-mock', k, x.ic, esc(x.titre), esc(x.papers.map(p => p.titre.replace(/ \(.*$/, '')).join(' · ')) + (e.notes['mock-' + k] ? ' · last: ' + esc(e.notes['mock-' + k]) : '')); }).join('') + '</div></section>';
     poser('gb-accueil', '<h2>📝 Mock exams</h2><p class="pieges-intro">Built like the real 2026 exams: same papers, same timings and, where they are published, the same marks. Plumo roasts every mistake, then gives you your result.</p>' + onglets('gb-mocks') +
       '<section class="domaine"><h3>✖️ Year 4</h3><div class="cartes-anglais">' + carte('gb-mtc', '', '✖️', 'Multiplication tables check', '25 questions · 6 seconds each · ' + (e.mtc ? 'best ' + e.mtc + '/25' : 'June of Year 4')) + '</div></section>' +
-      groupe('🎒 Year 6 · KS2 SATs', ['sats-gps', 'sats-reading', 'sats-maths']) +
-      groupe('🎓 Year 11 · GCSE', ['gcse-maths-f', 'gcse-maths-h', 'gcse-english-lang', 'gcse-english-lit', 'gcse-science', 'gcse-history', 'gcse-geography', 'gcse-computing', 'gcse-french']) +
-      groupe('🎓 Year 13 · A level', ['alevel-maths', 'alevel-sciences', 'alevel-english', 'alevel-options']));
+      groupe('✅ Year 6 · Real KS2 SATs papers', ['sats26-reel-gps', 'sats26-reel-maths', 'sats25-reel-gps', 'sats25-reel-maths']) +
+      groupe('🎒 Year 6 · KS2 SATs (twin papers)', ['sats-gps', 'sats-reading', 'sats-maths']) +
+      groupe('🎓 Year 11 · GCSE', ['gcse-maths-f', 'gcse-maths-h', 'gcse-english-lang', 'gcse-english-lit', 'gcse-science', 'gcse-history', 'gcse-geography', 'gcse-computing', 'gcse-french', 'gcse-spanish', 'gcse-german']) +
+      groupe('🎓 Year 13 · A level', ['alevel-maths', 'alevel-sciences', 'alevel-english', 'alevel-options', 'alevel-humanities']) +
+      groupe('🏛️ University entrance', ['uni-ucat', 'uni-lnat']));
   }
   function mockGo(k, graine, passe){
     const x = G.EXAMENS[k]; if(!x) return mocks();
@@ -94,20 +101,25 @@
     const p = m.x.papers[m.i];
     poser('gb-mocks', '<div class="centre"><h2>' + m.x.ic + ' ' + esc(m.passe ? m.passe.titre : m.x.titre) + '</h2><p class="piege-cat">Paper ' + (m.i + 1) + ' of ' + m.x.papers.length + '</p><h3>' + esc(p.titre) + '</h3>' +
       '<p>⏱️ Real exam: ' + esc(p.duree) + (p.points ? ' · ' + p.points + ' marks' : '') + '</p>' + (m.x.quand && !m.i ? '<p class="petit">📅 ' + esc(m.x.quand) + '</p>' : '') +
+      (p.reel ? '<p class="aide">✅ Real exam questions, as set in ' + esc(G.REELS[p.reel].annee) + '. You choose the answer instead of writing it.</p>' + ogl(p.reel) : '') +
       '<p><button class="gros" data-a="gb-paper">▶ Start this paper</button></p></div>');
   }
   function paper(){
     const m = mock, A = api(); if(!m) return mocks();
     const p = m.x.papers[m.i], liste = G.construirePaper(p, m.graine + m.i * 7919, etat().ton);
     if(!liste.length){ m.res.push({ p, ok:0, n:0 }); m.i++; return intro(); }
+    let pts = 0; const max = p.reel ? liste.reduce((t, q) => t + (q.pts || 1), 0) : 0;
     A.questionsGo(liste, { titre:'📝 ' + p.titre, retour:'gb-mocks', lang:'en', sujet:p.matiere, prof:p.matiere === 'gb-maths',
-      onReponse:(juste, q) => { if(!juste) A.noterErreur('gb-mock:' + m.k); },
-      fin:z => { m.res.push({ p, ok:z.bonnes, n:z.liste.length }); m.i++; intro(); } });
+      onReponse:(juste, q) => { if(juste) pts += q.pts || 1; else A.noterErreur('gb-mock:' + m.k); },
+      fin:z => { m.res.push({ p, ok:z.bonnes, n:z.liste.length, pts, max }); m.i++; intro(); } });
   }
   function resultat(){
     const A = api(), m = mock, x = m.x, e = etat();
-    const tot = m.res.reduce((t, r) => t + r.n, 0), ok = m.res.reduce((t, r) => t + r.ok, 0), p = tot ? ok / tot : 0;
-    const lignes = m.res.map(r => '<li><span>' + esc(r.p.titre) + '</span><strong>' + (r.p.points ? Math.round(r.p.points * r.ok / Math.max(1, r.n)) + ' / ' + r.p.points : r.ok + ' / ' + r.n) + '</strong></li>').join('');
+    // Points : vrai sujet → points des vraies questions (ramenés au total officiel du paper) ; jumeau → au prorata.
+    const marks = r => r.p.points ? Math.round(r.p.points * (r.max ? r.pts / r.max : r.ok / Math.max(1, r.n))) : null;
+    const avecPts = m.res.every(r => r.p.points), tot = m.res.reduce((t, r) => t + r.n, 0), ok = m.res.reduce((t, r) => t + r.ok, 0);
+    const p = avecPts ? m.res.reduce((t, r) => t + marks(r), 0) / Math.max(1, m.res.reduce((t, r) => t + r.p.points, 0)) : tot ? ok / tot : 0;
+    const lignes = m.res.map(r => '<li><span>' + esc(r.p.titre) + '</span><strong>' + (r.p.points ? marks(r) + ' / ' + r.p.points : r.ok + ' / ' + r.n) + '</strong></li>').join('');
     let gros, detail;
     if(x.note === 'sats'){ const ss = G.noteSats(p, x.seuil); gros = ss == null ? 'Below 80' : 'Scaled score ≈ ' + ss; detail = ss != null && ss >= 100 ? '✅ Expected standard reached (100 or more).' + (ss >= 110 ? ' 🌟 Many schools call 110+ “greater depth”.' : '') : 'Not yet the expected standard (100). Plumo knows exactly what to practise now. 💪';
       detail += ' <span class="petit">Plumo’s estimate, based on the 2026 pass marks published by the Standards and Testing Agency.</span>'; }
@@ -116,7 +128,7 @@
     e.notes[(m.passe ? 'past-' + m.passe.id : 'mock-' + m.k)] = gros.replace(/^.*≈ /, '').replace('Below 80', '<80'); A.J().plumes += Math.round(10 * p); A.garder(); try{ A.bruit('fin'); }catch(err){}
     const verdict = p >= .8 ? 'Plumo puts his roasts in the cupboard: he did not need them. Respect. 🫡' : p >= .6 ? 'Solid! Plumo found an ant, not an elephant.' : p >= .4 ? 'It is close. Plumo laughed, but he also took notes to help you.' : 'Plumo emptied his roast stock. Good news: from here, it is all progress. 💪';
     poser('gb-mocks', '<div class="centre examen-fin"><div class="ami-moyen">' + A.ami(p >= .6 ? 'fete' : 'malin') + '</div><h2>' + x.ic + ' ' + esc(m.passe ? m.passe.titre : x.titre) + '</h2>' +
-      '<p class="note-examen">' + esc(gros) + '</p><p>' + detail + '</p><ol class="ligue-classement">' + lignes + '</ol><p>' + verdict + '</p>' +
+      '<p class="note-examen">' + esc(gros) + '</p><p>' + detail + '</p><ol class="ligue-classement">' + lignes + '</ol><p>' + verdict + '</p>' + (x.reel ? ogl(x.papers.find(q => q.reel).reel) : '') +
       (x.ecriture ? '<p class="aide">✍️ Section B (writing) is half of each English Language paper: write a paragraph and get it marked.</p><p><button class="moyen" data-a="correction">✍️ Plumo’s marking</button></p>' : '') +
       '<div class="actions serrees"><button class="moyen plein" data-a="gb-mock" data-v="' + esc(m.k) + '">🔁 Another mock</button><button class="moyen" data-a="gb-mocks">📝 Mocks</button></div></div>');
     mock = null;
@@ -161,15 +173,17 @@
   function passes(){
     const e = etat();
     poser('gb-accueil', '<h2>🗂️ Past papers 2026</h2><p class="pieges-intro">For each real 2026 exam: a twin paper built the same way, with different questions. The real paper stays with its author.</p>' + onglets('gb-passes') +
-      '<div class="cartes-anglais">' + G.PASSES.map(a => '<div class="carte-annale">' + carte('gb-passe', a.id, '🗂️', esc(a.titre), 'Twin of the ' + esc(G.EXAMENS[a.exam].titre) + ' papers' + (e.notes['past-' + a.id] ? ' · your result: ' + esc(e.notes['past-' + a.id]) : '')) +
+      '<div class="cartes-anglais">' + G.PASSES.map(a => '<div class="carte-annale">' + carte('gb-passe', a.id, a.reel ? '✅' : '🗂️', esc(a.titre), (a.reel ? 'Real exam: ' + esc(a.reel) : 'Twin of the ' + esc(G.EXAMENS[a.exam].titre) + ' papers') + (e.notes['past-' + a.id] ? ' · your result: ' + esc(e.notes['past-' + a.id]) : '')) +
         '<a class="lien-officiel" href="' + esc(a.url) + '" target="_blank" rel="noopener">📄 Real papers: ' + esc(a.ou) + '</a></div>').join('') + '</div>' +
-      '<p class="petit">KS2 test papers are free on gov.uk. Exam boards share recent GCSE and A level papers with teachers first; students get them later (Pearson Edexcel: papers more than 9 months old).</p>');
+      '<p class="petit">✅ = real questions. KS2 SATs papers are Crown copyright and may be re-used under the Open Government Licence, so Plumo includes the real arithmetic, grammar and spelling papers (the reading texts belong to their authors, and the reasoning papers are diagrams: those stay as twins). GCSE and A level papers belong to the exam boards (AQA, Pearson Edexcel, OCR), which do not allow copying: you get a twin paper and a link to the real one. Boards share recent papers with teachers first; students get them later (Pearson Edexcel: papers more than 9 months old).</p>');
   }
   function officiel(){
     const O = G.OFFICIEL, liste = l => '<div class="cartes-anglais">' + l.map(([t, u, d]) => '<a class="carte-anglais lien-carte" href="' + esc(u) + '" target="_blank" rel="noopener"><span class="ic">🔗</span><strong>' + esc(t) + '</strong><small>' + esc(d) + '</small></a>').join('') + '</div>';
     poser('gb-accueil', '<h2>🏛️ Official curriculum & papers</h2><p class="pieges-intro">The official texts from the Department for Education and the exam boards. Plumo’s twin papers are in the Mocks and Past papers tabs.</p>' + onglets('gb-officiel') +
       '<section class="domaine"><h3>📚 Curriculum</h3>' + liste(O.programmes) + '</section><section class="domaine"><h3>🗂️ Real past papers</h3>' + liste(O.annales) + '</section>');
   }
+  // Mention de licence des vrais sujets (exigée par l'Open Government Licence).
+  const ogl = id => { const R = G.REELS && G.REELS[id]; return R ? '<p class="petit licence-ogl">' + esc(R.attrib) + ' <a href="' + esc(G.LICENCE_OGL) + '" target="_blank" rel="noopener">OGL v3.0</a></p>' : ''; };
   // ───────── Branchements ─────────
   M.cartes.matiere.unshift(() => actif() ? '' : carte('gb-programme', 'gb', '🏴', 'England curriculum', 'Year 6 → A level, in English: SATs, GCSE, A level'));
   M.gb = { actif, etat, serie:(id, cible, n) => G.serie(id, cible, etat().niveau, n, Math.floor(Math.random() * 1e9), etat().ton) };

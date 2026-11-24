@@ -69,6 +69,7 @@
     P('Literary terms & contexts', '2 h 30 per paper', null, 'gb-english', ['alevel-lit', 'poetry', 'techniques'], 12, 'Y13')] };
   // Construire un paper : questions tirées dans les chapitres du paper (graine fixe pour les « past papers » jumeaux).
   E.construirePaper = function(p, graine, ton){
+    if(p.reel && E.listeReelle) return E.listeReelle(p.reel, graine);   // v6.2 : vrai sujet (SATs)
     const m = E.trouver(p.matiere); if(!m) return [];
     const chs = p.chapitres.length ? p.chapitres : m.chapitres.filter(c => c.niv.includes(p.niveau)).map(c => c.id);
     const r = E.hasard(graine), out = [], vus = new Set();
@@ -89,9 +90,11 @@
   // « Past papers » 2026 : le jumeau de chaque vraie session 2026 (graine fixe), avec l'endroit où trouver le vrai sujet.
   const GOV = 'https://www.gov.uk/government/publications/', AQA = 'https://www.aqa.org.uk/past-papers-and-mark-schemes-finder', PEARSON = 'https://qualifications.pearson.com/en/support/support-topics/exams/past-papers.html';
   E.PASSES = [
-    { id:'sats26-maths', exam:'sats-maths', graine:2026051301, titre:'KS2 SATs 2026 · Maths', url:GOV + 'key-stage-2-tests-2026-mathematics-test-materials', ou:'gov.uk (Standards and Testing Agency)' },
-    { id:'sats26-gps', exam:'sats-gps', graine:2026051101, titre:'KS2 SATs 2026 · Grammar, punctuation & spelling', url:GOV + 'key-stage-2-tests-2026-english-grammar-punctuation-and-spelling-test-materials', ou:'gov.uk (Standards and Testing Agency)' },
-    { id:'sats26-reading', exam:'sats-reading', graine:2026051201, titre:'KS2 SATs 2026 · Reading', url:GOV + 'key-stage-2-tests-2026-english-reading-test-materials', ou:'gov.uk (Standards and Testing Agency)' },
+    { id:'sats26-maths', exam:'sats26-reel-maths', graine:2026051301, titre:'KS2 SATs 2026 · Maths', url:GOV + 'key-stage-2-tests-2026-mathematics-test-materials', ou:'gov.uk (Standards and Testing Agency)', reel:'real arithmetic paper + twin reasoning papers' },
+    { id:'sats26-gps', exam:'sats26-reel-gps', graine:2026051101, titre:'KS2 SATs 2026 · Grammar, punctuation & spelling', url:GOV + 'key-stage-2-tests-2026-english-grammar-punctuation-and-spelling-test-materials', ou:'gov.uk (Standards and Testing Agency)', reel:'real questions and real spelling words' },
+    { id:'sats25-maths', exam:'sats25-reel-maths', graine:2025051401, titre:'KS2 SATs 2025 · Maths', url:GOV + 'key-stage-2-tests-2025-mathematics-test-materials', ou:'gov.uk (Standards and Testing Agency)', reel:'real arithmetic paper + twin reasoning papers' },
+    { id:'sats25-gps', exam:'sats25-reel-gps', graine:2025051201, titre:'KS2 SATs 2025 · Grammar, punctuation & spelling', url:GOV + 'key-stage-2-tests-2025-english-grammar-punctuation-and-spelling-test-materials', ou:'gov.uk (Standards and Testing Agency)', reel:'real questions and real spelling words' },
+    { id:'sats26-reading', exam:'sats-reading', graine:2026051201, titre:'KS2 SATs 2026 · Reading (twin: the real texts belong to their authors)', url:GOV + 'key-stage-2-tests-2026-english-reading-test-materials', ou:'gov.uk (Standards and Testing Agency)' },
     { id:'gcse26-maths-h', exam:'gcse-maths-h', graine:2026051401, titre:'GCSE Maths 2026 · Higher', url:AQA, ou:'AQA, Pearson Edexcel or OCR (your school’s board)', board:true },
     { id:'gcse26-maths-f', exam:'gcse-maths-f', graine:2026051402, titre:'GCSE Maths 2026 · Foundation', url:AQA, ou:'AQA, Pearson Edexcel or OCR (your school’s board)', board:true },
     { id:'gcse26-english', exam:'gcse-english-lang', graine:2026052101, titre:'GCSE English Language 2026', url:AQA, ou:'AQA, Pearson Edexcel or OCR', board:true },

@@ -1,0 +1,13 @@
+Ami des mots — version 6.3 : toutes les matières du français, côté anglais, et les études pour la NASA
+
+Programme anglais (England) :
+- 🇪🇸 Spanish et 🇩🇪 German : KS3, nouveau GCSE (premières épreuves 2026 : dictée, lecture à voix haute) et A level.
+- 🤔 Philosophy, 🗳️ Politics, 👥 Sociology (A level), à côté d'Economics et Psychology.
+- Nouveau niveau « University » (après le A level) : 🩺 Medicine (anatomie, éthique, NHS, UCAT 2025+ sans Abstract
+  Reasoning), ⚖️ Law (système juridique anglais, contrat, responsabilité, pénal, LNAT : 42 QCM + essai), 🔭 Astrophysics.
+- Examens blancs : GCSE Spanish/German, A level Philosophy/Politics/Sociology, entrée à l'université (UCAT, LNAT).
+- 🚀 « Careers in space: NASA & ESA » : conditions NASA (citoyenneté américaine, master STEM, 3 ans d'expérience),
+  la voie européenne (ESA), les A levels et diplômes qui mènent au spatial ; liens officiels NASA et ESA.
+Programme français :
+- 🚀 Astrophysique : nouveau chapitre « Travailler à la NASA, à l'ESA ou au CNES » (1re, Tle, Sup).
+Plus de 1 500 questions anglaises ; 169 tests.
