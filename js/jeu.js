@@ -501,8 +501,34 @@
       '</svg>';
     if(opts.immobile) return svg;
     // v5.93 : toujours le Plumo en 3D ; les accessoires du vestiaire sont posés par-dessus l'image.
-    const CADRES = { echarpe:'31 82 38 28', noeud:'38 82 24 16', lunettes:'23 30 54 28', chapeau:'27 -5 46 25', couronne:'32 -5 36 23' };
-    const calques = porte.filter(k => acc[k] && CADRES[k]).map(k => '<svg class="ami-acc ami-acc-' + k + '" viewBox="' + CADRES[k] + '" aria-hidden="true" focusable="false">' + acc[k] + '</svg>').join('');
+    const CADRES = { echarpe:'0 0 560 613', noeud:'38 82 24 16', lunettes:'0 0 560 613', chapeau:'27 -5 46 25', couronne:'32 -5 36 23' };
+    // v5.96 : lunettes dessinées sur l'image 3D elle-même (mêmes coordonnées que img/ami-3d-560.webp) :
+    // chaque verre est centré sur un œil, inclinées comme la tête, l'œil de droite plus petit (vu de trois quarts).
+    const ACC_3D = {
+      chapeau:'<defs><linearGradient id="chap3d" x1="0" x2="1"><stop offset="0" stop-color="#1b1b1f"/><stop offset=".35" stop-color="#4a4a52"/><stop offset=".6" stop-color="#2a2a30"/><stop offset="1" stop-color="#111114"/></linearGradient><linearGradient id="bord3d" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#55555e"/><stop offset="1" stop-color="#151518"/></linearGradient><linearGradient id="ruban3d" x1="0" x2="1"><stop offset="0" stop-color="#9e2b27"/><stop offset=".4" stop-color="#e8605a"/><stop offset="1" stop-color="#8a2420"/></linearGradient></defs>' +
+        '<path d="M36 15 L38 -3 Q50 -5.5 62 -3 L64 15 Z" fill="url(#chap3d)"/><ellipse cx="50" cy="-3" rx="12" ry="2" fill="#3c3c44"/>' +
+        '<path d="M37.6 9 Q50 11 62.4 9 L62.8 12.6 Q50 14.6 37.2 12.6 Z" fill="url(#ruban3d)"/>' +
+        '<ellipse cx="50" cy="15.5" rx="22" ry="4.6" fill="url(#bord3d)"/><path d="M30 14.5 Q50 11.5 70 14.5" stroke="rgba(255,255,255,.25)" stroke-width=".8" fill="none"/>' +
+        '<path d="M41 -1 L42.5 12" stroke="rgba(255,255,255,.22)" stroke-width="1.6" stroke-linecap="round"/>',
+      couronne:'<defs><linearGradient id="or3d" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff2a8"/><stop offset=".35" stop-color="#f2c230"/><stop offset=".7" stop-color="#c9900f"/><stop offset="1" stop-color="#8a5f05"/></linearGradient><radialGradient id="rubis3d" cx=".35" cy=".35" r=".7"><stop offset="0" stop-color="#ffb3ae"/><stop offset=".45" stop-color="#d9342b"/><stop offset="1" stop-color="#7a1410"/></radialGradient></defs>' +
+        '<path d="M34 16 L36 0 L43 9 L50 -3 L57 9 L64 0 L66 16 Z" fill="url(#or3d)" stroke="#9c6e08" stroke-width=".8" stroke-linejoin="round"/>' +
+        '<path d="M34.6 12.5 Q50 15 65.4 12.5" stroke="#9c6e08" stroke-width=".8" fill="none"/>' +
+        '<circle cx="36" cy="0" r="1.5" fill="url(#or3d)"/><circle cx="50" cy="-3" r="1.7" fill="url(#or3d)"/><circle cx="64" cy="0" r="1.5" fill="url(#or3d)"/>' +
+        '<circle cx="50" cy="8.5" r="2.4" fill="url(#rubis3d)"/><circle cx="42" cy="12" r="1.3" fill="#3f8fe0"/><circle cx="58" cy="12" r="1.3" fill="#3f8fe0"/>' +
+        '<path d="M37.5 3 L38.5 13" stroke="rgba(255,255,255,.55)" stroke-width="1" stroke-linecap="round"/>',
+      echarpe:'<g class="echarpe-3d"><defs><linearGradient id="ech3d" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ff7b72"/><stop offset=".55" stop-color="#e0413c"/><stop offset="1" stop-color="#a92526"/></linearGradient></defs>' +
+      '<path d="M168 278 Q270 330 392 262 L398 296 Q272 372 166 312 Z" fill="url(#ech3d)" stroke="#8d1f1f" stroke-width="3"/>' +
+      '<path d="M180 290 Q270 336 384 276" fill="none" stroke="rgba(255,255,255,.28)" stroke-width="4"/>' +
+      '<path d="M300 322 Q312 368 296 418 L330 422 Q344 370 330 318 Z" fill="url(#ech3d)" stroke="#8d1f1f" stroke-width="3"/>' +
+      '<path d="M298 410 l4 16 M308 412 l2 16 M318 413 l1 16 M327 414 l0 15" stroke="#a92526" stroke-width="4" stroke-linecap="round"/></g>',
+      lunettes:'<g class="lunettes-3d">' +
+      '<path d="M190 207 Q160 196 132 203" fill="none" stroke="#2b1d14" stroke-width="7" stroke-linecap="round"/>' +
+      '<ellipse cx="238" cy="206" rx="55" ry="51" fill="rgba(200,235,255,.16)" stroke="#2b1d14" stroke-width="8" transform="rotate(-17 238 206)"/>' +
+      '<ellipse cx="346" cy="173" rx="44" ry="45" fill="rgba(200,235,255,.16)" stroke="#2b1d14" stroke-width="7" transform="rotate(-17 346 173)"/>' +
+      '<path d="M290 190 Q296 172 303 176" fill="none" stroke="#2b1d14" stroke-width="7" stroke-linecap="round"/>' +
+      '<path d="M205 180 Q220 168 238 168" fill="none" stroke="rgba(255,255,255,.7)" stroke-width="5" stroke-linecap="round"/>' +
+      '<path d="M325 146 Q338 138 351 139" fill="none" stroke="rgba(255,255,255,.65)" stroke-width="4" stroke-linecap="round"/></g>' };
+    const calques = porte.filter(k => acc[k] && CADRES[k]).map(k => '<svg class="ami-acc ami-acc-' + k + '" viewBox="' + CADRES[k] + '" aria-hidden="true" focusable="false">' + (ACC_3D[k] || acc[k]) + '</svg>').join('');
     const humeurClasse = humeur === 'fete' ? ' ami-3d-fete' : humeur === 'surpris' ? ' ami-3d-surpris' : humeur === 'triste' ? ' ami-3d-triste' : '';
     return '<span class="ami-3d-wrap' + humeurClasse + '" aria-hidden="true"><span class="ami-3d-corps"><img class="ami-3d" src="img/ami-3d-560.webp" alt="" decoding="async">' + calques + '</span></span>';
   }
@@ -531,6 +557,7 @@
     '<span class="compteur" aria-label="' + esc(J().plumes + ' ' + t('plumes')) + '">🪶 ' + J().plumes + '</span></header>';
 
   // v5.95 : rappels (appli seulement) et « série en danger ».
+  function appliquerTexte(){ const t = base.texte; if(t === 'grand' || t === 'tres-grand') document.documentElement.dataset.texte = t; else delete document.documentElement.dataset.texte; }
   function majRappels(){
     if(!window.RAPPELS || !RAPPELS.dispo()) return Promise.resolve({ ok:false, raison:'web' });
     return RAPPELS.planifier(base.rappel, { serie:serie(), joueAujourdhui:J().jours.includes(jour()) },
@@ -993,7 +1020,7 @@
     // Les vannes écrites par la famille (Espace parents).
     const fam = (Array.isArray(J().vannesFamille) ? J().vannesFamille : []).filter(b => !window.JUGE || (JUGE.juger(b).ok && !JUGE.retiree(J().notesVannes, b)));
     if(fam.length && f && j && Math.random() < .08){ const b = fam[Math.floor(Math.random() * fam.length)]; derniereBlague = b; return remplir(b, { f, j }); }
-    if((type === 'mot' || type === 'ecoute') && mauvaise && bonne){ const ia = iaPrendre(bonne, mauvaise); if(ia){ derniereBlague = ia; return ia; } }
+    if((type === 'mot' || type === 'ecoute') && mauvaise && bonne){ const ia = iaPrendre(bonne, mauvaise); if(ia){ derniereBlague = ia; return MARQUE_IA + ia; } }
     if(type === 'mot' || type === 'ecoute'){
       if(!f || !j || f === j) pool = V.secours;
       else{
@@ -2796,16 +2823,34 @@
       iaPrecharger(sujet, [q.consigne, q.enonce].filter(Boolean).join(' — '), q.bon, q.faux.map(x => x.en), ton, 'fr');
     }
   }
+  // v5.98 : carnet d'erreurs — les questions de matières ratées sont gardées (80 au plus, sur l'appareil)
+  // pour une révision avant un contrôle ; une question réussie ensuite sort du carnet.
+  const cleQ = q => String(q.enonce || '') + '\u0001' + String(q.bon);
+  function carnetErreurs(q, juste){
+    if(!q || !q.matiere || q.vanneDe || !Array.isArray(q.faux) || !q.faux.length) return;
+    const j = J(); j.carnet = Array.isArray(j.carnet) ? j.carnet : [];
+    const k = cleQ(q), i = j.carnet.findIndex(x => cleQ(x) === k);
+    if(juste){ if(i >= 0) j.carnet.splice(i, 1); return; }
+    const x = { matiere:q.matiere, consigne:q.consigne, enonce:q.enonce, bon:q.bon, regle:q.regle, lang:q.lang, contexte:q.contexte,
+      faux:q.faux.map(f => ({ en:String(f.en), vanne:String(f.vanne || '') })), rate:jour() };
+    if(i >= 0) j.carnet.splice(i, 1); j.carnet.push(x); if(j.carnet.length > 80) j.carnet.splice(0, j.carnet.length - 80);
+  }
+  function carnetGo(){
+    const l = (J().carnet || []).slice(); if(!l.length) return matieresAccueil();
+    for(let i = l.length - 1; i > 0; i--){ const k = Math.floor(Math.random() * (i + 1)); [l[i], l[k]] = [l[k], l[i]]; }
+    questionsGo(l.slice(0, 20).map(x => Object.assign({}, x, { faux:x.faux.map(f => Object.assign({}, f)) })), { titre:'🎯 Mes erreurs', retour:'matieres' });
+  }
   function repondreQuestion(i){
     const z = qz; if(!z || z.repondu) return;
     const q = z.liste[z.i], choix = z.options[i]; if(choix == null) return;
     z.repondu = true; const juste = choix === q.bon; if(juste) z.bonnes++;
     noterJournal(q.matiere || (z.prof || q.chap ? 'maths' : window.SCIENCES && SCIENCES.Q.some(x => x[0] === q.id) ? 'sciences' : 'anglais'), juste);
+    carnetErreurs(q, juste);
     if(q.apres) q.apres(juste, choix); garder();
     document.querySelectorAll('.piege-opt').forEach((b, k) => { b.disabled = true; if(z.options[k] === q.bon) b.classList.add('ok'); else if(k === i) b.classList.add('ko'); });
     let f = !juste && (q.vanneDe ? { vanne:q.vanneDe(choix) } : q.faux.find(x => x.en === choix));
     const ia = f && !q.vanneDe && iaPrendre(q.bon, choix);
-    if(ia) f = Object.assign({}, f, { vanne:ia + (f.explication || ''), fraiche:null });
+    if(ia) f = Object.assign({}, f, { vanne:MARQUE_IA + ia + (f.explication || ''), fraiche:null });
     else if(f && typeof f.fraiche === 'function') f.vanne = f.fraiche(memoireVannes()); // la vanne choisie est retenue par fraiche
     else if(f && f.vanne) retenirVanne(f.vanne);
     // Même erreur refaite dans la série : Prof Pi monte en pression (« Mais genre, tu fais exprès ou quoi !!!! »).
@@ -3206,6 +3251,7 @@
         ? '<p>' + esc(t('abo_actif', droits ? new Date(droits.fin).toLocaleDateString(base.ui) : '')) + '</p>' + (CONFIG.LIEN_GESTION ? '<p><a class="moyen" href="' + esc(CONFIG.LIEN_GESTION) + '" target="_blank" rel="noopener">' + esc(t('gerer_abo')) + '</a></p>' : '')
         : '<p><button class="moyen plein" data-a="plus" data-v="reglages">' + esc(t('decouvrir_plus')) + '</button></p>') +
         '<p class="petit">' + esc(t('code_abo')) + '<br><code>' + esc(base.abo.code) + '</code><br>' + esc(t('code_aide')) + '</p>' : '') +
+      '<div class="reglage"><span><strong>🔠 ' + esc(tt('taille_texte')) + '</strong></span><span class="actions serrees">' + [['normal', 'A'], ['grand', 'A+'], ['tres-grand', 'A++']].map(([k, l]) => '<button class="moyen' + ((base.texte || 'normal') === k ? ' plein' : '') + '" data-a="taille-texte" data-v="' + k + '" aria-pressed="' + ((base.texte || 'normal') === k) + '">' + l + '</button>').join('') + '</span></div>' +
       reglageRappels() + reglageGraphismes() + reglageVoix() +
       '<h3>' + esc(t('joueurs')) + '</h3><div class="liste-joueurs">' + base.joueurs.map((j, i) =>
         '<button class="ligne-carnet" data-a="modifier-joueur" data-v="' + i + '"><span class="ami-icone">' + ami('content', { couleur:j.couleur, porte:j.porte, immobile:true }) + '</span><span class="txt"><strong>' + esc(j.nom || '—') + (i === base.actif ? ' ✓' : '') + '</strong><span>🪶 ' + j.plumes + '</span></span><span aria-hidden="true">✏️</span></button>').join('') + '</div>' +
@@ -3232,6 +3278,8 @@
   // Dès qu'une question s'affiche, on demande à l'IA une vanne neuve pour chaque mauvaise réponse possible, en lui
   // donnant les dernières vannes déjà dites. Si elle ne répond pas à temps (ou sans serveur), Plumo garde ses vannes à lui.
   // Rien de personnel ne part : ni prénom, ni code, ni voix — seulement la question et les réponses.
+  // v5.98 : toute vanne écrite par l'IA est signalée (« 🤖 ») : le joueur sait quand il lit une IA.
+  const MARQUE_IA = '🤖 ';
   const cacheIA = new Map(), recentes = [];
   let iaEnPanne = 0;
   const cleIA = (bonne, fausse) => String(bonne) + '\u0001' + String(fausse);
@@ -3365,6 +3413,7 @@
     poser(barre('accueil') + '<main class="coin-anglais matieres-ecran"><h2>📚 Matières</h2><p class="pieges-intro">Le programme de la 6e au bac, avec Plumo qui vanne les erreurs (jamais toi) et t’explique la bonne réponse.</p>' +
       (window.EPREUVES ? ongletsExamens('matieres') : '') +
       '<div class="cartes-anglais">' +
+        ((J().carnet || []).length ? c('carnet-erreurs', '', '🎯', 'Mes erreurs (' + J().carnet.length + ')', 'Les questions ratées, à revoir avant un contrôle : une bonne réponse les retire') : '') +
         c('matiere', 'francais', '📝', 'Français', 'Conjugaison, orthographe, grammaire, figures de style, littérature') +
         (M.trouver('lespagnol') ? c('matiere', 'lespagnol', '🇪🇸', 'Espagnol (LVB, 5e → bac)', 'Ser ou estar, passé, subjonctif, faux amis') : '') +
         (M.trouver('lallemand') ? c('matiere', 'lallemand', '🇩🇪', 'Allemand (LVB, 5e → bac)', 'Cas, place du verbe, parfait, Konjunktiv II') : '') +
@@ -3908,6 +3957,8 @@
         if(!b.dataset.ok){ b.dataset.ok = 1; b.textContent = t('confirmer'); return; }
         base.joueurs.splice(Number(v), 1); base.actif = 0; garder(); return reglages();
       case 'facile': J().facile = !J().facile; garder(); return reglages();
+      case 'taille-texte': base.texte = ['normal', 'grand', 'tres-grand'].includes(v) ? v : 'normal'; garder(); appliquerTexte(); return reglages();
+      case 'carnet-erreurs': return carnetGo();
       case 'consigne': return lireConsigne(($('#consigne') || {}).textContent);
       case 'humour': J().humour = Math.max(0, Math.min(3, Number(v) || 0)); garder(); return reglages();
       case 'langue-blagues': J().langueBlagues = v === 'en' ? 'en' : 'fr'; garder(); return reglages();
@@ -3967,7 +4018,7 @@
   // Au lancement : le certificat gardé est vérifié (hors connexion aussi), puis le serveur est consulté.
   // v5.85 : l'offre signée (gardée, puis celle du serveur) est appliquée avant ; l'écran se redessine si elle change.
   const redessiner = () => { if(!partie && !lienAller && !lienDefi && !lienSalon && !depuis3D()) accueil(); };
-  compterVisite('ouverture'); majRappels();
+  compterVisite('ouverture'); majRappels(); appliquerTexte();
   window.AmiDesMotsPret = offreGardee().then(g => { if(g) redessiner(); return verifierJeton(base.abo.jeton, base.abo.code); })
     .then(d => { droits = d; if(d) redessiner(); return rafraichir(retourPaiement); })
     .then(() => offreServeur()).then(chg => { if(chg) redessiner(); })
@@ -3978,7 +4029,7 @@
   if(retourPaiement) [5000, 15000, 40000].forEach(ms => setTimeout(() => { if(!plus()) rafraichir(true); }, ms));
   if(boucheDispo()) try{ Articulation.init(); }catch(e){}
   if('serviceWorker' in navigator && location.protocol === 'https:') navigator.serviceWorker.register('sw.js').catch(() => {});
-  window.AmiDesMots = { formulesOffertes, appliquerCertificat, qzBonne:() => qz && qz.liste[qz.i] ? qz.liste[qz.i].bon : null, CLE_OFFRE, verifierOffre, base, J, affiche, fnv1a, urlVoix, accueil, themes, choisirJeu, commencer, lettresPossibles, distincts, motsDu, aDire, CATALOGUE, MECAS, disponible, nomJeu, aRevoir, noter, jour, defi, revoir, lecon, astuces, aToi, blague, carnet, noteVoix, sansEmojis, direPhrase, direEcoute, iaPrecharger, iaPrendre, vanneObjets, avecArticle, astuce, niveauHumour, fousRires, reglages, CONFIG, COINS, coinOuvert, offreLue, facile, nbMots, restaurer, verifierJeton, plus, ecranPlus, formatCode, rafraichir,
+  window.AmiDesMots = { questionsGo, formulesOffertes, appliquerCertificat, qzBonne:() => qz && qz.liste[qz.i] ? qz.liste[qz.i].bon : null, CLE_OFFRE, verifierOffre, base, J, affiche, fnv1a, urlVoix, accueil, themes, choisirJeu, commencer, lettresPossibles, distincts, motsDu, aDire, CATALOGUE, MECAS, disponible, nomJeu, aRevoir, noter, jour, defi, revoir, lecon, astuces, aToi, blague, carnet, noteVoix, sansEmojis, direPhrase, direEcoute, iaPrecharger, iaPrendre, vanneObjets, avecArticle, astuce, niveauHumour, fousRires, reglages, CONFIG, COINS, coinOuvert, offreLue, facile, nbMots, restaurer, verifierJeton, plus, ecranPlus, formatCode, rafraichir,
     get etat(){ return J(); } };
   garder();
   if(lienDefi || lienSalon){

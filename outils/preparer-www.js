@@ -12,6 +12,8 @@ let n = 0, taille = 0;
   for(const e of fs.readdirSync(src, { withFileTypes:true })){
     if(e.name.startsWith('.') && e.name !== '.well-known') continue;
     const s = path.join(src, e.name), d = path.join(dst, e.name);
+    if(src === ICI && EXCLUS.has(e.name)) continue;
+    if(e.isSymbolicLink()) continue;   // v5.97 : jamais de lien (ex. node_modules lié)
     if(e.isDirectory()){ if(src === ICI && EXCLUS.has(e.name)) continue; fs.mkdirSync(d, { recursive:true }); copier(s, d); }
     else if(!(src === ICI && (FICHIERS_EXCLUS.test(e.name) || (APPLI && e.name === 'admin.html')))){ fs.copyFileSync(s, d); n++; taille += fs.statSync(s).size; }
   }

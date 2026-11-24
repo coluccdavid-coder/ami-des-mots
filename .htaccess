@@ -21,3 +21,13 @@ AddType model/gltf-binary .glb
   Header always set X-Content-Type-Options "nosniff"
   Header always set Referrer-Policy "strict-origin-when-cross-origin"
 </IfModule>
+# v5.97 : HTTPS obligatoire, et jamais de fichier de réglages ou de clé lisible depuis le web (même déposé par erreur dans www/).
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteCond %{HTTPS} off
+  RewriteCond %{HTTP:X-Forwarded-Proto} !https
+  RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+</IfModule>
+<FilesMatch "^(config.*\.php|.*\.(pem|p8|key|sqlite|sql|log|bak))$">
+  Require all denied
+</FilesMatch>

@@ -1,0 +1,9 @@
+Ami des mots 5.96.0
+
+🦉 Plumo ne saute plus quand la souris passe dessus. Cause : avec les graphismes « ultra », l'effet de survol
+  des boutons remplaçait le centrage de Plumo ; il partait sur le côté, la souris ne le touchait plus, il revenait,
+  et ainsi de suite. Survol : maintenant un simple halo doré, sans mouvement.
+👓 Nouvelles lunettes dessinées sur l'image 3D : un verre centré sur chaque œil, inclinées comme la tête,
+  l'œil droit plus petit (vu de trois quarts), reflets dans les verres.
+🧣 Écharpe redessinée autour du cou (dégradé, pan qui tombe, franges) ; ombre douce sous tous les accessoires.
+Vérifié : 145 tests ; survol testé dans un navigateur avec les graphismes « ultra » (Plumo immobile).

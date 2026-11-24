@@ -2210,6 +2210,54 @@ await test('v5.95 : spécialités (SES, HGGSP, HLP, NSI) et renfort philo, droit
   for(const id of ['ses', 'hggsp', 'hlp', 'nsi']) for(const niv of ['1re', 'Tle']){ const s = M.serie(id, 'examen', niv, 8, 42, 'taquin'); assert.ok(s.length >= 5, id + ' ' + niv + ' : ' + s.length); }
 });
 
+await test('v5.96 : Plumo reste en place au survol, lunettes et écharpe posées sur l’image 3D', () => {
+  const fs = require('fs'), path = require('path'), R = path.join(__dirname, '..');
+  const ultra = fs.readFileSync(path.join(R, 'css/ultra.css'), 'utf8'), css = fs.readFileSync(path.join(R, 'css/jeu.css'), 'utf8');
+  for(const l of ultra.split('\n').filter(l => /button:not\(.petit-bouton\)[^{]*:hover/.test(l))) assert.match(l, /:not\(\.ami-grand\)/, l);
+  assert.match(css, /\.perchoir \.ami-grand:hover[^{]*\{ transform:translateX\(-50%\) !important/);
+  const w = page(); const A = w.AmiDesMots; A.base.joueurs[0].porte = ['lunettes', 'echarpe'];
+  const x = w.document.createElement('button'); x.dataset.a = 'accueil'; w.document.body.appendChild(x); x.click();
+  const lun = w.document.querySelector('.ami-acc-lunettes'), ech = w.document.querySelector('.ami-acc-echarpe');
+  assert.ok(lun && ech); assert.strictEqual(lun.getAttribute('viewBox'), '0 0 560 613'); assert.strictEqual(lun.querySelectorAll('ellipse').length, 2);
+  assert.strictEqual(ech.getAttribute('viewBox'), '0 0 560 613');
+});
+
+await test('v5.97 : mise en ligne OVH — rien sans secrets, aucun fichier secret envoyé, rien effacé, réglages cherchés au-dessus de www/', () => {
+  const fs = require('fs'), path = require('path'), R = path.join(__dirname, '..');
+  const y = fs.readFileSync(path.join(R, '.github/workflows/ovh.yml'), 'utf8');
+  assert.match(y, /secrets\.OVH_HOTE/); assert.match(y, /Secrets OVH absents/);
+  assert.ok(!/--delete|rm -rf|auto-confirm yes/.test(y), 'rien d’effacé, empreinte du serveur vérifiée');
+  for(const m of ['config\\*\\.php', '\\*\\.pem', '\\*\\.p8']) assert.match(y, new RegExp("--exclude '" + m + "'"));
+  assert.match(y, /PRIVATE KEY\|sk_live_/);
+  const lib = fs.readFileSync(path.join(R, 'serveur-php/lib.php'), 'utf8');
+  assert.match(lib, /dirname\(__DIR__, 2\) \. '\/config-ami\.php', dirname\(__DIR__\)/);
+  const h = fs.readFileSync(path.join(R, '.htaccess'), 'utf8'); assert.match(h, /config\.\*\\\.php/); assert.match(h, /Require all denied/);
+});
+
+await test('v5.98 : vannes de l’IA signalées 🤖, carnet d’erreurs, taille du texte, chapeau et couronne en relief', async () => {
+  // Vanne de l'IA : marquée.
+  const w = page(undefined, { SERVEUR:'https://ami.example/serveur' }, x => { x.fetch = async (u, o) => {
+    if(/vannes-direct/.test(u)){ const b = JSON.parse(o.body); const v = {}; for(const f of b.fausses) v[f] = 'Ta réponse a pris un raccourci par la mauvaise porte.'; return { ok:true, status:200, json:async () => ({ vannes:v }) }; }
+    return { ok:true, status:200, json:async () => ({ actif:false }) }; }; });
+  await w.AmiDesMotsPret; const A = w.AmiDesMots, d = w.document, M = w.MATIERES;
+  const va = (a, v) => { const x = d.createElement('button'); x.dataset.a = a; if(v != null) x.dataset.v = v; d.body.appendChild(x); x.click(); x.remove(); };
+  const s = M.serie('ses', 'examen', 'Tle', 3, 5, 'taquin'); A.questionsGo(s, { titre:'t', retour:'matieres' }); await new Promise(r => setTimeout(r, 30));
+  const q = s[0], faux = [...d.querySelectorAll('.piege-opt')].findIndex(b => b.textContent !== q.bon);
+  d.querySelectorAll('.piege-opt')[faux].click(); await new Promise(r => setTimeout(r, 20));
+  assert.match(d.getElementById('qz-retour').textContent, /🤖 Ta réponse a pris un raccourci/);
+  // Carnet : la question ratée y est, une bonne réponse l'en retire.
+  const j = A.base.joueurs[0]; assert.strictEqual(j.carnet.length, 1); assert.strictEqual(j.carnet[0].bon, q.bon);
+  va('matieres'); assert.match(d.querySelector('[data-a="carnet-erreurs"]').textContent, /Mes erreurs \(1\)/);
+  va('carnet-erreurs'); const bonne = [...d.querySelectorAll('.piege-opt')].findIndex(b => b.textContent === q.bon);
+  d.querySelectorAll('.piege-opt')[bonne].click(); assert.strictEqual(j.carnet.length, 0);
+  // Taille du texte.
+  va('reglages'); va('taille-texte', 'grand'); assert.strictEqual(d.documentElement.dataset.texte, 'grand');
+  va('taille-texte', 'normal'); assert.ok(!d.documentElement.dataset.texte);
+  // Accessoires en relief.
+  j.porte = ['chapeau', 'couronne']; va('accueil');
+  assert.ok(d.querySelector('.ami-acc-chapeau linearGradient') && d.querySelector('.ami-acc-couronne radialGradient'));
+});
+
 console.log(`\n${ok} réussi(s), ${ko} échoué(s)`);
 process.exit(ko ? 1 : 0);
 })();

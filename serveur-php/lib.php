@@ -9,7 +9,8 @@ const AMI_ACTIFS = ['active', 'trialing', 'past_due', 'a_vie', 'cadeau', 'magasi
 function ami_config(): array {
   static $c = null;
   if ($c !== null) return $c;
-  $chemins = [getenv('AMI_CONFIG') ?: '', dirname(__DIR__) . '/config-ami.php', __DIR__ . '/config.php'];
+  // v5.97 : d'abord AU-DESSUS de www/ (www/serveur/lib.php → ../../config-ami.php), comme l'explique LISEZMOI.md.
+  $chemins = [getenv('AMI_CONFIG') ?: '', dirname(__DIR__, 2) . '/config-ami.php', dirname(__DIR__) . '/config-ami.php', __DIR__ . '/config.php'];
   foreach ($chemins as $f) if ($f && is_file($f)) { $c = require $f; return $c; }
   ami_json(['erreur' => 'non_configure'], 503);
 }

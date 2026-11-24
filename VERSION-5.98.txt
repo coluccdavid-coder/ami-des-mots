@@ -1,0 +1,9 @@
+Ami des mots 5.98.0
+
+🤖 Chaque vanne écrite par l'IA est marquée « 🤖 » : le joueur sait quand il lit une IA (obligatoire pour un produit
+  utilisé par des mineurs selon les règles d'Anthropic). Page de confidentialité mise à jour.
+🎯 Carnet d'erreurs : les questions de matières ratées sont gardées (80 au plus, sur l'appareil). Carte « Mes erreurs (N) »
+  dans Matières : 20 questions au hasard pour réviser avant un contrôle ; une bonne réponse retire la question du carnet.
+🔠 Taille du texte réglable (A, A+, A++) dans les réglages, en 11 langues.
+🎩 Chapeau et 👑 couronne redessinés en relief (dégradés, reflets, pierres).
+Vérifié : 147 tests ; accessibilité 10/10.

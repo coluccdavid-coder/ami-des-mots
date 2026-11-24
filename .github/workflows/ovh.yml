@@ -1,0 +1,61 @@
+# Ami des mots — mise en ligne automatique chez OVH (v5.97).
+# À chaque mise à jour de main (ou à la main : Actions → « Mise en ligne OVH » → Run workflow) :
+#   tests → dossier du jeu + dossier serveur/ → envoi en SFTP dans www/ de l'hébergement.
+# Ne fait RIEN tant que les secrets OVH ne sont pas réglés (voir docs/MISE-EN-LIGNE-OVH.md).
+# Jamais envoyés : config-ami.php, la clé privée, les clés Google / Apple (déposés une fois à la main AU-DESSUS de www/).
+# Rien n'est effacé chez OVH : les fichiers sont seulement ajoutés ou remplacés.
+name: Mise en ligne OVH
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: ovh
+  cancel-in-progress: false
+jobs:
+  envoyer:
+    runs-on: ubuntu-latest
+    env:
+      HOTE: ${{ secrets.OVH_HOTE }}
+    steps:
+      - name: Secrets OVH réglés ?
+        id: pret
+        run: |
+          if [ -z "$HOTE" ]; then echo "Secrets OVH absents : rien à envoyer (voir docs/MISE-EN-LIGNE-OVH.md)."; echo "ok=0" >> "$GITHUB_OUTPUT"; else echo "ok=1" >> "$GITHUB_OUTPUT"; fi
+      - uses: actions/checkout@v4
+        if: steps.pret.outputs.ok == '1'
+      - uses: actions/setup-node@v4
+        if: steps.pret.outputs.ok == '1'
+        with: { node-version: 22 }
+      - name: Tests
+        if: steps.pret.outputs.ok == '1'
+        run: npm ci && npm run verifier
+      - name: Préparer les fichiers
+        if: steps.pret.outputs.ok == '1'
+        run: |
+          node outils/preparer-www.js _ovh
+          cp .htaccess _ovh/.htaccess
+          mkdir -p _ovh/serveur
+          rsync -a --exclude 'config*.php' --exclude '*.md' --exclude '*.sqlite' --exclude '*.pem' --exclude '*.p8' --exclude '*.log' serveur-php/ _ovh/serveur/
+          test -f _ovh/serveur/.htaccess
+          if grep -rlE "BEGIN (EC |RSA )?PRIVATE KEY|sk_live_|whsec_[A-Za-z0-9]{10}" _ovh; then echo "Secret trouvé dans les fichiers à envoyer : arrêt."; exit 1; fi
+          echo "$(find _ovh -type f | wc -l) fichiers prêts"
+      - name: Envoyer chez OVH (SFTP)
+        if: steps.pret.outputs.ok == '1'
+        env:
+          UTILISATEUR: ${{ secrets.OVH_UTILISATEUR }}
+          MOT_DE_PASSE: ${{ secrets.OVH_MOT_DE_PASSE }}
+          EMPREINTE: ${{ secrets.OVH_KNOWN_HOSTS }}
+          DOSSIER: ${{ secrets.OVH_DOSSIER }}
+        run: |
+          sudo apt-get install -y -qq lftp >/dev/null
+          test -n "$EMPREINTE" || { echo "Secret OVH_KNOWN_HOSTS manquant (empreinte du serveur, voir la doc)."; exit 1; }
+          mkdir -p ~/.ssh && printf '%s\n' "$EMPREINTE" > ~/.ssh/known_hosts && chmod 600 ~/.ssh/known_hosts
+          lftp -u "$UTILISATEUR,$MOT_DE_PASSE" "sftp://$HOTE" -e "set sftp:auto-confirm no; set net:max-retries 2; mirror --reverse --only-newer --parallel=4 --verbose=1 _ovh ${DOSSIER:-www}; bye"
+      - name: Vérifier le site
+        if: steps.pret.outputs.ok == '1' && vars.OVH_ADRESSE != ''
+        run: |
+          curl -fsS -o /dev/null "${{ vars.OVH_ADRESSE }}/index.html" && echo "Site en ligne ✔"
+          code=$(curl -s -o /dev/null -w '%{http_code}' "${{ vars.OVH_ADRESSE }}/serveur/lib.php"); echo "serveur/lib.php → $code (doit être 403)"; test "$code" = "403"
