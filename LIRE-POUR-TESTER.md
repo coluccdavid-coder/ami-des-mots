@@ -1,4 +1,4 @@
-# Tester Plumo des Mots v5.18
+# Tester Ami des Mots v5.18
 
 ## Windows
 1. Décompressez entièrement le ZIP dans un dossier.

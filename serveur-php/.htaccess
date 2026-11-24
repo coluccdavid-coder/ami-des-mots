@@ -1,6 +1,6 @@
 # Seuls les points d'entrée publics sont accessibles.
 Options -Indexes
-<FilesMatch "^(lib\.php|config.*\.php|schema\.sql|.*\.pem|.*\.md)$">
+<FilesMatch "^(lib\.php|paiement-lib\.php|veille-sources\.php|config.*\.php|schema\.sql|.*\.(pem|p8|key|json|sqlite|db|log|bak|sql|md|txt))$">
   Require all denied
 </FilesMatch>
 <IfModule mod_headers.c>

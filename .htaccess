@@ -1,0 +1,23 @@
+# Ami des mots — réglages pour un hébergement Apache (OVH).
+# Compression : les scripts passent d'environ 1,5 Mo à 500 Ko.
+<IfModule mod_deflate.c>
+  AddOutputFilterByType DEFLATE text/html text/css text/plain application/javascript text/javascript application/json image/svg+xml application/manifest+json
+</IfModule>
+AddType image/webp .webp
+AddType application/manifest+json .webmanifest
+AddType model/gltf-binary .glb
+# Cache : images, polices et modèles 3D gardés 30 jours ; le code est revalidé à chaque visite
+# (le service worker garde de toute façon tout le jeu pour le hors-ligne).
+<IfModule mod_headers.c>
+  <FilesMatch "\.(webp|png|svg|woff2|glb|mp3|ogg)$">
+    Header set Cache-Control "public, max-age=2592000"
+  </FilesMatch>
+  <FilesMatch "\.(html|js|css|webmanifest)$">
+    Header set Cache-Control "no-cache"
+  </FilesMatch>
+  <FilesMatch "^sw\.js$">
+    Header set Cache-Control "no-cache, no-store"
+  </FilesMatch>
+  Header always set X-Content-Type-Options "nosniff"
+  Header always set Referrer-Policy "strict-origin-when-cross-origin"
+</IfModule>

@@ -1,4 +1,4 @@
-# Plumo des Mots v5.3 — guide de test
+# Ami des Mots v5.3 — guide de test
 
 ## 1. Préparer le projet
 - Décompresser l'archive dans un dossier.

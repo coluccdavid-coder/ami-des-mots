@@ -24,8 +24,8 @@ jobs:
         run: npm ci && npm run verifier
       - name: Jeu à embarquer
         run: node outils/preparer-www.js www --appli
-      - name: Capacitor (seulement pour fabriquer l'appli, pas dans le jeu)
-        run: npm install --no-save @capacitor/cli@8 @capacitor/core@8 @capacitor/android@8 @capacitor-community/text-to-speech@8 @capacitor/assets@3
+      - name: Capacitor (seulement pour fabriquer l'appli, pas dans le jeu) + paiement Google Play (cordova-plugin-purchase)
+        run: npm install --no-save @capacitor/cli@8 @capacitor/core@8 @capacitor/android@8 @capacitor-community/text-to-speech@8 @capacitor/assets@3 cordova-plugin-purchase@13 @capacitor/local-notifications@8
       - name: Projet Android
         run: |
           npx cap add android

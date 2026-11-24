@@ -35,6 +35,8 @@ par l'IA, veille des programmes de maths. Il tourne sur un hébergement mutualis
 | `admin/` | Compte admin (mot de passe) : 💰 offre et paiement (payant, prix, liens Stripe, ce qui est Plus) + validation de la veille |
 | `vanne-juge.php` | L'IA trie les vannes ajoutées au paquet du Clash libre (refuse ce qui vise la personne, vérifie l'anglais) |
 | `offre.php` | Donne au jeu l'offre réglée dans l'admin, signée (rien de secret) |
+| `cadeau.php` / `magasin.php` | Codes cadeaux ; achats Google Play / App Store vérifiés auprès des stores |
+| `visite.php` | Fréquentation anonyme (v5.95) : totaux par jour, sans cookie ni identifiant ni IP gardée ; visible dans l'admin (📈) |
 
 ## Sécurité
 - Aucun secret dans le dépôt ni dans le navigateur : clés Stripe, Claude et clé privée restent dans `config-ami.php` et le `.pem`, hors du site.

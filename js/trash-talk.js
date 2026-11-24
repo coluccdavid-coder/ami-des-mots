@@ -287,25 +287,48 @@
   const ANNONCE_POTES = {
     doux:['Ouah, trois d’affilée ! Si tu en fais une quatrième, j’appelle mes amis pour t’applaudir. 📞', 'Trois de suite ! Encore une, et toute ma bande vient te féliciter. 🎉'],
     fort:['Wwwwaaaaa, t’es un ouf toi !! La prochaine bonne réponse, j’appelle mes potes… 📞', 'Wesh, trois d’affilée ?! Encore une et je sonne la bande, je te préviens. 📲',
-      'Trois sur trois… OK. Encore une, et j’appelle du renfort. Ils vont pas rigoler. 🚨', 'Ah ouais, carrément ? Une de plus, et je fais venir mes potes. Prépare-toi. 😤']
+      'Trois sur trois… OK. Encore une, et j’appelle du renfort. Ils vont pas rigoler. 🚨', 'Ah ouais, carrément ? Une de plus, et je fais venir mes potes. Prépare-toi. 😤',
+      'Wesh, tu te crois où ? Trois d’affilée chez moi ? Encore une et j’appelle toute la bande, tu vas voir. 📞', 'T’es un ouf, toi… Attends, je compose le numéro de mes potes. Une de plus et ils débarquent. ☎️']
   };
   // Les potes de Plumo : [icône, nom, phrases]
+  // v5.94 : version CASH (par défaut) — la bande allume Plumo sans pitié. Version douce gardée pour « Tout doux ».
   const POTES = [
-    ['🦔', 'Pico le hérisson', ['{a}, tu nous as appelés pour ça ? Il t’a mis une leçon, et sans forcer. 😂', '{a}, t’es un hibou ou un pigeon ? On a traversé la ville pour te voir perdre. 🐦',
-      'Moi je dis : {a}, range tes plumes, t’as plus le niveau. 🪶', 'Il répond plus vite que toi, {a}. Même la nuit, et pourtant c’est ton heure. 🌙']],
-    ['🐸', 'Zaza la grenouille', ['Wesh {a}, il te fait des misères ! Moi je change de camp, je suis avec lui. 🐸', 'Coa-coa… Ça veut dire « {a} s’est fait plier » en grenouille. 💀',
-      'J’ai sauté trois mares pour ça ? Respect au joueur, et toi {a}, retourne réviser. 📚', 'Il est chaud, {a}. Toi t’es tiède. Comme l’eau de ma mare. 🌡️']],
-    ['🦊', 'Rocket le renard', ['On m’avait dit que c’était un piège pour lui… en fait le piège, c’était pour toi, {a}. 🪤', 'Je note : joueur 4 bonnes, {a} 0 répartie. Screenshot. 📸',
-      '{a}, la prochaine fois, appelle-nous AVANT de perdre, pas pendant. 🦊', 'Il a plus d’aura que toi, {a}. Et toi t’as même des plumes. ✨']]
+    ['🦔', 'Pico le hérisson', 'pico', [
+      '{a}, il vient de te mettre quatre bonnes réponses dans la face. Range tes plumes, c’est fini pour toi. 🪶',
+      'Wesh {a}, t’as appelé la bande pour qu’on te voie perdre en direct ? Merci pour le spectacle. 🍿',
+      '{a}, t’es un hibou ou une veilleuse ? Parce que là, t’éclaires plus rien du tout. 🔦',
+      'Frérot {a}, même mes piquants sont plus affûtés que tes questions. 🦔',
+      '{a}, il t’a plié tellement vite que t’as pas eu le temps de dire « hou hou ». 💨',
+      'On vient de voir {a} se faire démonter par un élève. Je l’encadre et je l’accroche au mur. 🖼️']],
+    ['🐸', 'Zaza la grenouille', 'zaza', [
+      'Wesh {a}, il te fait des misères ! Moi je change de camp, je suis avec lui. 🐸',
+      'Coa-coa… ça veut dire « {a} s’est fait plier » en grenouille. Et ça se traduit pareil dans toutes les langues. 💀',
+      '{a}, t’as plus d’aura qu’un lampadaire éteint. Il t’a éteint en quatre coups. 💡',
+      'J’ai sauté trois mares pour ça ? Respect au joueur. Toi {a}, retourne au nid réviser tes questions. 📚',
+      '{a}, il est chaud. Toi t’es tiède. Comme l’eau de ma mare en novembre. 🌡️',
+      'Skill issue, {a}. Gros skill issue. Même ma mare a plus de répondant que toi. 🎮']],
+    ['🦊', 'Rocket le renard', 'rocket', [
+      'Je note : joueur 4 bonnes, {a} zéro répartie. Screenshot, et je l’envoie à tout le groupe. 📸',
+      '{a}, la prochaine fois appelle-nous AVANT de te faire humilier, pas pendant. 🦊',
+      'Il a plus d’aura que toi, {a}. Et toi t’as même des plumes. C’est grave. ✨',
+      '{a}, t’as voulu faire le boss final et t’es le tuto. Le tuto qu’on passe. ⏩',
+      'Moi je dis : {a} en PLS, joueur en mode légende. Fin du match. 🏁',
+      '{a}, on était venus faire la fête, pas regarder un hibou se faire éteindre. 🎉']]
   ];
-  const ENTREE_POTES = ['📞 Plumo a appelé ses potes… et ils sont pas venus pour toi !', '🚪 Toc toc : la bande de Plumo débarque !', '🚨 Renforts arrivés… mais ils chambrent Plumo !'];
+  // Version « Tout doux » : on taquine Plumo gentiment.
+  const POTES_DOUX = {
+    pico:['{a}, tu nous as appelés pour ça ? Il t’a mis une leçon, et sans forcer. 😂', 'Moi je dis : {a}, range tes plumes, t’as plus le niveau. 🪶'],
+    zaza:['Coa-coa… Ça veut dire « {a} s’est fait plier » en grenouille. 😄', 'J’ai sauté trois mares pour ça, {a} ? Respect au joueur ! 🐸'],
+    rocket:['Je note : joueur 4 bonnes, {a} 0 répartie. 📸', '{a}, la prochaine fois, appelle-nous AVANT de perdre, pas pendant. 🦊']
+  };
+  const ENTREE_POTES = ['📞 Plumo a appelé ses potes… et ils sont pas venus pour toi !', '🚪 Toc toc : la bande de Plumo débarque !', '🚨 Renforts arrivés… mais ils chambrent Plumo !', '😈 La bande est là… et c’est Plumo qui va prendre cher !', '🎤 Micro ouvert : la bande allume Plumo !'];
   const RACCROCHE = ['😮‍💨 Ouf ! J’ai raccroché, mes potes ne viendront pas cette fois.', '📵 Fausse alerte, je rappelle pas la bande. Mais j’ai eu chaud.', '😅 Ha ! J’ai annulé l’appel. La série s’arrête là.'];
   function annoncePotes(ton, memoire){ return choisir(ANNONCE_POTES[ton === 'doux' ? 'doux' : 'fort'], {}, memoire); }
   // 2 ou 3 potes, chacun une phrase.
-  function bandePotes(memoire, hasard){
+  function bandePotes(memoire, hasard, ton){
     const r = hasard || Math.random, n = r() < .5 ? 2 : 3, qui = POTES.slice().sort(() => r() - .5).slice(0, n);
-    return { entree:choisir(ENTREE_POTES, {}, memoire), potes:qui.map(([ic, nom, l]) => ({ ic, nom, dit:remplir(choisir(l, { a:NOM_AMI }, memoire), { a:NOM_AMI }) })) };
+    return { entree:choisir(ENTREE_POTES, {}, memoire), potes:qui.map(([ic, nom, id, l]) => ({ ic, nom, id, dit:remplir(choisir(ton === 'doux' ? POTES_DOUX[id] : l, { a:NOM_AMI }, memoire), { a:NOM_AMI }) })) };
   }
   function raccroche(memoire){ return choisir(RACCROCHE, {}, memoire); }
-  window.TRASH_TALK = { IMAGEES, TCHATCHE, ENTREE, BRAVO, SERIE_OK, SERIE_KO, PREMIER, TOUR, FIN, EGALITE, BONNE, SERIE_BONNE, BONNE_EN, bonneReponse, NOM_AMI, ANNONCE_POTES, POTES, ENTREE_POTES, RACCROCHE, annoncePotes, bandePotes, raccroche, choisir, remplir };
+  window.TRASH_TALK = { IMAGEES, TCHATCHE, ENTREE, BRAVO, SERIE_OK, SERIE_KO, PREMIER, TOUR, FIN, EGALITE, BONNE, SERIE_BONNE, BONNE_EN, bonneReponse, NOM_AMI, ANNONCE_POTES, POTES, POTES_DOUX, ENTREE_POTES, RACCROCHE, annoncePotes, bandePotes, raccroche, choisir, remplir };
 })();

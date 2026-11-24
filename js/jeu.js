@@ -63,11 +63,12 @@
 
 
   // Avec le serveur PHP, l'abonnement et les vannes IA passent par lui (sauf adresse donnée à part).
-  if(CONFIG.SERVEUR){ const b = String(CONFIG.SERVEUR).replace(/\/?$/, '/'); if(!CONFIG.API_ABONNEMENT) CONFIG.API_ABONNEMENT = b + 'abonnement.php'; if(!CONFIG.API_VANNES) CONFIG.API_VANNES = b + 'vannes.php'; if(!CONFIG.API_VANNES_DIRECT) CONFIG.API_VANNES_DIRECT = b + 'vannes-direct.php'; if(!CONFIG.API_VANNE_JUGE) CONFIG.API_VANNE_JUGE = b + 'vanne-juge.php'; }
+  if(CONFIG.SERVEUR){ const b = String(CONFIG.SERVEUR).replace(/\/?$/, '/'); if(!CONFIG.API_ABONNEMENT) CONFIG.API_ABONNEMENT = b + 'abonnement.php'; if(!CONFIG.API_VANNES) CONFIG.API_VANNES = b + 'vannes.php'; if(!CONFIG.API_VANNES_DIRECT) CONFIG.API_VANNES_DIRECT = b + 'vannes-direct.php'; if(!CONFIG.API_VANNE_JUGE) CONFIG.API_VANNE_JUGE = b + 'vanne-juge.php'; if(!CONFIG.API_CADEAU) CONFIG.API_CADEAU = b + 'cadeau.php'; if(!CONFIG.API_MAGASIN) CONFIG.API_MAGASIN = b + 'magasin.php'; if(!CONFIG.API_VISITE) CONFIG.API_VISITE = b + 'visite.php'; }
 
   // js/offre.js (fabriqué par le coin admin) : on ne garde que les réglages connus, au bon format.
   // Il ne peut que dire ce qui est réservé à Plus, jamais ouvrir Plus.
   function offreLue(o){
+    const FORMULES_CONNUES = ['mensuel', 'annuel', 'famille', 'a_vie'];
     const r = {}; if(!o || typeof o !== 'object') return r;
     const liste = x => Array.isArray(x) ? x.filter(e => typeof e === 'string' && /^[a-z0-9_-]{1,30}$/.test(e)) : null;
     if(typeof o.MODE_PAYANT === 'boolean') r.MODE_PAYANT = o.MODE_PAYANT;
@@ -76,6 +77,10 @@
     if(Number.isInteger(o.JOUEURS_GRATUITS) && o.JOUEURS_GRATUITS >= 1 && o.JOUEURS_GRATUITS <= 6) r.JOUEURS_GRATUITS = o.JOUEURS_GRATUITS;
     // v5.85 : liens Stripe réglés dans le coin admin du serveur (seulement des adresses Stripe en https).
     for(const k of ['LIEN_PAIEMENT', 'LIEN_GESTION']) if(typeof o[k] === 'string' && (o[k] === '' || /^https:\/\/(buy|billing)\.stripe\.com\/[A-Za-z0-9_\/?=&.-]{1,200}$/.test(o[k]))) r[k] = o[k];
+    // v5.94 : formules (mensuel, annuel, famille, à vie) : prix et essai affichés, lien Stripe, proposée ou non dans les stores.
+    if(Array.isArray(o.FORMULES)) r.FORMULES = o.FORMULES.filter(f => f && FORMULES_CONNUES.includes(f.id)).slice(0, 4).map(f => ({ id:f.id,
+      prix:typeof f.prix === 'string' ? f.prix.slice(0, 20) : '', essai:typeof f.essai === 'string' ? f.essai.slice(0, 40) : '', magasin:f.magasin === true,
+      lien:typeof f.lien === 'string' && /^https:\/\/buy\.stripe\.com\/[A-Za-z0-9_\/?=&.-]{1,200}$/.test(f.lien) ? f.lien : '' }));
     return r;
   }
 
@@ -494,9 +499,12 @@
       (['mdr', 'choque'].includes(humeur) ? '<path class="companion-beak" fill="#E8973A" d="M 50 50 L 43 55 Q 50 70 57 55 Z"/><path d="M45.5 57 Q50 64 54.5 57 Z" fill="#7a2d12"/>' : '<path class="companion-beak" fill="#E8973A" d="M 50 50 L 45 55 Q 50 63 55 55 Z"/>') +
       dessus +
       '</svg>';
-    if(opts.immobile || porte.length) return svg;
+    if(opts.immobile) return svg;
+    // v5.93 : toujours le Plumo en 3D ; les accessoires du vestiaire sont posés par-dessus l'image.
+    const CADRES = { echarpe:'31 82 38 28', noeud:'38 82 24 16', lunettes:'23 30 54 28', chapeau:'27 -5 46 25', couronne:'32 -5 36 23' };
+    const calques = porte.filter(k => acc[k] && CADRES[k]).map(k => '<svg class="ami-acc ami-acc-' + k + '" viewBox="' + CADRES[k] + '" aria-hidden="true" focusable="false">' + acc[k] + '</svg>').join('');
     const humeurClasse = humeur === 'fete' ? ' ami-3d-fete' : humeur === 'surpris' ? ' ami-3d-surpris' : humeur === 'triste' ? ' ami-3d-triste' : '';
-    return '<span class="ami-3d-wrap' + humeurClasse + '" aria-hidden="true"><img class="ami-3d" src="img/ami-3d.webp" alt="" decoding="async"></span>';
+    return '<span class="ami-3d-wrap' + humeurClasse + '" aria-hidden="true"><span class="ami-3d-corps"><img class="ami-3d" src="img/ami-3d-560.webp" alt="" decoding="async">' + calques + '</span></span>';
   }
   // ── Écrans ────────────────────────────────────────────────────────
   // Couleur de chaque thème (cartes, barre de progression, accents).
@@ -522,6 +530,20 @@
     (retour ? '<button class="bouton-rond" data-a="' + retour + '" aria-label="' + esc(t('retour')) + '">' + (RTL.includes(base.ui) ? '→' : '←') + '</button>' : '<span></span>') +
     '<span class="compteur" aria-label="' + esc(J().plumes + ' ' + t('plumes')) + '">🪶 ' + J().plumes + '</span></header>';
 
+  // v5.95 : rappels (appli seulement) et « série en danger ».
+  function majRappels(){
+    if(!window.RAPPELS || !RAPPELS.dispo()) return Promise.resolve({ ok:false, raison:'web' });
+    return RAPPELS.planifier(base.rappel, { serie:serie(), joueAujourdhui:J().jours.includes(jour()) },
+      { titre:tt('notif_titre'), corps:tt('notif_corps'), dangerTitre:tt('danger_titre'), dangerCorps:tt('danger_corps') }).catch(() => ({ ok:false }));
+  }
+  function reglageRappels(){
+    if(!window.RAPPELS || !RAPPELS.dispo()) return '';
+    const r = base.rappel || {}, h = r.heure == null ? 18 : r.heure;
+    return '<section class="reglage-rappels"><h3>' + esc(tt('rappel_titre')) + '</h3><p class="petit">' + esc(tt('rappel_aide')) + '</p>' +
+      '<div class="reglage"><span>' + esc(tt('rappel_titre').replace(/^\S+\s/, '')) + '</span><button class="moyen' + (r.actif ? ' plein' : '') + '" data-a="rappel" aria-pressed="' + !!r.actif + '">' + esc(tt(r.actif ? 'oui' : 'non')) + '</button></div>' +
+      (r.actif ? '<p><label>' + esc(tt('rappel_heure')) + ' <select id="rappel-heure">' + [7, 8, 12, 16, 17, 18, 19, 20].map(x => '<option value="' + x + '"' + (x === h ? ' selected' : '') + '>' + x + ':00</option>').join('') + '</select></label></p>' : '') +
+      '<p id="etat-rappel" class="petit" role="status"></p></section>';
+  }
   function serie(){
     const j = new Set(J().jours);
     let n = 0, dec = j.has(jour()) ? 0 : -1;
@@ -578,6 +600,7 @@
           '<label>' + esc(t('j_apprends')) + '<select id="cible">' + opts(APPRENDRE, base.cible) + '</select></label>' +
         '</div></div></section>' +
       '<main class="accueil">' +
+        (s >= 2 && !fait ? '<p class="serie-danger" role="status">' + esc(tt('serie_danger', s)) + '</p>' : '') +
         (function(){ const b = bilanAdaptatif(); return b.total ? '<section class="carte-apprentissage" aria-label="Progression adaptative"><strong>🧠 Ton apprentissage</strong><span>' + b.aRevoir + ' notion(s) à revoir · ' + b.maitrisees + ' maîtrisée(s) · ' + b.total + ' suivie(s)</span></section>' : ''; })() +
         '<button class="gros defi' + (defiFait ? ' fait' : '') + '" data-a="defi">' + (defiFait ? '✓ ' : '⚡ ') + esc(t('defi')) + '</button>' +
         '<button class="gros apprendre" data-a="lecon">📚 ' + esc(t('apprendre')) + '</button>' +
@@ -612,6 +635,7 @@
           '<button data-a="reglages"><span aria-hidden="true">⚙️</span>' + esc(t('reglages')) + '</button>' +
           '<button data-a="parents"><span aria-hidden="true">👪</span>' + (base.ui === 'en' ? 'Parents' : 'Parents') + '</button>' +
         '</nav>' +
+        '<p class="liens-legaux"><a href="legal.html#confidentialite">' + esc(tt('confidentialite')) + '</a> · <a href="legal.html#cgu">' + esc(tt('regles')) + '</a> · <a href="legal.html#mentions">' + esc(tt('mentions')) + '</a></p>' +
       '</main>', 'accueil');
     $('#ui').addEventListener('change', ev => { base.ui = ev.target.value; garder(); accueil(); });
     $('#cible').addEventListener('change', ev => { base.cible = ev.target.value; garder(); prefs(); accueil(); });
@@ -1305,6 +1329,7 @@
   function noterJournal(matiere, ok){
     try{ const j = J(), d = jour(); j.journal = j.journal && typeof j.journal === 'object' ? j.journal : {};
       const e = j.journal[d] = j.journal[d] || {}; const k = matiere + (ok ? '+' : '-'); e[k] = (e[k] || 0) + 1;
+      if(!j.jours.includes(d)){ j.jours = j.jours.concat(d).slice(-60); majRappels(); }
       const jours = Object.keys(j.journal).sort(); while(jours.length > 21) delete j.journal[jours.shift()];
     }catch(e){}
   }
@@ -1535,7 +1560,7 @@
     if(partie.mode === 'theme'){ const cle = base.cible + ':' + theme + ':' + partie.jeu; j.etoiles[cle] = Math.max(j.etoiles[cle] || 0, etoiles); }
     const avant = j.plumes;
     j.plumes += gain;
-    if(!j.jours.includes(jour())) j.jours = j.jours.concat(jour()).slice(-60);
+    if(!j.jours.includes(jour())){ j.jours = j.jours.concat(jour()).slice(-60); majRappels(); }
     const accs = ACCESSOIRES.filter(([k, n]) => avant < n && j.plumes >= n).map(([k]) => k);
     const trs = trophees();
     garder();
@@ -1907,18 +1932,19 @@
   let battle = null;
   // ── v5.86 : Clash libre — on se vanne, tout simplement (un téléphone, chacun son tour, en anglais ET en français) ──
   let clashL = null;
+  const lc = (fr, en) => base.ui === 'fr' ? fr : en; // v5.95 : Clash libre en français pour l'interface française, sinon en anglais
   function clashLibre(){
     const V = window.VANNES_LIBRES; if(!V) return battleMenu();
     const n = (base.clashNoms || ['', '']);
     reverifierPaquet();
-    poser(barre('battle') + '<main class="battle-ecran clash-libre"><h2>🗯️ Clash libre</h2>' +
-      '<p>On se vanne, c’est tout ! Chacun son tour, on se passe le téléphone. Chaque vanne est en <strong>anglais</strong> et en français : tu chambres <em>et</em> tu apprends.</p>' +
-      '<p class="aide">👊 Règle d’or : on vise ce que fait l’autre (le jeu, les devoirs, le téléphone…), <strong>jamais qui il est</strong> : ni physique, ni famille, ni origine.</p>' +
-      '<p><label>Joueur 1 <input id="cl-n1" maxlength="16" value="' + esc(n[0]) + '" placeholder="Joueur 1"></label></p>' +
-      '<p><label>Joueur 2 <input id="cl-n2" maxlength="16" value="' + esc(n[1]) + '" placeholder="Joueur 2"></label></p>' +
-      '<p class="piege-consigne">Combien de vannes chacun ?</p><div class="actions serrees">' +
-      [3, 5, 8].map(k => '<button class="moyen' + (k === 5 ? ' plein' : '') + '" data-a="clash-libre-go" data-v="' + k + '">' + k + ' vannes</button>').join('') + '</div>' +
-      '<div class="actions serrees"><button class="moyen" data-a="clash-libre-paquet">➕ Ajouter des vannes au paquet (⭐ ' + paquet().length + ')</button></div></main>');
+    poser(barre('battle') + '<main class="battle-ecran clash-libre"><h2>🗯️ ' + lc('Clash libre', 'Free roast battle') + '</h2>' +
+      '<p>' + lc('On se vanne, c’est tout ! Chacun son tour, on se passe le téléphone. Chaque vanne est en <strong>anglais</strong> et en français : tu chambres <em>et</em> tu apprends.', 'Just roast each other! Take turns and pass the phone. Every roast is in <strong>English</strong>: you tease <em>and</em> you learn.') + '</p>' +
+      '<p class="aide">👊 ' + lc('Règle d’or : on vise ce que fait l’autre (le jeu, les devoirs, le téléphone…), <strong>jamais qui il est</strong> : ni physique, ni famille, ni origine.', 'Golden rule: roast what the other person does (gaming, homework, phone…), <strong>never who they are</strong>: no looks, no family, no origins.') + '</p>' +
+      '<p><label>' + lc('Joueur 1', 'Player 1') + ' <input id="cl-n1" maxlength="16" value="' + esc(n[0]) + '" placeholder="' + lc('Joueur 1', 'Player 1') + '"></label></p>' +
+      '<p><label>' + lc('Joueur 2', 'Player 2') + ' <input id="cl-n2" maxlength="16" value="' + esc(n[1]) + '" placeholder="' + lc('Joueur 2', 'Player 2') + '"></label></p>' +
+      '<p class="piege-consigne">' + lc('Combien de vannes chacun ?', 'How many roasts each?') + '</p><div class="actions serrees">' +
+      [3, 5, 8].map(k => '<button class="moyen' + (k === 5 ? ' plein' : '') + '" data-a="clash-libre-go" data-v="' + k + '">' + k + ' ' + lc('vannes', 'roasts') + '</button>').join('') + '</div>' +
+      '<div class="actions serrees"><button class="moyen" data-a="clash-libre-paquet">➕ ' + lc('Ajouter des vannes au paquet', 'Add roasts to the deck') + ' (⭐ ' + paquet().length + ')</button></div></main>');
   }
   function clashLibreGo(nb){
     const V = window.VANNES_LIBRES; if(!V) return battleMenu();
@@ -1933,14 +1959,14 @@
     const c = clashL, V = window.VANNES_LIBRES; if(!c || !V) return clashLibre();
     if(c.tour >= c.total) return clashLibreFin();
     const moi = c.tour % 2, lui = 1 - moi;
-    const cartes = c.main.map((v, k) => '<button class="carte-anglais clash-carte" data-a="clash-libre-carte" data-v="' + k + '"><span class="ic">' + v.ic + '</span>' + (v.en ? '<strong lang="en">' + esc(v.en) + '</strong><small>🇫🇷 ' + esc(v.fr) + '</small>' : '<strong>' + esc(v.fr) + '</strong>') + '</button>').join('');
-    poser(barre('battle') + '<main class="battle-ecran clash-libre"><p class="piege-cat">🗯️ Vanne ' + (Math.floor(c.tour / 2) + 1) + '/' + (c.total / 2) + ' · ✨ ' + esc(c.j[0]) + ' ' + c.aura[0] + ' – ' + c.aura[1] + ' ' + esc(c.j[1]) + '</p>' +
-      '<h2>🎤 ' + esc(c.j[moi]) + ', envoie ta vanne à ' + esc(c.j[lui]) + ' !</h2>' +
+    const cartes = c.main.map((v, k) => '<button class="carte-anglais clash-carte" data-a="clash-libre-carte" data-v="' + k + '"><span class="ic">' + v.ic + '</span>' + (v.en ? '<strong lang="en">' + esc(v.en) + '</strong>' + (base.ui === 'fr' ? '<small>🇫🇷 ' + esc(v.fr) + '</small>' : '') : '<strong>' + esc(v.fr) + '</strong>') + '</button>').join('');
+    poser(barre('battle') + '<main class="battle-ecran clash-libre"><p class="piege-cat">🗯️ ' + lc('Vanne', 'Roast') + ' ' + (Math.floor(c.tour / 2) + 1) + '/' + (c.total / 2) + ' · ✨ ' + esc(c.j[0]) + ' ' + c.aura[0] + ' – ' + c.aura[1] + ' ' + esc(c.j[1]) + '</p>' +
+      '<h2>🎤 ' + esc(c.j[moi]) + lc(', envoie ta vanne à ', ', roast ') + esc(c.j[lui]) + ' !</h2>' +
       (c.ecrire
-        ? '<p><label>Ta vanne (en anglais ou en français) <textarea id="cl-texte" maxlength="140" rows="3"></textarea></label></p>' +
+        ? '<p><label>' + lc('Ta vanne (en anglais ou en français)', 'Your roast (in English)') + ' <textarea id="cl-texte" maxlength="140" rows="3"></textarea></label></p>' +
           '<p class="aide" id="cl-msg" role="status" aria-live="polite">' + esc(c.msg) + '</p>' +
-          '<div class="actions serrees"><button class="moyen plein" data-a="clash-libre-envoyer">🎤 Envoyer</button><button class="moyen" data-a="clash-libre-ecrire">🃏 Revenir aux cartes</button></div>'
-        : '<div class="cartes-anglais">' + cartes + '</div><div class="actions serrees"><button class="moyen" data-a="clash-libre-melange">🔁 Autres vannes</button><button class="moyen" data-a="clash-libre-ecrire">✍️ J’écris la mienne</button></div>') +
+          '<div class="actions serrees"><button class="moyen plein" data-a="clash-libre-envoyer">🎤 ' + lc('Envoyer', 'Send') + '</button><button class="moyen" data-a="clash-libre-ecrire">🃏 ' + lc('Revenir aux cartes', 'Back to the cards') + '</button></div>'
+        : '<div class="cartes-anglais">' + cartes + '</div><div class="actions serrees"><button class="moyen" data-a="clash-libre-melange">🔁 ' + lc('Autres vannes', 'Other roasts') + '</button><button class="moyen" data-a="clash-libre-ecrire">✍️ ' + lc('J’écris la mienne', 'Write my own') + '</button></div>') +
       '</main>');
   }
   function clashLibreEnvoyer(v){
@@ -1949,10 +1975,10 @@
     if(v.cat) c.jouees.push(V_L().cle(v));
     const moi = c.tour % 2, lui = 1 - moi, V = window.VANNES_LIBRES;
     poser(barre('battle') + '<main class="battle-ecran clash-libre centre"><p class="piege-cat">🎤 ' + esc(c.j[moi]) + ' → ' + esc(c.j[lui]) + '</p>' +
-      '<div class="bulle-ami clash-vanne">' + (v.en ? '<p class="piege-fr" lang="en">« ' + esc(v.en) + ' »</p><p class="petit">🇫🇷 ' + esc(v.fr) + '</p>' : '<p class="piege-fr">« ' + esc(v.fr) + ' »</p>') + '</div>' +
-      '<p class="piege-consigne">📱 Passe le téléphone à <strong>' + esc(c.j[lui]) + '</strong>. Alors, ta réaction ?</p>' +
+      '<div class="bulle-ami clash-vanne">' + (v.en ? '<p class="piege-fr" lang="en">« ' + esc(v.en) + ' »</p>' + (base.ui === 'fr' ? '<p class="petit">🇫🇷 ' + esc(v.fr) + '</p>' : '') : '<p class="piege-fr">« ' + esc(v.fr) + ' »</p>') + '</div>' +
+      '<p class="piege-consigne">📱 ' + lc('Passe le téléphone à', 'Pass the phone to') + ' <strong>' + esc(c.j[lui]) + '</strong>. ' + lc('Alors, ta réaction ?', 'So, your reaction?') + '</p>' +
       '<div class="actions serrees">' + V.REACTIONS.map(r => '<button class="moyen" data-a="clash-libre-reaction" data-v="' + r[0] + '">' + r[1] + ' ' + esc(r[2]) + '</button>').join('') + '</div>' +
-      (!v.cat ? '<div class="actions serrees"><button class="moyen" data-a="clash-libre-garder">➕ Garder cette vanne dans le paquet</button></div><p class="aide" id="cl-garde" role="status" aria-live="polite"></p>' : '') + '</main>');
+      (!v.cat ? '<div class="actions serrees"><button class="moyen" data-a="clash-libre-garder">➕ ' + lc('Garder cette vanne dans le paquet', 'Keep this roast in the deck') + '</button></div><p class="aide" id="cl-garde" role="status" aria-live="polite"></p>' : '') + '</main>');
     if(v.en) direPhrase(v.en, 'en');
   }
   function clashLibreReaction(id){
@@ -1964,7 +1990,7 @@
     let sortie = false;
     if(r[0] === 'mechant' && c.vanne.perso){ const avant = paquet().length; base.clashPerso = paquet().filter(x => x.fr !== c.vanne.fr); sortie = paquet().length < avant; garder(); }
     c.tour++; c.vanne = null; c.main = V.tirer(c.jouees, null, paquet());
-    if(r[0] === 'mechant'){ c.msg = ''; poser(barre('battle') + '<main class="battle-ecran clash-libre centre"><h2>🚫 Carton jaune</h2><p>On se chambre, on ne se blesse pas : on vise ce que l’autre fait, pas qui il est. −2 d’aura.</p>' + (sortie ? '<p>⭐ Cette vanne sort du paquet.</p>' : '') + '<button class="moyen plein" data-a="clash-libre-suite">Continuer →</button></main>'); return; }
+    if(r[0] === 'mechant'){ c.msg = ''; poser(barre('battle') + '<main class="battle-ecran clash-libre centre"><h2>🚫 ' + lc('Carton jaune', 'Yellow card') + '</h2><p>' + lc('On se chambre, on ne se blesse pas : on vise ce que l’autre fait, pas qui il est. −2 d’aura.', 'We tease, we don’t hurt: roast what they do, not who they are. −2 aura.') + '</p>' + (sortie ? '<p>⭐ ' + lc('Cette vanne sort du paquet.', 'This roast leaves the deck.') + '</p>' : '') + '<button class="moyen plein" data-a="clash-libre-suite">' + lc('Continuer', 'Continue') + ' →</button></main>'); return; }
     clashLibreTour();
   }
   function clashLibreFin(){
@@ -1973,11 +1999,11 @@
     const apprises = [...new Set(c.jouees)].map(k => V.toutes(paquet()).find(v => V.cle(v) === k)).filter(v => v && v.en);
     J().plumes += 2; garder();
     poser(barre('battle') + '<main class="centre battle-fin clash-libre"><div class="ami-moyen">' + ami('fete') + '</div>' +
-      '<h2>' + (g < 0 ? '🤝 Égalité parfaite ! Aura partagée.' : '🏆 ' + esc(c.j[g]) + ' gagne le clash !') + '</h2>' +
+      '<h2>' + (g < 0 ? lc('🤝 Égalité parfaite ! Aura partagée.', '🤝 Perfect tie! Shared aura.') : '🏆 ' + esc(c.j[g]) + lc(' gagne le clash !', ' wins the battle!')) + '</h2>' +
       '<p class="battle-score">✨ ' + esc(c.j[0]) + ' ' + c.aura[0] + ' – ' + c.aura[1] + ' ' + esc(c.j[1]) + '</p>' +
       '<p>' + esc(c.j[0]) + ' : ' + esc(V.titre(c.aura[0])) + ' · ' + esc(c.j[1]) + ' : ' + esc(V.titre(c.aura[1])) + '</p>' +
-      (apprises.length ? '<details class="contexte-exo" open><summary>📚 L’anglais que vous venez d’apprendre</summary><ul>' + apprises.map(v => '<li><strong lang="en">' + esc(v.en) + '</strong> — ' + esc(v.fr) + '</li>').join('') + '</ul></details>' : '') +
-      '<div class="actions serrees"><button class="moyen plein" data-a="clash-libre-go" data-v="' + (c.total / 2) + '">🔁 Revanche</button><button class="moyen" data-a="clash-libre">🗯️ Changer de joueurs</button><button class="moyen" data-a="battle">🎤 Autres battles</button></div></main>');
+      (apprises.length ? '<details class="contexte-exo" open><summary>📚 ' + lc('L’anglais que vous venez d’apprendre', 'The English you just learned') + '</summary><ul>' + apprises.map(v => '<li><strong lang="en">' + esc(v.en) + '</strong>' + (base.ui === 'fr' ? ' — ' + esc(v.fr) : '') + '</li>').join('') + '</ul></details>' : '') +
+      '<div class="actions serrees"><button class="moyen plein" data-a="clash-libre-go" data-v="' + (c.total / 2) + '">🔁 ' + lc('Revanche', 'Rematch') + '</button><button class="moyen" data-a="clash-libre">🗯️ ' + lc('Changer de joueurs', 'Change players') + '</button><button class="moyen" data-a="battle">🎤 ' + lc('Autres battles', 'Other battles') + '</button></div></main>');
     clashL = null;
   }
 
@@ -2743,7 +2769,16 @@
 
   // ── Moteur de questions à choix (examens, révision, histoires) : une réponse, une vanne si on se trompe ──
   let qz = null;
-  function questionsGo(liste, opts){ qz = Object.assign({ liste, i:0, bonnes:0, repondu:false }, opts); afficherQuestion(); }
+  // v5.95 : fréquentation anonyme. Au plus une « ouverture » et une « partie » par jour et par appareil ;
+  // n'envoie que le type d'événement et la plateforme (aucun code, aucun identifiant). Respecte « Ne pas me suivre ».
+  function compterVisite(e){
+    if(!CONFIG.API_VISITE || navigator.doNotTrack === '1' || window.doNotTrack === '1') return;
+    const cle = 'amidesmots:visite:' + e, j = new Date().toISOString().slice(0, 10);
+    try{ if(localStorage.getItem(cle) === j) return; localStorage.setItem(cle, j); }catch(x){ return; }
+    const p = window.Capacitor && Capacitor.getPlatform ? Capacitor.getPlatform() : 'web';
+    fetch(CONFIG.API_VISITE, { method:'POST', cache:'no-store', credentials:'omit', keepalive:true, headers:{ 'Content-Type':'application/json' }, body:JSON.stringify({ e, p:['android', 'ios'].includes(p) ? p : 'web' }) }).catch(() => {});
+  }
+  function questionsGo(liste, opts){ compterVisite('partie'); qz = Object.assign({ liste, i:0, bonnes:0, repondu:false }, opts); afficherQuestion(); }
   function afficherQuestion(){
     const z = qz; if(!z) return coinAnglais();
     if(z.i >= z.liste.length) return z.fin(z);
@@ -2801,7 +2836,7 @@
     if(TT && TT.bandePotes && !anglaisSeul){
       const tonA = (J().maths || {}).ton || 'taquin';
       if(juste && z.suite % 4 === 3) bravoTrash = TT.annoncePotes(tonA, memoireVannes());
-      else if(juste && z.suite >= 4 && z.suite % 4 === 0) bande = TT.bandePotes(memoireVannes());
+      else if(juste && z.suite >= 4 && z.suite % 4 === 0) bande = TT.bandePotes(memoireVannes(), null, tonA);
       else if(!juste && suiteAvant > 0 && suiteAvant % 4 === 3) raccrochage = TT.raccroche(memoireVannes());
     }
     const az = $('#ami-qz'); if(az && !q.image) az.innerHTML = z.prof ? profPi(juste ? 'fier' : 'mdr') : ami(bande ? 'surpris' : juste ? (q.humeurJuste || 'fete') : raccrochage ? 'fete' : (q.humeurFaux || (niveauHumour() > 1 ? 'mdr' : 'surpris')));
@@ -2810,7 +2845,7 @@
     const fr_ = (z.lang || q.lang) === 'fr';
     z.derniereVanne = (!juste && f && f.vanne ? String(f.vanne) : juste ? bravoTrash : '').slice(0, 220);
     const bandeHtml = bande ? '<div class="bande-potes" role="group" aria-label="La bande de Plumo"><p class="bande-entree">' + esc(bande.entree) + '</p>' +
-      bande.potes.map((p, k) => '<p class="pote" style="animation-delay:' + (k * 0.45).toFixed(2) + 's"><span class="pote-ic" aria-hidden="true">' + p.ic + '</span><span><strong>' + esc(p.nom) + '</strong> ' + esc(p.dit) + '</span></p>').join('') + '</div>' : '';
+      bande.potes.map((p, k) => '<p class="pote" style="animation-delay:' + (k * 0.45).toFixed(2) + 's"><span class="pote-ic" aria-hidden="true">' + (window.BANDE && BANDE.svg(p.id) || p.ic) + '</span><span><strong>' + esc(p.nom) + '</strong> ' + esc(p.dit) + '</span></p>').join('') + '</div>' : '';
     if(r) r.innerHTML = (raccrochage ? '<p class="raccroche">' + esc(raccrochage) + '</p>' : '') + bandeHtml + (juste && bande ? '<p class="piege-bravo">🏆 ' + esc(z.suite + ' d’affilée !') + '</p>' : juste ? '<p class="piege-bravo">' + esc(bravoTrash || (fr_ ? (z.bravo ? z.bravo() : 'Bravo ! 🎉') : 'Yes! 🎉')) + '</p>' : '<p class="piege-vanne">' + (z.prof ? '🦝 ' : '😂 ') + esc(f && f.vanne ? f.vanne : 'Presque !') + '</p>') +
       ((!juste && f && f.vanne) || (juste && bravoTrash) ? '<p class="avis-vanne"><button class="petit-bouton" data-a="qz-avis" data-v="1">😂 ' + (fr_ ? 'Trop drôle' : 'Funny') + '</button> <button class="petit-bouton" data-a="qz-avis" data-v="-1">🙄 ' + (fr_ ? 'Pas drôle' : 'Not funny') + '</button></p>' : '') +
       '<p class="piege-bon" lang="' + (fr_ ? 'fr' : 'en') + '">✅ ' + esc(q.bonTexte || q.bon) + '</p>' + (q.regle ? '<p class="piege-regle">💡 ' + esc(q.regle) + '</p>' : '') +
@@ -3012,18 +3047,32 @@
     return null;
   }
   // v5.75 : résumé des 7 derniers jours (tout reste sur l'appareil).
+  let bilanTexte = '';
   function resumeSemaine(){
     const jr = J().journal || {}, jours = []; for(let k = 6; k >= 0; k--) jours.push(jour(-k));
     const somme = cle => jours.reduce((t, d) => t + ((jr[d] || {})[cle] || 0), 0);
     const actifs = jours.filter(d => jr[d] && Object.keys(jr[d]).length).length, min = somme('min');
-    const mat = [['mots', '🖼️', 'Mots'], ['anglais', '🇬🇧', 'Anglais'], ['maths', '🔢', 'Maths'], ['francais', '📝', 'Français'], ['histoire', '🏛️', 'Histoire-géo'], ['svt', '🧬', 'SVT'], ['physique', '⚗️', 'Physique-chimie'], ['medecine', '🩺', 'Médecine'], ['droit', '⚖️', 'Droit'], ['astro', '🔭', 'Astrophysique'], ['sciences', '🚀', 'Sciences']].map(([k, ic, nom]) => {
+    const mat = [['mots', '🖼️', 'Mots'], ['anglais', '🇬🇧', 'Anglais'], ['maths', '🔢', 'Maths'], ['francais', '📝', 'Français'], ['histoire', '🏛️', 'Histoire-géo'], ['svt', '🧬', 'SVT'], ['physique', '⚗️', 'Physique-chimie'], ['medecine', '🩺', 'Médecine'], ['droit', '⚖️', 'Droit'], ['astro', '🔭', 'Astrophysique'], ['sciences', '🚀', 'Sciences'], ['langlais', '🎓', 'Anglais du programme'], ['lespagnol', '🇪🇸', 'Espagnol'], ['lallemand', '🇩🇪', 'Allemand'], ['philo', '🤔', 'Philosophie'], ['ses', '📈', 'SES'], ['hggsp', '🌐', 'HGGSP'], ['hlp', '📜', 'HLP'], ['nsi', '💻', 'NSI']].map(([k, ic, nom]) => {
       const b = somme(k + '+'), e = somme(k + '-'), n = b + e; return n ? '<li><span>' + ic + ' ' + nom + '</span><strong>' + b + '/' + n + ' (' + Math.round(b / n * 100) + ' %)</strong></li>' : ''; }).join('');
     const barres = jours.map(d => { const x = jr[d] || {}, n = Object.keys(x).filter(k => /[+-]$/.test(k)).reduce((t, k) => t + x[k], 0);
       return '<span class="jour-barre" title="' + d + ' : ' + n + ' réponses"><i style="height:' + Math.min(100, n * 3) + '%"></i><small>' + ['D', 'L', 'M', 'M', 'J', 'V', 'S'][new Date(d + 'T12:00').getDay()] + '</small></span>'; }).join('');
     const av = Array.isArray(J().avisVannes) ? J().avisVannes : [], top = v => av.filter(x => x.v === v).slice(-4).reverse();
-    return '<h3>📅 Cette semaine</h3><p class="pieges-intro"><strong>' + actifs + ' jour' + (actifs > 1 ? 's' : '') + '</strong> de jeu sur 7 · <strong>' + min + ' min</strong> environ</p>' +
+    // v5.93 : comparaison avec la semaine d'avant, notes des évaluations, conseil, bilan à partager.
+    const avant = []; for(let k = 13; k >= 7; k--) avant.push(jour(-k));
+    const reps = js => js.reduce((t, d) => { const x = jr[d] || {}; return t + Object.keys(x).filter(k => /[+-]$/.test(k)).reduce((u, k) => u + x[k], 0); }, 0);
+    const bonnes = js => js.reduce((t, d) => { const x = jr[d] || {}; return t + Object.keys(x).filter(k => /\+$/.test(k)).reduce((u, k) => u + x[k], 0); }, 0);
+    const rN = reps(jours), rA = reps(avant), tN = rN ? Math.round(bonnes(jours) / rN * 100) : null, tA = rA ? Math.round(bonnes(avant) / rA * 100) : null;
+    const evol = rA ? '<p class="petit">' + (rN >= rA ? '⬆️ ' : '⬇️ ') + esc(tt('semaine_avant', rN, rA)) + (tN != null && tA != null ? ', ' + esc(tt('reussite', tN, tA)) : '') + '.</p>' : '';
+    const faibles = [['anglais', 'l’anglais'], ['maths', 'les maths'], ['francais', 'le français'], ['histoire', 'l’histoire-géo'], ['svt', 'la SVT'], ['physique', 'la physique-chimie'], ['langlais', 'l’anglais du programme'], ['philo', 'la philo'], ['ses', 'les SES'], ['hggsp', 'la HGGSP'], ['hlp', 'la HLP'], ['nsi', 'la NSI']]
+      .map(([k, nom]) => { const b = somme(k + '+'), n = b + somme(k + '-'); return { nom, n, t:n ? b / n : 1 }; }).filter(x => x.n >= 5).sort((a, b) => a.t - b.t)[0];
+    const conseil = faibles && faibles.t < .6 ? '<p class="aide">' + esc(tt('conseil', faibles.nom, Math.round(faibles.t * 100))) + '</p>' : '';
+    const N = (J().matieres || {}).notes || {}, notes = Object.entries(N).slice(-8);
+    const notesHtml = notes.length ? '<h3>' + esc(tt('notes_titre')) + '</h3><ul class="pieges-cats">' + notes.map(([k, v]) => '<li><span>' + esc(k.replace(/^blanc-/, 'Examen blanc ').replace(/-/g, ' · ')) + '</span><strong>' + String(v).replace('.', ',') + '/20</strong></li>').join('') + '</ul>' : '';
+    bilanTexte = 'Bilan Ami des mots de la semaine : ' + actifs + ' jour(s) de jeu, environ ' + min + ' min, ' + rN + ' réponses' + (tN != null ? ' (' + tN + ' % de réussite)' : '') + '.' + (faibles && faibles.t < .6 ? ' À retravailler : ' + faibles.nom + '.' : '');
+    return '<h3>📅 Cette semaine</h3><p class="pieges-intro"><strong>' + actifs + ' jour' + (actifs > 1 ? 's' : '') + '</strong> de jeu sur 7 · <strong>' + min + ' min</strong> environ</p>' + evol + conseil +
       '<div class="semaine-barres" aria-hidden="true">' + barres + '</div>' +
       (mat ? '<ul class="pieges-cats">' + mat + '</ul>' : '<p class="petit">Pas encore de réponses cette semaine.</p>') +
+      notesHtml + '<p><button class="moyen" data-a="bilan-partager">' + esc(tt('partager_bilan')) + '</button></p><p class="aide" id="bilan-msg" role="status" aria-live="polite"></p>' +
       (av.length ? '<h3>😂 Ce qui fait rire (ou pas)</h3><ul class="pieges-cats">' + top(1).map(x => '<li><span>😂 ' + esc(x.t) + '</span></li>').join('') + top(-1).map(x => '<li><span>🙄 ' + esc(x.t) + '</span></li>').join('') + '</ul>' : '');
   }
   function tableauParents(){
@@ -3052,7 +3101,7 @@
           (vannesIA && vannesIA.length ? '<ul class="pieges-cats">' + vannesIA.map((v, k) => '<li><span>' + esc(v) + '</span><span><button class="petit-bouton" data-a="vanne-ia-garder" data-v="' + k + '" aria-label="Garder">✅</button> <button class="petit-bouton" data-a="vanne-ia-non" data-v="' + k + '" aria-label="Jeter">❌</button></span></li>').join('') + '</ul>' : '')
         : '<p class="petit">✨ Avec Plus, Plumo peut vous proposer des vannes inventées par l’IA, que vous validez une à une.</p>') : '') +
       '<h3>🛸 Salon des battles</h3><p><label><input type="checkbox" id="salon-chat"' + (base.salonChat ? ' checked' : '') + ' data-a="salon-chat-reglage"> Autoriser le chat écrit dans les salons PRIVÉS (entre potes qui ont le code). Les salons publics restent en réactions toutes faites.</label></p>' +
-      '<p class="petit">🔒 Ces informations restent sur cet appareil.</p></main>');
+      '<p class="petit">🔒 Ces informations restent sur cet appareil. <a href="legal.html#confidentialite">' + esc(tt('donnees')) + '</a> · <a href="legal.html#cgv">' + esc(tt('cgv')) + '</a></p></main>');
   }
 
   // Leçon : 5 mots nouveaux d'un même thème, présentés puis joués 10 fois.
@@ -3157,7 +3206,7 @@
         ? '<p>' + esc(t('abo_actif', droits ? new Date(droits.fin).toLocaleDateString(base.ui) : '')) + '</p>' + (CONFIG.LIEN_GESTION ? '<p><a class="moyen" href="' + esc(CONFIG.LIEN_GESTION) + '" target="_blank" rel="noopener">' + esc(t('gerer_abo')) + '</a></p>' : '')
         : '<p><button class="moyen plein" data-a="plus" data-v="reglages">' + esc(t('decouvrir_plus')) + '</button></p>') +
         '<p class="petit">' + esc(t('code_abo')) + '<br><code>' + esc(base.abo.code) + '</code><br>' + esc(t('code_aide')) + '</p>' : '') +
-      reglageGraphismes() + reglageVoix() +
+      reglageRappels() + reglageGraphismes() + reglageVoix() +
       '<h3>' + esc(t('joueurs')) + '</h3><div class="liste-joueurs">' + base.joueurs.map((j, i) =>
         '<button class="ligne-carnet" data-a="modifier-joueur" data-v="' + i + '"><span class="ami-icone">' + ami('content', { couleur:j.couleur, porte:j.porte, immobile:true }) + '</span><span class="txt"><strong>' + esc(j.nom || '—') + (i === base.actif ? ' ✓' : '') + '</strong><span>🪶 ' + j.plumes + '</span></span><span aria-hidden="true">✏️</span></button>').join('') + '</div>' +
       (base.joueurs.length < MAX_JOUEURS ? '<p><button class="moyen" data-a="nouveau-joueur">＋ ' + esc(t('ajouter_joueur')) + (plus() ? '' : ' ✨') + '</button></p>' : '') +
@@ -3317,7 +3366,13 @@
       (window.EPREUVES ? ongletsExamens('matieres') : '') +
       '<div class="cartes-anglais">' +
         c('matiere', 'francais', '📝', 'Français', 'Conjugaison, orthographe, grammaire, figures de style, littérature') +
+        (M.trouver('lespagnol') ? c('matiere', 'lespagnol', '🇪🇸', 'Espagnol (LVB, 5e → bac)', 'Ser ou estar, passé, subjonctif, faux amis') : '') +
+        (M.trouver('lallemand') ? c('matiere', 'lallemand', '🇩🇪', 'Allemand (LVB, 5e → bac)', 'Cas, place du verbe, parfait, Konjunktiv II') : '') +
         (M.trouver('philo') ? c('matiere', 'philo', '🤔', 'Philosophie (Tle)', 'Auteurs, notions, méthode de la dissertation') : '') +
+        (M.trouver('ses') ? c('matiere', 'ses', '📈', 'SES (spécialité 1re, Tle)', 'Marchés, monnaie, inégalités, mobilité sociale') : '') +
+        (M.trouver('hggsp') ? c('matiere', 'hggsp', '🌐', 'HGGSP (spécialité 1re, Tle)', 'Puissance, ONU, espace, mémoire, environnement') : '') +
+        (M.trouver('hlp') ? c('matiere', 'hlp', '📜', 'HLP (spécialité 1re, Tle)', 'Parole, représentations du monde, recherche de soi') : '') +
+        (M.trouver('nsi') ? c('matiere', 'nsi', '💻', 'NSI (spécialité 1re, Tle)', 'Binaire, Python, réseaux, SQL, algorithmes') : '') +
         (M.trouver('langlais') ? c('matiere', 'langlais', '🇬🇧', 'Anglais (6e → bac)', 'Grammaire, verbes irréguliers, faux amis, axes du bac, compréhension') : '') +
         (window.MATHS ? c('maths', '', '🔢', 'Maths', 'De la 6e au bac, avec Prof Pi') : '') +
         c('matiere', 'histoire', '🏛️', 'Histoire-géo & EMC', 'Repères, géographie, citoyenneté') +
@@ -3476,19 +3531,46 @@
 
   // ── Ami des mots Plus ─────────────────────────────────────────────
   let retourPlus = 'accueil';
+  // v5.94 : toutes les façons de payer — formules (mensuel, annuel, famille, à vie) par Stripe sur le site,
+  // achat Google Play / App Store dans l'appli (vérifié par le serveur), code cadeau, et code d'abonnement déjà payé.
+  // v5.95 : textes des écrans récents dans les 11 langues (js/textes-plus.js).
+  function tt(k, ...v){ return window.TT ? TT(k, base.ui, ...v) : k; }
+  const nomFormule = id => tt(id);
+  function formulesOffertes(){
+    const valides = (offreLue({ FORMULES:CONFIG.FORMULES }).FORMULES || []);
+    const l = valides.length ? valides : (CONFIG.LIEN_PAIEMENT ? [{ id:'mensuel', prix:CONFIG.PRIX, lien:CONFIG.LIEN_PAIEMENT, essai:'', magasin:false }] : []);
+    return achatsNatifs() ? l.filter(f => f.magasin) : l.filter(f => f.lien);
+  }
+  const achatsNatifs = () => !!(window.ACHATS && ACHATS.natif() && CONFIG.API_MAGASIN);
+  // Un certificat signé par le serveur (abonnement, cadeau, store) : on le vérifie avant d'ouvrir Plus.
+  async function appliquerCertificat(d, code){
+    const dd = d && d.actif ? await verifierJeton(d.jeton, code) : null; if(!dd) return false;
+    Object.assign(base.abo, { code, jeton:d.jeton, verifie:jour() }); droits = dd; garder(); annonce('✨ ' + t('plus')); return true;
+  }
   function ecranPlus(retour){
     retourPlus = retour || 'accueil';
-    const lien = CONFIG.LIEN_PAIEMENT ? CONFIG.LIEN_PAIEMENT + (CONFIG.LIEN_PAIEMENT.includes('?') ? '&' : '?') + 'client_reference_id=' + encodeURIComponent(base.abo.code) : '';
+    const natif = achatsNatifs(), fr = base.ui === 'fr', formules = formulesOffertes();
+    const carte = f => {
+      const prix = (natif && ACHATS.prix(f.id)) || f.prix || '';
+      const lien = f.lien ? f.lien + (f.lien.includes('?') ? '&' : '?') + 'client_reference_id=' + encodeURIComponent(base.abo.code) : '';
+      const corps = '<strong>' + esc(nomFormule(f.id)) + '</strong>' + (prix ? '<span class="prix-formule">' + esc(prix) + '</span>' : '') + (f.essai ? '<small>🎁 ' + esc(f.essai) + '</small>' : '') +
+        (f.id === 'a_vie' ? '<small>' + esc(tt('une_fois')) + '</small>' : f.id === 'famille' ? '<small>' + esc(tt('tous_appareils')) + '</small>' : '');
+      return natif ? '<button class="carte-formule" data-a="plus-acheter" data-v="' + f.id + '">' + corps + '</button>' : '<a class="carte-formule" href="' + esc(lien) + '" rel="noopener">' + corps + '</a>';
+    };
     poser(barre(retourPlus) + '<main class="centre plus">' +
       '<div class="ami-moyen">' + ami('fete', { porte:['couronne'] }) + '</div>' +
       '<h2>✨ ' + esc(t('plus')) + '</h2><p>' + esc(t('plus_titre')) + '</p>' +
       '<ul class="avantages">' + t('plus_avantages').map(a => '<li>' + esc(a) + '</li>').join('') + '</ul>' +
-      '<p class="prix"><strong>' + esc(t('plus_prix', CONFIG.PRIX)) + '</strong><br><span class="petit">' + esc(t('sans_engagement')) + '</span></p>' +
-      (lien ? '<p><a class="gros" href="' + esc(lien) + '" rel="noopener">' + esc(t('s_abonner')) + '</a></p>' : '<p class="gros desactive" aria-disabled="true">' + esc(t('bientot')) + '</p>') +
+      (formules.length ? '<div class="formules">' + formules.map(carte).join('') + '</div><p class="petit">' + esc(t('sans_engagement')) + (natif ? ' · ' + esc(tt('paie_dans', Capacitor.getPlatform() === 'ios' ? 'App Store' : 'Google Play')) : '') + '</p>'
+        : '<p class="gros desactive" aria-disabled="true">' + esc(t('bientot')) + '</p>') +
+      '<p class="aide" id="achat-etat" role="status" aria-live="polite"></p>' +
+      (natif ? '<p><button class="moyen" data-a="plus-restaurer">🔄 ' + esc(tt('restaurer')) + '</button></p>' : (CONFIG.LIEN_GESTION ? '<p class="petit"><a href="' + esc(CONFIG.LIEN_GESTION) + '" rel="noopener">' + esc(tt('gerer')) + '</a></p>' : '')) +
       '<p class="petit">' + esc(t('gratuit_reste')) + '</p>' +
+      (CONFIG.API_CADEAU ? '<details class="deja"><summary>🎁 ' + esc(tt('cadeau_ai')) + '</summary><form id="form-cadeau" class="form"><label>' + esc(tt('cadeau_code')) +
+        '<input id="cadeau" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="CADEAU-XXXX-XXXX"></label><button class="moyen plein" type="submit">' + esc(tt('utiliser')) + '</button><p id="cadeau-etat" role="status"></p></form></details>' : '') +
       (CONFIG.API_ABONNEMENT ? '<details class="deja"><summary>' + esc(t('deja_abonne')) + '</summary><form id="form-code" class="form"><label>' + esc(t('code_abo')) +
         '<input id="code" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="AMI-XXXX-XXXX-XXXX"></label><button class="moyen plein" type="submit">' + esc(t('verifier')) + '</button><p id="code-etat" role="status"></p></form></details>' : '') +
-      '</main>');
+      '<p class="petit"><a href="legal.html#cgv">' + esc(tt('cgv')) + '</a></p></main>');
     const f = $('#form-code');
     if(f) f.addEventListener('submit', async ev => {
       ev.preventDefault();
@@ -3497,11 +3579,28 @@
       etat.textContent = '…';
       const r = await verifier(code);
       if(!r){ etat.textContent = t('hors_ligne'); return; }
-      const d = r.actif ? await verifierJeton(r.jeton, code) : null;
-      if(!d){ etat.textContent = t('abo_inconnu'); return; }
-      Object.assign(base.abo, { code, jeton:r.jeton, verifie:jour() }); droits = d; garder();
-      annonce('✨ ' + t('plus')); accueil();
+      if(!await appliquerCertificat(r, code)){ etat.textContent = t('abo_inconnu'); return; }
+      accueil();
     });
+    const fc = $('#form-cadeau');
+    if(fc) fc.addEventListener('submit', async ev => {
+      ev.preventDefault();
+      const cadeau = String($('#cadeau').value || '').toUpperCase().replace(/[^A-Z0-9-]/g, '').trim(), etat = $('#cadeau-etat');
+      if(!/^CADEAU-[A-Z0-9]{4}-[A-Z0-9]{4}$/.test(cadeau)){ etat.textContent = tt('cadeau_format'); return; }
+      etat.textContent = '…';
+      try{
+        const r = await fetch(CONFIG.API_CADEAU, { method:'POST', cache:'no-store', headers:{ 'Content-Type':'application/json' }, body:JSON.stringify({ code:base.abo.code, cadeau }) });
+        const d = await r.json().catch(() => ({}));
+        if(r.ok && await appliquerCertificat(d, base.abo.code)){ etat.textContent = tt('cadeau_ok', d.mois); setTimeout(() => accueil(), 1200); return; }
+        const msg = { inconnu:tt('cadeau_inconnu'), deja_utilise:tt('cadeau_deja'), deja_a_vie:tt('cadeau_vie'), deja_abonne:tt('cadeau_abonne') };
+        etat.textContent = msg[d.erreur] || t('hors_ligne');
+      }catch(e){ etat.textContent = t('hors_ligne'); }
+    });
+  }
+  async function acheterPlus(formule){
+    const etat = $('#achat-etat'); if(etat) etat.textContent = '…';
+    const r = await ACHATS.acheter(formule);
+    if(etat) etat.textContent = tt(r.ok ? 'achat_verif' : 'achat_annule');
   }
 
   // ── Sauvegarde : un fichier .json à garder (iPhone peut vider le stockage
@@ -3563,6 +3662,7 @@
     };
     lu.readAsText(fichier);
   }
+  document.addEventListener('change', ev => { if(ev.target.id === 'rappel-heure'){ base.rappel = Object.assign({}, base.rappel, { heure:Number(ev.target.value) || 18 }); garder(); majRappels(); } });
   document.addEventListener('change', ev => { if(ev.target.id === 'fichier-sauvegarde' && ev.target.files[0]) restaurer(ev.target.files[0]); });
   // Choix de la voix : gardé sur cet appareil ; la liste des voix arrive parfois en retard (Android, Chrome).
   document.addEventListener('change', ev => {
@@ -3735,6 +3835,12 @@
       case 'repeter-bien': { if(rep1){ const e = etatAnglais(); if(!e.repete.includes(rep1.i)){ e.repete.push(rep1.i); J().plumes += 1; garder(); } const s2 = $('#rep-etat'); if(s2) s2.textContent = '✅ Bravo ! Phrase suivante ?'; bruit('juste'); } return; }
       case 'repeter-suivant': { const l = PARCOURS.REPETER, e = etatAnglais(); let i = l.findIndex((x, k) => !e.repete.includes(k) && (!rep1 || k !== rep1.i)); if(i < 0) i = rep1 ? (rep1.i + 1) % l.length : 0; return afficherRepeter(i); }
       case 'parents': return parents();
+      case 'bilan-partager': {
+        const m = $('#bilan-msg'), txt = bilanTexte || 'Bilan Ami des mots';
+        if(navigator.share) return navigator.share({ title:'Bilan Ami des mots', text:txt }).catch(() => {});
+        if(navigator.clipboard) return navigator.clipboard.writeText(txt).then(() => { if(m) m.textContent = tt('bilan_copie'); }, () => { if(m) m.textContent = txt; });
+        if(m) m.textContent = txt; return;
+      }
       case 'parents-ouvrir': { const z = $('#porte-parents'); if(porteParents && z && Number(z.value) === porteParents.a * porteParents.b) return tableauParents(); const m = $('#porte-msg'); if(m) m.textContent = 'Ce n’est pas ça. Demande à un adulte ! 😉'; return; }
       case 'battle-rep': return repondreBattle(Number(v));
       case 'battle-suivant': if(battle){ battle.i++; } return afficherBattle();
@@ -3795,6 +3901,8 @@
       case 'choisir-joueur': base.actif = Number(v); garder(); accueil.choisi = true; return accueil();
       case 'nouveau-joueur': return base.joueurs.length >= CONFIG.JOUEURS_GRATUITS && !plus() && !(base.joueurs.length === 1 && !base.joueurs[0].nom) ? ecranPlus('reglages') : formJoueur(null);
       case 'plus': return ecranPlus(v || 'accueil');
+      case 'plus-acheter': if(achatsNatifs()) return acheterPlus(v); return;
+      case 'plus-restaurer': if(achatsNatifs()){ const e = $('#achat-etat'); if(e) e.textContent = '…'; return ACHATS.restaurer().then(() => { const z = $('#achat-etat'); if(z && !plus()) z.textContent = tt('rien_restaurer'); }); } return;
       case 'modifier-joueur': return formJoueur(Number(v));
       case 'supprimer-joueur':
         if(!b.dataset.ok){ b.dataset.ok = 1; b.textContent = t('confirmer'); return; }
@@ -3821,6 +3929,8 @@
       case 'vannes-ia-direct': J().vannesIA = J().vannesIA === false; garder(); return reglages();
       case 'graphismes': if(window.GRAPHISMES) GRAPHISMES.definir(v); return reglages();
       case 'son': base.son = !base.son; garder(); bruit('juste'); return reglages();
+      case 'rappel': { const r = base.rappel = Object.assign({ heure:18 }, base.rappel, { actif:!(base.rappel && base.rappel.actif) }); garder();
+        return majRappels().then(x => { if(r.actif && x && x.raison === 'permission'){ r.actif = false; garder(); reglages(); const e = document.getElementById('etat-rappel'); if(e) e.textContent = tt('rappel_refuse'); } else reglages(); }); }
       case 'porter': { const j = J(); j.porte = j.porte.includes(v) ? j.porte.filter(x => x !== v) : j.porte.concat(v); garder(); return vestiaire(); }
       case 'effacer-tout':
         if(!b.dataset.ok){ b.dataset.ok = 1; b.textContent = t('confirmer'); return; }
@@ -3857,14 +3967,18 @@
   // Au lancement : le certificat gardé est vérifié (hors connexion aussi), puis le serveur est consulté.
   // v5.85 : l'offre signée (gardée, puis celle du serveur) est appliquée avant ; l'écran se redessine si elle change.
   const redessiner = () => { if(!partie && !lienAller && !lienDefi && !lienSalon && !depuis3D()) accueil(); };
+  compterVisite('ouverture'); majRappels();
   window.AmiDesMotsPret = offreGardee().then(g => { if(g) redessiner(); return verifierJeton(base.abo.jeton, base.abo.code); })
     .then(d => { droits = d; if(d) redessiner(); return rafraichir(retourPaiement); })
-    .then(() => offreServeur()).then(chg => { if(chg) redessiner(); });
+    .then(() => offreServeur()).then(chg => { if(chg) redessiner(); })
+    // v5.94 : achats dans l'appli (Google Play / App Store) ; chaque achat est vérifié par le serveur.
+    .then(() => { if(CONFIG.MODE_PAYANT && achatsNatifs()) return ACHATS.init({ api:CONFIG.API_MAGASIN, code:() => base.abo.code, compte:() => fnv1a('ami|' + base.abo.code),
+      certificat:async d => { if(await appliquerCertificat(d, base.abo.code) && !partie) accueil(); } }).catch(() => {}); });
   // Le webhook Stripe peut arriver quelques secondes après le retour.
   if(retourPaiement) [5000, 15000, 40000].forEach(ms => setTimeout(() => { if(!plus()) rafraichir(true); }, ms));
   if(boucheDispo()) try{ Articulation.init(); }catch(e){}
   if('serviceWorker' in navigator && location.protocol === 'https:') navigator.serviceWorker.register('sw.js').catch(() => {});
-  window.AmiDesMots = { qzBonne:() => qz && qz.liste[qz.i] ? qz.liste[qz.i].bon : null, CLE_OFFRE, verifierOffre, base, J, affiche, fnv1a, urlVoix, accueil, themes, choisirJeu, commencer, lettresPossibles, distincts, motsDu, aDire, CATALOGUE, MECAS, disponible, nomJeu, aRevoir, noter, jour, defi, revoir, lecon, astuces, aToi, blague, carnet, noteVoix, sansEmojis, direPhrase, direEcoute, iaPrecharger, iaPrendre, vanneObjets, avecArticle, astuce, niveauHumour, fousRires, reglages, CONFIG, COINS, coinOuvert, offreLue, facile, nbMots, restaurer, verifierJeton, plus, ecranPlus, formatCode, rafraichir,
+  window.AmiDesMots = { formulesOffertes, appliquerCertificat, qzBonne:() => qz && qz.liste[qz.i] ? qz.liste[qz.i].bon : null, CLE_OFFRE, verifierOffre, base, J, affiche, fnv1a, urlVoix, accueil, themes, choisirJeu, commencer, lettresPossibles, distincts, motsDu, aDire, CATALOGUE, MECAS, disponible, nomJeu, aRevoir, noter, jour, defi, revoir, lecon, astuces, aToi, blague, carnet, noteVoix, sansEmojis, direPhrase, direEcoute, iaPrecharger, iaPrendre, vanneObjets, avecArticle, astuce, niveauHumour, fousRires, reglages, CONFIG, COINS, coinOuvert, offreLue, facile, nbMots, restaurer, verifierJeton, plus, ecranPlus, formatCode, rafraichir,
     get etat(){ return J(); } };
   garder();
   if(lienDefi || lienSalon){
