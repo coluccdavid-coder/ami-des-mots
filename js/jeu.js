@@ -2885,7 +2885,7 @@
     else if(f && f.vanne) retenirVanne(f.vanne);
     // Même erreur refaite dans la série : Prof Pi monte en pression (« Mais genre, tu fais exprès ou quoi !!!! »).
     // v6.5 : maths en anglais (interface anglaise) → seulement des vannes anglaises, jamais les listes françaises.
-    const langQ = z.lang || q.lang, mathsEn = !!z.prof && !!langQ && langQ !== 'fr';   // v6.6 : toute langue traduite, pas seulement l'anglais
+    const langQ = q.lang || z.lang, mathsEn = (!!z.prof || !!q.matiere) && !!langQ && langQ !== 'fr';   // v6.7 : matières traduites aussi   // v6.6 : toute langue traduite, pas seulement l'anglais
     const ESC = mathsEn ? (window.MATHS_LANGUES && MATHS_LANGUES[langQ] && MATHS_LANGUES[langQ].escalade) : window.VANNES_CASH && VANNES_CASH.ESCALADE;
     if(f && f.cle && z.prof && ESC){ z.memesErreurs = z.memesErreurs || {}; const n = z.memesErreurs[f.cle] = (z.memesErreurs[f.cle] || 0) + 1;
       if(n >= 2){ const E = ESC[etatMaths().ton] || ESC.taquin, niv = E[Math.min(n, 4) - 2], m = memoireVannes();
@@ -3271,8 +3271,21 @@
       '<p class="petit">' + (en ? 'Robot voice? On a PC, open the app in Microsoft Edge (natural voices) or Chrome (Google voices). On Android: Settings › Text-to-speech › Google engine, then install the high-quality voice.'
         : TXT('Voix de robot ? Sur PC, ouvre l’appli dans Microsoft Edge (voix « Natural ») ou Chrome (voix Google). Sur Android : Paramètres › Synthèse vocale › moteur Google, puis installe la voix « haute qualité ». Les mots anglais, eux, sont de vrais enregistrements.')) + '</p></section>';
   }
+  // v6.7 : le programme scolaire suivi est indépendant de la langue de l'appli (France ou Angleterre, dans n'importe quelle langue).
+  const PROG_TX = {
+    titre:{ fr:'Programme scolaire suivi', en:'School curriculum you follow', es:'Programa escolar que sigues', de:'Lehrplan, dem du folgst', it:'Programma scolastico che segui', pt:'Programa escolar que segues' },
+    aide:{ fr:'Indépendant de la langue de l’appli : choisis le pays dont tu suis le programme.', en:'Independent of the app language: choose the country whose curriculum you follow.', es:'Independiente del idioma de la app: elige el país cuyo programa sigues.',
+      de:'Unabhängig von der App-Sprache: Wähle das Land, dessen Lehrplan du folgst.', it:'Indipendente dalla lingua dell’app: scegli il Paese di cui segui il programma.', pt:'Independente da língua da aplicação: escolhe o país cujo programa segues.' },
+    fr:{ fr:'🇫🇷 France (6e → bac)', en:'🇫🇷 France (6e → baccalauréat)', es:'🇫🇷 Francia (6e → bac)', de:'🇫🇷 Frankreich (6e → Bac)', it:'🇫🇷 Francia (6e → bac)', pt:'🇫🇷 França (6e → bac)' },
+    gb:{ fr:'🏴 Angleterre (Year 6 → A level)', en:'🏴 England (Year 6 → A level)', es:'🏴 Inglaterra (Year 6 → A level)', de:'🏴 England (Year 6 → A level)', it:'🏴 Inghilterra (Year 6 → A level)', pt:'🏴 Inglaterra (Year 6 → A level)' },
+    pasTraduit:{ en:'Not translated yet: in French', es:'Aún sin traducir: en francés', de:'Noch nicht übersetzt: auf Französisch', it:'Non ancora tradotto: in francese', pt:'Ainda não traduzido: em francês' }
+  };
+  const progTx = k => (PROG_TX[k] && (PROG_TX[k][base.ui] || PROG_TX[k].en)) || '';
   function reglages(){
+    const progActuel = base.programme === 'gb' ? 'gb' : 'fr';
     poser(barre('accueil') + '<main class="texte"><h2>⚙️ ' + esc(t('reglages')) + '</h2>' +
+      '<section class="reglage-programme"><h3>📚 ' + esc(progTx('titre')) + '</h3><p class="petit">' + esc(progTx('aide')) + '</p><div class="actions serrees">' +
+        ['fr', 'gb'].map(k => '<button class="moyen' + (progActuel === k ? ' plein' : '') + '" data-a="programme-choix" data-v="' + k + '" aria-pressed="' + (progActuel === k) + '">' + esc(progTx(k)) + '</button>').join('') + '</div></section>' +
       '<div class="reglage reglage-facile"><span><strong>📖 ' + esc(t('facile')) + '</strong><span class="petit">' + esc(t('facile_aide')) + '</span></span><button class="moyen' + (facile() ? ' plein' : '') + '" data-a="facile" aria-pressed="' + facile() + '">' + esc(facile() ? t('oui') : t('non')) + '</button></div>' +
       '<div class="reglage"><span>🔔 ' + esc(t('son')) + '</span><button class="moyen' + (base.son ? ' plein' : '') + '" data-a="son" aria-pressed="' + base.son + '">' + esc(base.son ? t('oui') : t('non')) + '</button></div>' +
       '<section class="reglage-humour"><h3>😂 ' + (base.ui === 'en' ? 'Plumo’s joke level' : TXT('Le niveau des blagues de Plumo')) + '</h3><p class="petit">' + (base.ui === 'en' ? 'Plumo only teases himself, the words or the situation — never the player.' : TXT('Plumo se moque de lui-même, des mots ou de la situation — jamais du joueur.')) + '</p>' +
@@ -3522,15 +3535,15 @@
     const ex = m.examens && m.examens[e.niveau];
     // v5.83 : la référence du programme officiel du niveau, avec le lien vers éduscol.
     const O = window.EPREUVES && EPREUVES.OFFICIEL, ref = O && ({ '6e':0, '5e':1, '4e':1, '3e':1, '2nde':2, '1re':2, 'Tle':2 })[e.niveau], pr = O && ref != null ? O.programmes[ref] : null;
-    poser(barre('matieres') + '<main class="coin-anglais coin-maths matiere-ecran"><h2>' + m.ic + ' ' + esc(m.nom) + '</h2>' +
+    poser(barre('matieres') + '<main class="coin-anglais coin-maths matiere-ecran"><h2>' + m.ic + ' ' + esc(M.nom(m)) + '</h2>' +
       (pr ? '<p class="petit ref-programme">📜 Programme officiel (' + esc(pr[0]) + ') : ' + esc(pr[2]) + ' · <a href="' + esc(pr[1]) + TXT('" target="_blank" rel="noopener">voir sur éduscol</a></p>') : '') +
       '<div class="onglets-niveaux" role="tablist">' + niveaux.map(n => { const vide = !M.chapitres(id, n).length;
         return '<button role="tab" aria-selected="' + (n === e.niveau) + '" class="onglet' + (n === e.niveau ? ' actif' : '') + (vide ? ' vide' : '') + '" data-a="matiere-niveau" data-v="' + id + '|' + n + '">' + n + '</button>'; }).join('') + '</div>' +
       TXT('<p class="ton-prof">Ton de Plumo : ') + TONS_PROF.map(([k, l]) => '<button class="petit-bouton' + (k === ton ? ' actif' : '') + '" data-a="maths-ton-matiere" data-v="' + id + '|' + k + '" aria-pressed="' + (k === ton) + '">' + TXT(l) + '</button>').join(' ') + '</p>' +
       (chs.length ? '<div class="actions serrees"><button class="moyen plein" data-a="matiere-melange" data-v="' + id + TXT('">🔁 Entraînement mélangé</button>') +
         (ex ? '<button class="moyen" data-a="matiere-examen" data-v="' + id + '">📝 ' + esc(ex) + (e.notes[id + '-' + e.niveau] != null ? ' (' + String(e.notes[id + '-' + e.niveau]).replace('.', ',') + '/20)' : '') + '</button>' : '') + '</div>' +
-        '<div class="domaines">' + doms.map(d => '<section class="domaine"><h3>' + esc(d.d) + ' <small>' + d.l.length + '</small></h3><div class="liste-chap">' +
-          d.l.map(c => '<button class="chap" data-a="matiere-chap" data-v="' + id + '|' + c.id + '"><span>' + esc(c.nom) + '</span><em>' + (etoiles(c.id) || '▶ 10') + '</em></button>').join('') + '</div></section>').join('') + '</div>'
+        '<div class="domaines">' + doms.map(d => '<section class="domaine"><h3>' + esc(M.nomDom(m, d.d)) + ' <small>' + d.l.length + '</small></h3><div class="liste-chap">' +
+          d.l.map(c => '<button class="chap" data-a="matiere-chap" data-v="' + id + '|' + c.id + '"><span>' + esc(M.nomChap(m, c)) + (base.ui !== 'fr' && !M.traduit(m, c) ? ' <small class="pas-traduit" title="' + esc(progTx('pasTraduit')) + '">🇫🇷</small>' : '') + '</span><em>' + (etoiles(c.id) || '▶ 10') + '</em></button>').join('') + '</div></section>').join('') + '</div>'
         : TXT('<p class="pieges-intro">🛠️ Cette matière arrive bientôt pour la ') + esc(e.niveau) + TXT('. Choisis un autre niveau.</p>')) +
       '</main>', 'matieres');
   }
@@ -3538,7 +3551,8 @@
   function matiereSerie(id, cible, n, titre, fin){
     const M = window.MATIERES, e = etatMatieres(), liste = M.serie(id, cible, e.niveau, n, Math.floor(Math.random() * 1e9), etatMaths().ton);
     if(!liste.length) return matiereAccueil(id);
-    questionsGo(liste, { titre, retour:'matiere', lang:'fr', sujet:id,
+    const lq = liste.every(q => q.lang && q.lang !== 'fr') ? liste[0].lang : 'fr', BR = lq !== 'fr' && window.MATIERES_LANGUES && MATIERES_LANGUES[lq] && MATIERES_LANGUES[lq].bravo;
+    questionsGo(liste, { titre, retour:'matiere', lang:lq, sujet:id, bravo:BR ? () => BR[Math.floor(Math.random() * BR.length)] : undefined,
       onReponse:(juste, q) => { const k = id + ':' + q.chap, s = e.chap[k] || (e.chap[k] = { ok:0, n:0 }); s.n++; if(juste) s.ok++; else noterErreur('mat:' + id + ':' + q.chap); garder(); },
       fin:fin || (z => finMatiere(z, titre, id)) });
   }
@@ -3854,6 +3868,7 @@
       case 'installer': if(installation){ const ev = installation; installation = null; ev.prompt(); ev.userChoice.finally(() => accueil()); } return;
       case 'maths': return mathsAccueil();
       case 'maths-niveau': if(window.MATHS && MATHS.NIVEAUX.includes(v)){ etatMaths().niveau = v; garder(); } return mathsAccueil();
+      case 'programme-choix': base.programme = v === 'gb' ? 'gb' : 'fr'; garder(); return reglages();
       case 'maths-ton': if(TONS_PROF.some(x => x[0] === v)){ etatMaths().ton = v; garder(); } return mathsAccueil();
       case 'maths-chap': { const c = window.MATHS && MATHS.disponible(v) && MATHS.carte.niveaux[etatMaths().niveau].chapitres.find(x => x[0] === v); return c ? mathsSerie(v, 10, '🔢 ' + MATHS.tr.chap(c)) : mathsAccueil(); }
       case 'maths-melange': return mathsSerie(etatMaths().niveau, 10, TXT('🔁 Maths ') + etatMaths().niveau);
@@ -3889,8 +3904,8 @@
       case 'matiere': return matiereAccueil(v || (window.MATIERES && etatMatieres().derniere) || 'francais');
       case 'matiere-niveau': { const [id, n] = String(v).split('|'); if(window.MATIERES && MATIERES.NIVEAUX.includes(n)){ etatMatieres().niveau = n; garder(); } return matiereAccueil(id); }
       case 'maths-ton-matiere': { const [id, k] = String(v).split('|'); if(TONS_PROF.some(x => x[0] === k)){ etatMaths().ton = k; garder(); } return matiereAccueil(id); }
-      case 'matiere-chap': { const [id, c] = String(v).split('|'), m = window.MATIERES && MATIERES.trouver(id), ch = m && m.chapitres.find(x => x.id === c); return ch ? matiereSerie(id, c, 10, m.ic + ' ' + ch.nom) : matieresAccueil(); }
-      case 'matiere-melange': { const m = window.MATIERES && MATIERES.trouver(v); return m ? matiereSerie(v, 'melange', 10, m.ic + ' ' + m.nom + ' · ' + etatMatieres().niveau) : matieresAccueil(); }
+      case 'matiere-chap': { const [id, c] = String(v).split('|'), m = window.MATIERES && MATIERES.trouver(id), ch = m && m.chapitres.find(x => x.id === c); return ch ? matiereSerie(id, c, 10, m.ic + ' ' + MATIERES.nomChap(m, ch)) : matieresAccueil(); }
+      case 'matiere-melange': { const m = window.MATIERES && MATIERES.trouver(v); return m ? matiereSerie(v, 'melange', 10, m.ic + ' ' + MATIERES.nom(m) + ' · ' + etatMatieres().niveau) : matieresAccueil(); }
       case 'matiere-examen': { const m = window.MATIERES && MATIERES.trouver(v), e = etatMatieres(), t = m && m.examens && m.examens[e.niveau]; if(!t) return matiereAccueil(v);
         return matiereSerie(v, 'examen', 20, '📝 ' + t, z => { const note = noteSur20(z); etatMatieres().notes[v + '-' + e.niveau] = note; garder(); finMatiere(z, '📝 ' + t, v, note); }); }
       case 'examens': return examensAccueil();
