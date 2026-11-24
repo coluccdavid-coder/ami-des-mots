@@ -86,7 +86,17 @@
   ] });
   M.ajouter({ id:'astro', nom:'Astrophysique', ic:'🔭', examens:{}, chapitres:[
     { id:'etoiles', nom:'Étoiles, galaxies et Univers', dom:'Connaissances', niv:['Sup'], banque:ASTRO },
-    { id:'calculs', nom:'Calculs d’astrophysicien', dom:'Calculs', niv:['Sup'], gen:r => un(r, ASTRO_GEN)(r) }
+    { id:'calculs', nom:'Calculs d’astrophysicien', dom:'Calculs', niv:['Sup'], gen:r => un(r, ASTRO_GEN)(r) },
+    // v6.3 : les études pour travailler dans le spatial (NASA, ESA, CNES).
+    { id:'nasa', nom:'Travailler à la NASA, à l’ESA ou au CNES', dom:'Métiers', niv:['1re', 'Tle', 'Sup'], banque:[
+      ['Pour devenir astronaute de la NASA, il faut…', 'être citoyen américain', [['avoir n’importe quelle nationalité', 'Les postes d’astronaute de la NASA sont réservés aux citoyens américains (les doubles nationaux peuvent postuler).'], ['avoir moins de 25 ans', 'Il n’y a pas de limite d’âge officielle.']], 'Les Européens passent par l’ESA, l’Agence spatiale européenne.'],
+      ['Quel diplôme la NASA demande-t-elle au minimum à ses astronautes ?', 'un master scientifique (STEM)', [['le brevet', 'Il faudra un peu plus d’études. 🚀'], ['le permis de conduire', 'Plumo ne l’a pas non plus.']], 'Ingénierie, sciences, informatique, maths ; ou médecine, doctorat en cours, école de pilote d’essai.'],
+      ['Après ce diplôme, la NASA demande au moins…', '3 ans d’expérience professionnelle', [['3 semaines', 'Un peu plus qu’un job d’été.'], ['30 ans', 'Ce serait un départ très tardif.']], 'Les pilotes peuvent compter des heures de vol.'],
+      ['Quelle agence recrute les astronautes français ?', 'l’ESA', [['la NASA', 'La NASA recrute des Américains.'], ['la SNCF', 'Pas de fusée à la SNCF.']], 'L’ESA (Agence spatiale européenne) ; le CNES est l’agence spatiale française.'],
+      ['Quel astronaute français a fait deux missions sur l’ISS (2016-2017 et 2021) ?', 'Thomas Pesquet', [['Neil Armstrong', 'Un Américain, la Lune en 1969.'], ['Jules Verne', 'Il a écrit De la Terre à la Lune, sans y aller.']], 'Missions Proxima et Alpha.'],
+      ['Quelles spécialités au lycée ouvrent le plus de portes vers le spatial ?', 'maths et physique-chimie', [['aucune, on postule directement', 'Il faut des études longues.'], ['seulement arts plastiques', 'Les arts, c’est génial, mais l’ingénierie demande des maths.']], 'Puis prépa ou université, école d’ingénieurs (ISAE-SUPAERO, etc.), master ou doctorat.'],
+      ['La plupart des métiers du spatial sont…', 'ingénieurs, chercheurs et techniciens au sol', [['astronautes', 'Seule une poignée d’astronautes volent.'], ['vendeurs de souvenirs', 'Il y en a, mais peu.']], 'Satellites, lanceurs (Ariane), données, centres de contrôle.'],
+      ['Où se trouve le port spatial européen d’où décolle Ariane ?', 'à Kourou, en Guyane', [['à Paris', 'Pas de fusée sur les Champs-Élysées.'], ['en Floride', 'C’est Cap Canaveral, aux États-Unis.']], 'Près de l’équateur : les fusées profitent de la rotation de la Terre.']] }
   ] });
   window.MATIERES._sup = { ASTRO_GEN, genDebit };
 })();

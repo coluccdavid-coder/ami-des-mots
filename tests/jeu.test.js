@@ -21,7 +21,7 @@ function page(langue, config, avant){
   w.TextEncoder = TextEncoder; w.TextDecoder = TextDecoder;
   w.__fetch = []; w.fetch = async (u) => { w.__fetch.push(String(u)); return { ok:true, json:async () => (w.__reponse || { actif:false }) }; };
   if(avant) avant(w);
-  for(const f of ['js/donnees.js', 'js/voix.js', 'js/phrases-enregistrees.js', 'js/textes.js', 'js/textes-plus.js', 'js/textes-ecrans.js', 'js/articulation.js', 'js/genres.js', 'js/confusions.js', 'js/vannes.js', 'js/pieges.js', 'js/anglais.js', 'js/clash.js', 'js/histoires.js', 'js/blagues-en.js', 'js/parcours.js', 'js/rigolade.js', 'js/clash-plus.js', 'js/salon.js', 'js/juge.js', 'js/vannes-libres.js', 'js/maths.js', 'js/sciences.js', 'js/trash-talk.js', 'js/bande-images.js', 'js/bande-plumo.js', 'js/achats.js', 'js/rappels.js', 'js/epreuves.js', 'js/epreuves-spe.js', 'js/epreuves-plus.js', 'js/epreuves-oraux.js', 'js/epreuves-pro.js', 'js/matieres.js', 'js/mat-francais.js', 'js/mat-histoire.js', 'js/mat-svt-pc.js', 'js/mat-sup.js', 'js/mat-anglais.js', 'js/mat-renfort.js', 'js/mat-langues.js', 'js/mat-specialites.js', 'js/vannes-cash.js', 'js/vannes-ironie.js', 'js/vannes-mots.js', 'js/offre.js', 'js/jeu.js', 'js/mod-base.js', 'js/mod-ligue.js', 'js/mod-saisons.js', 'js/mod-veille.js', 'js/mod-oral.js', 'js/mod-classe.js', 'js/mod-parrainage.js', 'js/mod-ia.js', 'js/gb-moteur.js', 'js/gb-maths.js', 'js/gb-english.js', 'js/gb-sciences.js', 'js/gb-humanites.js', 'js/gb-options.js', 'js/gb-plus.js', 'js/gb-examens.js', 'js/mod-angleterre.js']) w.eval(lire(f));
+  for(const f of ['js/donnees.js', 'js/voix.js', 'js/phrases-enregistrees.js', 'js/textes.js', 'js/textes-plus.js', 'js/textes-ecrans.js', 'js/articulation.js', 'js/genres.js', 'js/confusions.js', 'js/vannes.js', 'js/pieges.js', 'js/anglais.js', 'js/clash.js', 'js/histoires.js', 'js/blagues-en.js', 'js/parcours.js', 'js/rigolade.js', 'js/clash-plus.js', 'js/salon.js', 'js/juge.js', 'js/vannes-libres.js', 'js/maths.js', 'js/sciences.js', 'js/trash-talk.js', 'js/bande-images.js', 'js/bande-plumo.js', 'js/achats.js', 'js/rappels.js', 'js/epreuves.js', 'js/epreuves-spe.js', 'js/epreuves-plus.js', 'js/epreuves-oraux.js', 'js/epreuves-pro.js', 'js/matieres.js', 'js/mat-francais.js', 'js/mat-histoire.js', 'js/mat-svt-pc.js', 'js/mat-sup.js', 'js/mat-anglais.js', 'js/mat-renfort.js', 'js/mat-langues.js', 'js/mat-specialites.js', 'js/vannes-cash.js', 'js/vannes-ironie.js', 'js/vannes-mots.js', 'js/offre.js', 'js/jeu.js', 'js/mod-base.js', 'js/mod-ligue.js', 'js/mod-saisons.js', 'js/mod-veille.js', 'js/mod-oral.js', 'js/mod-classe.js', 'js/mod-parrainage.js', 'js/mod-ia.js', 'js/gb-moteur.js', 'js/gb-maths.js', 'js/gb-english.js', 'js/gb-sciences.js', 'js/gb-humanites.js', 'js/gb-options.js', 'js/gb-plus.js', 'js/gb-programme.js', 'js/gb-programme-plus.js', 'js/gb-examens.js', 'js/gb-sats-reels.js', 'js/gb-options2.js', 'js/mod-angleterre.js']) w.eval(lire(f));
   return w;
 }
 // Certificats d'abonnement comme les signe le serveur (même format que serveur/functions/ami-abonnement).
@@ -2451,7 +2451,9 @@ await test('v6.0 : serveur — accès offert par l’admin, ligue, classe, parra
 await test('v6.1 : England — données complètes, vannes en anglais acceptées par le juge, générateurs sans NaN', () => {
   const w = page(), G = w.ENGLAND, J = w.JUGE;
   assert.ok(G.LISTE.length >= 12, 'matières');
-  for(const n of G.NIVEAUX) assert.ok(G.LISTE.filter(m => G.chapitres(m.id, n).length).length >= 6, n + ' : au moins 6 matières');
+  for(const n of G.NIVEAUX) assert.ok(G.LISTE.filter(m => G.chapitres(m.id, n).length).length >= (n === 'Uni' ? 3 : 6), n + ' : matières');
+  for(const id of ['gb-spanish', 'gb-german', 'gb-philosophy', 'gb-politics', 'gb-sociology', 'gb-medicine', 'gb-law', 'gb-astro']) assert.ok(G.trouver(id), 'matière ' + id);
+  assert.ok(G.trouver('gb-astro').chapitres.some(c => c.id === 'space-careers') && w.MATIERES.trouver('astro').chapitres.some(c => c.id === 'nasa'), 'NASA / ESA');
   let nq = 0;
   for(const m of G.LISTE) for(const c of m.chapitres){
     assert.ok(c.niv.length && c.niv.every(n => G.NIVEAUX.includes(n)), m.id + ':' + c.id);
@@ -2463,7 +2465,7 @@ await test('v6.1 : England — données complètes, vannes en anglais acceptées
       assert.ok(!/NaN|undefined|Infinity|null/.test(tout), c.id + ' : ' + tout); assert.ok(q.faux.length >= 1 && q.faux.every(f => f.en !== q.bon), c.id + ' : ' + tout);
       for(const f of q.faux) assert.ok(J.juger(f.vanne).ok, f.vanne); }
   }
-  assert.ok(nq >= 900, nq + ' questions');
+  assert.ok(nq >= 1500, nq + ' questions');
   for(const ton of ['doux', 'taquin', 'sanspitie']) for(const m of G.LISTE) for(const n of G.niveauxDe(m.id)){ const l = G.serie(m.id, 'melange', n, 10, 42, ton);
     assert.ok(l.length >= 5, m.id + ' ' + n); assert.ok(l.every(q => q.lang === 'en' && q.faux.length), m.id); }
 });
@@ -2478,7 +2480,7 @@ await test('v6.1 : England — examens 2026 : chaque paper a des questions, suje
   // Seuils 2026 publiés : 56/110 en maths, 25/50 en lecture, 34/70 en GPS → 100.
   assert.strictEqual(G.noteSats(56 / 110, 56 / 110), 100); assert.strictEqual(G.noteSats(1, 56 / 110), 120); assert.ok(G.noteSats(.3, 56 / 110) < 100); assert.strictEqual(G.noteSats(.02, .5), null);
   assert.strictEqual(G.grade(.9, 'gcse-h'), '9'); assert.strictEqual(G.grade(.05, 'gcse-h'), 'U'); assert.strictEqual(G.grade(.85, 'alevel'), 'A*'); assert.strictEqual(G.grade(.7, 'gcse-f'), '4');
-  for(const [, u] of G.OFFICIEL.programmes.concat(G.OFFICIEL.annales)) assert.ok(/^https:\/\/(www\.)?(gov\.uk|aqa\.org\.uk|qualifications\.pearson\.com|ocr\.org\.uk)\//.test(u), u);
+  for(const [, u] of G.OFFICIEL.programmes.concat(G.OFFICIEL.annales)) assert.ok(/^https:\/\/(www\.)?(gov\.uk|aqa\.org\.uk|qualifications\.pearson\.com|ocr\.org\.uk|nasa\.gov|esa\.int|ucat\.ac\.uk|lnat\.ac\.uk)\//.test(u), u);
 });
 await test('v6.1 : England — choisir le programme, réviser un chapitre, revenir au français', () => {
   const w = page(), d = w.document, A = w.AMI_MODULES.api;
@@ -2500,7 +2502,7 @@ await test('v6.1 : England — choisir le programme, réviser un chapitre, reven
 });
 await test('v6.1 : England — mock SATs (scaled score estimé), quiz GCSE (grade), past paper jumeau, onglet Official', () => {
   const w = page(), d = w.document, A = w.AMI_MODULES.api;
-  A.base().programme = 'gb'; bouton(w, 'gb-mocks'); assert.ok(d.querySelectorAll('[data-a="gb-mock"]').length >= 14);
+  A.base().programme = 'gb'; bouton(w, 'gb-mocks'); assert.ok(d.querySelectorAll('[data-a="gb-mock"]').length >= 21);
   clic(w, '[data-a="gb-mock"][data-v="sats-maths"]');
   for(let p = 0; p < 3; p++){ assert.ok(/Paper \d of 3/.test(d.body.textContent)); clic(w, '[data-a="gb-paper"]');
     while(d.querySelector('[data-a="qz-rep"]')){ clic(w, '[data-a="qz-rep"]'); clic(w, '[data-a="qz-suivant"]'); } }
@@ -2536,6 +2538,49 @@ await test('v6.1 : England — veille de contrôle avec les matières anglaises'
   bouton(w, 'veille'); assert.ok(/Night before the test/.test(d.body.textContent) && d.querySelector('[data-a="veille-matiere"][data-v="gb-history"]'));
   bouton(w, 'veille-matiere', 'gb-history'); bouton(w, 'veille-go', 'gb-history|melange');
   assert.ok(d.getElementById('chrono-veille')); assert.ok(d.querySelector('.piege-ecran'));
+});
+
+
+await test('v6.2 : vrais SATs 2025 et 2026 — chaque réponse officielle de calcul vérifiée, 40 points, licence OGL citée', () => {
+  const w = page(), G = w.ENGLAND;
+  const val = t => { t = String(t).replace(/\(long (multiplication|division)\)/, '').replace(/,(?=\d{3})/g, '').replace(/−/g, '-').replace(/×/g, '*').replace(/÷/g, '/')
+    .replace(/(\d+) (\d+)\/(\d+)/g, '($1+$2/$3)').replace(/(\d+(?:\.\d+)?)% of/g, '($1/100)*').replace(/(\d+\/\d+) of/g, '($1)*').replace(/³/g, '**3').replace(/²/g, '**2').replace(/=\s*$/, '').trim();
+    return Function('"use strict";return (' + t + ')')(); };
+  for(const id of ['sats26-arith', 'sats25-arith']){ const R = G.REELS[id];
+    assert.strictEqual(R.items.length, 36, id); assert.strictEqual(R.items.reduce((t, x) => t + x[2], 0), 40, id + ' : 40 points');
+    for(const [q, rep] of R.items){
+      const r = val(rep);
+      if(q.includes('?')){ const [g, d] = q.replace('?', '(' + rep.replace(/,(?=\d{3})/g, '') + ')').split('='); assert.ok(Math.abs(val(g) - val(d)) < 1e-9, id + ' ' + q); }
+      else assert.ok(Math.abs(val(q) - r) < 1e-9, id + ' ' + q + ' → ' + rep + ' (calcul : ' + val(q) + ')'); } }
+  for(const id of Object.keys(G.REELS)){ const l = G.listeReelle(id, 3); assert.ok(l.length >= 20, id);
+    for(const q of l){ assert.ok(q.faux.length >= 1 && q.faux.every(f => f.en !== q.bon), id + ' ' + q.enonce); for(const f of q.faux) assert.ok(w.JUGE.juger(f.vanne).ok, f.vanne); }
+    assert.ok(/Standards and Testing Agency for 20\d\d .*Open Government Licence v3\.0/.test(G.REELS[id].attrib)); }
+  assert.ok(G.listeReelle('sats26-spell', 1).every(q => q.ecoute && q.ecoute.includes(q.bon) && q.enonce.includes('___')), 'dictée lue à voix haute');
+});
+await test('v6.2 : vrai SATs 2026 jouable : mention de licence, points des vraies questions, score estimé avec le seuil 2026', () => {
+  const w = page(), d = w.document, A = w.AMI_MODULES.api;
+  A.base().programme = 'gb'; bouton(w, 'gb-passes');
+  assert.ok(d.querySelector('[data-a="gb-passe"][data-v="sats26-gps"] .ic').textContent === '✅');
+  clic(w, '[data-a="gb-passe"][data-v="sats26-gps"]'); assert.ok(/Real exam questions/.test(d.body.textContent) && d.querySelector('.licence-ogl a[href*="open-government-licence"]'));
+  clic(w, '[data-a="gb-paper"]'); assert.ok(/Which sentence must end with a question mark/.test(d.body.textContent));
+  let bon = 0; while(d.querySelector('[data-a="qz-rep"]')){ const q = [...d.querySelectorAll('[data-a="qz-rep"]')]; const b = q.find(x => x.textContent.trim() === 'Will Orla buy tickets for all of us') || q[0]; if(b.textContent.trim() === 'Will Orla buy tickets for all of us') bon++; b.click(); clic(w, '[data-a="qz-suivant"]'); }
+  assert.strictEqual(bon, 1);
+  clic(w, '[data-a="gb-paper"]'); assert.ok(d.querySelector('[data-a="qz-ecouter"]'), 'dictée : bouton écouter');
+  while(d.querySelector('[data-a="qz-rep"]')){ clic(w, '[data-a="qz-rep"]'); clic(w, '[data-a="qz-suivant"]'); }
+  assert.ok(/Scaled score ≈ \d+|Below 80/.test(d.querySelector('.note-examen').textContent) && /\/ 50/.test(d.body.textContent) && /\/ 20/.test(d.body.textContent));
+  assert.ok(d.querySelector('.licence-ogl'));
+});
+
+
+await test('v6.2 : programme officiel anglais — chaque partie couverte, chaque chapitre rattaché, au moins 8 questions par chapitre', () => {
+  const w = page(), G = w.ENGLAND, d = w.document;
+  for(const m of G.LISTE){ const P = G.PROGRAMME[m.id]; assert.ok(P && P.length, m.id + ' : programme officiel');
+    for(const [t, , chs] of P){ assert.ok(chs.length, m.id + ' ' + t); for(const c of chs) assert.ok(m.chapitres.some(x => x.id === c), m.id + ' : ' + c); }
+    for(const c of m.chapitres) assert.ok(P.some(p => p[2].includes(c.id)), m.id + ' : chapitre hors programme ' + c.id);
+    for(const c of m.chapitres) if(c.banque && !c.gen) assert.ok(c.banque.length >= 8, m.id + ':' + c.id + ' = ' + c.banque.length); }
+  assert.ok(G.PROGRAMME['gb-history'].some(p => /Holocaust/.test(p[0]) && p[2].includes('holocaust')), 'Holocauste (obligatoire en KS3)');
+  w.AMI_MODULES.api.base().programme = 'gb'; bouton(w, 'gb-matiere', 'gb-history');
+  assert.ok(d.querySelector('details.programme-officiel') && d.querySelectorAll('details.programme-officiel [data-a="gb-chap"]').length >= 6);
 });
 
 console.log(`\n${ok} réussi(s), ${ko} échoué(s)`);
