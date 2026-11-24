@@ -33,6 +33,7 @@ par l'IA, veille des programmes de maths. Il tourne sur un hébergement mutualis
 | `programme.php` | Carte des programmes de maths et sujets officiels **validés** |
 | `veille.php` | Lit les documents officiels (`veille-sources.php`) et propose ; rien n'est publié sans validation |
 | `admin/` | Compte admin (mot de passe) : 💰 offre et paiement (payant, prix, liens Stripe, ce qui est Plus) + validation de la veille |
+| `vanne-juge.php` | L'IA trie les vannes ajoutées au paquet du Clash libre (refuse ce qui vise la personne, vérifie l'anglais) |
 | `offre.php` | Donne au jeu l'offre réglée dans l'admin, signée (rien de secret) |
 
 ## Sécurité

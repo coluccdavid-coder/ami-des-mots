@@ -1,0 +1,17 @@
+Ami des mots 5.86.0
+
+🗯️ Clash libre : on se vanne, tout simplement (coin Battle de vannes, première carte)
+- Deux joueurs, un téléphone, chacun son tour : 3, 5 ou 8 vannes chacun.
+- 3 cartes à chaque tour (catégories différentes) : « Wesh gros (ça pique) », Skill issue (le jeu), Aura & NPC,
+  Devoirs & école, Téléphone & réseaux, La vie de tous les jours, Ripostes — 59 vannes, toutes en anglais ET en français.
+- « ✍️ J'écris la mienne » : vanne libre (140 caractères), passée au juge d'Ami.
+- Celui qui reçoit réagit : 😂 Wesh, il m'a eu (+3 d'aura), 🔥 T'es un ouf, quelle punchline (+5), 🙄 Bof, gros (0),
+  🚫 Là, c'est trop méchant (−2 et carton jaune).
+- Fin : gagnant, titres (Apprenti vanneur → Aura infinie), et la liste de l'anglais appris pendant le clash. Revanche avec les mêmes noms.
+- Règle d'or : on vise ce que fait l'autre, jamais qui il est. Refusé : physique, famille, origine, religion, argent,
+  insultes, gros mots, violence, infos personnelles.
+- Juge d'Ami : « wesh gros », « …, gros » (on interpelle un pote) ne sont plus pris pour une moquerie ; « t'es gros » reste refusé.
+- docs/a-relire : les vannes du Clash libre sont ajoutées aux listes à faire relire.
+
+Vérifié : 129 tests (dont une partie complète), captures sur téléphone.
+Contient aussi la v5.85 (compte admin, offre signée) et la v5.84 (voie pro).
