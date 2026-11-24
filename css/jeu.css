@@ -954,16 +954,16 @@ body::after{
   display:block;position:relative;width:100%;height:100%;line-height:0;
   transform-style:preserve-3d;perspective:900px;
   filter:drop-shadow(0 18px 16px rgba(0,0,0,.28));
-  animation:ami3d-flotte 4.2s ease-in-out infinite;
+  animation:ami3d-flotte 6s ease-in-out infinite;
 }
 .ami-3d-wrap::before{
   content:"";position:absolute;z-index:-1;left:12%;right:12%;bottom:4%;height:18%;
   border-radius:50%;background:rgba(0,0,0,.28);filter:blur(13px);
-  transform:rotateX(68deg) translateZ(-18px);animation:ami3d-ombre 4.2s ease-in-out infinite;
+  transform:rotateX(68deg) translateZ(-18px);animation:ami3d-ombre 6s ease-in-out infinite;
 }
 .ami-3d{
   display:block;width:100%;height:auto;max-width:100%;object-fit:contain;
-  transform:translateZ(26px) rotateY(-5deg);
+  transform:none;
   transform-origin:50% 82%;
   filter:drop-shadow(0 8px 14px rgba(255,205,115,.12));
   user-select:none;-webkit-user-drag:none;
@@ -973,18 +973,26 @@ body::after{
 .ami-petit .ami-3d-wrap{width:100%;max-width:68px}
 .ami-mini .ami-3d-wrap{width:100%;max-width:76px;margin:0 auto}
 .ami-icone .ami-3d-wrap{width:100%;max-width:48px}
-.ami-3d-fete{animation:ami3d-fete .72s cubic-bezier(.2,1.4,.4,1) 2}
+.ami-3d-fete{animation:ami3d-fete .8s ease-in-out 1}
 .ami-3d-fete .ami-3d{filter:drop-shadow(0 0 22px rgba(255,218,116,.55))}
-.ami-3d-surpris{animation:ami3d-surpris .55s ease-in-out 2}
-.ami-3d-triste{animation:ami3d-triste .7s ease-in-out 1}
+.ami-3d-surpris{animation:ami3d-surpris .7s ease-in-out 1}
+.ami-3d-triste{animation:ami3d-triste .9s ease-in-out 1}
+/* v5.93 : Plumo respire au lieu de flotter (mouvements doux, lents) */
 @keyframes ami3d-flotte{
-  0%,100%{transform:translate3d(0,0,0) rotateZ(-1deg)}
-  50%{transform:translate3d(0,-9px,16px) rotateZ(1.5deg)}
+  0%,100%{transform:translateY(0) scale(1)}
+  50%{transform:translateY(-2px) scale(1.012)}
 }
-@keyframes ami3d-ombre{0%,100%{transform:rotateX(68deg) scale(1);opacity:.5}50%{transform:rotateX(68deg) scale(.82);opacity:.25}}
-@keyframes ami3d-fete{0%,100%{transform:translateY(0) rotateZ(0) scale(1)}35%{transform:translateY(-18px) rotateZ(-8deg) scale(1.07)}70%{transform:translateY(-7px) rotateZ(8deg) scale(1.04)}}
-@keyframes ami3d-surpris{0%,100%{transform:rotateZ(0) scale(1)}35%{transform:rotateZ(-9deg) scale(1.08)}70%{transform:rotateZ(7deg) scale(.98)}}
-@keyframes ami3d-triste{0%,100%{transform:rotateZ(0)}45%{transform:rotateZ(-7deg) translateY(4px)}}
+@keyframes ami3d-ombre{0%,100%{transform:rotateX(68deg) scale(1);opacity:.45}50%{transform:rotateX(68deg) scale(.96);opacity:.38}}
+@keyframes ami3d-fete{0%,100%{transform:translateY(0) scale(1)}45%{transform:translateY(-7px) scale(1.03)}}
+@keyframes ami3d-surpris{0%,100%{transform:rotateZ(0) scale(1)}40%{transform:rotateZ(-3deg) scale(1.03)}}
+@keyframes ami3d-triste{0%,100%{transform:rotateZ(0)}50%{transform:rotateZ(-3deg) translateY(2px)}}
+.ami-3d-corps{position:relative;display:block;line-height:0}
+.ami-acc{position:absolute;pointer-events:none;overflow:visible}
+.ami-acc-echarpe{left:33%;top:46%;width:40%}
+.ami-acc-noeud{left:45%;top:49%;width:17%}
+.ami-acc-lunettes{left:30%;top:22%;width:44%;transform:rotate(-12deg)}
+.ami-acc-chapeau{left:30%;top:-4%;width:38%;transform:rotate(-6deg)}
+.ami-acc-couronne{left:35%;top:-2%;width:30%;transform:rotate(-6deg)}
 .partie{
   max-width:1120px;margin:0 auto;padding:clamp(14px,3vw,34px) clamp(14px,3vw,32px) 150px;
   transform-style:preserve-3d;
@@ -1721,7 +1729,8 @@ button:focus-visible,a:focus-visible,select:focus-visible,input:focus-visible,[t
 @media(prefers-reduced-motion:reduce){ .clash-foule{ animation:none } .clash-public .jauge span{ transition:none } }
 /* v5.64 : choix de la voix d'Ami */
 .reglage-voix label{ display:flex; gap:.6em; align-items:center; flex:1; flex-wrap:wrap; }
-.reglage-voix select{ flex:1; min-width:12em; max-width:100%; padding:.5em; border-radius:10px; font:inherit; }
+.reglage-voix select{ flex:1; min-width:12em; max-width:100%; padding:.5em; border-radius:10px; font:inherit; background:#1f1b46; color:#fff; border:1px solid var(--bord); }
+.reglage-voix select option, select option{ background:#1f1b46; color:#fff; }
 /* v5.65 : sur PC, l'image d'une question tient toujours dans l'écran (plus de montre géante qui oblige à défiler). */
 @media (min-width:900px){
   .partie .pic-grande, .partie .pic-moyenne{ width:min(520px, 100%)!important; height:min(38vh, 380px)!important; }
@@ -1825,3 +1834,19 @@ a.lien-carte{ text-decoration:none; color:inherit; }
 .raccroche{font-weight:800;color:#ffd36e;margin:0 0 8px}
 @keyframes pote-arrive{from{opacity:0;transform:translateY(14px) scale(.9)}to{opacity:1;transform:none}}
 @media (prefers-reduced-motion:reduce){.pote{animation:none}}
+.liens-legaux{text-align:center;font-size:.85rem;opacity:.75;margin:18px 0 4px}
+.liens-legaux a{color:inherit}
+/* v5.93 : la bande dessinée — elle arrive puis rit doucement (pas d'agitation) */
+.pote-ic{width:64px;height:64px;font-size:2rem;display:flex;align-items:center;justify-content:center}
+.pote-svg,.pote-img{width:64px;height:64px;object-fit:contain;filter:drop-shadow(0 4px 6px rgba(0,0,0,.3));transform-origin:50% 90%;animation:pote-rit 2.4s ease-in-out .6s 2}
+@keyframes pote-rit{0%,100%{transform:none}30%{transform:rotate(-3deg) scale(1.03)}60%{transform:rotate(2deg)}}
+@media (prefers-reduced-motion:reduce){.pote-svg,.pote-img{animation:none}}
+/* v5.94 : les formules de Plus */
+.formules{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin:14px 0;width:100%;max-width:640px}
+.carte-formule{display:flex;flex-direction:column;align-items:center;gap:4px;padding:16px 12px;border-radius:20px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.22);color:inherit;text-decoration:none;font:inherit;cursor:pointer}
+.carte-formule:hover,.carte-formule:focus-visible{background:rgba(255,211,110,.18);border-color:#ffd36e}
+.carte-formule strong{font-size:1.1rem}.prix-formule{font-size:1.35rem;font-weight:900;color:#ffd36e}.carte-formule small{opacity:.85}
+/* v5.95 : série en danger, rappels */
+.serie-danger{ position:relative; z-index:3; max-width:440px; margin:-30px auto 14px; grid-column:1/-1; padding:10px 14px; border-radius:14px; background:rgba(255,120,60,.16); border:1px solid rgba(255,150,90,.55); color:#ffe2d2; font-weight:800; text-align:center; }
+.reglage-rappels select{ background:#1f1b46; color:#fff; border:1px solid var(--bord); border-radius:10px; padding:.4em .6em; font:inherit; }
+.serie-danger ~ .gros.defi{ margin-top:0; }

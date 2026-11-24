@@ -21,7 +21,7 @@ function page(langue, config, avant){
   w.TextEncoder = TextEncoder; w.TextDecoder = TextDecoder;
   w.__fetch = []; w.fetch = async (u) => { w.__fetch.push(String(u)); return { ok:true, json:async () => (w.__reponse || { actif:false }) }; };
   if(avant) avant(w);
-  for(const f of ['js/donnees.js', 'js/voix.js', 'js/phrases-enregistrees.js', 'js/textes.js', 'js/articulation.js', 'js/genres.js', 'js/confusions.js', 'js/vannes.js', 'js/pieges.js', 'js/anglais.js', 'js/clash.js', 'js/histoires.js', 'js/blagues-en.js', 'js/parcours.js', 'js/rigolade.js', 'js/clash-plus.js', 'js/salon.js', 'js/juge.js', 'js/vannes-libres.js', 'js/maths.js', 'js/sciences.js', 'js/trash-talk.js', 'js/epreuves.js', 'js/epreuves-spe.js', 'js/epreuves-plus.js', 'js/epreuves-oraux.js', 'js/epreuves-pro.js', 'js/matieres.js', 'js/mat-francais.js', 'js/mat-histoire.js', 'js/mat-svt-pc.js', 'js/mat-sup.js', 'js/mat-anglais.js', 'js/mat-renfort.js', 'js/vannes-cash.js', 'js/vannes-ironie.js', 'js/vannes-mots.js', 'js/offre.js', 'js/jeu.js']) w.eval(lire(f));
+  for(const f of ['js/donnees.js', 'js/voix.js', 'js/phrases-enregistrees.js', 'js/textes.js', 'js/textes-plus.js', 'js/articulation.js', 'js/genres.js', 'js/confusions.js', 'js/vannes.js', 'js/pieges.js', 'js/anglais.js', 'js/clash.js', 'js/histoires.js', 'js/blagues-en.js', 'js/parcours.js', 'js/rigolade.js', 'js/clash-plus.js', 'js/salon.js', 'js/juge.js', 'js/vannes-libres.js', 'js/maths.js', 'js/sciences.js', 'js/trash-talk.js', 'js/bande-images.js', 'js/bande-plumo.js', 'js/achats.js', 'js/rappels.js', 'js/epreuves.js', 'js/epreuves-spe.js', 'js/epreuves-plus.js', 'js/epreuves-oraux.js', 'js/epreuves-pro.js', 'js/matieres.js', 'js/mat-francais.js', 'js/mat-histoire.js', 'js/mat-svt-pc.js', 'js/mat-sup.js', 'js/mat-anglais.js', 'js/mat-renfort.js', 'js/mat-langues.js', 'js/mat-specialites.js', 'js/vannes-cash.js', 'js/vannes-ironie.js', 'js/vannes-mots.js', 'js/offre.js', 'js/jeu.js']) w.eval(lire(f));
   return w;
 }
 // Certificats d'abonnement comme les signe le serveur (même format que serveur/functions/ami-abonnement).
@@ -440,6 +440,8 @@ await test('scènes absurdes : les deux vrais mots, articles justes, et la bonne
       assert.ok(!/\b(de|à|au|du)\s+\{[FJ]\}/.test(x.t), 'contraction : ' + x.t); assert.ok(/\{je\}/.test(x.en) && /^[A-Z][^{}]*\{je\}[^{}]*[.!?]$/.test(x.en), x.en); }
     for(const x of SE[th]) assert.ok(x.t.includes('{j}') && x.t.includes('{f}'), x.t);
   }
+  // v5.95 : hasard reproductible (le test ne dépend plus de la chance).
+  let g = 12345; w.Math.random = () => (g = (g * 1103515245 + 12345) % 2147483648) / 2147483648;
   A.J().humour = 1; A.choisirJeu('animaux'); A.commencer('quel_mot');
   const vus = new Set(); for(let k = 0; k < 400; k++) vus.add(A.blague('🐢', '🐱'));
   const sc = [...vus].filter(b => b.includes('🇬🇧'));
@@ -1051,7 +1053,7 @@ await test('abonnement : lien Stripe avec le code anonyme ; un certificat signé
   const code = etat(w).abo.code;
   assert.match(code, /^AMI-[A-Z2-9]{4}-[A-Z2-9]{4}-[A-Z2-9]{4}$/);
   A.ecranPlus();
-  assert.strictEqual(d.querySelector('main.plus a.gros').getAttribute('href'), 'https://buy.stripe.com/test_abc?client_reference_id=' + encodeURIComponent(code));
+  assert.strictEqual(d.querySelector('main.plus a.carte-formule').getAttribute('href'), 'https://buy.stripe.com/test_abc?client_reference_id=' + encodeURIComponent(code));
   const fin = new Date(Date.now() + 30 * 864e5).toISOString();
   w.__reponse = { actif:true, fin, jeton:await jeton('AMI-ABCD-EFGH-JKMN', fin) };
   d.getElementById('code').value = 'ami abcd-efgh-jkmn';
@@ -1177,7 +1179,8 @@ await test('aucune promesse de santé, aucun traceur ; un seul envoi : le code d
   assert.ok(!/rééduc|thérap|aphasi|AVC|guérir|soigne(?!\s+rien)|Alzheimer/i.test(tout.replace(/il ne soigne rien/g, '')), 'promesse de santé');
   const J = lire('js/jeu.js');
   assert.ok(!/google-analytics|gtag|fbq|matomo|sendBeacon|XMLHttpRequest/.test(J));
-  assert.strictEqual((J.match(/fetch\(/g) || []).length, 6, 'six fetch : vérification du code, vannes IA (Plus), vannes en direct (serveur configuré), carte des programmes de maths, offre signée (rien n’est envoyé), tri des vannes ajoutées (texte de la vanne seulement)');
+  assert.strictEqual((J.match(/fetch\(/g) || []).length, 8, 'huit fetch : fréquentation anonyme (type d’événement et plateforme seulement), vérification du code, vannes IA (Plus), vannes en direct (serveur configuré), carte des programmes de maths, offre signée (rien n’est envoyé), tri des vannes ajoutées (texte de la vanne seulement), code cadeau (code AMI + code cadeau)');
+  assert.match(J, /body:JSON\.stringify\(\{ code:base\.abo\.code, cadeau \}\)/);
   assert.match(J, /fetch\(CONFIG\.API_VANNE_JUGE, \{ method:'POST', cache:'no-store', headers:\{ 'Content-Type':'application\/json' \}, body:JSON\.stringify\(\{ fr, en \}\) \}\)/);
   assert.match(J, /fetch\(String\(CONFIG\.SERVEUR\)\.replace\(\/\\\/\?\$\/, '\/'\) \+ 'offre\.php', \{ cache:'no-cache' \}\)/);
   assert.match(J, /fetch\(CONFIG\.API_VANNES_DIRECT, /); assert.match(J, /API_VANNES_DIRECT = b \+ 'vannes-direct\.php'/);
@@ -1596,9 +1599,9 @@ await test('v5.90 : renfort des matières — une évaluation à chaque niveau, 
 });
 await test('v5.91 : 3 bonnes d’affilée → Plumo appelle ses potes ; la 4e → la bande vanne Plumo (jamais le joueur)', async () => {
   const w = page(), T = w.TRASH_TALK, d = w.document, A = w.AmiDesMots;
-  const lignes = [...T.ANNONCE_POTES.doux, ...T.ANNONCE_POTES.fort, ...T.ENTREE_POTES, ...T.RACCROCHE, ...T.POTES.flatMap(p => p[2].map(l => T.remplir(l, { a:T.NOM_AMI })))];
+  const lignes = [...T.ANNONCE_POTES.doux, ...T.ANNONCE_POTES.fort, ...T.ENTREE_POTES, ...T.RACCROCHE, ...T.POTES.flatMap(p => p[3].map(l => T.remplir(l, { a:T.NOM_AMI })))];
   for(const l of lignes){ assert.ok(w.JUGE.juger(l).ok, l); assert.ok(!/\{\w+\}/.test(l), l); }
-  for(const p of T.POTES) for(const l of p[2]) assert.match(l, /\{a\}/, 'la bande vise Plumo : ' + l);
+  for(const p of T.POTES) for(const l of p[3]) assert.match(l, /\{a\}/, 'la bande vise Plumo : ' + l);
   assert.ok(T.ANNONCE_POTES.fort.some(l => /Wwwwaaaaa, t’es un ouf toi !! La prochaine bonne réponse, j’appelle mes potes/.test(l)));
   const b = T.bandePotes(null, () => .3); assert.ok(b.potes.length >= 2 && b.potes.length <= 3);
   // En jeu : on répond juste en lisant la bonne réponse affichée après coup (on rejoue la même question si besoin).
@@ -1622,6 +1625,90 @@ await test('v5.91 : 3 bonnes d’affilée → Plumo appelle ses potes ; la 4e �
   let k = 0; for(const v of vus){ k = v.ok ? k + 1 : 0;
     if(v.ok && k % 4 === 3) assert.match(v.html, /potes|bande|renfort|amis/, 'annonce à 3');
     if(v.ok && k >= 4 && k % 4 === 0) assert.match(v.html, /class="pote"/, 'la bande à 4'); }
+});
+await test('v5.93 : bilan des parents — évolution, notes, conseil, partage ; Plumo 3D avec accessoires ; pages légales', async () => {
+  const w = page(), d = w.document, A = w.AmiDesMots, J = A.J();
+  const jr = J.journal = {}, aj = k => { const x = new Date(Date.now() - k * 864e5); return x.getFullYear() + '-' + String(x.getMonth() + 1).padStart(2, '0') + '-' + String(x.getDate()).padStart(2, '0'); };
+  jr[aj(1)] = { 'maths+':4, 'maths-':8, 'francais+':9, 'francais-':1, min:20 }; jr[aj(9)] = { 'maths+':2, 'maths-':2 };
+  J.matieres = Object.assign(J.matieres || {}, { notes:{ 'langlais-3e':14.5, 'blanc-brevet':12 } });
+  const va = (a, v) => { const x = d.createElement('button'); x.dataset.a = a; if(v != null) x.dataset.v = v; d.body.appendChild(x); x.click(); x.remove(); };
+  va('parents'); const [, x, y] = d.querySelector('main').textContent.match(/(\d+) × (\d+)/); d.getElementById('porte-parents').value = String(x * y); va('parents-ouvrir');
+  const t = d.querySelector('main').textContent;
+  assert.match(t, /Cette semaine/); assert.match(t, /semaine dernière/); assert.match(t, /Conseil de Plumo : un petit quart d’heure sur les maths \(33 %/); assert.match(t, /14,5\/20/);
+  assert.ok(d.querySelector('[data-a="bilan-partager"]'));
+  let partage = null; w.navigator.clipboard = { writeText:async x => { partage = x; } }; va('bilan-partager'); await new Promise(r => setTimeout(r, 10));
+  assert.match(partage, /Bilan Ami des mots de la semaine : 1 jour\(s\) de jeu, environ 20 min, 22 réponses \(59 % de réussite\)\. À retravailler : les maths\./);
+  // Plumo : toujours l'image 3D, accessoires par-dessus.
+  J.porte = ['echarpe', 'noeud']; A.accueil();
+  assert.ok(d.querySelector('.ami-3d-wrap img.ami-3d'), 'Plumo en 3D même avec accessoires');
+  assert.ok(d.querySelector('.ami-acc-echarpe') && d.querySelector('.ami-acc-noeud'));
+  assert.ok(d.querySelector('a[href="legal.html#confidentialite"]'), 'lien confidentialité sur l’accueil');
+  const L = lire('legal.html');
+  for(const x of ['id="mentions"', 'id="confidentialite"', 'id="cgu"', 'id="cgv"', 'jamais envoyé', '3018', 'CNIL', 'rétractation']) assert.ok(L.includes(x), x);
+  assert.ok(lire('sw.js').includes('legal.html'), 'page légale disponible hors ligne');
+  // La bande : dessin de chaque pote (ou image 3D si présente).
+  for(const id of ['pico', 'zaza', 'rocket']) assert.match(w.BANDE.svg(id), /<svg|<img/);
+});
+await test('v5.93 : espagnol et allemand LVB de la 5e au bac — évaluations, vannes validées', async () => {
+  const w = page(), M = w.MATIERES;
+  for(const id of ['lespagnol', 'lallemand']){ const m = M.trouver(id); assert.ok(m, id);
+    for(const n of ['5e', '4e', '3e', '2nde', '1re', 'Tle']){ assert.ok(m.examens[n], id + ' ' + n); assert.ok(M.serie(id, 'examen', n, 20, 9, 'taquin').length >= 10, id + ' ' + n); }
+    for(const c of m.chapitres) for(const x of c.banque){ assert.strictEqual(x[2].length, 3, x[0]); for(const f of x[2]){ assert.notStrictEqual(f[0], x[1]); assert.ok(w.JUGE.juger(f[1]).ok, f[1]); } assert.ok(x[3]); } }
+  const d = w.document, va = (a, v) => { const x = d.createElement('button'); x.dataset.a = a; if(v != null) x.dataset.v = v; d.body.appendChild(x); x.click(); x.remove(); };
+  va('matieres'); assert.ok(d.querySelector('[data-a="matiere"][data-v="lespagnol"]') && d.querySelector('[data-a="matiere"][data-v="lallemand"]'));
+});
+await test('v5.94 : tous les moyens de payer — formules Stripe, code cadeau, achats Google / Apple vérifiés par le serveur', async () => {
+  const { prive, publique } = await cles();
+  const fin = new Date(Date.now() + 30 * 864e5).toISOString();
+  const FORMULES = [{ id:'mensuel', prix:'5,99 €', lien:'https://buy.stripe.com/m', essai:'7 jours gratuits', magasin:true }, { id:'annuel', prix:'49 €', lien:'https://buy.stripe.com/a', magasin:true },
+    { id:'a_vie', prix:'99 €', lien:'https://buy.stripe.com/v', magasin:false }, { id:'pirate', prix:'0 €', lien:'https://pirate.example/x' }];
+  // 1) Site : une carte par formule avec lien Stripe + code anonyme ; formule inconnue ignorée ; lien non Stripe refusé.
+  let w = page(undefined, { MODE_PAYANT:true, SERVEUR:'https://ami.example/serveur', CLE_PUBLIQUE:publique, FORMULES }); await w.AmiDesMotsPret;
+  let d = w.document, A = w.AmiDesMots, code = A.base.abo.code;
+  A.ecranPlus(); const cartes = [...d.querySelectorAll('a.carte-formule')];
+  assert.strictEqual(cartes.length, 3); assert.ok(cartes[0].getAttribute('href').startsWith('https://buy.stripe.com/m?client_reference_id=' + encodeURIComponent(code)));
+  assert.match(d.querySelector('main').textContent, /7 jours gratuits/); assert.match(d.querySelector('main').textContent, /Un seul paiement, pour toujours/);
+  assert.ok(!d.querySelector('[data-a="plus-acheter"]'), 'pas de bouton store sur le site');
+  // 2) Code cadeau : le serveur répond avec un certificat signé → Plus s'ouvre ; un faux certificat ne l'ouvre pas.
+  const signer = async (c, f) => b64u(new Uint8Array(await webcrypto.subtle.sign({ name:'ECDSA', hash:'SHA-256' }, prive, Buffer.from(c + '|' + f))));
+  let envoye = null; w.fetch = async (u, o) => { w.__fetch.push(String(u)); if(/cadeau\.php$/.test(u)){ envoye = JSON.parse(o.body); return { ok:true, json:async () => ({ actif:true, fin, jeton:await jeton(code, fin), mois:3 }) }; } return { ok:true, json:async () => ({ actif:false }) }; };
+  d.querySelector('#cadeau').value = 'cadeau-ab12-cd34'; d.getElementById('form-cadeau').dispatchEvent(new w.Event('submit', { cancelable:true })); await attendre(80);
+  assert.deepStrictEqual(envoye, { code, cadeau:'CADEAU-AB12-CD34' }); assert.ok(A.plus(), 'le code cadeau ouvre Plus (certificat signé)');
+  assert.match(d.getElementById('cadeau-etat').textContent, /3 mois/);
+  const w2 = page(undefined, { MODE_PAYANT:true, SERVEUR:'https://ami.example/serveur', CLE_PUBLIQUE:publique, FORMULES }); await w2.AmiDesMotsPret;
+  assert.ok(!await w2.AmiDesMots.appliquerCertificat({ actif:true, jeton:'faux.faux' }, w2.AmiDesMots.base.abo.code)); assert.ok(!w2.AmiDesMots.plus(), 'faux certificat refusé');
+  // 3) Appli Android : seules les formules « stores » ; achat → serveur (magasin.php) → certificat → Plus. Pas de lien Stripe.
+  let valider = null, commande = null;
+  const faux = x => { x.Capacitor = { isNativePlatform:() => true, getPlatform:() => 'android' };
+    const quand = { approved:() => quand, verified:() => quand };
+    x.CdvPurchase = { Platform:{ GOOGLE_PLAY:'android-playstore', APPLE_APPSTORE:'ios-appstore' }, ProductType:{ PAID_SUBSCRIPTION:'sub', NON_CONSUMABLE:'nc' },
+      store:{ register(){}, when:() => quand, initialize:async () => {}, restorePurchases:async () => {}, set validator(f){ valider = f; }, get validator(){ return valider; },
+        get:id => ({ pricing:{ price:id === 'plus_mensuel' ? '5,49 €' : '45,99 €' }, getOffer:() => ({ order:async () => { commande = id; } }) }) } }; };
+  const w3 = page(undefined, { MODE_PAYANT:true, SERVEUR:'https://ami.example/serveur', CLE_PUBLIQUE:publique, FORMULES }, faux); await w3.AmiDesMotsPret; await attendre(30);
+  const d3 = w3.document, A3 = w3.AmiDesMots, code3 = A3.base.abo.code; A3.ecranPlus();
+  assert.strictEqual(d3.querySelectorAll('[data-a="plus-acheter"]').length, 2, 'mensuel et annuel (à vie non proposé dans les stores)');
+  assert.ok(!d3.querySelector('a.carte-formule'), 'aucun lien Stripe dans l’appli des stores');
+  assert.match(d3.querySelector('main').textContent, /5,49 €/, 'prix du store'); assert.ok(d3.querySelector('[data-a="plus-restaurer"]'));
+  d3.querySelector('[data-a="plus-acheter"][data-v="mensuel"]').click(); await attendre(20); assert.strictEqual(commande, 'plus_mensuel');
+  let corps = null; w3.fetch = async (u, o) => { if(/magasin\.php$/.test(u)){ corps = JSON.parse(o.body); return { ok:true, json:async () => ({ actif:true, fin, jeton:await jeton(code3, fin) }) }; } return { ok:true, json:async () => ({}) }; };
+  let rep = null; await valider({ transactions:[{ purchaseId:'jeton-google-123456', products:[{ id:'plus_mensuel' }] }] }, x => { rep = x; }); await attendre(40);
+  assert.deepStrictEqual(corps, { code:code3, plateforme:'google', produit:'plus_mensuel', jeton:'jeton-google-123456' }); assert.ok(rep.ok); assert.ok(A3.plus(), 'achat vérifié par le serveur → Plus');
+  // Serveur qui refuse : rien n'est ouvert.
+  const w4 = page(undefined, { MODE_PAYANT:true, SERVEUR:'https://ami.example/serveur', CLE_PUBLIQUE:publique, FORMULES }, faux); await w4.AmiDesMotsPret; await attendre(30);
+  w4.fetch = async () => ({ ok:false, json:async () => ({ actif:false, erreur:'achat_invalide' }) });
+  rep = null; await valider({ transactions:[{ purchaseId:'faux-jeton-999', products:[{ id:'plus_mensuel' }] }] }, x => { rep = x; }); await attendre(20);
+  assert.ok(!rep.ok); assert.ok(!w4.AmiDesMots.plus(), 'achat non confirmé : pas de Plus');
+  // Le serveur : vérifications Google / Apple et aucun secret côté jeu.
+  const P = lire('serveur-php/paiement-lib.php'), M = lire('serveur-php/magasin.php');
+  assert.match(P, /subscriptionsv2\/tokens/); assert.match(P, /inApps\/v1\/transactions/); assert.match(M, /achat_invalide/);
+  for(const f of ['js/achats.js', 'js/jeu.js']) assert.ok(!/BEGIN (EC |RSA )?PRIVATE KEY|sk_live|private_key/.test(lire(f)), 'aucun secret dans ' + f);
+});
+await test('v5.94 : la bande vanne Plumo version cash (version douce pour « Tout doux »)', () => {
+  const w = page(), T = w.TRASH_TALK;
+  const cash = new Set(T.POTES.flatMap(p => p[3].map(l => T.remplir(l, { a:T.NOM_AMI })))), doux = new Set(Object.values(T.POTES_DOUX).flat().map(l => T.remplir(l, { a:T.NOM_AMI })));
+  for(let k = 0; k < 30; k++){ for(const p of T.bandePotes(null, Math.random, 'taquin').potes) assert.ok(cash.has(p.dit), p.dit); for(const p of T.bandePotes(null, Math.random, 'doux').potes) assert.ok(doux.has(p.dit), p.dit); }
+  for(const l of [...cash, ...doux]){ assert.ok(w.JUGE.juger(l).ok, l); assert.match(l, /Plumo/, 'la bande vise Plumo, pas le joueur : ' + l); }
+  assert.ok(cash.size >= 18);
 });
 await test('hors connexion : le service worker garde le jeu et toutes ses images', () => {
   const S = lire('sw.js');
@@ -2013,6 +2100,114 @@ await test('v5.84 : voie professionnelle (bac pro, CAP) et plus aucune vanne pla
   for(const id of ['medecine', 'droit', 'astro']) for(const c of M.trouver(id).chapitres) for(const q of M.serie(id, c.id, 'Sup', 8, 3, 'taquin')) for(const f of q.faux) assert.ok(!/^Non\.?$/.test(f.vanne.trim()), q.enonce);
   A.base.ui = 'fr'; clic('examens'); assert.ok($('[data-a="examen-go"][data-v="bac-pro"]') && $('[data-a="examen-go"][data-v="cap"]'));
   clic('examen-go', 'cap'); assert.match($('main').textContent, /épreuve 1\/3/);
+});
+
+await test('v5.95 : chaque texte des écrans récents existe dans les 11 langues, sans français ailleurs', () => {
+  const w = page('ja'); const TT = w.TT;
+  assert.ok(TT && TT.CLES.length >= 25);
+  for(const k of TT.CLES) for(const l of TT.LANGUES){
+    const v = TT._T[k][l];
+    assert.ok(v != null, k + ' manque en ' + l);
+    const s = typeof v === 'function' ? v(3, 40) : v;
+    assert.ok(typeof s === 'string' && s.length > 1, k + '/' + l);
+    if(l !== 'fr' && !['regles', 'mentions'].includes(k)) assert.notEqual(s, typeof TT._T[k].fr === 'function' ? TT._T[k].fr(3, 40) : TT._T[k].fr, k + ' non traduit en ' + l);
+  }
+  assert.equal(TT('cle_inconnue', 'ja'), 'cle_inconnue');
+  assert.equal(TT('restaurer', 'xx'), 'Restore purchases');
+});
+
+await test('v5.95 : écran Plus, liens légaux et Clash libre sans français quand l’interface est en japonais', async () => {
+  const w = page('ja', { MODE_PAYANT:true, SERVEUR:'https://ami.example/serveur', FORMULES:[{ id:'a_vie', prix:'99 €', lien:'https://buy.stripe.com/v' }] }); await w.AmiDesMotsPret;
+  const d = w.document, A = w.AmiDesMots;
+  A.ecranPlus(); const h = d.querySelector('main').textContent;
+  assert.ok(!/Restaurer|code cadeau|Conditions de vente|Un seul paiement/.test(h), 'français dans l’écran Plus');
+  assert.match(h, /一度の支払い/); assert.match(h, /ギフトコード/);
+  const x = d.createElement('button'); x.dataset.a = 'clash-libre'; d.body.appendChild(x); x.click(); x.remove();
+  const c = d.querySelector('main').textContent; assert.match(c, /Free roast battle/); assert.ok(!/On se vanne|Joueur 1/.test(c), 'français dans le Clash libre');
+});
+
+await test('v5.95 : fréquentation anonyme — une ouverture par jour, rien d’identifiant, « Ne pas me suivre » respecté', async () => {
+  const envois = [];
+  const avant = w => { w.fetch = async (u, o) => { if(/visite\.php$/.test(u)) envois.push({ u:String(u), o }); return { ok:true, json:async () => ({ actif:false }) }; }; };
+  let w = page(undefined, { MODE_PAYANT:false, SERVEUR:'https://ami.example/serveur' }, avant); await w.AmiDesMotsPret;
+  assert.strictEqual(envois.length, 1); const c = JSON.parse(envois[0].o.body);
+  assert.deepStrictEqual(Object.keys(c).sort(), ['e', 'p']); assert.strictEqual(c.e, 'ouverture'); assert.strictEqual(c.p, 'web'); assert.strictEqual(envois[0].o.credentials, 'omit');
+  // Même appareil, même jour : rien de plus.
+  const ls = w.localStorage.getItem('amidesmots:visite:ouverture');
+  w = page(undefined, { SERVEUR:'https://ami.example/serveur' }, x => { avant(x); x.localStorage.setItem('amidesmots:visite:ouverture', ls); }); await w.AmiDesMotsPret;
+  assert.strictEqual(envois.length, 1);
+  // Ne pas me suivre : rien.
+  w = page(undefined, { SERVEUR:'https://ami.example/serveur' }, x => { avant(x); Object.defineProperty(x.navigator, 'doNotTrack', { value:'1' }); }); await w.AmiDesMotsPret;
+  assert.strictEqual(envois.length, 1);
+  // Sans serveur : rien.
+  w = page(undefined, {}, avant); await w.AmiDesMotsPret; assert.strictEqual(envois.length, 1);
+});
+
+await test('v5.95 : rappels — rien sur le site ; dans l’appli, activés seulement à la demande, série en danger, permission refusée', async () => {
+  // Site : pas de réglage, bandeau « série en danger » quand on n'a pas joué aujourd'hui.
+  let w = page(); await w.AmiDesMotsPret; const A = w.AmiDesMots, d = w.document;
+  const va = (w, a, v) => { const x = w.document.createElement('button'); x.dataset.a = a; if(v != null) x.dataset.v = v; w.document.body.appendChild(x); x.click(); x.remove(); };
+  va(w, 'reglages'); assert.ok(!d.querySelector('[data-a="rappel"]'), 'pas de rappel sur le site');
+  const j = A.base.joueurs[0], jr = k => { const x = new Date(Date.now() + k * 864e5); return x.getFullYear() + '-' + String(x.getMonth() + 1).padStart(2, '0') + '-' + String(x.getDate()).padStart(2, '0'); };
+  j.jours = [jr(-3), jr(-2), jr(-1)]; va(w, 'accueil');
+  const bandeau = d.querySelector('.serie-danger'); assert.ok(bandeau && /3 jours/.test(bandeau.textContent), d.querySelector('main').innerHTML.slice(0, 200));
+  // Appli : faux plugin de notifications locales.
+  let planifies = [], annules = 0, accord = 'granted';
+  const avant = x => { x.Capacitor = { isNativePlatform:() => true, getPlatform:() => 'android', Plugins:{ LocalNotifications:{
+    checkPermissions:async () => ({ display:'prompt' }), requestPermissions:async () => ({ display:accord }),
+    cancel:async () => { annules++; }, schedule:async o => { planifies = o.notifications; } } } }; };
+  w = page(undefined, undefined, avant); await w.AmiDesMotsPret; await new Promise(r => setTimeout(r, 20));
+  assert.strictEqual(planifies.length, 0, 'désactivé par défaut : rien de planifié');
+  w.AmiDesMots.base.joueurs[0].jours = [jr(-2), jr(-1)];
+  va(w, 'reglages'); assert.ok(w.document.querySelector('[data-a="rappel"]'));
+  va(w, 'rappel'); await new Promise(r => setTimeout(r, 30));
+  assert.ok(w.AmiDesMots.base.rappel.actif); assert.strictEqual(planifies[0].id, 1); assert.strictEqual(JSON.stringify(planifies[0].schedule.on), '{"hour":18,"minute":0}');
+  assert.match(planifies[0].title, /Plumo/);
+  if(new Date().getHours() < 20) assert.ok(planifies.some(n => n.id === 2 && /série/.test(n.title)), 'série en danger ce soir');
+  // Permission refusée : le réglage revient à « désactivé » avec un message.
+  accord = 'denied'; w = page(undefined, undefined, avant); await w.AmiDesMotsPret; va(w, 'reglages'); va(w, 'rappel'); await new Promise(r => setTimeout(r, 30));
+  assert.ok(!w.AmiDesMots.base.rappel.actif); assert.match(w.document.getElementById('etat-rappel').textContent, /bloquées/);
+});
+
+await test('v5.95 : contrôles de cohérence — chaque script de la page existe, est hors ligne, est chargé par les tests, et chaque action a sa réponse', () => {
+  const fs = require('fs'), path = require('path'), R = path.join(__dirname, '..');
+  const html = fs.readFileSync(path.join(R, 'index.html'), 'utf8'), sw = fs.readFileSync(path.join(R, 'sw.js'), 'utf8'), moi = fs.readdirSync(__dirname).map(f => fs.readFileSync(path.join(__dirname, f), 'utf8')).join('\n');
+  const scripts = [...html.matchAll(/<script[^>]*src="(js\/[^"]+)"/g)].map(m => m[1]);
+  assert.ok(scripts.length > 30);
+  for(const s of scripts){
+    assert.ok(fs.existsSync(path.join(R, s)), s + ' manquant');
+    assert.ok(sw.includes(s), s + ' absent du cache hors ligne (sw.js)');
+    if(!/config|abonnement-config|capacitor|analytics/.test(s) && fs.readFileSync(path.join(R, s), 'utf8').length < 2e6) assert.ok(moi.includes(s) || /monde|three|village|city|3d/i.test(s), s + ' non chargé par les tests');
+  }
+  // Chaque data-a="…" écrit dans jeu.js a un « case » qui y répond.
+  const J = fs.readFileSync(path.join(R, 'js/jeu.js'), 'utf8');
+  const actions = new Set([...J.matchAll(/data-a="([a-z0-9-]+)"/g)].map(m => m[1]));
+  const cas = new Set([...J.matchAll(/case '([a-z0-9-]+)'/g)].map(m => m[1]));
+  const sans = [...actions].filter(a => !cas.has(a) && !new RegExp("dataset\\.a === '" + a + "'|a === '" + a + "'").test(J));
+  assert.deepStrictEqual(sans, [], 'actions sans réponse : ' + sans.join(', '));
+});
+
+await test('v5.95 : spécialités (SES, HGGSP, HLP, NSI) et renfort philo, droit, médecine — questions propres, vannes acceptées par le juge, binaire juste', () => {
+  const w = page(), M = w.MATIERES;
+  for(const id of ['ses', 'hggsp', 'hlp', 'nsi']){ const m = M.trouver(id); assert.ok(m && m.chapitres.length >= 2 && m.examens.Tle, id); }
+  assert.ok(M.trouver('philo').chapitres.some(c => c.id === 'r-philo2'));
+  assert.ok(M.trouver('droit').chapitres.some(c => c.id === 'droit-quotidien'));
+  assert.ok(M.trouver('medecine').chapitres.some(c => c.id === 'sang-immunite'));
+  let n = 0;
+  for(const id of ['ses', 'hggsp', 'hlp', 'nsi', 'philo', 'droit', 'medecine']) for(const c of M.trouver(id).chapitres) for(const q of (c.banque || [])){
+    n++; assert.ok(q[0] && q[1] && q[2].length >= 2 && q[3], q[0]);
+    assert.strictEqual(new Set([q[1], ...q[2].map(f => f[0])]).size, q[2].length + 1, 'réponses en double : ' + q[0]);
+    for(const [, vanne] of q[2]){ assert.ok(w.JUGE.juger(vanne).ok, vanne); assert.ok(!/\b(nul|idiot|stupide|débile|bête)\b/i.test(vanne), vanne); }
+  }
+  assert.ok(n >= 90, n + ' questions');
+  // Générateur binaire : la bonne réponse est juste, les fausses sont différentes.
+  let g = 7; const r = () => (g = (g * 16807) % 2147483647) / 2147483647;
+  for(let k = 0; k < 300; k++){ const q = w.MATIERES._spe.genBinaire(r);
+    const m = q.enonce.match(/binaire (\d+) en décimal/), d = q.enonce.match(/^Comment s’écrit (\d+)/);
+    if(m) assert.strictEqual(q.bon, String(parseInt(m[1], 2))); else assert.strictEqual(q.bon, Number(d[1]).toString(2));
+    assert.ok(q.faux.length >= 2 && q.faux.every(f => f.en !== q.bon), JSON.stringify(q)); }
+  // Les séries se construisent pour chaque niveau.
+  for(const id of ['ses', 'hggsp', 'hlp', 'nsi']) for(const niv of ['1re', 'Tle']){ const s = M.serie(id, 'examen', niv, 8, 42, 'taquin'); assert.ok(s.length >= 5, id + ' ' + niv + ' : ' + s.length); }
 });
 
 console.log(`\n${ok} réussi(s), ${ko} échoué(s)`);

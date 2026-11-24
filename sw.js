@@ -1,11 +1,12 @@
 // GÉNÉRÉ par outils/construire-sw.js — ne pas éditer.
 // Les ressources locales sont gardées pour jouer hors connexion. Le module 3D charge Three.js en ligne. Les voix (autre site)
 // ne sont pas gardées ici : sans réseau, c'est la voix du téléphone.
-const CACHE = 'amidesmots-7ade40d6eb';
+const CACHE = 'amidesmots-e4bbfeb3db';
 const FICHIERS = [
  "./",
  "index.html",
  "professeur.html",
+ "legal.html",
  "manifest.webmanifest",
  "css/jeu.css",
  "css/professeur-ia.css",
@@ -13,6 +14,7 @@ const FICHIERS = [
  "js/voix.js",
  "js/phrases-enregistrees.js",
  "js/textes.js",
+ "js/textes-plus.js",
  "js/articulation.js",
  "js/genres.js",
  "js/confusions.js",
@@ -39,6 +41,10 @@ const FICHIERS = [
  "js/maths.js",
  "js/sciences.js",
  "js/trash-talk.js",
+ "js/bande-images.js",
+ "js/bande-plumo.js",
+ "js/achats.js",
+ "js/rappels.js",
  "js/epreuves.js",
  "js/epreuves-spe.js",
  "js/epreuves-plus.js",
@@ -51,6 +57,8 @@ const FICHIERS = [
  "js/mat-sup.js",
  "js/mat-anglais.js",
  "js/mat-renfort.js",
+ "js/mat-langues.js",
+ "js/mat-specialites.js",
  "js/vannes-cash.js",
  "js/vannes-ironie.js",
  "js/vannes-mots.js",
@@ -62,7 +70,7 @@ const FICHIERS = [
  "img/icone.svg",
  "img/icone-192.png",
  "img/icone-512.png",
- "img/ami-3d.webp",
+ "img/ami-3d-560.webp",
  "fonts/andika-cyrillic-400-normal.woff2",
  "fonts/andika-cyrillic-700-normal.woff2",
  "fonts/andika-latin-400-normal.woff2",

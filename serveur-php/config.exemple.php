@@ -19,6 +19,25 @@ return [
   'stripe_secret' => 'sk_live_...',
   'stripe_webhook_secret' => 'whsec_...',
 
+  // v5.94 — Codes cadeaux : un mot secret pour l'empreinte des codes (une longue phrase au hasard, à ne jamais changer).
+  'cadeau_sel' => 'change-moi-par-une-longue-phrase-secrete',
+
+  // v5.94 — Achats dans l'appli Android (Google Play). Fichier JSON du compte de service (Play Console → Configuration →
+  // Accès à l'API ; droits « Afficher les données financières » et « Gérer les commandes ») rangé HORS du site.
+  'google_compte_service' => __DIR__ . '/google-compte-service.json',
+  'android_package' => 'fr.amidesmots.app',
+
+  // v5.94 — Achats dans l'appli iPhone (App Store). Clé « In-App Purchase » (App Store Connect → Utilisateurs et accès →
+  // Intégrations → Achats intégrés) : fichier .p8 HORS du site, son identifiant (Key ID) et l'identifiant de l'émetteur (Issuer ID).
+  'apple_cle_p8' => __DIR__ . '/apple-achats.p8',
+  'apple_key_id' => '',
+  'apple_issuer_id' => '',
+  'apple_bundle_id' => 'fr.amidesmots.app',
+  'apple_environnement' => 'production',   // 'sandbox' pour les tests avec des comptes de test Apple
+
+  // Produits des stores (mêmes identifiants dans Google Play et App Store) : abonnement ou paiement unique (« a_vie »).
+  'magasin_produits' => ['plus_mensuel' => 'abonnement', 'plus_annuel' => 'abonnement', 'plus_famille' => 'abonnement', 'plus_a_vie' => 'a_vie'],
+
   // Claude (vannes proposées par l'IA, veille des programmes). Vide : fonctions désactivées.
   'anthropic_cle' => '',
   'anthropic_modele' => 'claude-haiku-5-5',          // vannes : rapide, peu cher

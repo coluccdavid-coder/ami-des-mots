@@ -54,6 +54,19 @@ try {
     }
   }
 
+  // v5.94 : formule « à vie » = paiement unique (Payment Link en mode paiement).
+  if (($type === 'checkout.session.completed' || $type === 'checkout.session.async_payment_succeeded') && ($obj['mode'] ?? '') === 'payment' && ($obj['payment_status'] ?? '') === 'paid') {
+    $code = (string) ($obj['client_reference_id'] ?? '');
+    $pi = is_array($obj['payment_intent'] ?? null) ? ($obj['payment_intent']['id'] ?? '') : (string) ($obj['payment_intent'] ?? '');
+    $client = is_array($obj['customer'] ?? null) ? ($obj['customer']['id'] ?? '') : (string) ($obj['customer'] ?? '');
+    if (preg_match(AMI_FORMAT_CODE, $code) && $pi !== '') ami_inscrire_droit($db, $code, $client !== '' ? $client : 'stripe', $pi, 'a_vie', AMI_FIN_A_VIE);
+  }
+  // Remboursement d'un paiement « à vie » : l'accès s'arrête.
+  if ($type === 'charge.refunded' && !empty($obj['refunded'])) {
+    $pi = is_array($obj['payment_intent'] ?? null) ? ($obj['payment_intent']['id'] ?? '') : (string) ($obj['payment_intent'] ?? '');
+    if ($pi !== '') $db->prepare("UPDATE ami_abonnements SET statut = 'rembourse', maj = ? WHERE abonnement = ? AND statut = 'a_vie'")->execute([ami_maintenant(), $pi]);
+  }
+
   if ($type === 'customer.subscription.updated' || $type === 'customer.subscription.deleted') {
     // Stripe peut livrer dans le désordre : on relit l'état actuel.
     $sub = stripe_get('/v1/subscriptions/' . rawurlencode((string) ($obj['id'] ?? '')));

@@ -1,4 +1,4 @@
-/* Professeur IA Plumo des Mots — tuteur adaptatif local v1.
+/* Professeur IA Ami des Mots — tuteur adaptatif local v1.
  * Les explications et corrigés viennent d'un contenu pédagogique écrit et vérifiable.
  * Le moteur adapte le parcours à partir des réponses ; aucune donnée n'est envoyée.
  */

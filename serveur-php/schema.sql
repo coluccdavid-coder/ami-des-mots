@@ -72,3 +72,34 @@ CREATE TABLE IF NOT EXISTS ami_publications (
   contenu MEDIUMTEXT NOT NULL,
   maj DATETIME NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- v5.94 : codes cadeaux (seule l'empreinte est gardée, le code en clair n'est montré qu'une fois à l'admin).
+CREATE TABLE IF NOT EXISTS ami_cadeaux (
+  empreinte CHAR(64) NOT NULL PRIMARY KEY,
+  mois INT NOT NULL,
+  lot VARCHAR(60) NOT NULL DEFAULT '',
+  cree DATETIME NOT NULL,
+  utilise DATETIME NULL,
+  code VARCHAR(20) NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- v5.94 : achats Google Play / App Store vérifiés (jeton d'achat Google ou transaction d'origine Apple).
+CREATE TABLE IF NOT EXISTS ami_magasin (
+  empreinte CHAR(64) NOT NULL PRIMARY KEY,
+  plateforme VARCHAR(10) NOT NULL,
+  produit VARCHAR(60) NOT NULL,
+  jeton TEXT NOT NULL,
+  code VARCHAR(20) NOT NULL,
+  fin DATETIME NOT NULL,
+  maj DATETIME NOT NULL,
+  KEY code (code)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- v5.95 : fréquentation anonyme (compteurs par jour, sans identifiant ni adresse IP).
+CREATE TABLE IF NOT EXISTS ami_visites (
+  jour CHAR(10) NOT NULL,
+  evenement VARCHAR(16) NOT NULL,
+  plateforme VARCHAR(8) NOT NULL,
+  n INT NOT NULL DEFAULT 0,
+  PRIMARY KEY (jour, evenement, plateforme)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;

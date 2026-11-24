@@ -3,7 +3,8 @@
 declare(strict_types=1);
 
 const AMI_FORMAT_CODE = '/^AMI-[A-Z0-9]{4}-[A-Z0-9]{4}-[A-Z0-9]{4}$/';
-const AMI_ACTIFS = ['active', 'trialing', 'past_due'];
+// v5.94 : a_vie (paiement unique), cadeau (code cadeau), magasin (Google Play / App Store vérifié).
+const AMI_ACTIFS = ['active', 'trialing', 'past_due', 'a_vie', 'cadeau', 'magasin'];
 
 function ami_config(): array {
   static $c = null;
@@ -90,6 +91,8 @@ function ami_abonnement_actif(string $code): array {
   $s->execute([$code]);
   $r = $s->fetch();
   $actif = $r && in_array($r['statut'], AMI_ACTIFS, true) && $r['fin'] && strtotime($r['fin'] . ' UTC') > time();
+  // Abonnement d'un store échu : peut-être renouvelé chez Google / Apple.
+  if ($r && !$actif && $r['statut'] === 'magasin') { ami_magasin_rafraichir($code); $s->execute([$code]); $r = $s->fetch(); $actif = $r && $r['fin'] && strtotime($r['fin'] . ' UTC') > time(); }
   return [$actif, $r ? $r['fin'] : null];
 }
 
@@ -144,3 +147,5 @@ function ami_claude(string $systeme, array $contenu, string $modele, int $max = 
   foreach (($d['content'] ?? []) as $b) if (($b['type'] ?? '') === 'text') $t .= $b['text'];
   return $t;
 }
+
+require_once __DIR__ . '/paiement-lib.php';

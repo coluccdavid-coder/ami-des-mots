@@ -1,0 +1,1 @@
+Déposez ici pico.webp, zaza.webp et rocket.webp (voir docs/PERSONNAGES.md), puis lancez : npm run verifier

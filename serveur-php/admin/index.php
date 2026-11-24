@@ -27,10 +27,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   $id = (int) ($_POST['id'] ?? 0); $a = $_POST['action'] ?? '';
   if ($a === 'sortir') { session_destroy(); header('Location: ./'); exit; }
   if ($a === 'offre') { enregistrer_offre($db, $_POST); header('Location: ./?ok=offre'); exit; }
+  if ($a === 'cadeaux') { $nouveauxCadeaux = ami_cadeaux_actifs() ? creer_cadeaux($db, $_POST) : []; }
   $s = $db->prepare("SELECT * FROM ami_veille WHERE id = ? AND statut = 'a_valider'"); $s->execute([$id]); $v = $s->fetch();
   if ($v && $a === 'rejeter') $db->prepare("UPDATE ami_veille SET statut = 'rejete', decide = ? WHERE id = ?")->execute([ami_maintenant(), $id]);
   if ($v && $a === 'publier') { publier($db, json_decode($v['proposition'], true)); $db->prepare("UPDATE ami_veille SET statut = 'publie', decide = ? WHERE id = ?")->execute([ami_maintenant(), $id]); }
-  header('Location: ./'); exit;
+  if ($a !== 'cadeaux') { header('Location: ./'); exit; }
 }
 // ── L'offre : seules les valeurs du catalogue (catalogue.json, fabriqué depuis le jeu) sont acceptées. ──
 function catalogue(): array { $c = json_decode((string) @file_get_contents(__DIR__ . '/catalogue.json'), true); return is_array($c) ? $c : ['themes' => [], 'jeux' => [], 'coins' => []]; }
@@ -49,10 +50,65 @@ function enregistrer_offre(PDO $db, array $p): void {
     'THEMES_GRATUITS' => $garder('THEMES_GRATUITS', $ids($cat['themes'])),
     'JEUX_GRATUITS' => $garder('JEUX_GRATUITS', $ids($cat['jeux'])),
     'COINS_PLUS' => $garder('COINS_PLUS', $coins),
+    // v5.94 : formules (site : lien Stripe ; appli des stores : achat Google / Apple). Prix et essai sont affichés tels quels.
+    'FORMULES' => array_values(array_filter(array_map(function ($id) use ($p, $lien) {
+      if (empty($p['F_' . $id . '_on'])) return null;
+      return ['id' => $id, 'prix' => mb_substr(trim((string) ($p['F_' . $id . '_prix'] ?? '')), 0, 20), 'lien' => $lien($p['F_' . $id . '_lien'] ?? ''),
+        'essai' => mb_substr(trim((string) ($p['F_' . $id . '_essai'] ?? '')), 0, 40), 'magasin' => !empty($p['F_' . $id . '_magasin'])];
+    }, AMI_FORMULES))),
   ];
   $mysql = $db->getAttribute(PDO::ATTR_DRIVER_NAME) === 'mysql';
   $db->prepare('INSERT INTO ami_publications (cle, contenu, maj) VALUES (?, ?, ?) ' . ($mysql ? 'ON DUPLICATE KEY UPDATE contenu = VALUES(contenu), maj = VALUES(maj)' : 'ON CONFLICT(cle) DO UPDATE SET contenu = excluded.contenu, maj = excluded.maj'))
     ->execute(['offre', json_encode($o, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES), ami_maintenant()]);
+}
+const AMI_FORMULES = ['mensuel', 'annuel', 'famille', 'a_vie'];
+const AMI_NOMS_FORMULES = ['mensuel' => 'Mensuel', 'annuel' => 'Annuel', 'famille' => 'Famille', 'a_vie' => 'À vie (paiement unique)'];
+function formulaire_formules(array $o, callable $e): string {
+  $f = []; foreach ((array) ($o['FORMULES'] ?? []) as $x) if (is_array($x) && isset($x['id'])) $f[$x['id']] = $x;
+  $h = '<h3>💳 Formules</h3><p class="petit">Cochez les formules proposées. <strong>Lien Stripe</strong> : pour le site (créez un « Payment Link » par formule ; '
+    . 'pour « À vie », un paiement unique ; activez les codes promo dans Stripe si vous en voulez). <strong>Stores</strong> : propose aussi la formule dans l’appli Google Play / App Store '
+    . '(produits <code>plus_mensuel</code>, <code>plus_annuel</code>, <code>plus_famille</code>, <code>plus_a_vie</code> à créer dans les consoles). L’essai gratuit se règle dans Stripe et les stores ; écrivez ici le texte affiché (ex. « 7 jours gratuits »).</p>'
+    . '<table><tr><th>Formule</th><th>Prix affiché</th><th>Lien Stripe</th><th>Essai</th><th>Stores</th></tr>';
+  foreach (AMI_FORMULES as $id) { $x = $f[$id] ?? []; $n = fn($k) => 'F_' . $id . '_' . $k;
+    $h .= '<tr><td><label><input type="checkbox" name="' . $n('on') . '" value="1"' . ($x ? ' checked' : '') . '> ' . $e(AMI_NOMS_FORMULES[$id]) . '</label></td>'
+      . '<td><input name="' . $n('prix') . '" size="10" maxlength="20" value="' . $e($x['prix'] ?? '') . '"></td>'
+      . '<td><input name="' . $n('lien') . '" size="34" placeholder="https://buy.stripe.com/…" value="' . $e($x['lien'] ?? '') . '"></td>'
+      . '<td><input name="' . $n('essai') . '" size="16" maxlength="40" value="' . $e($x['essai'] ?? '') . '"></td>'
+      . '<td><input type="checkbox" name="' . $n('magasin') . '" value="1"' . (!empty($x['magasin']) ? ' checked' : '') . '></td></tr>'; }
+  return $h . '</table>';
+}
+// ── v5.95 : fréquentation anonyme des 30 derniers jours (aucune donnée personnelle). ──
+function section_frequentation(PDO $db, callable $e): string {
+  try { $l = $db->query("SELECT jour, evenement, plateforme, n FROM ami_visites WHERE jour >= '" . gmdate('Y-m-d', time() - 29 * 86400) . "' ORDER BY jour DESC")->fetchAll(); }
+  catch (Throwable $x) { return '<section><h2>📈 Fréquentation</h2><p>Table <code>ami_visites</code> absente : relancez <code>schema.sql</code>.</p></section>'; }
+  $j = []; $tot = ['ouverture' => 0, 'partie' => 0]; $pf = ['web' => 0, 'android' => 0, 'ios' => 0];
+  foreach ($l as $r) { $j[$r['jour']][$r['evenement']] = ($j[$r['jour']][$r['evenement']] ?? 0) + (int) $r['n']; $tot[$r['evenement']] = ($tot[$r['evenement']] ?? 0) + (int) $r['n']; if ($r['evenement'] === 'ouverture') $pf[$r['plateforme']] = ($pf[$r['plateforme']] ?? 0) + (int) $r['n']; }
+  $h = '<section><h2>📈 Fréquentation (30 jours)</h2><p class="petit">Compteurs anonymes : un appareil compte une « ouverture » par jour au plus. Aucun cookie, aucun identifiant, aucune adresse IP gardée.</p>'
+    . '<p><strong>' . $tot['ouverture'] . '</strong> ouvertures · <strong>' . $tot['partie'] . '</strong> parties · web ' . $pf['web'] . ' · Android ' . $pf['android'] . ' · iOS ' . $pf['ios'] . '</p>';
+  if (!$j) return $h . '<p>Pas encore de visite.</p></section>';
+  $max = max(1, max(array_map(fn($x) => $x['ouverture'] ?? 0, $j)));
+  $h .= '<table><tr><th>Jour</th><th>Ouvertures</th><th>Parties</th><th></th></tr>';
+  foreach ($j as $d => $x) { $o = $x['ouverture'] ?? 0; $h .= '<tr><td>' . $e($d) . '</td><td>' . $o . '</td><td>' . ($x['partie'] ?? 0) . '</td><td><span style="display:inline-block;height:10px;background:#5b8def;width:' . round(160 * $o / $max) . 'px" aria-hidden="true"></span></td></tr>'; }
+  return $h . '</table></section>';
+}
+
+// ── Codes cadeaux : seule l'empreinte est gardée ; les codes en clair ne s'affichent qu'une fois. ──
+function creer_cadeaux(PDO $db, array $p): array {
+  $n = max(1, min(200, (int) ($p['nombre'] ?? 1))); $mois = max(1, min(24, (int) ($p['mois'] ?? 1))); $lot = mb_substr(trim((string) ($p['lot'] ?? '')), 0, 60);
+  $codes = []; $ins = $db->prepare('INSERT INTO ami_cadeaux (empreinte, mois, lot, cree) VALUES (?, ?, ?, ?)');
+  while (count($codes) < $n) { $c = ami_nouveau_cadeau(); try { $ins->execute([ami_empreinte_cadeau($c), $mois, $lot, ami_maintenant()]); $codes[] = $c; } catch (Throwable $e) {} }
+  return $codes;
+}
+function section_cadeaux(PDO $db, string $jeton, callable $e, array $nouveaux): string {
+  $lots = $db->query('SELECT lot, mois, COUNT(*) n, SUM(CASE WHEN utilise IS NULL THEN 0 ELSE 1 END) u FROM ami_cadeaux GROUP BY lot, mois ORDER BY MAX(cree) DESC LIMIT 30')->fetchAll();
+  if (!ami_cadeaux_actifs()) return '<section><h2>🎁 Codes cadeaux</h2><p>⚠️ Réglez d’abord <code>cadeau_sel</code> (une longue phrase secrète, au moins 16 caractères) dans config-ami.php.</p></section>';
+  $h = '<section><h2>🎁 Codes cadeaux</h2><p class="petit">Un code cadeau ouvre Plus pour quelques mois (à offrir, pour une école, un concours…). Le joueur le saisit dans le jeu : « ✨ Plus » → « J’ai un code cadeau ».</p>';
+  if ($nouveaux) $h .= '<p><strong>⚠️ Copiez ces codes maintenant : ils ne seront plus affichés.</strong></p><textarea rows="' . min(12, count($nouveaux) + 1) . '" cols="30" readonly>' . $e(implode("\n", $nouveaux)) . '</textarea>';
+  $h .= '<form method="post"><input type="hidden" name="jeton" value="' . $jeton . '"><input type="hidden" name="action" value="cadeaux">'
+    . '<label>Nombre <input type="number" name="nombre" min="1" max="200" value="10"></label> <label>Durée (mois) <input type="number" name="mois" min="1" max="24" value="1"></label> '
+    . '<label>Nom du lot <input name="lot" maxlength="60" placeholder="ex. Classe de 4e B"></label> <button>🎁 Créer</button></form>';
+  if ($lots) { $h .= '<table><tr><th>Lot</th><th>Mois</th><th>Créés</th><th>Utilisés</th></tr>'; foreach ($lots as $l) $h .= '<tr><td>' . $e($l['lot'] ?: '—') . '</td><td>' . (int) $l['mois'] . '</td><td>' . (int) $l['n'] . '</td><td>' . (int) $l['u'] . '</td></tr>'; $h .= '</table>'; }
+  return $h . '</section>';
 }
 function formulaire_offre(PDO $db, string $jeton, callable $e): string {
   $o = offre_actuelle($db) + ['MODE_PAYANT' => false, 'PRIX' => '5,99 €', 'LIEN_PAIEMENT' => '', 'LIEN_GESTION' => '', 'JOUEURS_GRATUITS' => 6, 'THEMES_GRATUITS' => null, 'JEUX_GRATUITS' => null, 'COINS_PLUS' => []];
@@ -63,6 +119,7 @@ function formulaire_offre(PDO $db, string $jeton, callable $e): string {
     . '<p><label style="font-size:1.2em"><input type="checkbox" name="MODE_PAYANT" value="1"' . ($o['MODE_PAYANT'] ? ' checked' : '') . '> <strong>Activer le payant (Ami des mots Plus)</strong></label><br><span class="petit">Décoché : tout est gratuit pour tout le monde.</span></p>'
     . '<p><label>Prix affiché <input name="PRIX" maxlength="20" value="' . $e($o['PRIX']) . '"></label> <label>Joueurs gratuits <input type="number" min="1" max="6" name="JOUEURS_GRATUITS" value="' . (int) $o['JOUEURS_GRATUITS'] . '"></label></p>'
     . '<p><label>Lien de paiement Stripe <input name="LIEN_PAIEMENT" size="60" placeholder="https://buy.stripe.com/…" value="' . $e($o['LIEN_PAIEMENT']) . '"></label><br><label>Portail client Stripe <input name="LIEN_GESTION" size="60" placeholder="https://billing.stripe.com/…" value="' . $e($o['LIEN_GESTION']) . '"></label></p>'
+    . formulaire_formules($o, $e)
     . '<h3>✨ Coins réservés à Plus (cochés = payants)</h3>';
   foreach ($cat['coins'] as $g) { $h .= '<p><strong>' . $e($g[0]) . '</strong><br>'; foreach ($g[1] as $c) $h .= $case('COINS_PLUS', $c[0], in_array($c[0], $o['COINS_PLUS'], true), $c[1] . ' ' . $c[2]); $h .= '</p>'; }
   $h .= '<h3>🆓 Thèmes de mots gratuits (cochés = gratuits)</h3><p>'; foreach ($cat['themes'] as $t) $h .= $case('THEMES_GRATUITS', $t[0], $th === null || in_array($t[0], $th, true), $t[1]); $h .= '</p>';
@@ -84,7 +141,7 @@ function publier(PDO $db, array $p): void {
 }
 $j = $e($_SESSION['jeton']);
 $l = $db->query("SELECT * FROM ami_veille WHERE statut = 'a_valider' ORDER BY id")->fetchAll();
-$out = (($_GET['ok'] ?? '') === 'offre' ? '<section>✅ Offre enregistrée et publiée.</section>' : '') . formulaire_offre($db, $j, $e) . '<h1>🛠️ Veille des programmes et annales</h1><p class="petit">L’IA a lu les documents officiels. Vérifie, puis publie : le jeu l’affiche à la prochaine ouverture du coin maths.</p>';
+$out = (($_GET['ok'] ?? '') === 'offre' ? '<section>✅ Offre enregistrée et publiée.</section>' : '') . section_frequentation($db, $e) . formulaire_offre($db, $j, $e) . section_cadeaux($db, $j, $e, $nouveauxCadeaux ?? []) . '<h1>🛠️ Veille des programmes et annales</h1><p class="petit">L’IA a lu les documents officiels. Vérifie, puis publie : le jeu l’affiche à la prochaine ouverture du coin maths.</p>';
 if (!$l) $out .= '<section><p>Rien à valider. Lance la veille : <code>php veille.php</code> (ou la tâche planifiée).</p></section>';
 foreach ($l as $v) {
   $p = json_decode($v['proposition'], true);

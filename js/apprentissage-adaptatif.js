@@ -1,4 +1,4 @@
-/* Plumo des Mots — moteur local de révision adaptative (socle V6).
+/* Ami des Mots — moteur local de révision adaptative (socle V6).
  * Moteur pur : aucune donnée personnelle, aucun réseau, aucune dépendance.
  * Il ne remplace pas encore les révisions historiques de PIEGES ; intégration
  * progressive prévue dans docs/EVOLUTION-V6-PLAN.md.
