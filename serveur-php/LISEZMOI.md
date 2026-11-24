@@ -38,6 +38,11 @@ par l'IA, veille des programmes de maths. Il tourne sur un hébergement mutualis
 | `cadeau.php` / `magasin.php` | Codes cadeaux ; achats Google Play / App Store vérifiés auprès des stores |
 | `visite.php` | Fréquentation anonyme (v5.95) : totaux par jour, sans cookie ni identifiant ni IP gardée ; visible dans l'admin (📈) |
 | `plumes.php` | Solde de plumes magiques d'un code (v5.99) ; les plumes se règlent dans l'admin (docs/ADMIN.md) |
+| `ligue.php` | Ligue de la semaine (v6.0) : créer, rejoindre, points (60 par envoi, 5 000 par semaine), classement, quitter ; pseudo filtré, 40 membres |
+| `classe.php` | Défi de classe (v6.0) : le prof crée un défi (code + clé montrée une fois), les élèves envoient leur meilleur score, effacé après 60 jours |
+| `parrainage.php` | Parrainage (v6.0) : lien entre deux codes ; un mois offert au parrain quand le filleul prend Plus |
+| `explique.php` | Plumo réexplique après 3 erreurs (v6.0) : 2 plumes, 40 par jour et par IP au plus |
+| `correction.php` | Correction par Plumo (v6.0) : note, points forts, conseils, version corrigée ; 5 plumes ; texte non conservé |
 
 ## Sécurité
 - Aucun secret dans le dépôt ni dans le navigateur : clés Stripe, Claude et clé privée restent dans `config-ami.php` et le `.pem`, hors du site.

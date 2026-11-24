@@ -55,13 +55,18 @@
 <tr><td>Battles à distance</td><td>Le surnom affiché et les réponses de la partie.</td><td>Effacé après 12 secondes d’absence (présence) et 2 minutes (messages).</td></tr>
 <tr><td>Abonnement Plus</td><td>Un code d’abonnement anonyme (AMI-…). Le paiement est géré par Stripe sur le site, ou par Google Play / l’App Store dans l’appli : nous ne voyons jamais la carte bancaire. Pour un achat dans l’appli, le jeton d’achat est envoyé à notre serveur, qui le vérifie auprès de Google ou d’Apple.</td><td>Le temps de l’abonnement, puis la durée légale de conservation des données de facturation.</td></tr>
 <tr><td>Fréquentation (anonyme)</td><td>Une fois par jour au plus : « le jeu a été ouvert » ou « une partie a commencé », et le type d’appareil (site, Android, iPhone). Aucun identifiant, aucun cookie, ni code ni prénom. Rien n’est envoyé si ton navigateur demande « Ne pas me suivre ».</td><td>Seuls des totaux par jour sont gardés.</td></tr>
+<tr><td>Ligue de la semaine (v6.0)</td><td>Le pseudo choisi (pas de nom de famille ni de numéro : le jeu les refuse), les points de la semaine et un jeton d’appareil tiré au hasard, dont le serveur ne garde que l’empreinte.</td><td>Effacé après 15 jours au plus (la semaine en cours et la précédente) ; quitter la ligue efface ta ligne de la semaine.</td></tr>
+<tr><td>Défi de classe (v6.0)</td><td>Côté élève : le pseudo ou le prénom, et le score (bonnes réponses sur le total). Côté prof : le nom du défi, la matière et le niveau. La clé du prof n’est gardée qu’en empreinte.</td><td>Effacé 60 jours après la création du défi.</td></tr>
+<tr><td>Parrainage (v6.0)</td><td>Les deux codes d’abonnement anonymes (AMI-…) : celui de la famille qui invite et celui de la famille invitée. Aucun nom, aucune adresse.</td><td>2 ans au plus.</td></tr>
+<tr><td>Plumo réexplique / Correction par Plumo (v6.0)</td><td>La question, la bonne réponse et la règle ; ou le texte écrit par l’élève (le jeu demande de n’y mettre rien de personnel). Le code d’abonnement pour décompter les plumes.</td><td>Le texte n’est pas conservé : il est transmis à l’IA puis oublié. Seul le décompte des plumes est gardé.</td></tr>
+<tr><td>Oral noté (v6.0, seulement si un parent l’autorise)</td><td>Ami des mots n’envoie aucun son. La reconnaissance vocale est faite par le service du navigateur ou du téléphone (souvent Google ou Apple), qui reçoit la voix le temps de la reconnaissance, selon ses propres conditions.</td><td>Rien n’est gardé par Ami des mots.</td></tr>
 <tr><td>Protection contre les abus</td><td>Une empreinte de l’adresse IP (non réversible).</td><td>Quelques minutes.</td></tr>
 </table>
 
 <h3>Sous-traitants</h3>
 <ul>
 <li><strong>OVH</strong> (France) : hébergement du serveur.</li>
-<li><strong>Anthropic</strong> (États-Unis) : génération et tri des vannes par IA (chaque vanne écrite par l’IA est marquée 🤖 dans le jeu). Seul le texte du jeu est transmis, sans donnée personnelle. Transfert encadré par <span class="a-completer">les clauses contractuelles types de la Commission européenne (à vérifier dans le contrat)</span>.</li>
+<li><strong>Anthropic</strong> (États-Unis) : génération et tri des vannes, réexplications et corrections de textes par IA (chaque vanne écrite par l’IA est marquée 🤖 dans le jeu). Seul le texte du jeu est transmis, sans donnée personnelle. Transfert encadré par <span class="a-completer">les clauses contractuelles types de la Commission européenne (à vérifier dans le contrat)</span>.</li>
 <li><strong>Stripe</strong> (Irlande / États-Unis) : paiement de Plus sur le site, avec sa propre <a href="https://stripe.com/fr/privacy" rel="noopener">politique de confidentialité</a>.</li>
 <li><strong>Google</strong> et <strong>Apple</strong> : paiement de Plus dans l’appli téléchargée depuis leur store, selon leurs propres conditions.</li>
 </ul>

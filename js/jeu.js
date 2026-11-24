@@ -17,7 +17,8 @@
   // ── Réglages du produit ───────────────────────────────────────────
   const CONFIG = window.CONFIG_JEU = Object.assign({
     // Où trouver les voix enregistrées (dossier audio/ de ReParole).
-    AUDIO_BASE:'https://reparole.fr/audio/',
+    CONTACT:'',   // adresse de contact affichée aux parents (ex. contact@amidesmots.fr), réglée par outils/configurer.js
+    AUDIO_BASE:'audio/',   // v6.0 : les sons sont servis par le site lui-même (outils/copier-sons.js) ; absent → voix du téléphone
     // ── Gratuit / Ami des mots Plus (abonnement mensuel) ──
     // Phase de lancement : tout l'univers est ouvert gratuitement.
     // Le système Plus est conservé dans le code mais désactivé temporairement.
@@ -89,6 +90,12 @@
     return r;
   }
 
+  // v6.0 : les nouveautés vivent dans des modules séparés (js/mod-*.js) pour ne plus grossir ce fichier.
+  // Un module ajoute des actions (data-a), des cartes dans les écrans, et écoute les réponses ; il passe par AMI_MODULES.api.
+  const MODULES = window.AMI_MODULES = Object.assign({ actions:{}, hooks:{ reponse:[], question:[] }, cartes:{ battle:[], matiere:[], parents:[], anglais:[], accueil:[], plus:[] } }, window.AMI_MODULES || {});
+  if(!MODULES.cartes.plus) MODULES.cartes.plus = [];
+  if(!MODULES.hooks.question) MODULES.hooks.question = [];
+  const cartesModules = zone => (MODULES.cartes[zone] || []).map(f => { try{ return f(base.ui) || ''; }catch(e){ return ''; } }).join('');
   // v5.99.3 : textes des écrans dans la langue de l'interface (js/textes-ecrans.js) ; le français reste le français.
   function TXT(fr){ let l = 'fr'; try{ l = base.ui; }catch(e){} return window.L ? window.L(fr, l) : fr; }
   const UI = Object.keys(window.TEXTES);
@@ -496,6 +503,7 @@
       chapeau:'<ellipse cx="50" cy="15" rx="22" ry="4.5" fill="#2b2b2b"/><path d="M36 15 L38 -3 L62 -3 L64 15 Z" fill="#2b2b2b"/><rect x="37.6" y="9" width="24.8" height="3.6" fill="#d9534f"/>',
       couronne:'<path d="M34 16 L36 0 L43 9 L50 -3 L57 9 L64 0 L66 16 Z" fill="#f2c230" stroke="#c99a12" stroke-width="1"/><circle cx="50" cy="8" r="2" fill="#d9534f"/>'
     };
+    for(const [k, x] of Object.entries(accModules())) if(x.plat) acc[k] = x.plat;   // v6.0 : tenues de saison
     const dessus = porte.filter(k => acc[k] && k !== 'echarpe' && k !== 'noeud').map(k => acc[k]).join('');
     const cou = porte.filter(k => k === 'echarpe' || k === 'noeud').map(k => acc[k]).join('');
     const bouge = sobre() || opts.immobile ? '' : ' ami-bouge';
@@ -516,6 +524,7 @@
     if(opts.immobile) return svg;
     // v5.93 : toujours le Plumo en 3D ; les accessoires du vestiaire sont posés par-dessus l'image.
     const CADRES = { echarpe:'0 0 560 613', noeud:'38 82 24 16', lunettes:'0 0 560 613', chapeau:'27 -5 46 25', couronne:'32 -5 36 23' };
+    for(const [k, x] of Object.entries(accModules())) if(x.cadre) CADRES[k] = x.cadre;
     // v5.96 : lunettes dessinées sur l'image 3D elle-même (mêmes coordonnées que img/ami-3d-560.webp) :
     // chaque verre est centré sur un œil, inclinées comme la tête, l'œil de droite plus petit (vu de trois quarts).
     const ACC_3D = {
@@ -640,7 +649,7 @@
           '<label>' + esc(t('je_parle')) + '<select id="ui">' + opts(parleVisibles(), base.ui) + '</select></label>' +
           '<label>' + esc(t('j_apprends')) + '<select id="cible">' + opts(apprendreVisibles(), base.cible) + '</select></label>' +
         '</div></div></section>' +
-      '<main class="accueil">' +
+      '<main class="accueil">' + cartesModules('accueil') +
         (s >= 2 && !fait ? '<p class="serie-danger" role="status">' + esc(tt('serie_danger', s)) + '</p>' : '') +
         (function(){ const b = bilanAdaptatif(); return b.total ? '<section class="carte-apprentissage" aria-label="Progression adaptative"><strong>🧠 Ton apprentissage</strong><span>' + b.aRevoir + TXT(' notion(s) à revoir · ') + b.maitrisees + TXT(' maîtrisée(s) · ') + b.total + ' suivie(s)</span></section>' : ''; })() +
         '<button class="gros defi' + (defiFait ? ' fait' : '') + '" data-a="defi">' + (defiFait ? '✓ ' : '⚡ ') + esc(t('defi')) + '</button>' +
@@ -1373,6 +1382,8 @@
       if(!j.jours.includes(d)){ j.jours = j.jours.concat(d).slice(-60); majRappels(); }
       const jours = Object.keys(j.journal).sort(); while(jours.length > 21) delete j.journal[jours.shift()];
     }catch(e){}
+    // v6.0 : les modules (ligue, saisons…) apprennent chaque réponse.
+    for(const f of MODULES.hooks.reponse) try{ f(ok, matiere); }catch(e){}
   }
   setInterval(() => { try{ if(document.hidden || !document.querySelector('main') || document.querySelector('main.accueil')) return;
     const j = J(), d = jour(); j.journal = j.journal || {}; const e = j.journal[d] = j.journal[d] || {}; e.min = (e.min || 0) + 1; garder(); }catch(e){} }, 60000);
@@ -1959,7 +1970,7 @@
       carte('histoires', '📖', 'Mini-histoires', TXT('Lis et écoute de petites histoires du village'), '📖 ' + e.histoires.length + '/' + (window.HISTOIRES ? HISTOIRES.liste.length : 0)) +
       (jeuxEcouteCaches() ? '' : carte('repeter', '🗣️', TXT('Répète après Plumo'), TXT('Dis la phrase, réécoute-toi, compare'), '🗣️ ' + e.repete.length + '/' + (window.PARCOURS ? PARCOURS.REPETER.length : 0))) +
       carte('battle', '🎤', 'Battles', TXT('Rap, vannes, en famille, entre potes, en direct'), '🏆 ' + e.victoires + ' victoire' + (e.victoires > 1 ? 's' : '')) +
-      TXT('</div><h3 class="section-anglais">😂 Pour rire (et apprendre)</h3><div class="cartes-anglais">') +
+      cartesModules('anglais') + TXT('</div><h3 class="section-anglais">😂 Pour rire (et apprendre)</h3><div class="cartes-anglais">') +
       carte('trompe', '🦉', TXT('Plumo se trompe exprès'), TXT('Trouve ses fautes et corrige-le !'), '🔔') +
       (jeuxEcouteCaches() ? '' : carte('oreilles', '👂', TXT('Le jeu des oreilles'), TXT('ship ou sheep ? three ou tree ?'), '👂')) +
       carte('vraifaux', '🤥', 'True or false?', TXT('Plumo raconte des bêtises…'), '🤥') +
@@ -2532,7 +2543,7 @@
       [0, 1, 2, 3].map(i => TXT('<p><label>Joueur ') + (i + 1) + (i > 1 ? TXT(' (facultatif)') : '') + ' : <input class="champ-pseudo" id="pote' + i + '" maxlength="12" value="' + esc(noms[i] || '') + '" placeholder="Pseudo"></label></p>').join('') +
       (window.TRASH_TALK ? '<p class="choix-longueur"><button class="moyen' + (base.potesTrash ? ' plein' : '') + '" data-a="potes-trash" aria-pressed="' + !!base.potesTrash + '">🥊 Trash talk : ' + (base.potesTrash ? 'ON' : 'OFF') + '</button></p>' : '') +
       TXT('<p><button class="gros" data-a="potes-go">⚔️ Lancer la battle !</button></p><p class="aide" id="potes-msg" role="status"></p>') +
-      TXT('<h3>Autres façons de battle</h3><div class="cartes-anglais">') +
+      TXT('<h3>Autres façons de battle</h3><div class="cartes-anglais">') + cartesModules('battle') +
       TXT('<button class="carte-anglais" data-a="defi-pote"><span class="ic">📨</span><strong>Défier un pote (anglais)</strong><small>Par lien : mêmes questions, on compare</small></button>') +
       (window.MATHS ? TXT('<button class="carte-anglais" data-a="maths-defi"><span class="ic">🔗</span><strong>Défier un pote (maths)</strong><small>Par lien, à ton niveau</small></button>') : '') +
       TXT('<button class="carte-anglais" data-a="salon"><span class="ic">🛸</span><strong>Salon en direct</strong><small>Chacun sur son téléphone, en même temps</small></button>') +
@@ -2821,11 +2832,14 @@
     fetch(CONFIG.API_VISITE, { method:'POST', cache:'no-store', credentials:'omit', keepalive:true, headers:{ 'Content-Type':'application/json' }, body:JSON.stringify({ e, p:['android', 'ios'].includes(p) ? p : 'web' }) }).catch(() => {});
   }
   function questionsGo(liste, opts){ compterVisite('partie'); qz = Object.assign({ liste, i:0, bonnes:0, repondu:false }, opts); afficherQuestion(); }
+  // v6.0 : chrono de la veille de contrôle (mm:ss restantes), mis à jour chaque seconde.
+  function chrono(fin){ const r = Math.max(0, Math.ceil((fin - Date.now()) / 1000)); return Math.floor(r / 60) + ':' + String(r % 60).padStart(2, '0'); }
+  setInterval(() => { if(!qz || !qz.finA) return; const e = document.getElementById('chrono-veille'); if(e) e.textContent = '⏱️ ' + chrono(qz.finA); if(Date.now() >= qz.finA && !qz.repondu && e) afficherQuestion(); }, 1000);
   function afficherQuestion(){
     const z = qz; if(!z) return coinAnglais();
-    if(z.i >= z.liste.length) return z.fin(z);
+    if(z.i >= z.liste.length || (z.finA && Date.now() >= z.finA)) return z.fin(z);   // v6.0 : finA = fin du chrono (veille de contrôle)
     const q = z.liste[z.i]; z.repondu = false; z.options = A_EN().melanger([q.bon].concat(q.faux.map(f => f.en)));
-    poser(barre(z.retour || 'anglais') + '<main class="piege-ecran"><p class="piege-cat">' + esc(z.titre) + ' · ' + (z.i + 1) + '/' + z.liste.length + '</p>' +
+    poser(barre(z.retour || 'anglais') + '<main class="piege-ecran">' + (z.finA ? '<p class="chrono-veille" id="chrono-veille" role="timer">⏱️ ' + chrono(z.finA) + '</p>' : '') + '<p class="piege-cat">' + esc(z.titre) + ' · ' + (z.i + 1) + '/' + z.liste.length + '</p>' +
       (q.contexte ? TXT('<details class="contexte-exo" open><summary>📄 Énoncé de l’exercice</summary><p>') + esc(q.contexte).replace(/\n/g, '<br>') + '</p></details>' : '') +
       '<div class="piege-haut"><div class="ami-moyen" id="ami-qz">' + (q.image ? image(q.image, 'pic-moyenne') : z.prof ? profPi('content') : ami('content')) + '</div>' +
       '<div><p class="piege-consigne">' + esc(q.consigne) + '</p><p class="piege-fr">' + esc(q.enonce || '') + (q.ecoute ? ' <button class="bouton-rond" data-a="qz-ecouter" aria-label="Écouter">🔊</button>' + (q.lent ? ' <button class="bouton-rond" data-a="qz-lent" aria-label="Écouter lentement">🐢</button>' : '') : '') + '</p>' + (q.trad ? traduire(q.trad) : '') + '</div></div>' +
@@ -2861,6 +2875,7 @@
     z.repondu = true; const juste = choix === q.bon; if(juste) z.bonnes++;
     noterJournal(q.matiere || (z.prof || q.chap ? 'maths' : window.SCIENCES && SCIENCES.Q.some(x => x[0] === q.id) ? 'sciences' : 'anglais'), juste);
     carnetErreurs(q, juste);
+    for(const f of (MODULES.hooks.question || [])) try{ f(juste, q, z); }catch(e){}   // v6.0 : modules (réexplication…)
     if(q.apres) q.apres(juste, choix); garder();
     document.querySelectorAll('.piege-opt').forEach((b, k) => { b.disabled = true; if(z.options[k] === q.bon) b.classList.add('ok'); else if(k === i) b.classList.add('ko'); });
     let f = !juste && (q.vanneDe ? { vanne:q.vanneDe(choix) } : q.faux.find(x => x.en === choix));
@@ -2875,7 +2890,7 @@
         const neuves = niv.filter(l => m.age(l) < 0), l = neuves.length ? neuves[Math.floor(Math.random() * neuves.length)] : niv.slice().sort((a, b) => m.age(b) - m.age(a))[0];
         retenirVanne(l); f.vanne = l + ' ' + f.vanne; } }
     // v5.77 : 🥊 trash talk — Plumo chambre la réponse et se la raconte ; il compte les séries.
-    const TT = window.TRASH_TALK, trash = !!TT && (z.trash || ((z.prof || q.matiere) && (J().maths || {}).ton === 'trash'));
+    const TT = window.TRASH_TALK, gbQ = /^gb-/.test(q.matiere || ''), trash = !!TT && !gbQ && (z.trash || ((z.prof || q.matiere) && (J().maths || {}).ton === 'trash'));   // v6.1 : gbQ = programme anglais, vannes françaises exclues
     const suiteAvant = z.suite || 0;
     z.suite = juste ? Math.max(0, z.suite || 0) + 1 : Math.min(0, z.suite || 0) - 1;
     let bravoTrash = '';
@@ -2884,12 +2899,12 @@
       else if(f){ const x = Math.random(), pool = k >= 3 ? TT.SERIE_KO : x < 0.3 && TT.TCHATCHE ? TT.TCHATCHE : x < 0.55 && TT.IMAGEES ? TT.IMAGEES : TT.ENTREE; f = Object.assign({}, f, { vanne:(pool === TT.IMAGEES ? '🥊 ' : '') + TT.choisir(pool, { k }, m) + ' ' + (f.vanne || '') }); } }
     // v5.80 : en ton taquin ou cash, une expression imagée de temps en temps (sur la réponse, jamais sur le joueur).
     // v5.82 : une vanne trop courte (« Non. ») est toujours relevée par une expression imagée ou de la tchatche ; sinon, une fois sur quatre.
-    else if(TT && TT.IMAGEES && f && f.vanne && (z.prof || q.matiere) && (J().maths || {}).ton !== 'doux' && (String(f.vanne).length < 45 || (['taquin', 'sanspitie'].includes((J().maths || {}).ton || 'taquin') && Math.random() < 0.25))){
+    else if(TT && TT.IMAGEES && f && f.vanne && !gbQ && (z.prof || q.matiere) && (J().maths || {}).ton !== 'doux' && (String(f.vanne).length < 45 || (['taquin', 'sanspitie'].includes((J().maths || {}).ton || 'taquin') && Math.random() < 0.25))){
       const court = /^(Non\.?|Non :.*)$/.test(String(f.vanne).trim()), drole = TT.choisir(Math.random() < 0.7 ? TT.IMAGEES : TT.TCHATCHE.map(x => x.replace(/^🥊 /, '')), {}, memoireVannes());
       f = Object.assign({}, f, { vanne:drole + (court && /^Non\.?$/.test(String(f.vanne).trim()) ? '' : ' ' + f.vanne) }); }
     if(f && f.vanne) noterBetisier(f.vanne);
     // v5.90 : une vanne aussi quand c'est juste (sauf si l'écran a son propre « bravo »).
-    const anglaisSeul = (z.lang || q.lang) !== 'fr' && !q.matiere && !z.prof;
+    const anglaisSeul = gbQ || ((z.lang || q.lang) !== 'fr' && !q.matiere && !z.prof);
     if(juste && !bravoTrash && !z.bravo && TT && TT.bonneReponse) bravoTrash = TT.bonneReponse((J().maths || {}).ton || 'taquin', z.suite, memoireVannes(), anglaisSeul);
     // v5.91 : 3 d'affilée → Plumo prévient qu'il appelle ses potes ; la 4e → la bande débarque et vanne Plumo (jamais le joueur).
     let bande = null, raccrochage = '';
@@ -3140,7 +3155,7 @@
     const err = Object.entries(J().erreurs || {}).map(([k, n]) => [libelleErreur(k), n]).filter(x => x[0]).sort((a, b) => b[1] - a[1]).slice(0, 6);
     const der = e.revisions.length ? new Date(e.revisions[e.revisions.length - 1] * 864e5).toLocaleDateString('fr-FR') : 'jamais';
     const ligne = (ic, t, v) => '<li><span>' + ic + ' ' + t + '</span><strong>' + v + '</strong></li>';
-    poser(barre('anglais') + TXT('<main class="coin-anglais parents"><h2>👪 Espace parents</h2>') +
+    poser(barre('anglais') + TXT('<main class="coin-anglais parents"><h2>👪 Espace parents</h2>') + cartesModules('parents') +
       TXT('<p class="pieges-intro">Niveau réussi : <strong>') + (nv ? nv + ' / 3' : TXT('pas encore')) + TXT('</strong> · Révisions : <strong>') + e.revisions.length + ' jour' + (e.revisions.length > 1 ? 's' : '') + TXT('</strong> (dernière : ') + der + TXT(', série : ') + serieRevisions() + ')</p>' +
       '<ul class="pieges-cats">' + ligne('📚', TXT('Mots anglais bien connus'), s.mots) + ligne('🪤', TXT('Pièges déjoués'), s.pieges + '/' + (window.PIEGES ? PIEGES.liste.length : 0)) + ligne('☕', TXT('Situations réussies'), s.situations + '/' + A_EN().SITUATIONS.length) +
         ligne('📖', TXT('Histoires lues'), s.histoires + '/' + (window.HISTOIRES ? HISTOIRES.liste.length : 0)) + ligne('✍️', TXT('Phrases parfaites en dictée'), s.dictees) + ligne('🗣️', TXT('Phrases dites à voix haute'), s.repete) + ligne('🎤', TXT('Battles gagnées'), s.victoires) + '</ul>' +
@@ -3220,8 +3235,12 @@
         return '<div class="acc' + (dispo ? '' : ' verrou') + '"><div class="ami-mini">' + ami('content', { porte:[k], immobile:true }) + '</div><strong>' + esc(t('acc_' + k)) + '</strong>' +
           (dispo ? '<button class="moyen' + (porte ? '' : ' plein') + '" data-a="porter" data-v="' + k + '">' + esc(porte ? t('enlever') : t('mettre')) + '</button>'
                  : '<span class="seuil">🔒 ' + esc(t('a_partir', n)) + '</span>') + '</div>';
-      }).join('') + '</div></main>');
+      }).join('') + Object.entries(accModules()).map(([k, x]) => { const dispo = x.debloque(), porte = J().porte.includes(k);
+        return '<div class="acc saison' + (dispo ? '' : ' verrou') + '"><div class="ami-mini">' + ami('content', { porte:[k], immobile:true }) + '</div><strong>' + esc(x.nom(base.ui)) + '</strong>' +
+          (dispo ? '<button class="moyen' + (porte ? '' : ' plein') + '" data-a="porter" data-v="' + k + '">' + esc(porte ? t('enlever') : t('mettre')) + '</button>' : '<span class="seuil">🔒 ' + esc(x.condition(base.ui)) + '</span>') + '</div>'; }).join('') + '</div></main>');
   }
+  // v6.0 : accessoires apportés par les modules (tenues de saison) : { plat, cadre, nom(ui), condition(ui), debloque() }.
+  function accModules(){ return (MODULES.accessoires && typeof MODULES.accessoires === 'object') ? MODULES.accessoires : {}; }
   // v5.67 : graphismes Auto / Normal / Ultra (gardé sur l'appareil, partagé avec le village 3D et Mots City).
   function reglageGraphismes(){
     const G = window.GRAPHISMES; if(!G) return '';
@@ -3275,7 +3294,7 @@
       '<div class="actions"><button class="moyen" data-a="sauvegarder">⬇️ ' + esc(t('sauvegarder')) + '</button><button class="moyen" data-a="restaurer">⬆️ ' + esc(t('restaurer')) + '</button></div>' +
       '<input type="file" id="fichier-sauvegarde" accept="application/json,.json" hidden><p id="etat-sauvegarde" class="petit" role="status"></p>' +
       '<h3>' + esc(t('apropos')) + '</h3><p>' + esc(t('apropos_texte')) + '</p><p class="petit">' + esc(t('apropos_voix')) + '</p>' +
-      '<p class="petit">Ami des mots · ReParole (reparole.fr)<br>David Colucci — colucci.david@yahoo.fr · GitHub Pages (GitHub, Inc.)</p>' +
+      '<p class="petit">Ami des mots' + (CONFIG.CONTACT ? ' · ' + esc(CONFIG.CONTACT) : '') + ' · <a href="legal.html#mentions">' + esc(tt('mentions')) + '</a></p>' +
       '<p><button class="moyen" data-a="effacer-tout">' + esc(t('effacer_progres')) + '</button></p></main>');
   }
 
@@ -3468,7 +3487,7 @@
     const c = (a, v, ic, t1, t2) => '<button class="carte-anglais" data-a="' + a + '"' + (v ? ' data-v="' + v + '"' : '') + '><span class="ic">' + ic + '</span><strong>' + t1 + '</strong><small>' + t2 + '</small></button>';
     poser(barre('accueil') + TXT('<main class="coin-anglais matieres-ecran"><h2>📚 Matières</h2><p class="pieges-intro">Le programme de la 6e au bac, avec Plumo qui vanne les erreurs (jamais toi) et t’explique la bonne réponse.</p>') +
       (window.EPREUVES ? ongletsExamens('matieres') : '') +
-      '<div class="cartes-anglais">' +
+      '<div class="cartes-anglais">' + cartesModules('matiere') +
         ((J().carnet || []).length ? c('carnet-erreurs', '', '🎯', 'Mes erreurs (' + J().carnet.length + ')', TXT('Les questions ratées, à revoir avant un contrôle : une bonne réponse les retire')) : '') +
         c('matiere', 'francais', '📝', TXT('Français'), TXT('Conjugaison, orthographe, grammaire, figures de style, littérature')) +
         (M.trouver('lespagnol') ? c('matiere', 'lespagnol', '🇪🇸', TXT('Espagnol (LVB, 5e → bac)'), TXT('Ser ou estar, passé, subjonctif, faux amis')) : '') +
@@ -3670,14 +3689,15 @@
         : '<p class="gros desactive" aria-disabled="true">' + esc(t('bientot')) + '</p>') +
       '<p class="aide" id="achat-etat" role="status" aria-live="polite"></p>' +
       (natif ? '<p><button class="moyen" data-a="plus-restaurer">🔄 ' + esc(tt('restaurer')) + '</button></p>' : (CONFIG.LIEN_GESTION ? '<p class="petit"><a href="' + esc(CONFIG.LIEN_GESTION) + '" rel="noopener">' + esc(tt('gerer')) + '</a></p>' : '')) +
-      blocPlumes() +
+      blocPlumes() + cartesModules('plus') +
       '<p class="petit">' + esc(t('gratuit_reste')) + '</p>' +
       (CONFIG.API_CADEAU ? '<details class="deja"><summary>🎁 ' + esc(tt('cadeau_ai')) + '</summary><form id="form-cadeau" class="form"><label>' + esc(tt('cadeau_code')) +
         '<input id="cadeau" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="CADEAU-XXXX-XXXX"></label><button class="moyen plein" type="submit">' + esc(tt('utiliser')) + '</button><p id="cadeau-etat" role="status"></p></form></details>' : '') +
       (CONFIG.API_ABONNEMENT ? '<details class="deja"><summary>' + esc(t('deja_abonne')) + '</summary><form id="form-code" class="form"><label>' + esc(t('code_abo')) +
         '<input id="code" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="AMI-XXXX-XXXX-XXXX"></label><button class="moyen plein" type="submit">' + esc(t('verifier')) + '</button><p id="code-etat" role="status"></p></form></details>' : '') +
       '<p class="petit"><a href="legal.html#cgv">' + esc(tt('cgv')) + '</a></p></main>');
-    afficherSolde();
+    afficherSolde(); compterVisite('plus_vu');   // v6.0 : entonnoir anonyme
+    document.querySelectorAll('.carte-formule').forEach(x => x.addEventListener('click', () => compterVisite('plus_clic'), { once:true }));
     const f = $('#form-code');
     if(f) f.addEventListener('submit', async ev => {
       ev.preventDefault();
@@ -3734,7 +3754,8 @@
           plumes:Math.min(1e6, Math.max(0, Math.floor(Number(j.plumes)) || 0)),
           etoiles:filtrerObjet(j.etoiles, CLE_ETOILE, v => [1, 2, 3].includes(v), 5000),
           jours:dates(j.jours), defis:dates(j.defis),
-          porte:Array.isArray(j.porte) ? j.porte.filter(k => ACCESSOIRES.some(a => a[0] === k)) : [],
+          porte:Array.isArray(j.porte) ? j.porte.filter(k => ACCESSOIRES.some(a => a[0] === k) || Object.prototype.hasOwnProperty.call(accModules(), k)) : [],
+          badges:Array.isArray(j.badges) ? j.badges.filter(x => typeof x === 'string' && /^\d{4}-\d{2}$/.test(x)).slice(-60) : [],
           mots:filtrerObjet(j.mots, CLE_MOT, v => v && [0, 1, 2, 3, 4].includes(v.b) && DATE.test(v.d), 5000),
           pieges:window.PIEGES ? window.PIEGES.propre(j.pieges) : {},
           anglais:j.anglais && typeof j.anglais === 'object' ? JSON.parse(JSON.stringify(j.anglais)) : {},
@@ -3785,6 +3806,7 @@
   document.addEventListener('click', ev => {
     const b = ev.target.closest('[data-a]'); if(!b) return;
     const v = b.dataset.v;
+    if(Object.prototype.hasOwnProperty.call(MODULES.actions, b.dataset.a)) return MODULES.actions[b.dataset.a](v, b, ev);
     if(COIN_DE[b.dataset.a] && !coinOuvert(COIN_DE[b.dataset.a])){ ev.preventDefault(); return ecranPlus(retourCoin(COIN_DE[b.dataset.a])); }
     if(b.tagName === 'A' && b.dataset.a === 'plus') ev.preventDefault();
     switch(b.dataset.a){
@@ -4043,7 +4065,8 @@
       case 'son': base.son = !base.son; garder(); bruit('juste'); return reglages();
       case 'rappel': { const r = base.rappel = Object.assign({ heure:18 }, base.rappel, { actif:!(base.rappel && base.rappel.actif) }); garder();
         return majRappels().then(x => { if(r.actif && x && x.raison === 'permission'){ r.actif = false; garder(); reglages(); const e = document.getElementById('etat-rappel'); if(e) e.textContent = tt('rappel_refuse'); } else reglages(); }); }
-      case 'porter': { const j = J(); j.porte = j.porte.includes(v) ? j.porte.filter(x => x !== v) : j.porte.concat(v); garder(); return vestiaire(); }
+      case 'porter': { const j = J(), m = accModules()[v]; if(!j.porte.includes(v) && !(ACCESSOIRES.some(a => a[0] === v && j.plumes >= a[1]) || (m && m.debloque()))) return vestiaire();
+        j.porte = j.porte.includes(v) ? j.porte.filter(x => x !== v) : j.porte.concat(v); garder(); return vestiaire(); }
       case 'effacer-tout':
         if(!b.dataset.ok){ b.dataset.ok = 1; b.textContent = t('confirmer'); return; }
         Object.assign(J(), { plumes:0, etoiles:{}, jours:[], porte:[], mots:{}, trophees:[], defis:[], pieges:{}, anglais:{}, erreurs:{}, pasDrole:[], vannesAimees:[], notesVannes:{}, vannesFamille:[], betisier:[], avent:[], maison:{ achats:[], places:{} }, gag:0, maths:{} }); garder(); return accueil();
@@ -4090,6 +4113,14 @@
   if(retourPaiement) [5000, 15000, 40000].forEach(ms => setTimeout(() => { if(!plus()) rafraichir(true); }, ms));
   if(boucheDispo()) try{ Articulation.init(); }catch(e){}
   if('serviceWorker' in navigator && location.protocol === 'https:') navigator.serviceWorker.register('sw.js').catch(() => {});
+  // v6.0 : ce que les modules peuvent utiliser (rien d'autre).
+  MODULES.api = { base:() => base, J, garder, poser, barre, esc, t, tt, TXT, jour, questionsGo, ami, annonce, bruit, plus, accueil, CONFIG,
+    etatMatieres, matiereAccueil, matieresAccueil, noterErreur, codePlumes, plumesActives, retour:() => { qz = null; return accueil(); },
+    serieMatiere:(id, cible, n, niveau) => window.MATIERES ? MATIERES.serie(id, cible, niveau || etatMatieres().niveau, n, Math.floor(Math.random() * 1e9), etatMaths().ton) : [],
+    serieMaths:(n, niveau, graine) => window.MATHS ? MATHS.serie(niveau || etatMaths().niveau, n, graine != null ? graine : Math.floor(Math.random() * 1e9), etatMaths().ton) : [], etatMaths, questionsBattle:typeof questionsBattle === 'function' ? questionsBattle : null, cartesModules };
+  // v6.0 : liens d'invitation (?ligue=, ?classe=, ?parrain=) et autres démarrages de modules.
+  { const go = () => setTimeout(() => { for(const f of (window.AMI_MODULES.auDemarrage || [])) try{ f(); }catch(e){} }, 0);
+    if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded', go); else go(); }
   window.AmiDesMots = { questionsGo, formulesOffertes, appliquerCertificat, qzBonne:() => qz && qz.liste[qz.i] ? qz.liste[qz.i].bon : null, CLE_OFFRE, verifierOffre, base, J, affiche, fnv1a, urlVoix, accueil, themes, choisirJeu, commencer, lettresPossibles, distincts, motsDu, aDire, CATALOGUE, MECAS, disponible, nomJeu, aRevoir, noter, jour, defi, revoir, lecon, astuces, aToi, blague, carnet, noteVoix, sansEmojis, direPhrase, direEcoute, iaPrecharger, iaPrendre, vanneObjets, avecArticle, astuce, niveauHumour, fousRires, reglages, CONFIG, COINS, coinOuvert, offreLue, facile, nbMots, restaurer, verifierJeton, plus, ecranPlus, formatCode, rafraichir,
     get etat(){ return J(); } };
   garder();

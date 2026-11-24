@@ -1,5 +1,5 @@
 // Ami des mots — branche le site sur son serveur PHP, sans toucher au code du jeu.
-// node outils/configurer.js --serveur https://ami-des-mots.fr/serveur/ [--cle-publique '{"kty":"EC",…}']
+// node outils/configurer.js --serveur https://ami-des-mots.fr/serveur/ [--cle-publique '{"kty":"EC",…}'] [--contact contact@amidesmots.fr]
 //                           [--paiement https://buy.stripe.com/…] [--gestion https://billing.stripe.com/…]
 // Écrit js/config-site.js et ajoute l'adresse du serveur à la sécurité du contenu (CSP) de index.html.
 // Puis : npm run verifier
@@ -13,6 +13,7 @@ const https = (u, nom) => { let x; try{ x = new URL(u); }catch(e){} if(!x || x.p
 if(lire('--serveur') !== undefined){ const u = lire('--serveur'); c.SERVEUR = u ? https(u, '--serveur').href.replace(/\/?$/, '/') : ''; }
 if(lire('--cle-publique') !== undefined){ const k = JSON.parse(lire('--cle-publique')); if(k.d) { console.error('Refus : c’est la clé PRIVÉE. Donnez la clé publique.'); process.exit(1); } c.CLE_PUBLIQUE = { kty:k.kty, crv:k.crv, x:k.x, y:k.y }; }
 if(lire('--paiement') !== undefined) c.LIEN_PAIEMENT = lire('--paiement') ? https(lire('--paiement'), '--paiement').href : '';
+if(lire('--contact') !== undefined){ const m = String(lire('--contact') || '').trim(); if(m && !/^[^@\s]{1,64}@[^@\s]{1,190}\.[a-z]{2,}$/i.test(m)){ console.error('--contact doit être une adresse e-mail'); process.exit(1); } c.CONTACT = m; }
 if(lire('--gestion') !== undefined) c.LIEN_GESTION = lire('--gestion') ? https(lire('--gestion'), '--gestion').href : '';
 fs.writeFileSync(f, "// Ami des mots — réglages PUBLICS du site (aucun secret ici). Fabriqué par : node outils/configurer.js\n" +
   "// Vide : le jeu marche sans serveur (pas d'abonnement, pas de salon en direct, pas d'IA).\n" +

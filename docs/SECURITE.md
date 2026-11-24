@@ -36,6 +36,14 @@ Relecture de tous les points d'accès de `serveur-php/` comme le ferait un attaq
 - Le nombre de plumes d'un pack vient de l'admin, jamais du téléphone ; le pack Stripe est reconnu par son prix `price_…`, et ne peut pas ouvrir Plus « à vie ».
 - Plumes éteintes : rien ne change, aucun code n'est envoyé avec les vannes.
 
+## Ajouté en v6.0 : ligue, défi de classe, parrainage, IA, accès offerts
+- **Ligue** : pas de compte ; un jeton d'appareil au hasard dont le serveur ne garde que l'empreinte (sha256). Pseudos filtrés (juge de Plumo, pas de numéro), 60 points par envoi, 5 000 par semaine, 40 membres. Effacement après 15 jours.
+- **Défi de classe** : la clé du prof est montrée une seule fois et gardée en empreinte ; sans elle, ni résultats ni fermeture (403). Score borné au total, meilleur score gardé, 60 élèves, effacé après 60 jours.
+- **Parrainage** : seulement pour une famille jamais abonnée, une seule fois ; récompense au paiement réel (pas pendant l'essai), 12 par an ; le code cadeau passe par la même vérification que les autres.
+- **Accès offerts** : uniquement depuis l'admin (mot de passe + jeton anti-CSRF) ; Plus est donné par le certificat signé du serveur, jamais par un réglage du jeu. Un abonnement payé en cours n'est jamais écrasé.
+- **IA** : plumes prélevées avant l'appel et rendues si l'IA échoue ; limite par IP et par jour ; textes d'élèves non conservés ; réponses marquées 🤖.
+- **Oral noté** : désactivé sans l'accord d'un parent ; aucun son enregistré ni envoyé par le jeu.
+
 ## À faire au moment de la mise en ligne
 
 - Relancer `schema.sql` (nouvelle table `ami_visites`).
