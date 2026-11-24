@@ -1,0 +1,18 @@
+Ami des mots — version 6.8 : Droit, Médecine, Astrophysique et Philosophie complétés
+
+- ⚖️ Droit (licence) : 16 nouveaux chapitres, 76 questions : introduction au droit, histoire du droit, méthodologie
+  (cas pratique, fiche d'arrêt, dissertation), droit constitutionnel, droit administratif, libertés fondamentales,
+  finances publiques, droit de l'Union européenne et CEDH, droit international public, droit des personnes et de la
+  famille, contrats et responsabilité, droit des biens, droit pénal et procédure pénale, droit des affaires,
+  droit du travail, organisation de la justice et métiers. Nouveau « Partiel blanc de droit ».
+- 🩺 Médecine (PASS / LAS) : 10 nouveaux chapitres, 48 questions : biochimie, biologie cellulaire, histologie et
+  embryologie, génétique, biophysique et imagerie, pharmacologie, santé publique et biostatistiques, sémiologie,
+  premiers secours, éthique et droit de la santé. Nouveau « Concours blanc PASS / LAS ».
+- 🔭 Astrophysique : 9 nouveaux chapitres, 41 questions : système solaire, lumière et spectroscopie, gravitation et
+  lois de Kepler, vie des étoiles, galaxies et matière noire, cosmologie, exoplanètes, télescopes et missions,
+  trous noirs et ondes gravitationnelles. Nouveau « Partiel blanc d'astrophysique ».
+- 🤔 Philosophie (Tle) : les 17 notions du programme, chacune son chapitre (68 questions avec auteurs et œuvres) :
+  l'art, le bonheur, la conscience, le devoir, l'État, l'inconscient, la justice, le langage, la liberté, la nature,
+  la raison, la religion, la science, la technique, le temps, le travail, la vérité.
+- Toutes les vannes passent le juge ; les nouveaux chapitres sont marqués 🇫🇷 dans les autres langues tant qu'ils ne
+  sont pas traduits.
