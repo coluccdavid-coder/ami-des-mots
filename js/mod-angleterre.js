@@ -22,11 +22,13 @@
   const onglets = a => '<div class="onglets-matieres" role="tablist">' + [['gb-accueil', '📖 Revise'], ['gb-mocks', '📝 Mocks'], ['gb-passes', '🗂️ Past papers'], ['gb-officiel', '🏛️ Official']].map(([k, l]) =>
     '<button class="onglet' + (k === a ? ' actif' : '') + '" role="tab" aria-selected="' + (k === a) + '"' + (k === a ? '' : ' data-a="' + k + '"') + '>' + l + '</button>').join('') + '</div>';
   const poser = (retour, html) => api().poser(api().barre(retour) + '<main class="coin-anglais matieres-ecran" lang="en">' + html + '</main>');
+  // v6.7 : interface dans une autre langue que l'anglais → on le dit clairement (le contenu anglais n'est pas encore traduit).
+  const NOTE_LANGUE = {"fr": "Le programme anglais est pour l’instant en anglais ; sa traduction en français arrive.", "es": "El programa inglés está por ahora en inglés; la traducción al español llegará.", "de": "Der englische Lehrplan ist vorerst auf Englisch; die deutsche Übersetzung folgt.", "it": "Il programma inglese per ora è in inglese; la traduzione in italiano arriverà.", "pt": "O programa inglês está, por agora, em inglês; a tradução em português vai chegar."};
   // ───────── 📖 Revise ─────────
   function accueil(){
     const A = api(), e = etat(), J = A.J(); A.garder();
     const liste = G.LISTE.filter(m => G.chapitres(m.id, e.niveau).length);
-    poser('accueil', '<h2>🏴 England curriculum</h2><p class="pieges-intro">The national curriculum from Year 6 to Year 13: SATs, GCSE and A level. Plumo roasts your mistakes (never you) and always explains the right answer.</p>' + onglets('gb-accueil') +
+    poser('accueil', '<h2>🏴 England curriculum</h2><p class="pieges-intro">The national curriculum from Year 6 to Year 13: SATs, GCSE and A level. Plumo roasts your mistakes (never you) and always explains the right answer.</p>' + (NOTE_LANGUE[api().base().ui] ? '<p class="petit pas-traduit" lang="' + api().base().ui + '">🗣️ ' + esc(NOTE_LANGUE[api().base().ui]) + '</p>' : '') + onglets('gb-accueil') +
       '<div class="onglets-niveaux" role="tablist">' + G.NIVEAUX.map(n => '<button role="tab" aria-selected="' + (n === e.niveau) + '" class="onglet' + (n === e.niveau ? ' actif' : '') + '" data-a="gb-niveau" data-v="' + n + '" title="' + esc(G.ETAPES[n]) + '">' + n + '</button>').join('') + '</div>' +
       '<p class="petit">' + esc(G.NOMS[e.niveau] + ' · ' + G.ETAPES[e.niveau]) + '</p>' +
       '<div class="cartes-anglais">' + A.cartesModules('matiere') +

@@ -14,16 +14,28 @@
   // Petites phrases ajoutées selon le ton de Prof (doux / taquin / cash).
   const DOUX = ['Presque !', 'Pas grave, ça arrive.', 'Bonne tentative !'];
   const CASH = ['🔥 Sérieux ?', '🔥 Même pas en rêve.', '🔥 Raté dans les grandes largeurs.', '🔥 Plumo a failli tomber de sa branche.', '🔥 Respire. On recommence.', '🔥 Audacieux. Faux, mais audacieux.'];
-  function enQuestion(m, ch, x, ton, r){
+  // v6.7 : traductions des matières (js/mat-trad-xx.js). MATIERES_LANGUES[l] = { doux, cash, noms:{ matière:{ nom, ch:{ id:nom }, dom:{ domaine:nom } } },
+  // q:{ 'matière/chapitre':[ [énoncé, bonne, [[mauvaise, vanne], …], explication], … ] } } — même ordre que la banque française.
+  const LANGUE = () => { let l = 'fr'; try{ l = window.AmiDesMots.base.ui; }catch(e){ try{ l = document.documentElement.lang; }catch(e2){} } return l !== 'fr' && window.MATIERES_LANGUES && window.MATIERES_LANGUES[l] ? l : 'fr'; };
+  const D = () => { const l = LANGUE(); return l === 'fr' ? null : window.MATIERES_LANGUES[l]; };
+  const trad = (m, ch, i) => { const d = D(); const t = d && d.q && d.q[m.id + '/' + ch.id]; return t && i != null && t[i] ? t[i] : null; };
+  const traduit = (m, ch) => { const d = D(); const t = d && d.q && d.q[m.id + '/' + ch.id]; return !!(t && ch.banque && t.length === ch.banque.length); };
+  const langueDe = (m, ch) => (ch ? traduit(m, ch) : m && m.chapitres.some(c => traduit(m, c))) ? LANGUE() : 'fr';
+  const nom = m => { const d = D(), x = d && d.noms && d.noms[m.id]; return (x && x.nom) || m.nom; };
+  const nomChap = (m, c) => { const d = D(), x = d && d.noms && d.noms[m.id]; return (x && x.ch && x.ch[c.id]) || c.nom; };
+  const nomDom = (m, dom) => { const d = D(), x = d && d.noms && d.noms[m.id]; return (x && x.dom && x.dom[dom]) || dom; };
+  function enQuestion(m, ch, x, ton, r, idx){
+    const t = trad(m, ch, idx); if(t) x = t;
     const base = Array.isArray(x) ? { enonce:x[0], bon:x[1], faux:x[2].map(f => ({ en:f[0], vanne:f[1] })), regle:x[3], consigne:x[4] } : x;
     const faux = base.faux.filter(f => f && f.en !== base.bon).slice(0, 3).map(f => {
       let v = String(f.vanne || 'Raté !').replace(/\{f\}/g, f.en).replace(/\{j\}/g, base.bon);
-      if(ton === 'doux') v = DOUX[Math.floor(r() * DOUX.length)] + ' ' + (base.regle || '');
-      else if(ton === 'sanspitie') v = CASH[Math.floor(r() * CASH.length)] + ' ' + v;
+      const dd = t ? D() : null, DX = dd && dd.doux || DOUX, CX = dd && dd.cash || CASH;
+      if(ton === 'doux') v = DX[Math.floor(r() * DX.length)] + ' ' + (base.regle || '');
+      else if(ton === 'sanspitie') v = CX[Math.floor(r() * CX.length)] + ' ' + v;
       return { en:f.en, vanne:v };
     });
-    return { id:m.id + ':' + ch.id + ':' + base.enonce.slice(0, 40), chap:ch.id, matiere:m.id, lang:'fr',
-      consigne:(m.ic + ' ' + (base.consigne || ch.nom)), enonce:base.enonce, bon:base.bon, faux, regle:base.regle };
+    return { id:m.id + ':' + ch.id + ':' + (idx != null ? '#' + idx : base.enonce.slice(0, 40)), chap:ch.id, matiere:m.id, lang:t ? LANGUE() : 'fr',
+      consigne:(m.ic + ' ' + (base.consigne || (t ? nomChap(m, ch) : ch.nom))), enonce:base.enonce, bon:base.bon, faux, regle:base.regle };
   }
   function trouver(id){ return LISTE.find(m => m.id === id) || null; }
   // Chapitres d'un niveau (on garde ceux des niveaux d'avant quand le chapitre continue).
@@ -40,15 +52,16 @@
     const ordre = melanger(chs, r);
     while(out.length < n && essais++ < n * 12){
       const ch = ordre[out.length % ordre.length];
-      let x = null;
-      if(ch.gen && (!ch.banque || r() < .6)) x = ch.gen(r, niveau);
-      else if(ch.banque && ch.banque.length) x = ch.banque[Math.floor(r() * ch.banque.length)];
+      let x = null, idx = null;
+      // Langue traduite : on ne mélange pas des questions générées en français avec la banque traduite.
+      if(ch.gen && (!ch.banque || r() < .6) && !(traduit(m, ch) && !ch.genLangues)) x = ch.gen(r, niveau);
+      else if(ch.banque && ch.banque.length){ idx = Math.floor(r() * ch.banque.length); x = ch.banque[idx]; }
       if(!x) continue;
-      const q = enQuestion(m, ch, x, ton, r); if(vus.has(q.enonce + '|' + q.bon) || !q.faux.length) continue;
+      const q = enQuestion(m, ch, x, ton, r, idx); if(vus.has(q.enonce + '|' + q.bon) || !q.faux.length) continue;
       vus.add(q.enonce + '|' + q.bon); out.push(q);
     }
     return out;
   }
   function ajouter(m){ if(!trouver(m.id)) LISTE.push(m); }
-  window.MATIERES = { NIVEAUX, LISTE, ajouter, trouver, chapitres, niveauxDe, serie, hasard, melanger };
+  window.MATIERES = { NIVEAUX, LISTE, ajouter, trouver, chapitres, niveauxDe, serie, hasard, melanger, langue:LANGUE, langueDe, traduit, nom, nomChap, nomDom };
 })();
