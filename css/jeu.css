@@ -988,9 +988,9 @@ body::after{
 @keyframes ami3d-triste{0%,100%{transform:rotateZ(0)}50%{transform:rotateZ(-3deg) translateY(2px)}}
 .ami-3d-corps{position:relative;display:block;line-height:0}
 .ami-acc{position:absolute;pointer-events:none;overflow:visible}
-.ami-acc-echarpe{left:33%;top:46%;width:40%}
+.ami-acc-echarpe{left:0;top:0;width:100%;height:100%}
 .ami-acc-noeud{left:45%;top:49%;width:17%}
-.ami-acc-lunettes{left:30%;top:22%;width:44%;transform:rotate(-12deg)}
+.ami-acc-lunettes{left:0;top:0;width:100%;height:100%}
 .ami-acc-chapeau{left:30%;top:-4%;width:38%;transform:rotate(-6deg)}
 .ami-acc-couronne{left:35%;top:-2%;width:30%;transform:rotate(-6deg)}
 .partie{
@@ -1850,3 +1850,11 @@ a.lien-carte{ text-decoration:none; color:inherit; }
 .serie-danger{ position:relative; z-index:3; max-width:440px; margin:-30px auto 14px; grid-column:1/-1; padding:10px 14px; border-radius:14px; background:rgba(255,120,60,.16); border:1px solid rgba(255,150,90,.55); color:#ffe2d2; font-weight:800; text-align:center; }
 .reglage-rappels select{ background:#1f1b46; color:#fff; border:1px solid var(--bord); border-radius:10px; padding:.4em .6em; font:inherit; }
 .serie-danger ~ .gros.defi{ margin-top:0; }
+/* v5.96 : Plumo ne saute plus au survol (le survol « ultra » des boutons écrasait son centrage → il partait sur le côté, revenait, repartait…). */
+.perchoir .ami-grand, .perchoir .ami-grand:hover, html.gfx-ultra .perchoir .ami-grand:hover{ transform:translateX(-50%) !important; filter:none; }
+.ami-grand:hover .ami-3d, .ami-grand:focus-visible .ami-3d{ filter:drop-shadow(0 0 14px rgba(255,226,122,.55)) drop-shadow(0 9px 10px rgba(12,7,35,.35)); }
+.ami-grand, .ami-moyen{ transition:none; }
+.ami-acc{ filter:drop-shadow(0 3px 3px rgba(40,15,5,.35)); }
+/* v5.98 : taille du texte réglable (les tailles sont en rem : tout suit) */
+html[data-texte="grand"]{ font-size:112.5%; } html[data-texte="grand"] body{ font-size:1.25rem; }
+html[data-texte="tres-grand"]{ font-size:125%; } html[data-texte="tres-grand"] body{ font-size:1.25rem; }

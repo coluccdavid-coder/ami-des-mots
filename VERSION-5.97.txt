@@ -1,0 +1,10 @@
+Ami des mots 5.97.0
+
+🚀 Mise en ligne automatique chez OVH (.github/workflows/ovh.yml) : à chaque fusion sur main, tests puis envoi
+  du jeu et du serveur en SFTP dans www/. Ne fait rien tant que les secrets OVH ne sont pas réglés. N'envoie jamais
+  config-ami.php ni les clés ; s'arrête s'il trouve un secret ; n'efface rien chez OVH ; vérifie l'empreinte du
+  serveur ; contrôle à la fin que le site répond et que serveur/lib.php est interdit.
+🔧 Corrigé : le serveur cherchait config-ami.php dans www/ au lieu d'un dossier au-dessus (comme le dit la doc).
+🔒 .htaccess : HTTPS obligatoire ; fichiers de réglages et clés jamais lisibles depuis le web.
+📋 docs/MISE-EN-LIGNE-OVH.md (liste à cocher, de la commande au site en ligne) et docs/IA.md (ce que fait l'IA).
+Vérifié : 146 tests.

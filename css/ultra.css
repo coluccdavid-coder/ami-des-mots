@@ -14,8 +14,8 @@ html.gfx-ultra .carte, html.gfx-ultra .carte-jeu, html.gfx-ultra .cadre-image, h
 html.gfx-ultra button:not(.petit-bouton):not([role="switch"]){ position:relative; overflow:hidden; transition:transform .18s cubic-bezier(.3,1.6,.5,1), box-shadow .25s, filter .25s; }
 html.gfx-ultra button:not(.petit-bouton):not([role="switch"])::after{ content:""; position:absolute; inset:-40% auto -40% -60%; width:40%; pointer-events:none;
   background:linear-gradient(100deg, transparent, rgba(255,255,255,.38), transparent); transform:skewX(-20deg); opacity:0; }
-html.gfx-ultra button:not(.petit-bouton):not([role="switch"]):hover::after{ animation:balayage-ultra .75s ease-out; opacity:1; }
-html.gfx-ultra button:not(.petit-bouton):not([role="switch"]):hover{ transform:translateY(-2px) scale(1.02); filter:brightness(1.08) drop-shadow(0 8px 18px rgba(123,92,255,.35)); }
+html.gfx-ultra button:not(.petit-bouton):not(.ami-grand):not([role="switch"]):hover::after{ animation:balayage-ultra .75s ease-out; opacity:1; }
+html.gfx-ultra button:not(.petit-bouton):not(.ami-grand):not([role="switch"]):hover{ transform:translateY(-2px) scale(1.02); filter:brightness(1.08) drop-shadow(0 8px 18px rgba(123,92,255,.35)); }
 html.gfx-ultra button:not(.petit-bouton):not([role="switch"]):active{ transform:translateY(1px) scale(.97); }
 @keyframes balayage-ultra{ from{ left:-60%; } to{ left:130%; } }
 
