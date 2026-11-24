@@ -145,3 +145,19 @@ function ami_magasin_consommable(string $plateforme, string $produit, string $je
     || ($t['type'] ?? '') !== 'Consumable' || !empty($t['revocationDate'])) return null;
   return 'apple:' . (string) ($t['transactionId'] ?? $jeton);
 }
+
+// ── v6.0 : parrainage. Le filleul vient de prendre Plus (payé) : le parrain reçoit un code cadeau d'un mois.
+// 12 récompenses par an au plus ; jamais pour un abonnement venant lui-même d'un code cadeau ou d'un accès offert.
+function ami_parrainage_recompense(PDO $db, string $filleul): void {
+  try {
+    $s = $db->prepare("SELECT parrain FROM ami_parrainages WHERE filleul = ? AND statut = 'attente'"); $s->execute([$filleul]); $p = $s->fetchColumn();
+    if (!$p) return;
+    $an = gmdate('Y-m-d H:i:s', time() - 365 * 86400);
+    if ((int) ami_val($db, "SELECT COUNT(*) FROM ami_parrainages WHERE parrain = ? AND statut = 'recompense' AND recompense > ?", [$p, $an]) >= 12) {
+      $db->prepare("UPDATE ami_parrainages SET statut = 'plafond' WHERE filleul = ?")->execute([$filleul]); return; }
+    if (!ami_cadeaux_actifs()) return;   // sans cadeau_sel, on attend (la récompense sera donnée à un prochain paiement)
+    $c = ami_nouveau_cadeau();
+    $db->prepare('INSERT INTO ami_cadeaux (empreinte, mois, lot, cree) VALUES (?, 1, ?, ?)')->execute([ami_empreinte_cadeau($c), 'parrainage', ami_maintenant()]);
+    $u = $db->prepare("UPDATE ami_parrainages SET statut = 'recompense', cadeau = ?, recompense = ? WHERE filleul = ? AND statut = 'attente'"); $u->execute([$c, ami_maintenant(), $filleul]);
+  } catch (Throwable $e) { error_log('ami parrainage recompense ' . $e->getMessage()); }
+}

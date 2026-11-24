@@ -46,6 +46,7 @@ try {
       $fin = stripe_fin($sub);
       if (!$fin) throw new RuntimeException('Fin de période absente');
       $r = enregistrer_abonnement($db, $code, $clientSub, (string) $sub['id'], (string) $sub['status'], $fin);
+      if (($sub['status'] ?? '') === 'active') ami_parrainage_recompense($db, $code);   // v6.0 : pas pendant l'essai gratuit
       if ($r === 'deja_actif') {
         // Le même code a déjà un autre abonnement actif : on annule le doublon (vérifier le remboursement dans Stripe).
         if (($sub['status'] ?? '') !== 'canceled') stripe_annuler((string) $sub['id']);
@@ -62,7 +63,7 @@ try {
     // v5.99 : un pack de plumes magiques (prix Stripe réglé dans l'admin) crédite des plumes, il n'ouvre JAMAIS Plus « à vie ».
     $pack = ami_stripe_pack((string) ($obj['id'] ?? ''), (array) ($obj['metadata'] ?? []));
     if ($pack) { if (preg_match(AMI_FORMAT_CODE, $code) && $pi !== '') ami_credits_ajouter($db, $code, (int) $pack['plumes'], 'stripe:' . $pi, 'achat ' . $pack['id']); }
-    elseif (preg_match(AMI_FORMAT_CODE, $code) && $pi !== '') ami_inscrire_droit($db, $code, $client !== '' ? $client : 'stripe', $pi, 'a_vie', AMI_FIN_A_VIE);
+    elseif (preg_match(AMI_FORMAT_CODE, $code) && $pi !== '') { ami_inscrire_droit($db, $code, $client !== '' ? $client : 'stripe', $pi, 'a_vie', AMI_FIN_A_VIE); ami_parrainage_recompense($db, $code); }
   }
   // Remboursement d'un paiement « à vie » : l'accès s'arrête.
   if ($type === 'charge.refunded' && !empty($obj['refunded'])) {
@@ -76,6 +77,7 @@ try {
     $sub = stripe_get('/v1/subscriptions/' . rawurlencode((string) ($obj['id'] ?? '')));
     $db->prepare('UPDATE ami_abonnements SET statut = ?, fin = ?, maj = ? WHERE abonnement = ?')
       ->execute([(string) $sub['status'], stripe_fin($sub), ami_maintenant(), (string) $sub['id']]);
+    if (($sub['status'] ?? '') === 'active') { $cf = ami_val($db, 'SELECT code FROM ami_abonnements WHERE abonnement = ?', [(string) $sub['id']]); if ($cf) ami_parrainage_recompense($db, (string) $cf); }
   }
 
   $db->prepare('INSERT INTO ami_evenements_stripe (event_id, type, traite) VALUES (?, ?, ?)')->execute([$ev['id'], $type, ami_maintenant()]);

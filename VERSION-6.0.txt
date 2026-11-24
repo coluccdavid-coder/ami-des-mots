@@ -1,0 +1,21 @@
+Ami des mots — version 6.0
+
+Nouveautés
+- 🏆 Ligue de la semaine entre potes : chaque bonne réponse = 1 point, classement remis à zéro le lundi, lien d'invitation.
+- 🏅 Saisons : 150 bonnes réponses dans le mois = un badge et une tenue exclusive pour Plumo (bonnet, fleur, casquette, chapeau de sorcière).
+- ⏱️ Veille de contrôle : 15 minutes chrono sur un chapitre, les erreurs du carnet en premier, note sur 20.
+- 🎙️ Oral noté en anglais : 5 phrases, Plumo dit si on te comprend ; seulement si un parent l'autorise (Espace parents).
+- 👩‍🏫 Défi de classe : le prof crée un défi (code + clé), toute la classe a la même série, le prof voit scores et moyenne.
+- 🤝 Parrainage : un mois offert quand une famille invitée prend Plus ; entonnoir de Plus suivi dans l'admin.
+- 🦉 Plumo réexplique autrement après 3 erreurs sur la même notion (IA ; sans serveur : la règle et les bonnes réponses).
+- ✍️ Correction par Plumo : texte en anglais ou paragraphe de dissertation, noté, avec points forts, conseils et version corrigée.
+- 🎁 Admin : offrir Plus à qui tu veux (1 à 12 mois ou à vie) et le retirer.
+- Ami des mots est séparé de ReParole : sons dans audio/ (outils/copier-sons.js), contact réglable (outils/configurer.js --contact).
+
+Technique
+- Les nouveautés sont dans des modules (js/mod-*.js) branchés sur jeu.js (actions, cartes, accessoires, crochets) :
+  jeu.js n'a pas été découpé entièrement, mais il ne grossit plus.
+- Serveur : ligue.php, classe.php, parrainage.php, explique.php, correction.php ; tables dans schema.sql.
+- Tests : 160 (dont 10 pour la v6.0) ; parcours serveur vérifiés de bout en bout (SQLite + faux Stripe/Claude).
+
+À faire sur le serveur après la mise à jour : exécuter les nouvelles tables de serveur-php/schema.sql (CREATE TABLE IF NOT EXISTS).

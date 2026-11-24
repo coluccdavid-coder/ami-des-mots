@@ -121,3 +121,53 @@ CREATE TABLE IF NOT EXISTS ami_credits_mouvements (
   cree DATETIME NOT NULL,
   KEY (code)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- v6.0 : ligue de la semaine entre potes (pseudos, points de la semaine ; empreinte d'un jeton au hasard, pas de compte).
+CREATE TABLE IF NOT EXISTS ami_ligues (
+  code CHAR(6) NOT NULL PRIMARY KEY,
+  nom VARCHAR(30) NOT NULL,
+  cree DATETIME NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+CREATE TABLE IF NOT EXISTS ami_ligue_scores (
+  ligue CHAR(6) NOT NULL,
+  semaine CHAR(8) NOT NULL,
+  empreinte CHAR(64) NOT NULL,
+  pseudo VARCHAR(16) NOT NULL,
+  points INT NOT NULL DEFAULT 0,
+  maj DATETIME NOT NULL,
+  PRIMARY KEY (ligue, semaine, empreinte),
+  KEY (ligue, semaine, points)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- v6.0 : défi de classe (série commune ; pseudos ; clé du prof gardée en empreinte ; effacé après 60 jours).
+CREATE TABLE IF NOT EXISTS ami_classes (
+  code CHAR(6) NOT NULL PRIMARY KEY,
+  nom VARCHAR(40) NOT NULL,
+  matiere VARCHAR(20) NOT NULL,
+  niveau VARCHAR(4) NOT NULL,
+  n INT NOT NULL,
+  graine INT NOT NULL,
+  cle CHAR(64) NOT NULL,
+  ouvert TINYINT NOT NULL DEFAULT 1,
+  cree DATETIME NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+CREATE TABLE IF NOT EXISTS ami_classe_scores (
+  classe CHAR(6) NOT NULL,
+  empreinte CHAR(64) NOT NULL,
+  pseudo VARCHAR(20) NOT NULL,
+  bonnes INT NOT NULL,
+  total INT NOT NULL,
+  maj DATETIME NOT NULL,
+  PRIMARY KEY (classe, empreinte)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- v6.0 : parrainage (filleul → parrain ; code cadeau d'un mois quand le filleul prend Plus).
+CREATE TABLE IF NOT EXISTS ami_parrainages (
+  filleul VARCHAR(20) NOT NULL PRIMARY KEY,
+  parrain VARCHAR(20) NOT NULL,
+  statut VARCHAR(12) NOT NULL,
+  cadeau VARCHAR(20) NULL,
+  cree DATETIME NOT NULL,
+  recompense DATETIME NULL,
+  KEY (parrain)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;

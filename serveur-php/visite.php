@@ -9,7 +9,7 @@ require __DIR__ . '/lib.php';
 ami_cors('POST');
 if (($_SERVER['REQUEST_METHOD'] ?? '') !== 'POST') ami_json(['erreur' => 'methode'], 405);
 ami_limiter('visite', 20);
-const AMI_EVENEMENTS = ['ouverture', 'partie'];
+const AMI_EVENEMENTS = ['ouverture', 'partie', 'plus_vu', 'plus_clic'];   // v6.0 : entonnoir de Plus (écran vu, clic sur une formule)
 const AMI_PLATEFORMES = ['web', 'android', 'ios'];
 $c = ami_corps_json(256);
 $e = (string) ($c['e'] ?? ''); $p = (string) ($c['p'] ?? 'web');

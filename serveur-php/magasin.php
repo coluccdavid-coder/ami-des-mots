@@ -38,5 +38,6 @@ try {
   else $db->prepare('INSERT INTO ami_magasin (empreinte, plateforme, produit, jeton, code, fin, maj) VALUES (?, ?, ?, ?, ?, ?, ?)')->execute([$e, $plateforme, $produit, $cle, $code, $v['fin'], ami_maintenant()]);
   $r = ami_inscrire_droit($db, $code, $plateforme, 'magasin:' . substr($e, 0, 16), $v['statut'], $v['fin']);
   if ($r !== 'ok' && $r !== 'deja_abonne') ami_json(['erreur' => $r], 409);
+  if ($r === 'ok') ami_parrainage_recompense($db, $code);   // v6.0 : parrainage
   ami_reponse_certificat($code, ['plateforme' => $plateforme]);
 } catch (Throwable $ex) { error_log('ami magasin ' . $ex->getMessage()); ami_json(['erreur' => 'indisponible'], 503); }
