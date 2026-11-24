@@ -55,7 +55,17 @@
   ];
   const GENERIQUES = ['Le labo a explosé de rire. 💥', 'Même la souris du labo connaissait la réponse. 🐭', 'Prof Pi dit que ce n’est pas des maths, mais il rigole quand même. 🦝'];
   function hasard(g){ let a = (g >>> 0) || 1; return () => { a |= 0; a = a + 0x6D2B79F5 | 0; let t = Math.imul(a ^ a >>> 15, 1 | a); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
-  const enQuestion = (x, ton) => ({ id:x[0], q:x[2], consigne:THEMES.find(t => t.id === x[1]).e + ' Sciences', enonce:x[2], bon:x[3], regle:x[5], lang:'fr',
+  // v6.5/v6.6 : si la langue de l'interface a sa traduction (js/sciences-en.js, -es, -de, -it, -pt), le labo passe dans cette langue.
+  const LANGUE = () => { let l = 'fr'; try{ l = window.AmiDesMots.base.ui; }catch(e){ try{ l = document.documentElement.lang; }catch(e2){} } return l !== 'fr' && window.SCIENCES_LANGUES && window.SCIENCES_LANGUES[l] ? l : 'fr'; };
+  const D = () => { const l = LANGUE(); return l === 'fr' ? null : window.SCIENCES_LANGUES[l]; };
+  const EN = () => !!D();
+  const themes = () => { const d = D(); return d ? THEMES.map(t => { const x = d.themes[t.id]; return x ? Object.assign({}, t, { titre:x[0], sous:x[1] }) : t; }) : THEMES; };
+  const enAnglais = (x, ton) => { const E = D(), y = E.q[x[0]]; if(!y) return null;
+    return { id:x[0], q:y[0], consigne:THEMES.find(t => t.id === x[1]).e + ' ' + E.sciences, enonce:y[0], bon:y[1], regle:y[3], lang:LANGUE(),
+      faux:y[2].map(([v, clash]) => ({ en:v, vanne:ton === 'doux' ? E.doux + y[3] : ton === 'sanspitie' ? clash + ' ' + E.cash[(x[0].length + v.length) % E.cash.length] : clash,
+        fraiche:ton === 'sanspitie' ? memoire => { const n = E.cash.filter(l => memoire.age(l) < 0), l = n.length ? n[Math.floor(Math.random() * n.length)] : E.cash.slice().sort((a, b) => memoire.age(b) - memoire.age(a))[0];
+          if(memoire.noter) memoire.noter(l); return clash + ' ' + l; } : null })) }; };
+  const enQuestion = (x, ton) => (EN() && enAnglais(x, ton)) || ({ id:x[0], q:x[2], consigne:THEMES.find(t => t.id === x[1]).e + ' Sciences', enonce:x[2], bon:x[3], regle:x[5], lang:'fr',
     faux:x[4].map(([v, clash]) => ({ en:v, vanne:ton === 'doux'
       ? 'Presque ! ' + x[5]
       : ton === 'sanspitie'
@@ -72,5 +82,6 @@
     return l.slice(0, n).map(x => enQuestion(x, ton));
   }
   const parId = id => { const x = Q.find(y => y[0] === id); return x ? enQuestion(x, 'taquin') : null; };
-  window.SCIENCES = { THEMES, Q, GENERIQUES, serie, parId };
+  window.SCIENCES = { get THEMES(){ return themes(); }, Q, get GENERIQUES(){ return D() ? D().generiques : GENERIQUES; }, serie, parId, langue:LANGUE,
+    bravo:() => { const d = D(); return d && d.bravo ? d.bravo[Math.floor(Math.random() * d.bravo.length)] : null; } };
 })();
