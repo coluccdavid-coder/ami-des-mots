@@ -160,7 +160,7 @@
   // Réactions de celui qui reçoit la vanne : [id, icône, libellé, aura]
   const REACTIONS = [['rire', '😂', 'Wesh, il m’a eu', 3], ['feu', '🔥', 'T’es un ouf, quelle punchline', 5], ['bof', '🙄', 'Bof, gros', 0], ['mechant', '🚫', 'Là, c’est trop méchant', -2]];
   const TITRES = [[0, '🌱 Apprenti vanneur'], [10, '🎤 Vanneur confirmé'], [20, '🔥 Punchline sur pattes'], [30, '👑 Aura infinie']];
-  // Ce qu'on ne vise jamais (en plus du juge d'Ami) : physique, origine, religion, argent, famille.
+  // Ce qu'on ne vise jamais (en plus du juge de Plumo) : physique, origine, religion, argent, famille.
   const bas = s => String(s || '').normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase().replace(/[’']/g, ' ');
   const INTERDITS = ['cheveux', 'chauve', 'poids', 'maigre', 'boutons', 'acne', 'lunettes', 'appareil dentaire', 'dents', 'nez', 'oreilles', 'peau', 'couleur de peau', 'taille', 'petit gros',
     'pauvre', 'clochard', 'sdf', 'origine', 'pays', 'bled', 'arabe', 'rebeu', 'renoi', 'noir', 'blanc', 'chinois', 'juif', 'musulman', 'chretien', 'religion', 'immigre',

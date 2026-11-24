@@ -1,0 +1,12 @@
+Ami des mots 5.91.0
+
+📞 « J'appelle mes potes ! » (toutes les matières, maths, épreuves)
+- 3 bonnes réponses d'affilée : « Wwwwaaaaa, t'es un ouf toi !! La prochaine bonne réponse, j'appelle mes potes… 📞 »
+  (version douce en « Tout doux » : il appelle ses amis pour applaudir).
+- La 4e : la bande d'Ami débarque (2 ou 3 personnages, bulles qui arrivent une à une) et vanne… Ami, pas le joueur :
+  🦔 Pico le hérisson, 🐸 Zaza la grenouille, 🦊 Rocket le renard (4 répliques chacun). Ami prend un air surpris.
+- Se répète toutes les 4 bonnes réponses (annonce à 7, bande à 8…).
+- Erreur juste après l'annonce : « 😮‍💨 Ouf ! J'ai raccroché, mes potes ne viendront pas cette fois. »
+- Animation coupée si l'appareil demande moins de mouvement. Toutes les répliques passent le juge.
+Vérifié : 134 tests (dont 4 bonnes réponses réelles d'affilée puis l'erreur après l'annonce), captures sur téléphone.
+Contient aussi les v5.84 à v5.90.

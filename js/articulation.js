@@ -1,4 +1,4 @@
-// Ami des mots — recopié de ReParole (js/articulation.js, v6.452) : le bec d'Ami
+// Ami des mots — recopié de ReParole (js/articulation.js, v6.452) : le bec de Plumo
 // suit la voix. Ne pas modifier ici : recopier depuis ReParole si besoin.
 // =====================================================================
 //  v6.454 — synchronisation stricte avec le démarrage audio
@@ -9,7 +9,7 @@
 //
 //  1. texte → suite de SONS (règles d'écriture par langue) ;
 //  2. son → POSTURE (mâchoire, lèvres, langue, voile du palais) ;
-//  3. la posture anime : le bec d'Ami, partout où il est affiché, et un
+//  3. la posture anime : le bec de Plumo, partout où il est affiché, et un
 //     schéma de profil de la bouche (« 👄 Voir la bouche ») dans les
 //     exercices de répétition et les phrases du quotidien.
 //
@@ -21,7 +21,7 @@
 //  Langue non prise en charge (kanji, tifinagh) → pas de bouton, jamais
 //  un schéma faux.
 //
-//  SOBRIÉTÉ. `prefers-reduced-motion` : le bec d'Ami ne bouge pas, et le
+//  SOBRIÉTÉ. `prefers-reduced-motion` : le bec de Plumo ne bouge pas, et le
 //  schéma passe d'une posture à l'autre sans glissement.
 // =====================================================================
 (function(){
@@ -544,7 +544,7 @@ body.dark-mode .art-peau{fill:#5d4a3d;stroke:#c9a184}body.dark-mode .art-dent{fi
       '<button type="button" class="btn-ghost" data-art="fermer">' + esc(tr('ou_fermer')) + '</button></div>' +
       '<p class="art-note">' + esc(tr('ou_schema_note')) + '</p></div>';
     document.body.appendChild(fond);
-    // Ami en gros plan (son visage), pour que le bec se voie.
+    // Plumo en gros plan (son visage), pour que le bec se voie.
     const ami = fond.querySelector('.art-ami');
     try{
       if(window.Companion && Companion.svg){

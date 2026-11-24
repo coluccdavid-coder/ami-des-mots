@@ -53,9 +53,9 @@
     COINS_PLUS:[]
   }, offreLue(window.OFFRE_AMI), window.CONFIG_JEU || {});
   // v5.73 : « l'essentiel pour l'instant » (js/config-site.js). Rien n'est supprimé, tout revient en mettant false.
-  // VOIX_COUPEES : Ami ne commente plus à voix haute (consignes, vannes, répliques, professeur).
+  // VOIX_COUPEES : Plumo ne commente plus à voix haute (consignes, vannes, répliques, professeur).
   // Exception voulue (v5.74) : les jeux où il faut écouter gardent leur voix (mots enregistrés, dictée,
-  // Répète après Ami, jeu des oreilles, « qu'a dit Ami ? ») ainsi que tous les boutons 🔊 🐢 🎤.
+  // Répète après Plumo, jeu des oreilles, « qu'a dit Plumo ? ») ainsi que tous les boutons 🔊 🐢 🎤.
   const voixCoupee = () => !!CONFIG.VOIX_COUPEES;
   const jeuxEcouteCaches = () => !!CONFIG.JEUX_ECOUTE_CACHE;
   const boucheDispo = () => !!window.Articulation && !CONFIG.BOUCHE_CACHE; // « Comment la bouche fait ce mot »
@@ -379,7 +379,7 @@
   function lireConsigne(texte){ if(voixCoupee()) return; if(texte && !voixNavigateur(base.ui, texte)) silence(); }
   // Une phrase (vanne + correction) n'a pas d'enregistrement : on ne la demande
   // pas au serveur des voix, on la lit avec la voix du téléphone, sans chevauchement.
-  // direPhrase : Ami qui commente (coupé si VOIX_COUPEES) ; direEcoute : ce qu'il faut écouter (toujours là).
+  // direPhrase : Plumo qui commente (coupé si VOIX_COUPEES) ; direEcoute : ce qu'il faut écouter (toujours là).
   function direPhrase(texte, langue, vitesse){
     if(voixCoupee()) return;
     direEcoute(texte, langue, vitesse);
@@ -443,8 +443,8 @@
     }catch(e){}
   }
 
-  // ── Ami ───────────────────────────────────────────────────────────
-  // Les visages d'Ami : content, fete, surpris, vexe, mdr, choque, fier, boude, malin, dort.
+  // ── Plumo ───────────────────────────────────────────────────────────
+  // Les visages de Plumo : content, fete, surpris, vexe, mdr, choque, fier, boude, malin, dort.
   function visage(h, yeux, c1, immobile){
     const pup = (dx, ry) => '<g class="pupilles"><ellipse cx="' + (37 + dx) + '" cy="45" rx="6.5" ry="' + ry + '" fill="#1d2521"/><ellipse cx="' + (63 + dx) + '" cy="45" rx="6.5" ry="' + ry + '" fill="#1d2521"/><circle cx="' + (40 + dx) + '" cy="41.5" r="2.6" fill="#fff"/><circle cx="' + (66 + dx) + '" cy="41.5" r="2.6" fill="#fff"/></g>';
     const paup = immobile ? '' : '<g class="paupieres" fill="' + c1 + '"><ellipse cx="37" cy="44" rx="12" ry="12"/><ellipse cx="63" cy="44" rx="12" ry="12"/></g>';
@@ -645,14 +645,14 @@
     return '<section class="carte-jour astuce-jour"><h2>💡 ' + esc(t('astuce_ami')) + '</h2><p><strong>' + esc(titre) + '</strong> ' + esc(texte) + '</p>' +
       '<button class="lien" data-a="astuces">' + esc(t('toutes_astuces')) + '</button></section>';
   }
-  // Comment réussir à parler une autre langue : les conseils d'Ami.
+  // Comment réussir à parler une autre langue : les conseils de Plumo.
   function astuces(){
     const l = t('conseils') || [];
     poser(barre('accueil') + '<main class="astuces"><div class="ami-moyen">' + ami('content') + '</div><h2>💡 ' + esc(t('astuces_titre')) + '</h2><p class="aide">' + esc(t('astuces_intro')) + '</p>' +
       '<ol class="liste-astuces">' + l.map(([titre, texte], k) => '<li><span class="num" aria-hidden="true">' + ['🗓️', '🗣️', '🔁', '🙌', '🏷️', '👨‍👩‍👧', '🎵', '🧠'][k % 8] + '</span><div><strong>' + esc(titre) + '</strong><p>' + esc(texte) + '</p></div></li>').join('') + '</ol>' +
       '<div class="actions"><button class="moyen plein" data-a="lecon">📚 ' + esc(t('apprendre')) + '</button></div></main>', 'astuces');
   }
-  // « À toi ! » : on écoute Ami, on s'enregistre, on compare. Tout reste sur l'appareil.
+  // « À toi ! » : on écoute Plumo, on s'enregistre, on compare. Tout reste sur l'appareil.
   let micro = null;
   function fenetre(html){
     fermerFenetre();
@@ -704,7 +704,7 @@
         micro.url = URL.createObjectURL(new Blob(morceaux, { type:rec.mimeType || 'audio/webm' }));
         btn.classList.remove('enregistre'); btn.textContent = '🎤 ' + t('reessayer');
         const ap = $('#a-toi-apres'); if(ap) ap.hidden = false;
-        // Ma voix, puis celle d'Ami, pour comparer.
+        // Ma voix, puis celle de Plumo, pour comparer.
         const a = new Audio(micro.url); a.onended = () => setTimeout(() => dire(e), 300); a.play().catch(() => {});
         bravo();
       };
@@ -832,7 +832,7 @@
       chrono + prog + '<div class="scene">' + corps + '</div>' + '<p class="bulle" id="bulle" role="status" aria-live="polite"></p><div class="apres-erreur"><button class="moyen continuer-erreur" id="continuer-erreur" data-a="continuer-erreur" hidden>✓ ' + (base.ui === 'en' ? 'I understand — next' : 'J’ai compris — continuer') + '</button><button class="petit-bouton garder-vanne" id="garder-vanne" data-a="garder-vanne" hidden>😂</button><button class="petit-bouton pas-drole" id="pas-drole" data-a="pas-drole" hidden>🙄</button></div><p class="note" id="note-voix" aria-live="polite"></p></main>');
     if(facile() && partie.i === 0 && !partie.consigneLue){ partie.consigneLue = true; setTimeout(() => lireConsigne(aide), 250); }
   }
-  // Humour réglable : les plaisanteries visent Ami, le mot ou la situation,
+  // Humour réglable : les plaisanteries visent Plumo, le mot ou la situation,
   // jamais le joueur. Le niveau est mémorisé par profil.
   let derniereBlague = '', sceneAnim = null;
   // Suivi des erreurs (pour les vannes qui se souviennent et l'espace parents). Plafonné à 300 entrées.
@@ -846,45 +846,45 @@
     fr:[
       {
         eclair:["Mon bec a cliqué avant mon cerveau !","Oups… mes lunettes sont en mode avion.","J’ai visé juste. Pas la bonne image, mais juste !","Mon cerveau charge… à 2 %."]
-        ,devinette:["Pourquoi Ami aime les quiz ? Pour se prendre des plumes !","Quel est le sport préféré du hibou ? Le vol… plané !","Pourquoi le hibou révise ? Pour ne pas sécher !","Quel mot fait peur à Ami ? « Surprise »… surtout au contrôle !"]
-        ,chute:["Ami : « J’étais sûr ! » Le dictionnaire : « C’est bien le problème. »","Ami cherche ses neurones. Ils sont partis en pause.","Le hibou dit « facile ! » Le quiz répond « ah oui ? »","Ami a demandé un indice. Son cerveau lui a dit : « Bonne chance. »"]
+        ,devinette:["Pourquoi Plumo aime les quiz ? Pour se prendre des plumes !","Quel est le sport préféré du hibou ? Le vol… plané !","Pourquoi le hibou révise ? Pour ne pas sécher !","Quel mot fait peur à Plumo ? « Surprise »… surtout au contrôle !"]
+        ,chute:["Plumo : « J’étais sûr ! » Le dictionnaire : « C’est bien le problème. »","Plumo cherche ses neurones. Ils sont partis en pause.","Le hibou dit « facile ! » Le quiz répond « ah oui ? »","Plumo a demandé un indice. Son cerveau lui a dit : « Bonne chance. »"]
       },
       {
         eclair:["J’ai cliqué avec panache… et zéro précision.","Mon cerveau a pris la mauvaise sortie.","J’ai confondu réfléchir et cliquer. Classique.","Même mon écho répond mieux que moi."]
-        ,devinette:["Pourquoi Ami aime les dictionnaires ? Ils ne lui coupent jamais la parole !","Quel est le comble du hibou ? Faire chou blanc !","Pourquoi Ami garde ses plumes ? Pour ne pas perdre la face !","Qu’est-ce qui vole et se trompe ? Moi. Enfin… Ami !"]
-        ,chute:["Ami : « J’ai une stratégie ! » Le quiz : « Essaie déjà une réponse. »","Le cerveau d’Ami est en réunion. Personne n’a répondu.","Ami voulait briller. Il a juste clignoté.","Le dictionnaire a soupiré. Même les pages en ont marre."]
+        ,devinette:["Pourquoi Plumo aime les dictionnaires ? Ils ne lui coupent jamais la parole !","Quel est le comble du hibou ? Faire chou blanc !","Pourquoi Plumo garde ses plumes ? Pour ne pas perdre la face !","Qu’est-ce qui vole et se trompe ? Moi. Enfin… Plumo !"]
+        ,chute:["Plumo : « J’ai une stratégie ! » Le quiz : « Essaie déjà une réponse. »","Le cerveau de Plumo est en réunion. Personne n’a répondu.","Plumo voulait briller. Il a juste clignoté.","Le dictionnaire a soupiré. Même les pages en ont marre."]
       },
       {
         eclair:["Magnifique erreur. On encadre ?","J’ai le talent… de viser à côté.","Mon cerveau vient de poser un RTT.","Je réfléchis très fort. Ça ne se voit pas encore."]
-        ,devinette:["Pourquoi Ami adore les devinettes ? Il peut se tromper en plusieurs étapes !","Quel est le comble pour un hibou ? Avoir la tête dans les nuages !","Pourquoi le quiz rit ? Il connaît déjà la réponse !","Qui a deux yeux et rate la cible ? Ami, apparemment."]
-        ,chute:["Ami : « C’était presque ça ! » Le quiz : « Dans quel univers ? »","Le cerveau d’Ami a dit oui. La logique a démissionné.","Ami a choisi au feeling. Le feeling était en congé.","Le hibou a fait son choix. La sagesse n’était pas invitée."]
+        ,devinette:["Pourquoi Plumo adore les devinettes ? Il peut se tromper en plusieurs étapes !","Quel est le comble pour un hibou ? Avoir la tête dans les nuages !","Pourquoi le quiz rit ? Il connaît déjà la réponse !","Qui a deux yeux et rate la cible ? Plumo, apparemment."]
+        ,chute:["Plumo : « C’était presque ça ! » Le quiz : « Dans quel univers ? »","Le cerveau de Plumo a dit oui. La logique a démissionné.","Plumo a choisi au feeling. Le feeling était en congé.","Le hibou a fait son choix. La sagesse n’était pas invitée."]
       },
       {
         eclair:["Même une taupe aurait mieux vu !","J’ai visé la réponse. J’ai touché le décor.","Mon cerveau est officiellement en mode déco.","Je mérite une plume… de consolation."]
-        ,devinette:["Quel est le comble d’Ami ? Se faire poser un lapin par sa mémoire !","Pourquoi Ami ne joue pas à cache-cache ? Il oublie de chercher !","Quelle est la spécialité d’Ami ? Le faux départ !","Qui a raté la réponse avec panache ? Votre hibou préféré."]
-        ,chute:["Ami : « Je maîtrise ! » Le quiz : « On a des doutes. »","Le dictionnaire réclame des vacances loin d’Ami.","Ami a consulté son instinct. Il a porté plainte.","Le cerveau a quitté le nid. Sans laisser d’adresse."]
+        ,devinette:["Quel est le comble de Plumo ? Se faire poser un lapin par sa mémoire !","Pourquoi Plumo ne joue pas à cache-cache ? Il oublie de chercher !","Quelle est la spécialité de Plumo ? Le faux départ !","Qui a raté la réponse avec panache ? Votre hibou préféré."]
+        ,chute:["Plumo : « Je maîtrise ! » Le quiz : « On a des doutes. »","Le dictionnaire réclame des vacances loin de Plumo.","Plumo a consulté son instinct. Il a porté plainte.","Le cerveau a quitté le nid. Sans laisser d’adresse."]
       }
     ],
     en:[
       {
         eclair:["My beak clicked before my brain!","Oops… my glasses are in airplane mode.","I aimed right. Just at the wrong picture!","Brain loading… 2%."]
-        ,devinette:["Why do owls love quizzes? More chances to wing it!","What’s an owl’s favourite sport? Fly-ing!","Why did the owl revise? To stay sharp!","What scares Ami? A surprise test!"]
-        ,chute:["Ami: “I was sure!” Dictionary: “That’s the problem.”","Ami looked for his brain. It’s on a break.","The owl said “easy!” The quiz said “really?”","Ami asked for a hint. His brain said “good luck.”"]
+        ,devinette:["Why do owls love quizzes? More chances to wing it!","What’s an owl’s favourite sport? Fly-ing!","Why did the owl revise? To stay sharp!","What scares Plumo? A surprise test!"]
+        ,chute:["Plumo: “I was sure!” Dictionary: “That’s the problem.”","Plumo looked for his brain. It’s on a break.","The owl said “easy!” The quiz said “really?”","Plumo asked for a hint. His brain said “good luck.”"]
       },
       {
         eclair:["I clicked with style… and no accuracy.","My brain took the wrong turn.","I confused thinking with clicking. Classic.","Even my echo gets it right."]
-        ,devinette:["Why does Ami love dictionaries? They never interrupt!","What’s an owl’s worst nightmare? A blank look!","Why keep your feathers? To save face!","What flies and gets it wrong? Me. Well, Ami!"]
-        ,chute:["Ami: “I have a strategy!” Quiz: “Try an answer first.”","Ami’s brain is in a meeting. No one replied.","Ami wanted to shine. He just blinked.","The dictionary sighed. Even its pages are tired."]
+        ,devinette:["Why does Plumo love dictionaries? They never interrupt!","What’s an owl’s worst nightmare? A blank look!","Why keep your feathers? To save face!","What flies and gets it wrong? Me. Well, Plumo!"]
+        ,chute:["Plumo: “I have a strategy!” Quiz: “Try an answer first.”","Plumo’s brain is in a meeting. No one replied.","Plumo wanted to shine. He just blinked.","The dictionary sighed. Even its pages are tired."]
       },
       {
         eclair:["Brilliant mistake. Shall we frame it?","I have a talent for missing the point.","My brain just booked a day off.","Thinking hard. Results pending."]
-        ,devinette:["Why does Ami love riddles? He can get them wrong in stages!","What’s an owl’s worst habit? Head in the clouds!","Why is the quiz laughing? It knows the answer!","Who has two eyes and misses? Ami, apparently."]
-        ,chute:["Ami: “That was close!” Quiz: “In which universe?”","Ami’s brain said yes. Logic resigned.","Ami trusted his gut. His gut was on holiday.","The owl made a choice. Wisdom wasn't invited."]
+        ,devinette:["Why does Plumo love riddles? He can get them wrong in stages!","What’s an owl’s worst habit? Head in the clouds!","Why is the quiz laughing? It knows the answer!","Who has two eyes and misses? Plumo, apparently."]
+        ,chute:["Plumo: “That was close!” Quiz: “In which universe?”","Plumo’s brain said yes. Logic resigned.","Plumo trusted his gut. His gut was on holiday.","The owl made a choice. Wisdom wasn't invited."]
       },
       {
         eclair:["A mole could’ve seen that coming!","I aimed for the answer. Hit the scenery.","My brain is officially decorative.","I deserve a consolation feather."]
-        ,devinette:["What’s Ami’s biggest problem? His memory plays hide-and-seek!","Why is Ami bad at hide-and-seek? He forgets to look!","What’s Ami’s special skill? A false start!","Who got it wrong with style? Your favourite owl."]
-        ,chute:["Ami: “I’ve got this!” Quiz: “We have doubts.”","The dictionary wants a holiday far away from Ami.","Ami asked his instincts. They filed a complaint.","The brain left the nest. No forwarding address."]
+        ,devinette:["What’s Plumo’s biggest problem? His memory plays hide-and-seek!","Why is Plumo bad at hide-and-seek? He forgets to look!","What’s Plumo’s special skill? A false start!","Who got it wrong with style? Your favourite owl."]
+        ,chute:["Plumo: “I’ve got this!” Quiz: “We have doubts.”","The dictionary wants a holiday far away from Plumo.","Plumo asked his instincts. They filed a complaint.","The brain left the nest. No forwarding address."]
       }
     ]
   };
@@ -908,7 +908,7 @@
     if(!liste || !liste.length) return '';
     // Les vannes notées « pas drôle » par la famille ne ressortent plus (s'il en reste d'autres).
     const nul = J().pasDrole; if(Array.isArray(nul) && nul.length){ const l = liste.filter(x => !nul.includes(x)); if(l.length) liste = l; }
-    // Ami apprend (js/juge.js) : chaque vanne a un score familial (😂 +2, 🙄 -3). Les mauvaises disparaissent, les bonnes reviennent plus.
+    // Plumo apprend (js/juge.js) : chaque vanne a un score familial (😂 +2, 🙄 -3). Les mauvaises disparaissent, les bonnes reviennent plus.
     const sc = J().notesVannes, JG = window.JUGE;
     if(JG && sc && typeof sc === 'object'){ const l = liste.filter(x => !JG.retiree(sc, x)); if(l.length) liste = l; liste = liste.flatMap(x => Array(JG.poids(sc, x)).fill(x)); }
     const aime = J().vannesAimees; if(Array.isArray(aime) && aime.length){ const bonus = liste.filter(x => aime.includes(x)); if(bonus.length) liste = liste.concat(bonus, bonus); }
@@ -1013,7 +1013,7 @@
     }
     if(type === 'panier'){ valeurs.p = nomPanier(ctx.panier, langue); valeurs.b = nomPanier(ctx.bonPanier, langue); valeurs.m = j; }
     let liste = niv(pool);
-    // Lecture facile : Ami reste doux et préfère les phrases courtes.
+    // Lecture facile : Plumo reste doux et préfère les phrases courtes.
     if(facile()){ const courtes = liste.filter(v => v.length <= 60); if(courtes.length >= 2) liste = courtes; }
     const choix = tirerVanne(liste);
     derniereBlague = choix;
@@ -1028,7 +1028,7 @@
     if(!fabriquer && Math.random() >= .8) return false;
     const val = { Fc:majuscule(art[0].F), F:art[0].F, J:art[1].F, Jc:majuscule(art[1].F), tf:a.t, Tf:majuscule(a.t), tj:b.t, aj:b.a.replace('{X}', art[0].F) };
     const l = VM.modeles[Math.max(0, Math.min(3, niveau))] || VM.modeles[0];
-    // Le juge d'Ami écarte les drôles d'images (« mettre le couteau sur ta tête »…).
+    // Le juge de Plumo écarte les drôles d'images (« mettre le couteau sur ta tête »…).
     const essais = l.map(m => remplir(m, val).replace(/ à le /g, ' au ').replace(/ de le /g, ' du ')).filter(x => !window.JUGE || JUGE.juger(x).ok);
     if(!essais.length) return false;
     if(!fabriquer) return true;
@@ -1359,7 +1359,7 @@
       direPhrase(message, langueBlagues());
     }
   }
-  // Ami réagit à sa propre vanne : plus le niveau est corsé, plus il en fait.
+  // Plumo réagit à sa propre vanne : plus le niveau est corsé, plus il en fait.
   const REACTIONS = ['🙈', '👓', '🪶', '💥'];
   function reactionAmi(niveau){
     const w = $('#ami-partie .ami-3d-wrap'); if(!w) return;
@@ -1558,24 +1558,24 @@
   }
 
 
-  // ── Le village d'Ami : carte d'aventure reliée aux thèmes existants ──
+  // ── Le village de Plumo : carte d'aventure reliée aux thèmes existants ──
   const VILLAGE_TEXT = {
-    fr:{title:"Le village des mots",intro:"Ami a besoin de toi ! Choisis un lieu et pars à la découverte des mots.",mission:"Ta mission",hint:"Chaque lieu cache des mots à découvrir. Termine une partie pour faire progresser ton carnet.",back:"Retour au nid"},
-    en:{title:"The Word Village",intro:"Ami needs your help! Pick a place and discover new words.",mission:"Your mission",hint:"Every place is full of words. Finish a game to grow your word notebook.",back:"Back to the nest"},
-    es:{title:"El pueblo de las palabras",intro:"¡Ami necesita tu ayuda! Elige un lugar y descubre palabras.",mission:"Tu misión",hint:"Cada lugar esconde palabras. Termina una partida para llenar tu cuaderno.",back:"Volver al nido"},
-    it:{title:"Il villaggio delle parole",intro:"Ami ha bisogno di te! Scegli un luogo e scopri nuove parole.",mission:"La tua missione",hint:"Ogni luogo nasconde parole. Completa una partita per arricchire il quaderno.",back:"Torna al nido"},
-    pt:{title:"A aldeia das palavras",intro:"O Ami precisa de ti! Escolhe um lugar e descobre palavras.",mission:"A tua missão",hint:"Cada lugar esconde palavras. Termina uma partida para encher o caderno.",back:"Voltar ao ninho"},
-    de:{title:"Das Wörterdorf",intro:"Ami braucht dich! Wähle einen Ort und entdecke neue Wörter.",mission:"Deine Mission",hint:"An jedem Ort warten Wörter. Beende ein Spiel und fülle dein Wörterbuch.",back:"Zurück zum Nest"},
+    fr:{title:"Le village des mots",intro:"Plumo a besoin de toi ! Choisis un lieu et pars à la découverte des mots.",mission:"Ta mission",hint:"Chaque lieu cache des mots à découvrir. Termine une partie pour faire progresser ton carnet.",back:"Retour au nid"},
+    en:{title:"The Word Village",intro:"Plumo needs your help! Pick a place and discover new words.",mission:"Your mission",hint:"Every place is full of words. Finish a game to grow your word notebook.",back:"Back to the nest"},
+    es:{title:"El pueblo de las palabras",intro:"¡Plumo necesita tu ayuda! Elige un lugar y descubre palabras.",mission:"Tu misión",hint:"Cada lugar esconde palabras. Termina una partida para llenar tu cuaderno.",back:"Volver al nido"},
+    it:{title:"Il villaggio delle parole",intro:"Plumo ha bisogno di te! Scegli un luogo e scopri nuove parole.",mission:"La tua missione",hint:"Ogni luogo nasconde parole. Completa una partita per arricchire il quaderno.",back:"Torna al nido"},
+    pt:{title:"A aldeia das palavras",intro:"O Plumo precisa de ti! Escolhe um lugar e descobre palavras.",mission:"A tua missão",hint:"Cada lugar esconde palavras. Termina uma partida para encher o caderno.",back:"Voltar ao ninho"},
+    de:{title:"Das Wörterdorf",intro:"Plumo braucht dich! Wähle einen Ort und entdecke neue Wörter.",mission:"Deine Mission",hint:"An jedem Ort warten Wörter. Beende ein Spiel und fülle dein Wörterbuch.",back:"Zurück zum Nest"},
     ar:{title:"قرية الكلمات",intro:"آمي يحتاج إليك! اختر مكاناً واكتشف كلمات جديدة.",mission:"مهمتك",hint:"في كل مكان كلمات جديدة. أكمل لعبة لتضيفها إلى دفتر كلماتك.",back:"العودة إلى العش"},
-    tr:{title:"Kelime Köyü",intro:"Ami'nin yardımına ihtiyacı var! Bir yer seç ve yeni kelimeler keşfet.",mission:"Görevin",hint:"Her yerde keşfedilecek kelimeler var. Defterini geliştirmek için bir oyunu bitir.",back:"Yuvaya dön"},
-    pl:{title:"Wioska słów",intro:"Ami potrzebuje pomocy! Wybierz miejsce i odkrywaj słowa.",mission:"Twoja misja",hint:"W każdym miejscu czekają słowa. Ukończ grę, aby uzupełnić notes.",back:"Wróć do gniazda"},
+    tr:{title:"Kelime Köyü",intro:"Plumo'nun yardımına ihtiyacı var! Bir yer seç ve yeni kelimeler keşfet.",mission:"Görevin",hint:"Her yerde keşfedilecek kelimeler var. Defterini geliştirmek için bir oyunu bitir.",back:"Yuvaya dön"},
+    pl:{title:"Wioska słów",intro:"Plumo potrzebuje pomocy! Wybierz miejsce i odkrywaj słowa.",mission:"Twoja misja",hint:"W każdym miejscu czekają słowa. Ukończ grę, aby uzupełnić notes.",back:"Wróć do gniazda"},
     ja:{title:"ことばの村",intro:"アミが助けを待っているよ！場所を選んで新しい言葉を見つけよう。",mission:"ミッション",hint:"それぞれの場所に言葉が隠れているよ。ゲームを終えてノートを育てよう。",back:"巣に戻る"},
     uk:{title:"Селище слів",intro:"Амі потрібна твоя допомога! Обери місце й відкривай слова.",mission:"Твоє завдання",hint:"У кожному місці є нові слова. Заверши гру, щоб поповнити записник.",back:"До гнізда"},
     ko:{title:"단어 마을",intro:"아미에게 도움이 필요해요! 장소를 골라 새 단어를 찾아봐요.",mission:"미션",hint:"각 장소에는 단어가 숨어 있어요. 게임을 마치고 단어장을 채워요.",back:"둥지로 돌아가기"},
     dz:{title:"قرية الكلمات",intro:"آمي يحتاج مساعدتك! اختار مكان واكتشف كلمات جديدة.",mission:"مهمتك",hint:"كل بلاصة فيها كلمات. كمّل لعبة باش تعمّر كراسك.",back:"ارجع للعش"},
     ma:{title:"قرية الكلمات",intro:"آمي محتاج مساعدتك! اختار بلاصة واكتشف كلمات جديدة.",mission:"المهمة ديالك",hint:"كل بلاصة فيها كلمات. كمل لعبة باش تعمر الدفتر ديالك.",back:"رجع للعش"},
     tn:{title:"قرية الكلمات",intro:"آمي يستحق مساعدتك! اختار بلاصة واكتشف كلمات جديدة.",mission:"مهمتك",hint:"كل بلاصة فيها كلمات. كمّل لعبة باش تعمّر كراسك.",back:"ارجع للعش"},
-    kab:{title:"Tamdint n wawalen",intro:"Ami yesra tallelt-ik! Fren adeg sakin snirem awalen imaynuten.",mission:"Tameẓla-k",hint:"Yal adeg yesɛa awalen. Fak urar akken ad ternuḍ deg tferkit-ik.",back:"Uɣal ɣer usennun"}
+    kab:{title:"Tamdint n wawalen",intro:"Plumo yesra tallelt-ik! Fren adeg sakin snirem awalen imaynuten.",mission:"Tameẓla-k",hint:"Yal adeg yesɛa awalen. Fak urar akken ad ternuḍ deg tferkit-ik.",back:"Uɣal ɣer usennun"}
   };
   const LIEUX_VILLAGE = [
     {theme:'animaux',icon:'🌳',fr:'La forêt des animaux',en:'Animal Forest'},
@@ -1697,7 +1697,7 @@
         '<div class="ami-moyen ami-3d">' + ami('fete') + '</div>' +
         '<p class="sur-titre-phrases">✨ ' + (base.ui === 'en' ? 'MISSION COMPLETE' : 'MISSION TERMINÉE') + '</p>' +
         '<h2>' + (base.ui === 'en' ? 'Sentence superstar!' : 'Champion des phrases !') + '</h2>' +
-        '<p>' + (base.ui === 'en' ? 'You built 12 sentences. Ami is proud of you!' : 'Tu as construit 12 phrases. Ami est très fier de toi !') + '</p>' +
+        '<p>' + (base.ui === 'en' ? 'You built 12 sentences. Plumo is proud of you!' : 'Tu as construit 12 phrases. Plumo est très fier de toi !') + '</p>' +
         '<p class="gain-phrases">⭐ +' + p.gain + ' plumes</p>' +
         '<button class="moyen plein" data-a="accueil">' + (base.ui === 'en' ? 'Back to the nest' : 'Retour au nid') + '</button></main>');
       return;
@@ -1717,7 +1717,7 @@
       '<p class="compteur-phrases">' + (base.ui === 'en' ? 'Sentence' : 'Phrase') + ' ' + (p.index+1) + ' / ' + p.liste.length + '</p>' +
       '<div class="phrase-construite" aria-live="polite" dir="auto">' + (choisis.length ? choisis.map(i=>'<span class="mot-place">'+esc(tokens[i])+'</span>').join(' ') : '<span class="placeholder-phrase">'+(base.ui==='en'?'Your sentence will appear here…':'Ta phrase apparaîtra ici…')+'</span>') + '</div>' +
       '<div class="tuiles-phrases" dir="auto">' + melanger(ordre).map(i=>'<button class="tuile-phrase" data-a="phrase-token" data-v="'+i+'">'+esc(tokens[i])+'</button>').join('') + '</div>' +
-      '<p class="retour-phrase" id="retour-phrase" role="status" aria-live="polite">'+(base.ui==='en'?'Ami says: Let’s make a sentence!':'Ami dit : Allez, on fabrique une phrase !')+'</p>' +
+      '<p class="retour-phrase" id="retour-phrase" role="status" aria-live="polite">'+(base.ui==='en'?'Plumo says: Let’s make a sentence!':'Plumo dit : Allez, on fabrique une phrase !')+'</p>' +
       '<div class="actions actions-phrases">' +
       '<button class="moyen" data-a="phrase-reset">↶ '+(base.ui==='en'?'Start again':'Recommencer')+'</button>' +
       '<button class="moyen" data-a="phrase-hint">💡 '+(base.ui==='en'?'Hint':'Indice')+'</button>' +
@@ -1755,7 +1755,7 @@
     }
     p.gain+=3; J().plumes+=3; garder(); bruit('juste');
     const zone2=$('#retour-phrase');
-    if(zone2) zone2.textContent=base.ui==='en'?'Brilliant! Ami is doing a happy dance!':'Bravo ! Ami fait sa danse de la victoire !';
+    if(zone2) zone2.textContent=base.ui==='en'?'Brilliant! Plumo is doing a happy dance!':'Bravo ! Plumo fait sa danse de la victoire !';
     const amiEl=$('#ami-phrase'); if(amiEl){amiEl.innerHTML=ami('fete');amiEl.classList.add('ami-3d');}
     const boutons=document.querySelectorAll('.tuile-phrase'); boutons.forEach(b=>b.disabled=true);
     const check=$('[data-a="phrase-check"]'); if(check) check.disabled=true;
@@ -1772,11 +1772,11 @@
     const prochain=p.choisis.length;
     if(prochain<tokens.length){
       const zone=$('#retour-phrase');
-      if(zone) zone.textContent=(base.ui==='en'?'Ami’s hint: the next word is “':'Indice d’Ami : le prochain mot est « ')+tokens[prochain]+(base.ui==='en'?'”':' »');
+      if(zone) zone.textContent=(base.ui==='en'?'Plumo’s hint: the next word is “':'Indice de Plumo : le prochain mot est « ')+tokens[prochain]+(base.ui==='en'?'”':' »');
     }
   }
 
-  // Punchline bonus : on chambre la phrase et Ami, jamais la personne qui joue.
+  // Punchline bonus : on chambre la phrase et Plumo, jamais la personne qui joue.
   function vannePiquante(texte){
     const base = String(texte || 'Presque !');
     const langue = base && base.ui === 'en' ? 'en' : 'fr';
@@ -1889,21 +1889,21 @@
       '<div class="cartes-anglais">' +
       carte('pieges', '🪤', 'Les pièges', 'Les erreurs que font tous les francophones', '🏅 ' + m + '/' + P.liste.length) +
       carte('situations', '☕', 'Situations de la vie', 'Café, école, magasin… choisis ta réplique', '✅ ' + e.situations.length + '/' + A_EN().SITUATIONS.length) +
-      (jeuxEcouteCaches() ? '' : carte('dictee', '✍️', 'Dictée rigolote', 'Ami parle, tu écris (attention aux mots jumeaux !)', '✍️ ' + e.dictees + ' phrase' + (e.dictees > 1 ? 's' : '') + ' parfaite' + (e.dictees > 1 ? 's' : ''))) +
+      (jeuxEcouteCaches() ? '' : carte('dictee', '✍️', 'Dictée rigolote', 'Plumo parle, tu écris (attention aux mots jumeaux !)', '✍️ ' + e.dictees + ' phrase' + (e.dictees > 1 ? 's' : '') + ' parfaite' + (e.dictees > 1 ? 's' : ''))) +
       carte('histoires', '📖', 'Mini-histoires', 'Lis et écoute de petites histoires du village', '📖 ' + e.histoires.length + '/' + (window.HISTOIRES ? HISTOIRES.liste.length : 0)) +
-      (jeuxEcouteCaches() ? '' : carte('repeter', '🗣️', 'Répète après Ami', 'Dis la phrase, réécoute-toi, compare', '🗣️ ' + e.repete.length + '/' + (window.PARCOURS ? PARCOURS.REPETER.length : 0))) +
+      (jeuxEcouteCaches() ? '' : carte('repeter', '🗣️', 'Répète après Plumo', 'Dis la phrase, réécoute-toi, compare', '🗣️ ' + e.repete.length + '/' + (window.PARCOURS ? PARCOURS.REPETER.length : 0))) +
       carte('battle', '🎤', 'Battles', 'Rap, vannes, en famille, entre potes, en direct', '🏆 ' + e.victoires + ' victoire' + (e.victoires > 1 ? 's' : '')) +
       '</div><h3 class="section-anglais">😂 Pour rire (et apprendre)</h3><div class="cartes-anglais">' +
-      carte('trompe', '🦉', 'Ami se trompe exprès', 'Trouve ses fautes et corrige-le !', '🔔') +
+      carte('trompe', '🦉', 'Plumo se trompe exprès', 'Trouve ses fautes et corrige-le !', '🔔') +
       (jeuxEcouteCaches() ? '' : carte('oreilles', '👂', 'Le jeu des oreilles', 'ship ou sheep ? three ou tree ?', '👂')) +
-      carte('vraifaux', '🤥', 'True or false?', 'Ami raconte des bêtises…', '🤥') +
+      carte('vraifaux', '🤥', 'True or false?', 'Plumo raconte des bêtises…', '🤥') +
       carte('avent', '🎄', 'Calendrier de l’Avent', 'Un mot d’hiver par jour', '🎄 ' + (Array.isArray(J().avent) ? J().avent.length : 0) + '/24') +
       carte('betisier', '📺', 'Le bêtisier', 'Le best-of de tes vannes de la semaine', '📺') +
       carte('maison', '🏠', 'Ma maison', 'Dépense tes plumes, apprends les meubles', '🪶 ' + J().plumes) +
       '</div><p><button class="moyen" data-a="parents">👪 Espace parents</button></p></main>');
   }
 
-  // Battle : 3 manches. Ami se vante ; on choisit la réplique juste et drôle. Point seulement du premier coup.
+  // Battle : 3 manches. Plumo se vante ; on choisit la réplique juste et drôle. Point seulement du premier coup.
   let battle = null;
   // ── v5.86 : Clash libre — on se vanne, tout simplement (un téléphone, chacun son tour, en anglais ET en français) ──
   let clashL = null;
@@ -1981,7 +1981,7 @@
     clashL = null;
   }
 
-  // ── v5.87 : ⭐ le paquet de vannes ajoutées par les joueurs, trié par le juge d'Ami puis par l'IA du serveur ──
+  // ── v5.87 : ⭐ le paquet de vannes ajoutées par les joueurs, trié par le juge de Plumo puis par l'IA du serveur ──
   const V_L = () => window.VANNES_LIBRES;
   const paquet = () => Array.isArray(base.clashPerso) ? base.clashPerso.filter(v => v && typeof v.fr === 'string') : [];
   let paquetMsg = '', paquetVerif = false;
@@ -1998,10 +1998,10 @@
   async function ajouterAuPaquet(fr, en){
     const V = V_L(); fr = String(fr || '').replace(/\s+/g, ' ').trim().slice(0, 140); en = String(en || '').replace(/\s+/g, ' ').trim().slice(0, 140);
     if(!fr) return { ok:false, msg:'✍️ Écris la vanne en français (l’anglais est en option).' };
-    for(const t of [fr, en]) if(t){ const j = V.juger(t); if(!j.ok) return { ok:false, msg:'🛑 Le juge d’Ami refuse : ' + j.raisons.join(', ') + '.' }; }
+    for(const t of [fr, en]) if(t){ const j = V.juger(t); if(!j.ok) return { ok:false, msg:'🛑 Le juge de Plumo refuse : ' + j.raisons.join(', ') + '.' }; }
     if(paquet().some(x => x.fr.toLowerCase() === fr.toLowerCase())) return { ok:false, msg:'⭐ Elle est déjà dans le paquet.' };
     if(paquet().length >= 100) return { ok:false, msg:'Le paquet est plein (100 vannes) : retire-en une d’abord.' };
-    let etat = 'regles', msg = '✅ Ajoutée ! Vérifiée par le juge d’Ami.';
+    let etat = 'regles', msg = '✅ Ajoutée ! Vérifiée par le juge de Plumo.';
     if(CONFIG.API_VANNE_JUGE){
       const ia = await jugerParIA(fr, en);
       if(ia && !ia.garder) return { ok:false, msg:'🤖 L’IA ne la met pas dans le paquet' + (ia.raison ? ' : ' + ia.raison : '.') };
@@ -2023,9 +2023,9 @@
     } finally { paquetVerif = false; }
   }
   function clashPaquet(){
-    const p = paquet(), etiquette = { ok:'🤖✅ validée par l’IA', regles:'✅ juge d’Ami', attente:'⏳ attend l’IA' };
+    const p = paquet(), etiquette = { ok:'🤖✅ validée par l’IA', regles:'✅ juge de Plumo', attente:'⏳ attend l’IA' };
     poser(barre('battle') + '<main class="battle-ecran clash-libre"><h2>⭐ Ajouter des vannes au paquet</h2>' +
-      '<p>Vos vannes à vous sortiront dans le Clash libre. ' + (CONFIG.API_VANNE_JUGE ? '🤖 L’IA trie : elle refuse celles qui visent la personne et corrige l’anglais.' : 'Le juge d’Ami les vérifie (l’IA s’activera avec le serveur).') + '</p>' +
+      '<p>Vos vannes à vous sortiront dans le Clash libre. ' + (CONFIG.API_VANNE_JUGE ? '🤖 L’IA trie : elle refuse celles qui visent la personne et corrige l’anglais.' : 'Le juge de Plumo les vérifie (l’IA s’activera avec le serveur).') + '</p>' +
       '<p><label>La vanne en français <textarea id="cl-fr" maxlength="140" rows="2"></textarea></label></p>' +
       '<p><label>En anglais (si tu sais, sinon laisse vide) <input id="cl-en" maxlength="140" lang="en"></label></p>' +
       '<div class="actions serrees"><button class="moyen plein" data-a="clash-libre-ajouter">➕ Proposer</button><button class="moyen" data-a="clash-libre">← Retour au clash</button></div>' +
@@ -2040,10 +2040,10 @@
     if(!piegesDispo() || !A_EN()) return pieges();
     poser(barre('anglais') + '<main class="coin-anglais"><h2>🎤 Battle de vannes</h2><div class="cartes-anglais">' +
       (window.VANNES_LIBRES ? '<button class="carte-anglais" data-a="clash-libre"><span class="ic">🗯️</span><strong>Clash libre</strong><small>On se vanne, c’est tout ! Entre potes, en anglais et en français</small></button>' : '') +
-      '<button class="carte-anglais" data-a="battle-go" data-v="ami"><span class="ic">🦉</span><strong>Contre Ami</strong><small>3 manches : cloue-lui le bec !</small></button>' +
-      '<button class="carte-anglais" data-a="battle-go" data-v="famille"><span class="ic">🦊🐼</span><strong>En famille</strong><small>Deux équipes, chacun son tour, Ami arbitre</small></button>' +
-      '<button class="carte-anglais" data-a="invente"><span class="ic">✍️</span><strong>Invente ta vanne</strong><small>Fabrique une vanne en anglais pour Ami</small></button>' +
-      '<button class="carte-anglais" data-a="rap"><span class="ic">🎤🔥</span><strong>Battle de rap</strong><small>Sur scène : complète les rimes d’Ami, fais crier le public !</small></button>' +
+      '<button class="carte-anglais" data-a="battle-go" data-v="ami"><span class="ic">🦉</span><strong>Contre Plumo</strong><small>3 manches : cloue-lui le bec !</small></button>' +
+      '<button class="carte-anglais" data-a="battle-go" data-v="famille"><span class="ic">🦊🐼</span><strong>En famille</strong><small>Deux équipes, chacun son tour, Plumo arbitre</small></button>' +
+      '<button class="carte-anglais" data-a="invente"><span class="ic">✍️</span><strong>Invente ta vanne</strong><small>Fabrique une vanne en anglais pour Plumo</small></button>' +
+      '<button class="carte-anglais" data-a="rap"><span class="ic">🎤🔥</span><strong>Battle de rap</strong><small>Sur scène : complète les rimes de Plumo, fais crier le public !</small></button>' +
       '<button class="carte-anglais" data-a="tournoi"><span class="ic">👨‍👩‍👧</span><strong>Battle en famille</strong><small>2 à 4 joueurs, chacun son tour</small></button>' +
       '<button class="carte-anglais" data-a="defi-pote"><span class="ic">📨</span><strong>Défier un pote</strong><small>Par lien : mêmes questions, on compare</small></button>' +
       '<button class="carte-anglais" data-a="salon"><span class="ic">🛸</span><strong>Salon en direct</strong><small>Retrouve tes potes et battle en même temps</small></button></div></main>');
@@ -2061,7 +2061,7 @@
     if(b.i >= b.manches.length && b.fam){
       const g = b.eq[0] === b.eq[1] ? -1 : b.eq[0] > b.eq[1] ? 0 : 1;
       poser(barre('anglais') + '<main class="centre battle-fin"><div class="ami-moyen">' + ami('fete') + '</div>' +
-        '<h2>' + (g < 0 ? 'Égalité ! Ami offre des plumes à tout le monde. 🤝' : 'Victoire de l’équipe ' + ['🦊', '🐼'][g] + ' !') + '</h2>' +
+        '<h2>' + (g < 0 ? 'Égalité ! Plumo offre des plumes à tout le monde. 🤝' : 'Victoire de l’équipe ' + ['🦊', '🐼'][g] + ' !') + '</h2>' +
         '<p class="battle-score">🦊 ' + b.eq[0] + ' – ' + b.eq[1] + ' 🐼</p><p lang="en">🦉 « What a battle! You both speak great English! »</p><p>Quelle battle ! Vous parlez tous très bien anglais !</p>' +
         '<div class="actions serrees"><button class="moyen plein" data-a="battle-go" data-v="famille">🔁 Revanche</button><button class="moyen" data-a="battle">🎤 Autres battles</button></div></main>');
       return;
@@ -2069,8 +2069,8 @@
     if(b.i >= b.manches.length){
       const e = etatAnglais(); e.battles++; const gagne = b.toi > b.ami; if(gagne) e.victoires++; garder();
       poser(barre('anglais') + '<main class="centre battle-fin"><div class="ami-moyen">' + ami(gagne ? 'surpris' : 'fete') + '</div>' +
-        '<h2>' + (b.toi === 3 ? 'Victoire écrasante ! 🏆' : gagne ? 'Tu gagnes la battle ! 🎤' : 'Ami gagne… de justesse ! 🦉') + '</h2>' +
-        '<p class="battle-score">Toi ' + b.toi + ' – ' + b.ami + ' Ami</p>' +
+        '<h2>' + (b.toi === 3 ? 'Victoire écrasante ! 🏆' : gagne ? 'Tu gagnes la battle ! 🎤' : 'Plumo gagne… de justesse ! 🦉') + '</h2>' +
+        '<p class="battle-score">Toi ' + b.toi + ' – ' + b.ami + ' Plumo</p>' +
         '<p lang="en">🦉 « ' + (gagne ? 'OK, you win… Rematch tomorrow?' : 'I win! But your English is getting better!') + ' »</p>' +
         '<p>' + (gagne ? 'D’accord, tu as gagné… Revanche demain ?' : 'J’ai gagné ! Mais ton anglais progresse !') + '</p>' +
         '<div class="actions serrees"><button class="moyen plein" data-a="battle-go" data-v="ami">🔁 Revanche</button><button class="moyen" data-a="battle">🎤 Autres battles</button></div></main>');
@@ -2079,9 +2079,9 @@
     const m = b.manches[b.i]; b.essai = 0; b.fini = false;
     b.options = A_EN().melanger([m.bon.en].concat(m.faux.map(f => f.en)));
     const finale = b.i === b.manches.length - 1, moy = b.foule.length ? Math.round(b.foule.reduce((x, y) => x + y, 0) / b.foule.length) : 0;
-    poser(barre('battle') + '<main class="battle-ecran' + (finale ? ' finale' : '') + '"><p class="piege-cat">' + (finale ? '🏆 FINALE · ' : '') + '🎤 Manche ' + (b.i + 1) + '/' + b.manches.length + ' · ' + (b.fam ? '🦊 ' + b.eq[0] + ' – ' + b.eq[1] + ' 🐼 · <strong>À l’équipe ' + ['🦊', '🐼'][b.i % 2] + ' !</strong>' : 'Toi ' + b.toi + ' – ' + b.ami + ' Ami') + '</p>' +
+    poser(barre('battle') + '<main class="battle-ecran' + (finale ? ' finale' : '') + '"><p class="piege-cat">' + (finale ? '🏆 FINALE · ' : '') + '🎤 Manche ' + (b.i + 1) + '/' + b.manches.length + ' · ' + (b.fam ? '🦊 ' + b.eq[0] + ' – ' + b.eq[1] + ' 🐼 · <strong>À l’équipe ' + ['🦊', '🐼'][b.i % 2] + ' !</strong>' : 'Toi ' + b.toi + ' – ' + b.ami + ' Plumo') + '</p>' +
       '<div class="piege-haut"><div class="ami-moyen" id="ami-battle">' + ami('content') + '</div>' +
-      '<div class="bulle-ami"><p class="piege-fr" lang="en">« ' + esc(m.ami) + ' » <button class="bouton-rond" data-a="battle-ecouter" aria-label="Réécouter Ami">🔊</button></p>' + traduire(m.fr) + '</div></div>' +
+      '<div class="bulle-ami"><p class="piege-fr" lang="en">« ' + esc(m.ami) + ' » <button class="bouton-rond" data-a="battle-ecouter" aria-label="Réécouter Plumo">🔊</button></p>' + traduire(m.fr) + '</div></div>' +
       (b.foule.length ? '<div class="clash-public" aria-label="Énergie du public">📣 Public <span class="jauge"><span style="width:' + moy + '%"></span></span>' + (b.serie > 1 ? ' <strong>🔥 x' + b.serie + '</strong>' : '') + '</div>' : '') +
       '<p class="piege-consigne">Ta réplique (juste ET drôle) :</p>' +
       '<div class="piege-options">' + b.options.map((o, i) => '<button class="moyen piege-opt" data-a="battle-rep" data-v="' + i + '" lang="en">' + esc(o) + '</button>').join('') + '</div>' +
@@ -2101,7 +2101,7 @@
       b.serie = b.essai === 0 ? b.serie + 1 : 0;
       const ovation = C && b.essai === 0 ? '<p class="clash-foule">' + esc(C.FOULE[Math.floor(Math.random() * C.FOULE.length)]) + (C.SERIE[Math.min(4, b.serie)] && !b.fam ? ' <strong>' + esc(C.SERIE[Math.min(4, b.serie)]) + '</strong>' : '') + '</p>' : '';
       if(a) a.innerHTML = ami(b.serie >= 3 ? 'choque' : 'surpris');
-      if(r) r.innerHTML = '<p class="piege-bravo">🎤 ' + (b.essai === 0 ? (b.fam ? 'Bien envoyé ! Point pour l’équipe ' + ['🦊', '🐼'][b.i % 2] + '.' : 'Bien envoyé ! Point pour toi.') : (b.fam ? 'Trouvé ! Mais pas de point cette fois.' : 'Trouvé ! Mais le point va à Ami cette fois.')) + '</p>' +
+      if(r) r.innerHTML = '<p class="piege-bravo">🎤 ' + (b.essai === 0 ? (b.fam ? 'Bien envoyé ! Point pour l’équipe ' + ['🦊', '🐼'][b.i % 2] + '.' : 'Bien envoyé ! Point pour toi.') : (b.fam ? 'Trouvé ! Mais pas de point cette fois.' : 'Trouvé ! Mais le point va à Plumo cette fois.')) + '</p>' +
         '<p class="piege-bon" lang="en">« ' + esc(m.bon.en) + ' »</p><p class="petit">🇫🇷 ' + esc(m.bon.fr) + '</p>' +
         ovation + '<p lang="en">🦉 « ' + esc(aie.en) + ' » <small>(' + esc(aie.fr) + ')</small></p>' +
         '<button class="moyen plein" data-a="battle-suivant">' + (b.i + 1 < b.manches.length ? 'Manche suivante →' : 'Résultat') + '</button>';
@@ -2111,7 +2111,7 @@
       const f = m.faux.find(x => x.en === choix);
       if(a) a.innerHTML = ami('fete');
       const C = window.CLASH, rip = C ? C.RIPOSTES[(b.i * 3 + b.essai) % C.RIPOSTES.length] : null; b.serie = 0;
-      // Ami contre-attaque (sur la réplique ratée), puis la vanne explique l'erreur d'anglais.
+      // Plumo contre-attaque (sur la réplique ratée), puis la vanne explique l'erreur d'anglais.
       if(r) r.innerHTML = (rip ? '<p class="clash-riposte" lang="en">🦉 « ' + esc(rip.en) + ' » <small lang="fr">(' + esc(rip.fr) + ')</small></p>' : '') +
         '<p class="piege-vanne">😂 ' + esc(vannePiquante(f ? f.vanne : 'Presque !')) + '</p><p class="petit">Essaie une autre réplique !</p>';
       if(rip && niveauHumour() > 0) direPhrase(rip.en, 'en');
@@ -2189,7 +2189,7 @@
     }
     d.fait = false;
     poser(barre('anglais') + '<main class="battle-ecran dictee-ecran"><p class="piege-cat">✍️ Dictée · ' + (d.i + 1) + '/' + d.liste.length + '</p>' +
-      '<div class="piege-haut"><div class="ami-moyen">' + ami('content') + '</div><p class="piege-consigne">Écoute Ami, puis écris la phrase en anglais.</p></div>' +
+      '<div class="piege-haut"><div class="ami-moyen">' + ami('content') + '</div><p class="piege-consigne">Écoute Plumo, puis écris la phrase en anglais.</p></div>' +
       '<div class="actions serrees"><button class="moyen plein" data-a="dictee-ecouter">🔊 Écouter</button><button class="moyen" data-a="dictee-lent">🐢 Lentement</button></div>' +
       '<label class="dictee-label" for="dictee-texte">Ta phrase :</label>' +
       '<textarea id="dictee-texte" lang="en" rows="2" autocapitalize="off" autocomplete="off" autocorrect="off" spellcheck="false" maxlength="160"></textarea>' +
@@ -2207,7 +2207,7 @@
     else { for(const e of c.erreurs) if(e.ecrit) noterErreur('dictee:' + e.ecrit + '>' + e.attendu); garder(); }
     const rendu = c.mots.map((m, k) => '<span class="' + (c.ok[k] ? 'mot-ok' : 'mot-ko') + '">' + esc(m) + '</span>').join(' ');
     const r = $('#dictee-retour');
-    if(r) r.innerHTML = (c.juste ? '<p class="piege-bravo">✨ Parfait ! Pas une faute.</p>' : '<p class="piege-vanne">😂 ' + esc(c.erreurs.length ? A_EN().vanneDictee(c.erreurs.find(x => x.ecrit) || c.erreurs[0], c.score) : '« ' + c.enTrop[0] + ' » est en trop : Ami ne l’a pas dit ! 🤫') + '</p>' + '<p class="dictee-corrige" lang="en">' + rendu + '</p>') +
+    if(r) r.innerHTML = (c.juste ? '<p class="piege-bravo">✨ Parfait ! Pas une faute.</p>' : '<p class="piege-vanne">😂 ' + esc(c.erreurs.length ? A_EN().vanneDictee(c.erreurs.find(x => x.ecrit) || c.erreurs[0], c.score) : '« ' + c.enTrop[0] + ' » est en trop : Plumo ne l’a pas dit ! 🤫') + '</p>' + '<p class="dictee-corrige" lang="en">' + rendu + '</p>') +
       '<p class="piege-bon" lang="en">✅ ' + esc(ph.en) + '</p><p class="petit">🇫🇷 ' + esc(ph.fr) + '</p>' +
       '<button class="moyen plein" data-a="dictee-suivant">' + (d.i + 1 < d.liste.length ? 'Phrase suivante →' : 'Résultat') + '</button>';
     if(z) z.readOnly = true; const vb = $('[data-a="dictee-verifier"]'); if(vb) vb.hidden = true;
@@ -2225,7 +2225,7 @@
   }
   const melangeLocal = (l, rnd) => { const o = l.slice(); rnd = rnd || Math.random; for(let i = o.length - 1; i > 0; i--){ const k = Math.floor(rnd() * (i + 1)); [o[i], o[k]] = [o[k], o[i]]; } return o; };
 
-  // ── Ami se trompe exprès : on le juge, puis on le corrige ──
+  // ── Plumo se trompe exprès : on le juge, puis on le corrige ──
   let trompe = null;
   function amiTrompe(){
     if(!window.PIEGES || !RG()) return coinAnglais();
@@ -2236,14 +2236,14 @@
     const t = trompe; if(!t) return coinAnglais();
     if(t.i >= t.l.length){
       J().plumes += t.score; garder(); bruit('fin');
-      return poser(barre('anglais') + '<main class="centre"><div class="ami-moyen">' + ami(t.score >= 12 ? 'vexe' : 'malin') + '</div><h2>' + (t.score >= 12 ? 'Tu es le prof d’Ami ! 🎓' : 'Ami t’a eu quelques fois… 😏') + '</h2>' +
-        '<p>' + t.score + ' points · ⭐ +' + t.score + ' plumes</p><p lang="en">🦉 « ' + (t.score >= 12 ? 'OK… you’re the teacher now.' : 'Sneaky Ami strikes again!') + ' »</p>' +
+      return poser(barre('anglais') + '<main class="centre"><div class="ami-moyen">' + ami(t.score >= 12 ? 'vexe' : 'malin') + '</div><h2>' + (t.score >= 12 ? 'Tu es le prof de Plumo ! 🎓' : 'Plumo t’a eu quelques fois… 😏') + '</h2>' +
+        '<p>' + t.score + ' points · ⭐ +' + t.score + ' plumes</p><p lang="en">🦉 « ' + (t.score >= 12 ? 'OK… you’re the teacher now.' : 'Sneaky Plumo strikes again!') + ' »</p>' +
         '<div class="actions serrees"><button class="moyen plein" data-a="trompe">🔁 Encore</button><button class="moyen" data-a="anglais">🇬🇧 Coin anglais</button></div></main>');
     }
     const x = t.l[t.i], phrase = x.faute ? x.p.faux[x.k].en : x.p.bon;
     t.etape = 'juger';
-    poser(barre('anglais') + '<main class="piege-ecran"><p class="piege-cat">🦉 Ami se trompe exprès · ' + (t.i + 1) + '/' + t.l.length + ' · ' + t.score + ' pts</p>' +
-      '<div class="piege-haut"><div class="ami-moyen" id="ami-trompe">' + ami('malin') + '</div><div><p class="piege-consigne">Ami veut dire : « ' + esc(x.p.fr) + ' »</p>' +
+    poser(barre('anglais') + '<main class="piege-ecran"><p class="piege-cat">🦉 Plumo se trompe exprès · ' + (t.i + 1) + '/' + t.l.length + ' · ' + t.score + ' pts</p>' +
+      '<div class="piege-haut"><div class="ami-moyen" id="ami-trompe">' + ami('malin') + '</div><div><p class="piege-consigne">Plumo veut dire : « ' + esc(x.p.fr) + ' »</p>' +
       '<p class="piege-fr" lang="en">🦉 « ' + esc(phrase) + ' » <button class="bouton-rond" data-a="trompe-ecouter" aria-label="Réécouter">🔊</button></p></div></div>' +
       '<p class="piege-consigne">Sa phrase anglaise est…</p><div class="actions serrees"><button class="gros juste-btn" data-a="trompe-juge" data-v="juste">✅ Juste</button><button class="gros buzz-btn" data-a="trompe-juge" data-v="faux">❌ Faux !</button></div>' +
       '<div class="piege-retour" id="trompe-retour" role="status" aria-live="polite"></div></main>');
@@ -2258,7 +2258,7 @@
       t.etape = 'corriger'; t.score += 1; bruit('juste');
       const opts = melangeLocal([x.p.bon, x.p.faux[x.k].en].concat(x.p.faux.filter((f, k) => k !== x.k).map(f => f.en)).slice(0, 3));
       t.opts = opts;
-      if(r) r.innerHTML = '<p class="piege-bravo">🔔 Bien vu, il y a une faute ! Maintenant, corrige Ami :</p><div class="piege-options">' + opts.map((o, k) => '<button class="moyen piege-opt" data-a="trompe-corrige" data-v="' + k + '" lang="en">' + esc(o) + '</button>').join('') + '</div>';
+      if(r) r.innerHTML = '<p class="piege-bravo">🔔 Bien vu, il y a une faute ! Maintenant, corrige Plumo :</p><div class="piege-options">' + opts.map((o, k) => '<button class="moyen piege-opt" data-a="trompe-corrige" data-v="' + k + '" lang="en">' + esc(o) + '</button>').join('') + '</div>';
       if(a) a.innerHTML = ami('choque');
     } else if(x.faute){
       t.etape = 'fini'; bruit('faux'); noterBetisier(x.p.faux[x.k].vanne);
@@ -2286,15 +2286,15 @@
   function oreillesGo(){
     const R = RG(); if(!R) return coinAnglais();
     const l = melangeLocal(R.PAIRES).slice(0, 8).map(p => { const c = Math.random() < .5 ? p.a : p.b, o = c === p.a ? p.b : p.a;
-      return { consigne:'👂 Écoute bien : qu’a dit Ami ?', enonce:'', ecoute:c.en, lent:true, bon:c.e, bonTexte:c.e + ' ' + c.en + ' = ' + c.fr, dire:c.en,
+      return { consigne:'👂 Écoute bien : qu’a dit Plumo ?', enonce:'', ecoute:c.en, lent:true, bon:c.e, bonTexte:c.e + ' ' + c.en + ' = ' + c.fr, dire:c.en,
         faux:[{ en:o.e, vanne:'« ' + o.en + ' » au lieu de « ' + c.en + ' » : ' + p.rire }], regle:'« ' + p.a.en + ' » ' + p.a.e + ' / « ' + p.b.en + ' » ' + p.b.e + ' : réécoute-les avec 🐢.' }; });
     questionsGo(l, { titre:'👂 Le jeu des oreilles', retour:'anglais', fin:z => finJeu(z, '👂 Tes oreilles parlent anglais !', 'oreilles') });
   }
   function vraiFauxGo(){
     const R = RG(); if(!R) return coinAnglais();
-    const l = melangeLocal(R.VRAI_FAUX).slice(0, 8).map(v => ({ consigne:'🦉 Ami dit… True or false?', enonce:'« ' + v.en + ' »', ecoute:v.en, trad:v.fr, bon:v.vrai ? 'True' : 'False', dire:v.en,
+    const l = melangeLocal(R.VRAI_FAUX).slice(0, 8).map(v => ({ consigne:'🦉 Plumo dit… True or false?', enonce:'« ' + v.en + ' »', ecoute:v.en, trad:v.fr, bon:v.vrai ? 'True' : 'False', dire:v.en,
       bonTexte:(v.vrai ? 'True — c’est vrai !' : 'False — c’est faux !'), faux:[{ en:v.vrai ? 'False' : 'True', vanne:v.rire }], regle:'😂 ' + v.rire, humeurJuste:v.vrai ? 'fier' : 'mdr', humeurFaux:'malin' }));
-    questionsGo(l, { titre:'🤥 True or false?', retour:'anglais', fin:z => finJeu(z, z.bonnes >= 6 ? 'Impossible de te raconter des salades ! 🥗' : 'Ami t’a fait avaler quelques bêtises… 😏', 'vraifaux') });
+    questionsGo(l, { titre:'🤥 True or false?', retour:'anglais', fin:z => finJeu(z, z.bonnes >= 6 ? 'Impossible de te raconter des salades ! 🥗' : 'Plumo t’a fait avaler quelques bêtises… 😏', 'vraifaux') });
   }
   function finJeu(z, titre, rejouer){
     J().plumes += z.bonnes; garder(); bruit('fin');
@@ -2348,7 +2348,7 @@
       '<div class="ami-maison">' + ami('content') + '</div></div>' +
       '<p class="aide" id="maison-msg" role="status" aria-live="polite">' + esc(maisonMsg) + '</p>' +
       (carton.length ? '<p class="petit">📦 Dans le carton : ' + carton.map(id => objet(id).e).join(' ') + ' (touche une place libre pour le poser)</p>' : '') +
-      '<h3>🛒 La boutique d’Ami</h3><div class="boutique">' + R.MAISON.map(x => { const a = m.achats.includes(x.id);
+      '<h3>🛒 La boutique de Plumo</h3><div class="boutique">' + R.MAISON.map(x => { const a = m.achats.includes(x.id);
         return '<button class="article' + (a ? ' achete' : '') + '" data-a="maison-acheter" data-v="' + x.id + '"' + (a || J().plumes < x.prix ? ' disabled' : '') + '><span class="obj">' + x.e + '</span><span lang="en">' + esc(x.en) + '</span><small>' + esc(x.fr) + '</small><em>' + (a ? '✓' : x.prix + ' 🪶') + '</em></button>'; }).join('') + '</div></main>');
     maisonMsg = '';
   }
@@ -2378,9 +2378,9 @@
   }
   function afficherBest(){
     const b = best; if(!b) return coinAnglais();
-    if(!b.l.length) return poser(barre('anglais') + '<main class="centre"><div class="ami-moyen">' + ami('boude') + '</div><h2>📺 Le bêtisier d’Ami</h2><p>Pas encore de vannes cette semaine ! Joue un peu, trompe-toi un peu… et reviens. 😄</p><p><button class="moyen plein" data-a="anglais">🇬🇧 Coin anglais</button></p></main>');
-    if(b.i < 0) return poser(barre('anglais') + '<main class="centre tele"><div class="ecran-tele"><div class="ami-moyen">' + ami('fete') + '</div><h2>📺 Le bêtisier d’Ami</h2><p>Bienvenue dans l’émission la plus drôle du village ! Voici le top ' + b.l.length + ' de tes confusions de la semaine. Pas de honte : on rit, et on retient !</p></div><button class="gros" data-a="best-suivant">▶ Lancer l’émission</button></main>');
-    if(b.i >= b.l.length) return poser(barre('anglais') + '<main class="centre tele"><div class="ecran-tele"><div class="ami-moyen">' + ami('mdr') + '</div><h2>C’était le bêtisier d’Ami !</h2><p>Rendez-vous la semaine prochaine pour de nouvelles bêtises. 👋</p></div><p><button class="moyen plein" data-a="anglais">🇬🇧 Coin anglais</button></p></main>');
+    if(!b.l.length) return poser(barre('anglais') + '<main class="centre"><div class="ami-moyen">' + ami('boude') + '</div><h2>📺 Le bêtisier de Plumo</h2><p>Pas encore de vannes cette semaine ! Joue un peu, trompe-toi un peu… et reviens. 😄</p><p><button class="moyen plein" data-a="anglais">🇬🇧 Coin anglais</button></p></main>');
+    if(b.i < 0) return poser(barre('anglais') + '<main class="centre tele"><div class="ecran-tele"><div class="ami-moyen">' + ami('fete') + '</div><h2>📺 Le bêtisier de Plumo</h2><p>Bienvenue dans l’émission la plus drôle du village ! Voici le top ' + b.l.length + ' de tes confusions de la semaine. Pas de honte : on rit, et on retient !</p></div><button class="gros" data-a="best-suivant">▶ Lancer l’émission</button></main>');
+    if(b.i >= b.l.length) return poser(barre('anglais') + '<main class="centre tele"><div class="ecran-tele"><div class="ami-moyen">' + ami('mdr') + '</div><h2>C’était le bêtisier de Plumo !</h2><p>Rendez-vous la semaine prochaine pour de nouvelles bêtises. 👋</p></div><p><button class="moyen plein" data-a="anglais">🇬🇧 Coin anglais</button></p></main>');
     const n = b.l.length - b.i, x = b.l[b.i];
     poser(barre('anglais') + '<main class="centre tele"><div class="ecran-tele"><p class="numero">N° ' + n + (n === 1 ? ' 🏆' : '') + '</p><div class="ami-moyen">' + ami(n === 1 ? 'mdr' : ['choque', 'malin', 'fier', 'surpris'][n % 4]) + '</div><p class="piege-vanne">😂 ' + esc(x.v) + '</p></div>' +
       '<button class="gros" data-a="best-suivant">' + (n > 1 ? 'Suivant ▶' : 'Fin de l’émission') + '</button></main>');
@@ -2408,7 +2408,7 @@
       J().plumes += 3; garder(); bruit('fin');
       return poser(barre('battle') + '<main class="centre"><div class="ami-moyen">' + ami('mdr') + '</div><h2>' + (ex ? '🤝 Égalité au sommet !' : '👑 ' + esc(cl[0].n) + ' gagne la battle !') + '</h2>' +
         '<ol class="podium">' + cl.map((x, k) => '<li>' + ['🥇', '🥈', '🥉', '🏅'][k] + ' ' + esc(x.n) + ' — ' + x.s + '/6</li>').join('') + '</ol>' +
-        '<p lang="en">🦉 « And Ami? Ami got zero… because Ami was the referee! »</p><p class="petit">Et Ami ? Zéro… parce qu’il était l’arbitre !</p>' +
+        '<p lang="en">🦉 « And Plumo? Plumo got zero… because Plumo was the referee! »</p><p class="petit">Et Plumo ? Zéro… parce qu’il était l’arbitre !</p>' +
         '<div class="actions serrees"><button class="moyen plein" data-a="tournoi-go-memes">🔁 Revanche</button><button class="moyen" data-a="battle">🎤 Battles</button></div></main>');
     }
     poser(barre('battle') + '<main class="centre"><div class="ami-moyen">' + ami('fete') + '</div><h2>📱 Passe le téléphone à ' + esc(t.noms[t.i]) + ' !</h2><p>6 questions. Les autres, pas de souffle ! 🤫</p><button class="gros" data-a="tournoi-joue">C’est moi, ' + esc(t.noms[t.i]) + ' ! ▶</button></main>');
@@ -2419,10 +2419,10 @@
   }
 
   // ── v5.68 : Battle entre potes (accueil) — maths, anglais et vannes, 2 à 4 joueurs sur le même appareil ──
-  // Chaque joueur répond à la même formule (mêmes types, mêmes niveaux) ; Ami commente entre les tours et
-  // charrie les réponses, jamais les joueurs. Liens vers le défi par lien, le salon en direct et la battle contre Ami.
+  // Chaque joueur répond à la même formule (mêmes types, mêmes niveaux) ; Plumo commente entre les tours et
+  // charrie les réponses, jamais les joueurs. Liens vers le défi par lien, le salon en direct et la battle contre Plumo.
   let potes = null;
-  const MATIERES_POTES = [['melange', '🎲', 'Le grand mélange', 'Maths, anglais ET vannes'], ['culture', '📚', 'Culture G', 'Français, histoire-géo, SVT, physique'], ['maths', '🔢', 'Maths', 'Calcul, fractions, équations…'], ['anglais', '🇬🇧', 'Anglais', 'Pièges, oreille, vrai ou faux'], ['vannes', '🎤', 'Vannes', 'Ami clashe : trouve la meilleure punchline']];
+  const MATIERES_POTES = [['melange', '🎲', 'Le grand mélange', 'Maths, anglais ET vannes'], ['culture', '📚', 'Culture G', 'Français, histoire-géo, SVT, physique'], ['maths', '🔢', 'Maths', 'Calcul, fractions, équations…'], ['anglais', '🇬🇧', 'Anglais', 'Pièges, oreille, vrai ou faux'], ['langlais', '🎓', 'Anglais du programme', 'De la 6e au bac, à ton niveau : grammaire, irréguliers, faux amis'], ['vannes', '🎤', 'Vannes', 'Plumo clashe : trouve la meilleure punchline']];
   // Questions d'une battle : graine → toujours les mêmes pour une graine (revanche équitable).
   // Longueur : nombre de questions par joueur (mélange ; une seule matière : un peu moins).
   const LONGUEURS_POTES = { courte:[9, 6, '⚡ Courte'], normale:[15, 10, '🔥 Normale'], marathon:[24, 16, '🏃 Marathon'] };
@@ -2430,17 +2430,18 @@
     const L = LONGUEURS_POTES[longueur] || LONGUEURS_POTES.normale, N = mode === 'melange' ? L[0] : L[1], k = Math.ceil(N / 3);
     const CP = window.CLASH_PLUS, intro = i => CP ? CP.INTROS_POTES[(graine + i * 3) % CP.INTROS_POTES.length] : '';
     const R = window.RIGOLADE, rnd = R ? R.hasardGraine(graine) : Math.random, A = A_EN();
-    // Maths : une petite phrase d'Ami avant l'énoncé, pour mettre la pression (pour rire).
+    // Maths : une petite phrase de Plumo avant l'énoncé, pour mettre la pression (pour rire).
     const maths = n => window.MATHS ? MATHS.questionsSalon(graine, n, niveau).map((q, i) => Object.assign(q, { consigne:q.consigne + (intro(i) ? ' · ' + intro(i) : '') })) : [];
     const anglais = n => window.SALON && A ? SALON.questionsMixtes(graine + 17, n * 3).filter(q => !/^b:/.test(q.id)).slice(0, n) : [];
     const vannes = n => {
       if(!A) return [];
       const toutes = A.BATTLE.concat(window.CLASH ? CLASH.MANCHES : []), l = A.melanger(toutes, rnd).slice(0, n);
-      return l.map(m => ({ id:'c:' + m.ami, consigne:'🎤 Ami te clashe : renvoie-lui la meilleure punchline !', enonce:'« ' + m.ami + ' »', ecoute:m.ami, trad:m.fr,
+      return l.map(m => ({ id:'c:' + m.ami, consigne:'🎤 Plumo te clashe : renvoie-lui la meilleure punchline !', enonce:'« ' + m.ami + ' »', ecoute:m.ami, trad:m.fr,
         bon:m.bon.en, faux:m.faux.slice(0, 3), regle:'🇫🇷 ' + m.bon.fr, dire:m.bon.en }));
     };
     if(mode === 'culture' && window.MATIERES){ const ids = ['francais', 'histoire', 'svt', 'physique'], l = ids.map((id, i) => MATIERES.serie(id, 'melange', niveau, Math.ceil(N / ids.length) + 1, graine + i * 101, 'taquin'));
       const out = []; for(let i = 0; out.length < N && i < N; i++) for(const x of l) if(x[i] && out.length < N) out.push(x[i]); if(out.length) return out; }
+    if(mode === 'langlais' && window.MATIERES && MATIERES.trouver('langlais')){ const l = MATIERES.serie('langlais', 'melange', MATIERES.chapitres('langlais', niveau).length ? niveau : '3e', N, graine + 7, 'taquin'); if(l.length) return l; }
     if(mode === 'maths') return maths(N);
     if(mode === 'anglais') return anglais(N);
     if(mode === 'vannes') return vannes(N);
@@ -2452,10 +2453,10 @@
   function potesMenu(){
     potes = null;
     const noms = Array.isArray(base.famille) ? base.famille : [], A = A_EN(), niv = window.MATHS ? etatMaths().niveau : '6e';
-    const dispo = MATIERES_POTES.filter(([k]) => k === 'maths' ? !!window.MATHS : k === 'melange' ? !!(window.MATHS || A) : k === 'culture' ? !!window.MATIERES : !!A);
+    const dispo = MATIERES_POTES.filter(([k]) => k === 'maths' ? !!window.MATHS : k === 'melange' ? !!(window.MATHS || A) : k === 'culture' ? !!window.MATIERES : k === 'langlais' ? !!(window.MATIERES && MATIERES.trouver('langlais')) : !!A);
     const choix = dispo.some(x => x[0] === base.potesMode) ? base.potesMode : dispo[0][0];
     poser(barre('accueil') + '<main class="coin-anglais potes"><h2>⚔️ Battle entre potes</h2>' +
-      '<p class="pieges-intro">2 à 4 joueurs sur ce téléphone, chacun son tour. Ami pose les questions, compte les points… et charrie les mauvaises réponses. 😏</p>' +
+      '<p class="pieges-intro">2 à 4 joueurs sur ce téléphone, chacun son tour. Plumo pose les questions, compte les points… et charrie les mauvaises réponses. 😏</p>' +
       '<div class="cartes-anglais choix-matiere">' + dispo.map(([k, ic, nom, txt]) => '<button class="carte-anglais' + (k === choix ? ' choisie' : '') + '" data-a="potes-matiere" data-v="' + k + '" aria-pressed="' + (k === choix) + '"><span class="ic">' + ic + '</span><strong>' + nom + '</strong><small>' + txt + '</small></button>').join('') + '</div>' +
       '<p class="choix-longueur">' + Object.keys(LONGUEURS_POTES).map(k => { const L = LONGUEURS_POTES[k], ch = (base.potesLongueur || 'normale') === k;
         return '<button class="moyen' + (ch ? ' plein' : '') + '" data-a="potes-longueur" data-v="' + k + '" aria-pressed="' + ch + '">' + L[2] + ' · ' + (choix === 'melange' ? L[0] : L[1]) + ' questions</button>'; }).join(' ') + '</p>' +
@@ -2467,7 +2468,7 @@
       '<button class="carte-anglais" data-a="defi-pote"><span class="ic">📨</span><strong>Défier un pote (anglais)</strong><small>Par lien : mêmes questions, on compare</small></button>' +
       (window.MATHS ? '<button class="carte-anglais" data-a="maths-defi"><span class="ic">🔗</span><strong>Défier un pote (maths)</strong><small>Par lien, à ton niveau</small></button>' : '') +
       '<button class="carte-anglais" data-a="salon"><span class="ic">🛸</span><strong>Salon en direct</strong><small>Chacun sur son téléphone, en même temps</small></button>' +
-      (A ? '<button class="carte-anglais" data-a="battle-go" data-v="ami"><span class="ic">🦉</span><strong>Contre Ami</strong><small>3 manches de vannes en anglais</small></button>' : '') +
+      (A ? '<button class="carte-anglais" data-a="battle-go" data-v="ami"><span class="ic">🦉</span><strong>Contre Plumo</strong><small>3 manches de vannes en anglais</small></button>' : '') +
       '</div></main>');
   }
   function potesGo(){
@@ -2479,14 +2480,14 @@
     potes = { noms, scores:[], i:0, mode:modes.includes(base.potesMode) ? base.potesMode : modes[0], niveau, longueur:base.potesLongueur || 'normale', graine:Math.floor(Math.random() * 1e9), trash:!!(base.potesTrash && window.TRASH_TALK) };
     potesTour();
   }
-  // Ami commente le classement entre deux joueurs (il charrie la course, jamais une personne).
+  // Plumo commente le classement entre deux joueurs (il charrie la course, jamais une personne).
   function commentairePotes(p){
     const fait = p.noms.slice(0, p.i).map((n, k) => ({ n, s:p.scores[k] })).sort((a, b) => b.s - a.s), TT = window.TRASH_TALK;
     if(p.trash && TT) return esc(fait.length ? TT.choisir(TT.TOUR, { n:p.noms[p.i], t:fait[0].n, s:fait[0].s, total:p.liste ? p.liste.length : 9 }, memoireVannes()) : TT.choisir(TT.PREMIER, { n:p.noms[p.i] }, memoireVannes()));
     if(!fait.length) return 'Premier à passer : pas de pression… enfin si, un peu. 😏';
     const t = fait[0], total = p.liste ? p.liste.length : 9;
     const l = [esc(t.n) + ' mène avec ' + t.s + ' point' + (t.s > 1 ? 's' : '') + '. Qui va le faire tomber de son trône ? 👑',
-      'Score à battre : ' + t.s + '/' + total + '. Ami a déjà sorti le pop-corn. 🍿',
+      'Score à battre : ' + t.s + '/' + total + '. Plumo a déjà sorti le pop-corn. 🍿',
       t.s === total ? esc(t.n) + ' a fait un sans-faute. Il faudra un miracle… ou un sans-faute. 😱' : 'Le record est à ' + t.s + '. Franchement, c’est jouable. 🔥'];
     return l[(p.i + p.graine) % l.length];
   }
@@ -2499,7 +2500,7 @@
       const titres = ['👑 Roi ou reine de la battle', '🥈 Presque sur le trône', '🥉 Sur le podium', '🛟 Revanche obligatoire'];
       return poser(barre('potes') + '<main class="centre potes-fin"><div class="ami-moyen">' + ami('fete') + '</div><h2>' + (ex ? '🤝 Égalité au sommet !' : '👑 ' + esc(cl[0].n) + ' gagne la battle !') + '</h2>' +
         '<ol class="podium">' + cl.map((x, k) => '<li>' + ['🥇', '🥈', '🥉', '🏅'][k] + ' <strong>' + esc(x.n) + '</strong> — ' + x.s + '/' + total + ' <small>' + titres[k > 0 && k === cl.length - 1 ? 3 : Math.min(k, 2)] + '</small></li>').join('') + '</ol>' +
-        '<p>🦉 ' + (p.trash && window.TRASH_TALK ? esc(TRASH_TALK.choisir(ex ? TRASH_TALK.EGALITE : TRASH_TALK.FIN, { g:cl[0].n, d:cl[cl.length - 1].n }, memoireVannes())) : ex ? 'Égalité ! Ami exige une revanche, il n’a pas fini son pop-corn.' : 'Bien joué ' + esc(cl[0].n) + ' ! Les autres : Ami a noté toutes vos réponses ratées… pour la revanche. 😏') + '</p>' +
+        '<p>🦉 ' + (p.trash && window.TRASH_TALK ? esc(TRASH_TALK.choisir(ex ? TRASH_TALK.EGALITE : TRASH_TALK.FIN, { g:cl[0].n, d:cl[cl.length - 1].n }, memoireVannes())) : ex ? 'Égalité ! Plumo exige une revanche, il n’a pas fini son pop-corn.' : 'Bien joué ' + esc(cl[0].n) + ' ! Les autres : Plumo a noté toutes vos réponses ratées… pour la revanche. 😏') + '</p>' +
         '<div class="actions serrees"><button class="moyen plein" data-a="potes-revanche">🔁 Revanche (nouvelles questions)</button><button class="moyen" data-a="potes">⚔️ Changer de battle</button></div></main>');
     }
     const nom = MATIERES_POTES.find(x => x[0] === p.mode) || MATIERES_POTES[0];
@@ -2548,7 +2549,7 @@
   }
 
 
-  // ── Battle de rap : un rythme qui tourne, Ami rappe, on complète ses rimes ──
+  // ── Battle de rap : un rythme qui tourne, Plumo rappe, on complète ses rimes ──
   let rap = null, beat = null;
   function lancerBeat(){
     arreterBeat(); if(!base.son) return;
@@ -2582,14 +2583,14 @@
     const r = rap, R = RG(); if(!r) return coinAnglais();
     if(r.manche >= R.RAP.length){
       arreterBeat(); const gagne = r.score >= 4; J().plumes += r.score * 2; if(gagne){ const e = etatAnglais(); e.victoires++; } garder(); bruit('fin');
-      return poser(barre('battle') + scene('<div class="rap-centre"><div class="ami-moyen">' + ami(gagne ? 'vexe' : 'fier') + '</div><h2>' + (gagne ? '🏆 Champion du micro !' : '🎤 Ami garde le micro… pour cette fois !') + '</h2>' +
-        '<p>' + r.score + '/6 rimes parfaites · ⭐ +' + r.score * 2 + ' plumes</p><p lang="en">🦉 « ' + (gagne ? 'OK… you win. Mic drop. 🎤⬇️' : 'Ami is still the king! But you’re getting close…') + ' »</p>' +
+      return poser(barre('battle') + scene('<div class="rap-centre"><div class="ami-moyen">' + ami(gagne ? 'vexe' : 'fier') + '</div><h2>' + (gagne ? '🏆 Champion du micro !' : '🎤 Plumo garde le micro… pour cette fois !') + '</h2>' +
+        '<p>' + r.score + '/6 rimes parfaites · ⭐ +' + r.score * 2 + ' plumes</p><p lang="en">🦉 « ' + (gagne ? 'OK… you win. Mic drop. 🎤⬇️' : 'Plumo is still the king! But you’re getting close…') + ' »</p>' +
         '<div class="actions serrees"><button class="moyen plein" data-a="rap">🔁 Revanche</button><button class="moyen" data-a="battle">🎤 Battles</button></div></div>'));
     }
     const m = R.RAP[r.manche];
-    if(r.ligne < 4){ // Ami rappe son couplet, ligne par ligne
+    if(r.ligne < 4){ // Plumo rappe son couplet, ligne par ligne
       const l = r.ligne < 0 ? null : m.ami[r.ligne];
-      poser(barre('battle') + scene('<div class="rap-centre"><p class="piege-cat">🎤 Manche ' + (r.manche + 1) + '/3 · Ami rappe</p><div class="ami-moyen micro-ami">' + ami(r.ligne % 2 ? 'fier' : 'malin') + '</div>' +
+      poser(barre('battle') + scene('<div class="rap-centre"><p class="piege-cat">🎤 Manche ' + (r.manche + 1) + '/3 · Plumo rappe</p><div class="ami-moyen micro-ami">' + ami(r.ligne % 2 ? 'fier' : 'malin') + '</div>' +
         (l ? '<p class="rap-ligne" lang="en">' + esc(l[0]) + '</p>' + traduire(l[1]) : '<p class="rap-ligne">🎶 Le DJ lance le son…</p>') +
         '<button class="gros" data-a="rap-suivant">' + (r.ligne < 3 ? 'Ligne suivante ▶' : 'À toi de répondre ! 🎤') + '</button></div>'));
       if(l) direPhrase(l[0], 'en', 1.05);
@@ -2701,7 +2702,7 @@
     document.querySelectorAll('.piege-opt').forEach((b, i) => { b.disabled = true; if(P.opts[i] === q.bon) b.classList.add('ok'); else if(i === k) b.classList.add('ko'); });
     const f = !ok && k >= 0 && q.faux.find(x => x.en === choix), r = $('#qz-retour'), a = $('#ami-qz');
     if(a) a.innerHTML = ami(ok ? 'fete' : 'mdr');
-    if(r) r.innerHTML = (ok ? '<p class="piege-bravo">Yes! 🎉 +' + window.SALON.points(true, ms, 15000) + '</p>' : '<p class="piege-vanne">😂 ' + esc(k < 0 ? 'Trop tard ! Ami a eu le temps de faire une sieste. 😴' : (f && f.vanne) || 'Presque !') + '</p>') + '<p class="piege-bon" lang="en">✅ ' + esc(q.bonTexte || q.bon) + '</p><p class="petit">En attente des autres joueurs…</p>';
+    if(r) r.innerHTML = (ok ? '<p class="piege-bravo">Yes! 🎉 +' + window.SALON.points(true, ms, 15000) + '</p>' : '<p class="piege-vanne">😂 ' + esc(k < 0 ? 'Trop tard ! Plumo a eu le temps de faire une sieste. 😴' : (f && f.vanne) || 'Presque !') + '</p>') + '<p class="piege-bon" lang="en">✅ ' + esc(q.bonTexte || q.bon) + '</p><p class="petit">En attente des autres joueurs…</p>';
     bruit(ok ? 'juste' : 'faux'); if(f && f.vanne) noterBetisier(f.vanne);
   }
   function majScores(){
@@ -2778,8 +2779,9 @@
         // Parmi les variantes de ce niveau, une pas encore dite (sinon la plus ancienne).
         const neuves = niv.filter(l => m.age(l) < 0), l = neuves.length ? neuves[Math.floor(Math.random() * neuves.length)] : niv.slice().sort((a, b) => m.age(b) - m.age(a))[0];
         retenirVanne(l); f.vanne = l + ' ' + f.vanne; } }
-    // v5.77 : 🥊 trash talk — Ami chambre la réponse et se la raconte ; il compte les séries.
+    // v5.77 : 🥊 trash talk — Plumo chambre la réponse et se la raconte ; il compte les séries.
     const TT = window.TRASH_TALK, trash = !!TT && (z.trash || ((z.prof || q.matiere) && (J().maths || {}).ton === 'trash'));
+    const suiteAvant = z.suite || 0;
     z.suite = juste ? Math.max(0, z.suite || 0) + 1 : Math.min(0, z.suite || 0) - 1;
     let bravoTrash = '';
     if(trash){ const m = memoireVannes(), k = Math.abs(z.suite);
@@ -2791,13 +2793,26 @@
       const court = /^(Non\.?|Non :.*)$/.test(String(f.vanne).trim()), drole = TT.choisir(Math.random() < 0.7 ? TT.IMAGEES : TT.TCHATCHE.map(x => x.replace(/^🥊 /, '')), {}, memoireVannes());
       f = Object.assign({}, f, { vanne:drole + (court && /^Non\.?$/.test(String(f.vanne).trim()) ? '' : ' ' + f.vanne) }); }
     if(f && f.vanne) noterBetisier(f.vanne);
-    const az = $('#ami-qz'); if(az && !q.image) az.innerHTML = z.prof ? profPi(juste ? 'fier' : 'mdr') : ami(juste ? (q.humeurJuste || 'fete') : (q.humeurFaux || (niveauHumour() > 1 ? 'mdr' : 'surpris')));
+    // v5.90 : une vanne aussi quand c'est juste (sauf si l'écran a son propre « bravo »).
+    const anglaisSeul = (z.lang || q.lang) !== 'fr' && !q.matiere && !z.prof;
+    if(juste && !bravoTrash && !z.bravo && TT && TT.bonneReponse) bravoTrash = TT.bonneReponse((J().maths || {}).ton || 'taquin', z.suite, memoireVannes(), anglaisSeul);
+    // v5.91 : 3 d'affilée → Plumo prévient qu'il appelle ses potes ; la 4e → la bande débarque et vanne Plumo (jamais le joueur).
+    let bande = null, raccrochage = '';
+    if(TT && TT.bandePotes && !anglaisSeul){
+      const tonA = (J().maths || {}).ton || 'taquin';
+      if(juste && z.suite % 4 === 3) bravoTrash = TT.annoncePotes(tonA, memoireVannes());
+      else if(juste && z.suite >= 4 && z.suite % 4 === 0) bande = TT.bandePotes(memoireVannes());
+      else if(!juste && suiteAvant > 0 && suiteAvant % 4 === 3) raccrochage = TT.raccroche(memoireVannes());
+    }
+    const az = $('#ami-qz'); if(az && !q.image) az.innerHTML = z.prof ? profPi(juste ? 'fier' : 'mdr') : ami(bande ? 'surpris' : juste ? (q.humeurJuste || 'fete') : raccrochage ? 'fete' : (q.humeurFaux || (niveauHumour() > 1 ? 'mdr' : 'surpris')));
     if(z.onReponse) z.onReponse(juste, q);
     const r = $('#qz-retour');
     const fr_ = (z.lang || q.lang) === 'fr';
-    z.derniereVanne = !juste && f && f.vanne ? String(f.vanne).slice(0, 220) : '';
-    if(r) r.innerHTML = (juste ? '<p class="piege-bravo">' + esc(bravoTrash || (fr_ ? (z.bravo ? z.bravo() : 'Bravo ! 🎉') : 'Yes! 🎉')) + '</p>' : '<p class="piege-vanne">' + (z.prof ? '🦝 ' : '😂 ') + esc(f && f.vanne ? f.vanne : 'Presque !') + '</p>') +
-      (!juste && f && f.vanne ? '<p class="avis-vanne"><button class="petit-bouton" data-a="qz-avis" data-v="1">😂 ' + (fr_ ? 'Trop drôle' : 'Funny') + '</button> <button class="petit-bouton" data-a="qz-avis" data-v="-1">🙄 ' + (fr_ ? 'Pas drôle' : 'Not funny') + '</button></p>' : '') +
+    z.derniereVanne = (!juste && f && f.vanne ? String(f.vanne) : juste ? bravoTrash : '').slice(0, 220);
+    const bandeHtml = bande ? '<div class="bande-potes" role="group" aria-label="La bande de Plumo"><p class="bande-entree">' + esc(bande.entree) + '</p>' +
+      bande.potes.map((p, k) => '<p class="pote" style="animation-delay:' + (k * 0.45).toFixed(2) + 's"><span class="pote-ic" aria-hidden="true">' + p.ic + '</span><span><strong>' + esc(p.nom) + '</strong> ' + esc(p.dit) + '</span></p>').join('') + '</div>' : '';
+    if(r) r.innerHTML = (raccrochage ? '<p class="raccroche">' + esc(raccrochage) + '</p>' : '') + bandeHtml + (juste && bande ? '<p class="piege-bravo">🏆 ' + esc(z.suite + ' d’affilée !') + '</p>' : juste ? '<p class="piege-bravo">' + esc(bravoTrash || (fr_ ? (z.bravo ? z.bravo() : 'Bravo ! 🎉') : 'Yes! 🎉')) + '</p>' : '<p class="piege-vanne">' + (z.prof ? '🦝 ' : '😂 ') + esc(f && f.vanne ? f.vanne : 'Presque !') + '</p>') +
+      ((!juste && f && f.vanne) || (juste && bravoTrash) ? '<p class="avis-vanne"><button class="petit-bouton" data-a="qz-avis" data-v="1">😂 ' + (fr_ ? 'Trop drôle' : 'Funny') + '</button> <button class="petit-bouton" data-a="qz-avis" data-v="-1">🙄 ' + (fr_ ? 'Pas drôle' : 'Not funny') + '</button></p>' : '') +
       '<p class="piege-bon" lang="' + (fr_ ? 'fr' : 'en') + '">✅ ' + esc(q.bonTexte || q.bon) + '</p>' + (q.regle ? '<p class="piege-regle">💡 ' + esc(q.regle) + '</p>' : '') +
       '<button class="moyen plein" data-a="qz-suivant">' + (z.i + 1 < z.liste.length ? 'Suivant →' : 'Voir le résultat') + '</button>';
     bruit(juste ? 'juste' : 'faux'); if(!juste && niveauHumour() > 0) bruit('boing');
@@ -2897,7 +2912,7 @@
     direPhrase(en, 'en');
   }
 
-  // ── Répète après Ami : on s'enregistre (sur l'appareil seulement), on se réécoute, on compare ──
+  // ── Répète après Plumo : on s'enregistre (sur l'appareil seulement), on se réécoute, on compare ──
   let rep1 = null;
   function repeter(){
     if(!piegesDispo() || !window.PARCOURS) return pieges();
@@ -2910,12 +2925,12 @@
     const l = PARCOURS.REPETER, ph = l[i]; if(!ph) return repeter();
     rep1 = { i };
     const fait = etatAnglais().repete.includes(i);
-    poser(barre('anglais') + '<main class="battle-ecran repeter"><p class="piege-cat">🗣️ Répète après Ami · ' + etatAnglais().repete.length + '/' + l.length + ' phrases dites</p>' +
+    poser(barre('anglais') + '<main class="battle-ecran repeter"><p class="piege-cat">🗣️ Répète après Plumo · ' + etatAnglais().repete.length + '/' + l.length + ' phrases dites</p>' +
       '<div class="piege-haut"><div class="ami-moyen">' + ami('content') + '</div><div><p class="piege-fr" lang="en">« ' + esc(ph.en) + ' »</p>' + traduire(ph.fr) + '</div></div>' +
       '<div class="actions serrees"><button class="moyen" data-a="repeter-ecouter">🔊 Écouter</button><button class="moyen" data-a="repeter-lent">🐢 Lentement</button></div>' +
       '<p><button class="gros micro" id="btn-micro" data-a="repeter-micro">🎤 À moi de le dire</button></p>' +
       '<p class="aide" id="rep-etat">' + (fait ? '✅ Déjà dite. Tu peux t’entraîner encore !' : 'Écoute, puis appuie sur 🎤 et dis la phrase.') + '</p>' +
-      '<div class="actions serrees" id="rep-apres" hidden><button class="moyen" data-a="me-reecouter">👂 Me réécouter</button><button class="moyen" data-a="repeter-ecouter">🦉 Ami</button><button class="moyen plein" data-a="repeter-bien">👍 Bien dit !</button></div>' +
+      '<div class="actions serrees" id="rep-apres" hidden><button class="moyen" data-a="me-reecouter">👂 Me réécouter</button><button class="moyen" data-a="repeter-ecouter">🦉 Plumo</button><button class="moyen plein" data-a="repeter-bien">👍 Bien dit !</button></div>' +
       '<p class="petit">🔒 Ta voix reste sur cet appareil : elle n’est ni gardée ni envoyée.</p>' +
       '<p><button class="moyen" data-a="repeter-suivant">Phrase suivante →</button></p></main>');
     direEcoute(ph.en, 'en');
@@ -2934,7 +2949,7 @@
         flux.getTracks().forEach(p => p.stop()); if(!micro || !rep1) return;
         micro.url = URL.createObjectURL(new Blob(morceaux, { type:rec.mimeType || 'audio/webm' }));
         if(btn){ btn.classList.remove('enregistre'); btn.textContent = '🎤 Encore une fois'; }
-        if(apres) apres.hidden = false; if(etat) etat.textContent = 'Écoute-toi, puis Ami : c’est pareil ?';
+        if(apres) apres.hidden = false; if(etat) etat.textContent = 'Écoute-toi, puis Plumo : c’est pareil ?';
         const a = new Audio(micro.url); a.onended = () => setTimeout(() => direEcoute(ph.en, 'en'), 300); a.play().catch(() => {});
       };
       rec.start(); if(btn){ btn.classList.add('enregistre'); btn.textContent = '⏺ J’écoute…'; }
@@ -2950,20 +2965,20 @@
     invente = invente || { v:0, a:0, l:0 };
     const I = PARCOURS.INVENTE, ph = PARCOURS.inventer(invente.v, invente.a, invente.l);
     const rangee = (cle, liste, titre) => '<p class="piege-consigne">' + titre + '</p><div class="puces">' + liste.map((x, k) => '<button class="puce' + (invente[cle] === k ? ' choisie' : '') + '" data-a="invente-choix" data-v="' + cle + ':' + k + '" aria-pressed="' + (invente[cle] === k) + '" lang="en">' + esc(x.en) + '</button>').join('') + '</div>';
-    poser(barre('battle') + '<main class="battle-ecran invente"><h2>✍️ Invente ta vanne pour Ami</h2>' +
-      rangee('v', I.verbes, '1. Ce que fait Ami') + rangee('a', I.animaux, '2. Comme qui ?') + rangee('l', I.lieux, '3. Où ça ?') +
+    poser(barre('battle') + '<main class="battle-ecran invente"><h2>✍️ Invente ta vanne pour Plumo</h2>' +
+      rangee('v', I.verbes, '1. Ce que fait Plumo') + rangee('a', I.animaux, '2. Comme qui ?') + rangee('l', I.lieux, '3. Où ça ?') +
       '<div class="bulle-ami"><p class="piege-fr" lang="en">« ' + esc(ph.en) + ' »</p><p class="petit">🇫🇷 ' + esc(ph.fr) + '</p></div>' +
-      '<div class="actions serrees"><button class="moyen plein" data-a="invente-dire">🎤 Ami, écoute ça !</button><button class="moyen" data-a="invente-garder">😂 Je la garde</button></div>' +
+      '<div class="actions serrees"><button class="moyen plein" data-a="invente-dire">🎤 Plumo, écoute ça !</button><button class="moyen" data-a="invente-garder">😂 Je la garde</button></div>' +
       '<p class="aide" id="invente-retour" role="status" aria-live="polite"></p></main>');
   }
 
   // ── Espace parents : petite question de calcul (pour que les enfants ne tombent pas dessus par hasard) ──
   let porteParents = null, jugeMsg = '';
-  // Vannes proposées par l'IA : le juge d'Ami trie d'abord, puis un adulte garde ou jette.
+  // Vannes proposées par l'IA : le juge de Plumo trie d'abord, puis un adulte garde ou jette.
   let vannesIA = null, vannesIAMsg = '', vannesIAEnCours = false;
   async function demanderVannesIA(theme, ton){
     if(!CONFIG.API_VANNES || !plus() || vannesIAEnCours) return;
-    vannesIAEnCours = true; vannesIAMsg = '⏳ Ami réfléchit à des vannes…'; revoirVannesIA();
+    vannesIAEnCours = true; vannesIAMsg = '⏳ Plumo réfléchit à des vannes…'; revoirVannesIA();
     try{
       const r = await fetch(CONFIG.API_VANNES, { method:'POST', cache:'no-store', headers:{ 'Content-Type':'application/json' }, body:JSON.stringify({ code:base.abo.code, theme, ton }) });
       const d = await r.json().catch(() => ({}));
@@ -3022,20 +3037,20 @@
         ligne('📖', 'Histoires lues', s.histoires + '/' + (window.HISTOIRES ? HISTOIRES.liste.length : 0)) + ligne('✍️', 'Phrases parfaites en dictée', s.dictees) + ligne('🗣️', 'Phrases dites à voix haute', s.repete) + ligne('🎤', 'Battles gagnées', s.victoires) + '</ul>' +
       resumeSemaine() +
       '<h3>🔎 Ce qui coince</h3>' + (err.length ? '<ul class="pieges-cats">' + err.map(([t, n]) => ligne('•', esc(t), n + '×')).join('') + '</ul><p class="petit">Astuce : la révision du jour reprend ces points automatiquement.</p>' : '<p>Rien de particulier pour l’instant. 👍</p>') +
-      '<h3>🤖 Le juge de vannes d’Ami</h3><p class="petit">Ami garde les vannes qui font rire (😂) et retire celles qui tombent à plat (🙄). Il refuse toute vanne qui vise la personne (insulte, physique, gros mot, violence, infos perso).</p>' +
+      '<h3>🤖 Le juge de vannes de Plumo</h3><p class="petit">Plumo garde les vannes qui font rire (😂) et retire celles qui tombent à plat (🙄). Il refuse toute vanne qui vise la personne (insulte, physique, gros mot, violence, infos perso).</p>' +
       '<ul class="pieges-cats">' + (() => { const sc = J().notesVannes || {}, v = Object.values(sc); return '<li><span>😂 Vannes favorites</span><strong>' + v.filter(x => x >= 2).length + '</strong></li><li><span>🗑️ Vannes retirées</span><strong>' + v.filter(x => window.JUGE && x <= JUGE.SEUIL).length + '</strong></li>'; })() + '</ul>' +
-      '<h3>😂 Les vannes de la famille</h3><p class="petit">Ami les ressortira de temps en temps. Écrivez {f} pour le mauvais mot et {j} pour le bon (facultatif). Restez gentils : on taquine la confusion, pas la personne !</p>' +
+      '<h3>😂 Les vannes de la famille</h3><p class="petit">Plumo les ressortira de temps en temps. Écrivez {f} pour le mauvais mot et {j} pour le bon (facultatif). Restez gentils : on taquine la confusion, pas la personne !</p>' +
       '<p><input id="vanne-famille" maxlength="140" placeholder="Ex. : « {f} » ? Même tonton Marcel n’aurait pas osé ! C’était « {j} »." class="champ-long"> <button class="moyen" data-a="vanne-famille-ajout">Ajouter</button></p>' +
       (jugeMsg ? '<p class="aide" role="status">' + esc(jugeMsg) + '</p>' : '') +
       '<ul class="pieges-cats">' + (J().vannesFamille || []).map((v, k) => '<li><span>' + esc(v) + '</span><button class="petit-bouton" data-a="vanne-famille-suppr" data-v="' + k + '" aria-label="Supprimer">🗑️</button></li>').join('') + '</ul>' +
-      (CONFIG.API_VANNES ? '<h3 id="vannes-ia">✨ Ami propose des vannes (IA)</h3>' + (plus()
-        ? '<p class="petit">L’IA propose, le juge d’Ami trie, et c’est vous qui choisissez : rien n’arrive dans le jeu sans votre accord.</p>' +
+      (CONFIG.API_VANNES ? '<h3 id="vannes-ia">✨ Plumo propose des vannes (IA)</h3>' + (plus()
+        ? '<p class="petit">L’IA propose, le juge de Plumo trie, et c’est vous qui choisissez : rien n’arrive dans le jeu sans votre accord.</p>' +
           '<p><select id="vannes-ia-theme" aria-label="Thème">' + THEMES.map(th => '<option value="' + th + '">' + esc(t('th_' + th)) + '</option>').join('') + '<option value="anglais">🇬🇧 Coin anglais</option></select> ' +
           '<select id="vannes-ia-ton" aria-label="Ton"><option value="tout-doux">Tout doux</option><option value="normal" selected>Taquin</option><option value="corse">Corsé (ados)</option></select> ' +
           '<button class="moyen" data-a="vannes-ia"' + (vannesIAEnCours ? ' disabled' : '') + '>✨ Proposer 6 vannes</button></p>' +
           (vannesIAMsg ? '<p class="aide" role="status">' + esc(vannesIAMsg) + '</p>' : '') +
           (vannesIA && vannesIA.length ? '<ul class="pieges-cats">' + vannesIA.map((v, k) => '<li><span>' + esc(v) + '</span><span><button class="petit-bouton" data-a="vanne-ia-garder" data-v="' + k + '" aria-label="Garder">✅</button> <button class="petit-bouton" data-a="vanne-ia-non" data-v="' + k + '" aria-label="Jeter">❌</button></span></li>').join('') + '</ul>' : '')
-        : '<p class="petit">✨ Avec Plus, Ami peut vous proposer des vannes inventées par l’IA, que vous validez une à une.</p>') : '') +
+        : '<p class="petit">✨ Avec Plus, Plumo peut vous proposer des vannes inventées par l’IA, que vous validez une à une.</p>') : '') +
       '<h3>🛸 Salon des battles</h3><p><label><input type="checkbox" id="salon-chat"' + (base.salonChat ? ' checked' : '') + ' data-a="salon-chat-reglage"> Autoriser le chat écrit dans les salons PRIVÉS (entre potes qui ont le code). Les salons publics restent en réactions toutes faites.</label></p>' +
       '<p class="petit">🔒 Ces informations restent sur cet appareil.</p></main>');
   }
@@ -3120,7 +3135,7 @@
       return '<div class="reglage reglage-voix"><label><span>' + esc(LANGUES_APPRENDRE[l] || l) + '</span> <select data-voix="' + esc(l) + '">' + opts + '</select></label>' +
         '<button class="moyen" data-a="essai-voix" data-v="' + esc(l) + '">🔊 ' + (en ? 'Try' : 'Essayer') + '</button></div>';
     }).join('');
-    return '<section class="reglage-voix-bloc"><h3>🗣️ ' + (en ? 'Ami’s voice' : 'La voix d’Ami') + '</h3>' + blocs +
+    return '<section class="reglage-voix-bloc"><h3>🗣️ ' + (en ? 'Plumo’s voice' : 'La voix de Plumo') + '</h3>' + blocs +
       '<p class="petit">' + (en ? 'Robot voice? On a PC, open the app in Microsoft Edge (natural voices) or Chrome (Google voices). On Android: Settings › Text-to-speech › Google engine, then install the high-quality voice.'
         : 'Voix de robot ? Sur PC, ouvre l’appli dans Microsoft Edge (voix « Natural ») ou Chrome (voix Google). Sur Android : Paramètres › Synthèse vocale › moteur Google, puis installe la voix « haute qualité ». Les mots anglais, eux, sont de vrais enregistrements.') + '</p></section>';
   }
@@ -3128,11 +3143,11 @@
     poser(barre('accueil') + '<main class="texte"><h2>⚙️ ' + esc(t('reglages')) + '</h2>' +
       '<div class="reglage reglage-facile"><span><strong>📖 ' + esc(t('facile')) + '</strong><span class="petit">' + esc(t('facile_aide')) + '</span></span><button class="moyen' + (facile() ? ' plein' : '') + '" data-a="facile" aria-pressed="' + facile() + '">' + esc(facile() ? t('oui') : t('non')) + '</button></div>' +
       '<div class="reglage"><span>🔔 ' + esc(t('son')) + '</span><button class="moyen' + (base.son ? ' plein' : '') + '" data-a="son" aria-pressed="' + base.son + '">' + esc(base.son ? t('oui') : t('non')) + '</button></div>' +
-      '<section class="reglage-humour"><h3>😂 ' + (base.ui === 'en' ? 'Ami’s joke level' : 'Le niveau des blagues d’Ami') + '</h3><p class="petit">' + (base.ui === 'en' ? 'Ami only teases himself, the words or the situation — never the player.' : 'Ami se moque de lui-même, des mots ou de la situation — jamais du joueur.') + '</p>' +
-        (facile() ? '<p class="petit">📖 ' + (base.ui === 'en' ? 'Easy reading is on: Ami stays “gentle”, with short jokes.' : 'Lecture facile activée : Ami reste « Tout doux », avec des vannes courtes.') + '</p>' : '') + '<div class="choix-humour">' +
+      '<section class="reglage-humour"><h3>😂 ' + (base.ui === 'en' ? 'Plumo’s joke level' : 'Le niveau des blagues de Plumo') + '</h3><p class="petit">' + (base.ui === 'en' ? 'Plumo only teases himself, the words or the situation — never the player.' : 'Plumo se moque de lui-même, des mots ou de la situation — jamais du joueur.') + '</p>' +
+        (facile() ? '<p class="petit">📖 ' + (base.ui === 'en' ? 'Easy reading is on: Plumo stays “gentle”, with short jokes.' : 'Lecture facile activée : Plumo reste « Tout doux », avec des vannes courtes.') + '</p>' : '') + '<div class="choix-humour">' +
       ['Tout doux','Taquin','Piquant','Corsé 🪶'].map((nom, i) => '<button class="moyen' + (niveauHumour() === i ? ' plein' : '') + '" data-a="humour" data-v="' + i + '" aria-pressed="' + (niveauHumour() === i) + '">' + (base.ui === 'en' ? ['Gentle','Playful','Spicy','Extra cheeky 🪶'][i] : nom) + '</button>').join('') +
       '</div><p class="petit">' + (base.ui === 'en' ? 'Even the spiciest level stays kind.' : 'Même le niveau le plus corsé reste bienveillant.') + '</p>' +
-      '<h3 class="langue-blagues-titre">🗣️ ' + (base.ui === 'en' ? 'Language of the jokes' : 'Langue des blagues') + '</h3><p class="petit">' + (base.ui === 'en' ? 'Choose the language Ami uses for jokes and spoken feedback.' : 'Choisis la langue utilisée par Ami pour ses blagues et ses commentaires vocaux.') + '</p><div class="choix-humour choix-langue-blagues">' +
+      '<h3 class="langue-blagues-titre">🗣️ ' + (base.ui === 'en' ? 'Language of the jokes' : 'Langue des blagues') + '</h3><p class="petit">' + (base.ui === 'en' ? 'Choose the language Plumo uses for jokes and spoken feedback.' : 'Choisis la langue utilisée par Plumo pour ses blagues et ses commentaires vocaux.') + '</p><div class="choix-humour choix-langue-blagues">' +
       '<button class="moyen' + (langueBlagues() === 'fr' ? ' plein' : '') + '" data-a="langue-blagues" data-v="fr" aria-pressed="' + (langueBlagues() === 'fr') + '">🇫🇷 Français</button>' +
       '<button class="moyen' + (langueBlagues() === 'en' ? ' plein' : '') + '" data-a="langue-blagues" data-v="en" aria-pressed="' + (langueBlagues() === 'en') + '">🇬🇧 English</button>' +
       '</div>' +
@@ -3166,7 +3181,7 @@
   const empreinteVanne = t => { let h = 2166136261; for(const c of normeVanne(t).slice(0, 160)) h = Math.imul(h ^ c.charCodeAt(0), 16777619); return (h >>> 0).toString(36); };
   // ── v5.66 : vannes écrites en direct par l'IA (serveur-php/vannes-direct.php) ──
   // Dès qu'une question s'affiche, on demande à l'IA une vanne neuve pour chaque mauvaise réponse possible, en lui
-  // donnant les dernières vannes déjà dites. Si elle ne répond pas à temps (ou sans serveur), Ami garde ses vannes à lui.
+  // donnant les dernières vannes déjà dites. Si elle ne répond pas à temps (ou sans serveur), Plumo garde ses vannes à lui.
   // Rien de personnel ne part : ni prénom, ni code, ni voix — seulement la question et les réponses.
   const cacheIA = new Map(), recentes = [];
   let iaEnPanne = 0;
@@ -3194,7 +3209,7 @@
       if(r.status === 429 || r.status === 503) iaEnPanne = Date.now() + 10 * 60 * 1000;
       const d = r.ok ? await r.json() : null, v = d && d.vannes;
       items.forEach(x => { const t = v && typeof v[x.texte] === 'string' ? v[x.texte].trim() : '';
-        // Le juge d'Ami relit chaque vanne de l'IA ; une vanne déjà dite est jetée.
+        // Le juge de Plumo relit chaque vanne de l'IA ; une vanne déjà dite est jetée.
         if(t && (!window.JUGE || JUGE.juger(t).ok) && memoireVannes().age(t) < 0) cacheIA.set(cleIA(cleB, x.id), t); else cacheIA.delete(cleIA(cleB, x.id)); });
     }catch(e){ items.forEach(x => cacheIA.delete(cleIA(cleB, x.id))); iaEnPanne = Date.now() + 60 * 1000; }
     finally{ clearTimeout(minuteur); if(cacheIA.size > 200) [...cacheIA.keys()].slice(0, cacheIA.size - 200).forEach(k => cacheIA.delete(k)); }
@@ -3298,10 +3313,12 @@
   function matieresAccueil(){
     qz = null; const M = window.MATIERES; if(!M) return accueil();
     const c = (a, v, ic, t1, t2) => '<button class="carte-anglais" data-a="' + a + '"' + (v ? ' data-v="' + v + '"' : '') + '><span class="ic">' + ic + '</span><strong>' + t1 + '</strong><small>' + t2 + '</small></button>';
-    poser(barre('accueil') + '<main class="coin-anglais matieres-ecran"><h2>📚 Matières</h2><p class="pieges-intro">Le programme de la 6e au bac, avec Ami qui vanne les erreurs (jamais toi) et t’explique la bonne réponse.</p>' +
+    poser(barre('accueil') + '<main class="coin-anglais matieres-ecran"><h2>📚 Matières</h2><p class="pieges-intro">Le programme de la 6e au bac, avec Plumo qui vanne les erreurs (jamais toi) et t’explique la bonne réponse.</p>' +
       (window.EPREUVES ? ongletsExamens('matieres') : '') +
       '<div class="cartes-anglais">' +
         c('matiere', 'francais', '📝', 'Français', 'Conjugaison, orthographe, grammaire, figures de style, littérature') +
+        (M.trouver('philo') ? c('matiere', 'philo', '🤔', 'Philosophie (Tle)', 'Auteurs, notions, méthode de la dissertation') : '') +
+        (M.trouver('langlais') ? c('matiere', 'langlais', '🇬🇧', 'Anglais (6e → bac)', 'Grammaire, verbes irréguliers, faux amis, axes du bac, compréhension') : '') +
         (window.MATHS ? c('maths', '', '🔢', 'Maths', 'De la 6e au bac, avec Prof Pi') : '') +
         c('matiere', 'histoire', '🏛️', 'Histoire-géo & EMC', 'Repères, géographie, citoyenneté') +
         c('matiere', 'svt', '🧬', 'SVT', 'Le vivant, le corps humain, la Terre, la génétique') +
@@ -3326,7 +3343,7 @@
       (pr ? '<p class="petit ref-programme">📜 Programme officiel (' + esc(pr[0]) + ') : ' + esc(pr[2]) + ' · <a href="' + esc(pr[1]) + '" target="_blank" rel="noopener">voir sur éduscol</a></p>' : '') +
       '<div class="onglets-niveaux" role="tablist">' + niveaux.map(n => { const vide = !M.chapitres(id, n).length;
         return '<button role="tab" aria-selected="' + (n === e.niveau) + '" class="onglet' + (n === e.niveau ? ' actif' : '') + (vide ? ' vide' : '') + '" data-a="matiere-niveau" data-v="' + id + '|' + n + '">' + n + '</button>'; }).join('') + '</div>' +
-      '<p class="ton-prof">Ton d’Ami : ' + TONS_PROF.map(([k, l]) => '<button class="petit-bouton' + (k === ton ? ' actif' : '') + '" data-a="maths-ton-matiere" data-v="' + id + '|' + k + '" aria-pressed="' + (k === ton) + '">' + l + '</button>').join(' ') + '</p>' +
+      '<p class="ton-prof">Ton de Plumo : ' + TONS_PROF.map(([k, l]) => '<button class="petit-bouton' + (k === ton ? ' actif' : '') + '" data-a="maths-ton-matiere" data-v="' + id + '|' + k + '" aria-pressed="' + (k === ton) + '">' + l + '</button>').join(' ') + '</p>' +
       (chs.length ? '<div class="actions serrees"><button class="moyen plein" data-a="matiere-melange" data-v="' + id + '">🔁 Entraînement mélangé</button>' +
         (ex ? '<button class="moyen" data-a="matiere-examen" data-v="' + id + '">📝 ' + esc(ex) + (e.notes[id + '-' + e.niveau] != null ? ' (' + String(e.notes[id + '-' + e.niveau]).replace('.', ',') + '/20)' : '') + '</button>' : '') + '</div>' +
         '<div class="domaines">' + doms.map(d => '<section class="domaine"><h3>' + esc(d.d) + ' <small>' + d.l.length + '</small></h3><div class="liste-chap">' +
@@ -3344,7 +3361,7 @@
   }
   function finMatiere(z, titre, id, note){
     const p = z.bonnes / z.liste.length; J().plumes += z.bonnes; garder(); bruit('fin');
-    const mot = p === 1 ? 'Sans faute ! Ami range ses vannes, il n’en a pas eu besoin. 👏' : p >= .7 ? 'Solide ! Ami a cherché la petite bête… pas trouvée. 😏' : p >= .4 ? 'Ça vient ! Ami a bien rigolé, mais tu progresses.' : 'Ami a vidé tout son stock de vannes. On recommence ? 💪';
+    const mot = p === 1 ? 'Sans faute ! Plumo range ses vannes, il n’en a pas eu besoin. 👏' : p >= .7 ? 'Solide ! Plumo a cherché la petite bête… pas trouvée. 😏' : p >= .4 ? 'Ça vient ! Plumo a bien rigolé, mais tu progresses.' : 'Plumo a vidé tout son stock de vannes. On recommence ? 💪';
     poser(barre('matiere') + '<main class="centre"><div class="ami-moyen">' + ami(p >= .7 ? 'fete' : 'malin') + '</div><h2>' + esc(titre) + '</h2>' +
       (note != null ? '<p class="note-examen">' + String(note).replace('.', ',') + ' / 20</p>' : '<p class="score">' + z.bonnes + ' / ' + z.liste.length + '</p>') + '<p>' + mot + '</p>' +
       '<div class="actions serrees"><button class="moyen plein" data-a="matiere-melange" data-v="' + esc(id) + '">🔁 Encore</button><button class="moyen" data-a="matiere" data-v="' + esc(id) + '">📚 ' + esc((window.MATIERES.trouver(id) || {}).nom || '') + '</button></div></main>');
@@ -3355,10 +3372,10 @@
     '<button class="onglet' + (a === actif ? ' actif' : '') + '" role="tab" aria-selected="' + (a === actif) + '"' + (a === actif ? '' : ' data-a="' + a + '"') + '>' + l + '</button>').join('') + '</div>';
   const virg = n => String(n).replace('.', ',');
   const mentionDe = m => m >= 16 ? 'Mention très bien 🏆' : m >= 14 ? 'Mention bien 🥈' : m >= 12 ? 'Mention assez bien 🥉' : m >= 10 ? 'Admis ✅' : 'Pas encore… mais tu sais maintenant où ça coince 💪';
-  const verdictAmi = m => m >= 16 ? 'Ami range ses vannes au placard : il n’en a pas eu besoin. Respect. 🫡' : m >= 12 ? 'Solide ! Ami a cherché la petite bête… il a trouvé une fourmi, pas plus.' : m >= 8 ? 'Ça se joue à pas grand-chose. Ami a ri, mais il a aussi pris des notes pour t’aider.' : 'Ami a vidé son stock de vannes. Bonne nouvelle : il ne reste que des progrès à faire. 💪';
+  const verdictAmi = m => m >= 16 ? 'Plumo range ses vannes au placard : il n’en a pas eu besoin. Respect. 🫡' : m >= 12 ? 'Solide ! Plumo a cherché la petite bête… il a trouvé une fourmi, pas plus.' : m >= 8 ? 'Ça se joue à pas grand-chose. Plumo a ri, mais il a aussi pris des notes pour t’aider.' : 'Plumo a vidé son stock de vannes. Bonne nouvelle : il ne reste que des progrès à faire. 💪';
   function examensAccueil(){
     qz = null; blanc = null; const E = window.EPREUVES, e = etatMatieres(); if(!E) return matieresAccueil();
-    poser(barre('matieres') + '<main class="coin-anglais matieres-ecran"><h2>📝 Brevet & bac blancs</h2><p class="pieges-intro">Construits comme les vrais sujets 2026 : mêmes parties, mêmes types d’exercices, même barème. Une note sur 20 par épreuve, puis la moyenne avec les coefficients officiels. Et Ami qui vanne chaque erreur. 😏</p>' +
+    poser(barre('matieres') + '<main class="coin-anglais matieres-ecran"><h2>📝 Brevet & bac blancs</h2><p class="pieges-intro">Construits comme les vrais sujets 2026 : mêmes parties, mêmes types d’exercices, même barème. Une note sur 20 par épreuve, puis la moyenne avec les coefficients officiels. Et Plumo qui vanne chaque erreur. 😏</p>' +
       ongletsExamens('examens') + '<div class="cartes-anglais">' + Object.entries(E.BLANCS).filter(([k, x]) => !x.tle && !x.techno && !x.pro && !/^(oral-dnb|oral-eaf|grand-oral)$/.test(k)).map(([k, x]) => '<button class="carte-anglais" data-a="examen-go" data-v="' + k + '"><span class="ic">' + x.ic + '</span><strong>' + esc(x.titre) + '</strong><small>' + esc(x.niveau) + ' · ' +
         x.epreuves.map(p => esc(E.EPREUVES[p[0]].titre)).join(', ') + (e.notes['blanc-' + k] != null ? ' · dernière note : ' + virg(e.notes['blanc-' + k]) + '/20' : '') + '</small></button>').join('') + '</div>' +
       (E.SPES ? '<section class="domaine"><h3>🎒 Terminale : spécialités et philosophie</h3><div class="cartes-anglais"><button class="carte-anglais" data-a="bac-tle"><span class="ic">🎓</span><strong>Bac blanc de terminale</strong><small>2 spécialités au choix + philosophie, coefficients officiels' +
@@ -3385,7 +3402,7 @@
   function officielAccueil(){
     qz = null; const E = window.EPREUVES; if(!E || !E.OFFICIEL) return matieresAccueil();
     const liste = l => '<div class="cartes-anglais">' + l.map(([t, u, d]) => '<a class="carte-anglais lien-carte" href="' + esc(u) + '" target="_blank" rel="noopener"><span class="ic">🔗</span><strong>' + esc(t) + '</strong><small>' + esc(d) + '</small></a>').join('') + '</div>';
-    poser(barre('matieres') + '<main class="coin-anglais matieres-ecran"><h2>🏛️ Programmes et annales officiels</h2><p class="pieges-intro">Les textes officiels et tous les vrais sujets, directement sur les sites du ministère (éduscol et education.gouv.fr). Les sujets jumeaux d’Ami sont dans les onglets Blancs et Annales.</p>' +
+    poser(barre('matieres') + '<main class="coin-anglais matieres-ecran"><h2>🏛️ Programmes et annales officiels</h2><p class="pieges-intro">Les textes officiels et tous les vrais sujets, directement sur les sites du ministère (éduscol et education.gouv.fr). Les sujets jumeaux de Plumo sont dans les onglets Blancs et Annales.</p>' +
       ongletsExamens('officiel') + '<section class="domaine"><h3>📚 Programmes scolaires</h3>' + liste(E.OFFICIEL.programmes) + '</section><section class="domaine"><h3>🗂️ Toutes les annales officielles</h3>' + liste(E.OFFICIEL.annales) + '</section></main>');
   }
   function annalesAccueil(){
@@ -3585,7 +3602,7 @@
       case 'clash-libre-envoyer': {
         if(!clashL) return clashLibre();
         const x = $('#cl-texte'), t = x ? String(x.value).trim() : '', jg = window.VANNES_LIBRES.juger(t);
-        if(!jg.ok){ const m = $('#cl-msg'); if(m) m.textContent = '🛑 Le juge d’Ami refuse : ' + jg.raisons.join(', ') + '.'; return; }
+        if(!jg.ok){ const m = $('#cl-msg'); if(m) m.textContent = '🛑 Le juge de Plumo refuse : ' + jg.raisons.join(', ') + '.'; return; }
         return clashLibreEnvoyer({ fr:t });
       }
       case 'clash-libre-reaction': return clashLibreReaction(v);
@@ -3691,12 +3708,12 @@
       case 'salon-chat-reglage': base.salonChat = !!($('#salon-chat') || {}).checked; garder(); return;
       case 'vanne-famille-ajout': { const z = $('#vanne-famille'), t = String(z && z.value || '').replace(/[<>]/g, '').trim().slice(0, 140); if(!t) return;
         const avis = window.JUGE ? JUGE.juger(t) : { ok:true, raisons:[] };
-        if(!avis.ok){ jugeMsg = '🤖 Ami refuse cette vanne (' + avis.raisons.join(', ') + ') : on taquine la confusion, jamais la personne. 🙂'; return tableauParents(); }
-        const j = J(); j.vannesFamille = (Array.isArray(j.vannesFamille) ? j.vannesFamille : []).concat(t).slice(0, 30); garder(); jugeMsg = '✅ Vanne acceptée par le juge d’Ami !'; return tableauParents(); }
+        if(!avis.ok){ jugeMsg = '🤖 Plumo refuse cette vanne (' + avis.raisons.join(', ') + ') : on taquine la confusion, jamais la personne. 🙂'; return tableauParents(); }
+        const j = J(); j.vannesFamille = (Array.isArray(j.vannesFamille) ? j.vannesFamille : []).concat(t).slice(0, 30); garder(); jugeMsg = '✅ Vanne acceptée par le juge de Plumo !'; return tableauParents(); }
       case 'vannes-ia': { const th = $('#vannes-ia-theme'), to = $('#vannes-ia-ton'); demanderVannesIA(th ? th.value : 'animaux', to ? to.value : 'normal'); return; }
       case 'vanne-ia-garder': case 'vanne-ia-non': { const k = Number(v), x = vannesIA && vannesIA[k]; if(!x) return;
         vannesIA.splice(k, 1);
-        if(b.dataset.a === 'vanne-ia-garder' && (!window.JUGE || JUGE.juger(x).ok)){ const j = J(); j.vannesFamille = (Array.isArray(j.vannesFamille) ? j.vannesFamille : []).concat(x).slice(0, 30); garder(); vannesIAMsg = '✅ Gardée ! Ami la ressortira de temps en temps.'; }
+        if(b.dataset.a === 'vanne-ia-garder' && (!window.JUGE || JUGE.juger(x).ok)){ const j = J(); j.vannesFamille = (Array.isArray(j.vannesFamille) ? j.vannesFamille : []).concat(x).slice(0, 30); garder(); vannesIAMsg = '✅ Gardée ! Plumo la ressortira de temps en temps.'; }
         else vannesIAMsg = '🗑️ Jetée.';
         return revoirVannesIA(); }
       case 'vanne-famille-suppr': { const j = J(); if(Array.isArray(j.vannesFamille)) j.vannesFamille.splice(Number(v), 1); garder(); return tableauParents(); }
@@ -3769,7 +3786,7 @@
       case 'qz-avis': { const t = qz && qz.derniereVanne; if(t){ const j = J(); j.avisVannes = (Array.isArray(j.avisVannes) ? j.avisVannes : []).filter(x => x.t !== t).concat({ t, v:v === '1' ? 1 : -1, d:jour() }).slice(-150); garder();
           document.querySelectorAll('[data-a="qz-avis"]').forEach(x => { x.disabled = true; if(x.dataset.v === v) x.classList.add('plein'); }); } return; }
       case 'garder-vanne': { const m = partie && partie.dernierModele; if(m){ const j = J(); j.vannesAimees = (Array.isArray(j.vannesAimees) ? j.vannesAimees : []).filter(x => x !== m).concat(m).slice(-100); if(window.JUGE) j.notesVannes = JUGE.noter(j.notesVannes, m, 2); } return garderVanne(); }
-      case 'pas-drole': { const m = partie && partie.dernierModele; if(m){ const j = J(); j.pasDrole = (Array.isArray(j.pasDrole) ? j.pasDrole : []).filter(x => x !== m).concat(m).slice(-200); if(window.JUGE) j.notesVannes = JUGE.noter(j.notesVannes, m, -3); garder(); } const pd = $('#pas-drole'); if(pd){ pd.textContent = '✓ ' + (base.ui === 'en' ? 'Noted' : 'Noté, Ami la range au placard'); pd.disabled = true; } return; }
+      case 'pas-drole': { const m = partie && partie.dernierModele; if(m){ const j = J(); j.pasDrole = (Array.isArray(j.pasDrole) ? j.pasDrole : []).filter(x => x !== m).concat(m).slice(-200); if(window.JUGE) j.notesVannes = JUGE.noter(j.notesVannes, m, -3); garder(); } const pd = $('#pas-drole'); if(pd){ pd.textContent = '✓ ' + (base.ui === 'en' ? 'Noted' : 'Noté, Plumo la range au placard'); pd.disabled = true; } return; }
       case 'oublier-vanne': { const j = J(), i = Number(v); if(Array.isArray(j.fousRires) && Number.isInteger(i)){ j.fousRires.splice(i, 1); garder(); } return fousRires(); }
       case 'trophees': return ecranTrophees();
       case 'vestiaire': return vestiaire();
@@ -3799,7 +3816,7 @@
       case 'essai-voix': {
         const sel = document.querySelector('select[data-voix="' + v + '"]');
         if(sel){ const p = voixPreferees(); if(sel.value) p[v] = sel.value; else delete p[v]; try{ localStorage.setItem('ami-voix', JSON.stringify(p)); }catch(e){} }
-        return direPhrase(v === 'fr' ? 'Salut ! Moi, c’est Ami. Tu m’entends bien ?' : v === 'en' ? 'Hi! I am Ami. Can you hear me?' : (t('a_ombre') || 'Ami'), v, 1);
+        return direPhrase(v === 'fr' ? 'Salut ! Moi, c’est Plumo. Tu m’entends bien ?' : v === 'en' ? 'Hi! I am Plumo. Can you hear me?' : (t('a_ombre') || 'Plumo'), v, 1);
       }
       case 'vannes-ia-direct': J().vannesIA = J().vannesIA === false; garder(); return reglages();
       case 'graphismes': if(window.GRAPHISMES) GRAPHISMES.definir(v); return reglages();
@@ -3818,7 +3835,7 @@
     if(c.classList.contains('retournee')) dire(partie.liste[partie.i]);
   });
 
-  // Ami suit le doigt (ou la souris) du regard ; les cartes de thème s'inclinent.
+  // Plumo suit le doigt (ou la souris) du regard ; les cartes de thème s'inclinent.
   document.addEventListener('pointermove', ev => {
     if(sobre()) return;
     const x = (ev.clientX / innerWidth - .5) * 2, y = (ev.clientY / innerHeight - .5) * 2;
@@ -3847,7 +3864,7 @@
   if(retourPaiement) [5000, 15000, 40000].forEach(ms => setTimeout(() => { if(!plus()) rafraichir(true); }, ms));
   if(boucheDispo()) try{ Articulation.init(); }catch(e){}
   if('serviceWorker' in navigator && location.protocol === 'https:') navigator.serviceWorker.register('sw.js').catch(() => {});
-  window.AmiDesMots = { CLE_OFFRE, verifierOffre, base, J, affiche, fnv1a, urlVoix, accueil, themes, choisirJeu, commencer, lettresPossibles, distincts, motsDu, aDire, CATALOGUE, MECAS, disponible, nomJeu, aRevoir, noter, jour, defi, revoir, lecon, astuces, aToi, blague, carnet, noteVoix, sansEmojis, direPhrase, direEcoute, iaPrecharger, iaPrendre, vanneObjets, avecArticle, astuce, niveauHumour, fousRires, reglages, CONFIG, COINS, coinOuvert, offreLue, facile, nbMots, restaurer, verifierJeton, plus, ecranPlus, formatCode, rafraichir,
+  window.AmiDesMots = { qzBonne:() => qz && qz.liste[qz.i] ? qz.liste[qz.i].bon : null, CLE_OFFRE, verifierOffre, base, J, affiche, fnv1a, urlVoix, accueil, themes, choisirJeu, commencer, lettresPossibles, distincts, motsDu, aDire, CATALOGUE, MECAS, disponible, nomJeu, aRevoir, noter, jour, defi, revoir, lecon, astuces, aToi, blague, carnet, noteVoix, sansEmojis, direPhrase, direEcoute, iaPrecharger, iaPrendre, vanneObjets, avecArticle, astuce, niveauHumour, fousRires, reglages, CONFIG, COINS, coinOuvert, offreLue, facile, nbMots, restaurer, verifierJeton, plus, ecranPlus, formatCode, rafraichir,
     get etat(){ return J(); } };
   garder();
   if(lienDefi || lienSalon){

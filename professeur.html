@@ -3,14 +3,14 @@
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="theme-color" content="#17113f">
-<title>Le professeur IA — Ami des Mots</title>
+<title>Le professeur IA — Plumo des Mots</title>
 <link rel="stylesheet" href="css/professeur-ia.css">
 <link rel="icon" href="img/icone.svg" type="image/svg+xml">
 </head>
 <body>
-<header class="top"><a href="index.html" class="back">← Retour au jeu</a><div class="brand">🦉 Ami des Mots <span>· Le professeur</span></div><div class="privacy">🔒 Progression conservée sur cet appareil</div></header>
+<header class="top"><a href="index.html" class="back">← Retour au jeu</a><div class="brand">🦉 Plumo des Mots <span>· Le professeur</span></div><div class="privacy">🔒 Progression conservée sur cet appareil</div></header>
 <main>
-<section class="hero"><div class="hero-art" aria-label="Ami le hibou, ton professeur">
+<section class="hero"><div class="hero-art" aria-label="Plumo le hibou, ton professeur">
 <div class="orbit orbit-a"></div><div class="orbit orbit-b"></div>
 <div class="owl-stage" id="hibou-grand"></div>
 <button class="bouton-voix" id="bouton-voix" type="button" aria-pressed="true">🔊 Voix</button>
@@ -37,7 +37,7 @@
 (function(){
 'use strict';
 const $=id=>document.getElementById(id), niveau=$('niveau'), matiere=$('matiere'), zone=$('lesson');
-// v5.70 : Ami le prof animé (grand dans l'en-tête, petit dans le coin pendant la leçon).
+// v5.70 : Plumo le prof animé (grand dans l'en-tête, petit dans le coin pendant la leçon).
 const P=window.PROF_ANIME;
 if(P){const muet=!!(window.CONFIG_JEU&&CONFIG_JEU.VOIX_COUPEES);if(muet)$('bouton-voix').hidden=true;
  P.monter($('hibou-grand'),true);P.monter($('hibou-mini'),true);setTimeout(()=>P.bonjour(),500);
@@ -52,7 +52,7 @@ function charger(){
  if(!cours){zone.innerHTML='<h2>Cette matière arrive bientôt pour ce niveau.</h2>';return}
  zone.innerHTML='<div class="lesson-head"><span class="pill">'+safe(AMI_PROFESSEUR.COURS[niveau.value].nom)+'</span><span class="pill">'+(matiere.value==='anglais'?'🇬🇧 Anglais':'🔢 Mathématiques')+'</span></div><h2>'+safe(cours.titre)+'</h2><p class="notion">Notion : '+safe(cours.notion)+'</p><article class="teach"><h3>📖 Comprendre</h3><p>'+safe(cours.lecon)+'</p><div class="example"><b>Exemple</b><p>'+safe(cours.exemple)+'</p></div></article><article class="exercise"><h3>À toi de jouer</h3><p class="question">'+safe(cours.q)+'</p><div class="answers">'+cours.choix.map((v,i)=>'<button class="answer" data-i="'+i+'">'+safe(v)+'</button>').join('')+'</div><div id="feedback"></div></article>';
  zone.querySelectorAll('.answer').forEach(b=>b.addEventListener('click',()=>repondre(Number(b.dataset.i))));
- if(P){const t=zone.querySelector('.teach');if(!(window.CONFIG_JEU&&CONFIG_JEU.VOIX_COUPEES))t.insertAdjacentHTML('beforeend','<button class="bouton-ecouter" type="button">🦉 Ami m’explique</button>');
+ if(P){const t=zone.querySelector('.teach');if(!(window.CONFIG_JEU&&CONFIG_JEU.VOIX_COUPEES))t.insertAdjacentHTML('beforeend','<button class="bouton-ecouter" type="button">🦉 Plumo m’explique</button>');
   const be=t.querySelector('.bouton-ecouter');if(be)be.addEventListener('click',()=>P.lireLecon(cours.lecon+' Exemple : '+cours.exemple));
   P.lecon(cours.titre);setTimeout(()=>{if(!verrou)P.reflechit()},4500);}
 }

@@ -3,7 +3,7 @@
 // Un chapitre : { id, nom, dom (domaine), niv:['6e', …], banque:[…] et/ou gen:(r) => question }.
 // Une question de banque : [énoncé, bonne, [[mauvaise, vanne], …], explication, consigne?]
 // Une question générée : { enonce, bon, faux:[{ en, vanne }], regle, consigne? }
-// Les vannes visent la réponse, jamais l'élève (elles passent le juge d'Ami). L'explication est toujours affichée.
+// Les vannes visent la réponse, jamais l'élève (elles passent le juge de Plumo). L'explication est toujours affichée.
 (function(){
   'use strict';
   const NIVEAUX = ['6e', '5e', '4e', '3e', '2nde', '1re', 'Tle'];
@@ -13,7 +13,7 @@
   const melanger = (l, r) => { const a = l.slice(); for(let i = a.length - 1; i > 0; i--){ const j = Math.floor(r() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
   // Petites phrases ajoutées selon le ton de Prof (doux / taquin / cash).
   const DOUX = ['Presque !', 'Pas grave, ça arrive.', 'Bonne tentative !'];
-  const CASH = ['🔥 Sérieux ?', '🔥 Même pas en rêve.', '🔥 Raté dans les grandes largeurs.', '🔥 Ami a failli tomber de sa branche.', '🔥 Respire. On recommence.', '🔥 Audacieux. Faux, mais audacieux.'];
+  const CASH = ['🔥 Sérieux ?', '🔥 Même pas en rêve.', '🔥 Raté dans les grandes largeurs.', '🔥 Plumo a failli tomber de sa branche.', '🔥 Respire. On recommence.', '🔥 Audacieux. Faux, mais audacieux.'];
   function enQuestion(m, ch, x, ton, r){
     const base = Array.isArray(x) ? { enonce:x[0], bon:x[1], faux:x[2].map(f => ({ en:f[0], vanne:f[1] })), regle:x[3], consigne:x[4] } : x;
     const faux = base.faux.filter(f => f && f.en !== base.bon).slice(0, 3).map(f => {

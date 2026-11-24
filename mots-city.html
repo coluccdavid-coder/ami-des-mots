@@ -860,7 +860,7 @@ function ecranTitre(){
 }
 function ouvrirTelephone(){
   const r = save.reussies;
-  ouvrirPanneau('<h2>📱 Missions</h2><p>Chaque mission t’apprend des mots anglais. Une erreur ? Ami fait une vanne et tu réessaies.</p>' +
+  ouvrirPanneau('<h2>📱 Missions</h2><p>Chaque mission t’apprend des mots anglais. Une erreur ? Plumo fait une vanne et tu réessaies.</p>' +
     '<button class="carte-mission" data-m="livraison"><span class="ico">🛍️</span><span><b>Livraison express</b>Le client commande en anglais. Trouve le bon étal au marché ! (' + r.livraison + ' réussies)</span></button>' +
     '<button class="carte-mission" data-m="taxi"><span class="ico">🚕</span><span><b>Taxi des mots</b>Prends un véhicule. Le passager dit où aller, en anglais. (' + r.taxi + ' réussies)</span></button>' +
     '<button class="carte-mission" data-m="lettres"><span class="ico">🔤</span><span><b>Chasse aux lettres</b>Attrape les lettres du mot anglais dans le bon ordre. (' + r.lettres + ' réussies)</span></button>' +
@@ -873,7 +873,7 @@ function ouvrirTelephone(){
 function aide(){
   ouvrirPanneau('<h2>❔ Comment jouer</h2><p>▲ avancer · ▼ reculer/freiner · ◀ ▶ tourner (flèches, ZQSD ou WASD).<br><b>Maj</b> ou 🏃 : courir · <b>Espace</b> ou ⤒ : sauter.<br><b>E</b> ou 🚪 : monter dans un véhicule / descendre.<br>' +
     '<b>M</b> : missions · <b>R</b> : radio (en véhicule) · <b>H</b> : klaxon · Glisse sur l’écran pour tourner la caméra.</p>' +
-    '<p>🦉 Ami ne se moque jamais de toi : il se moque de lui, des mots et de la ville. Les voix anglaises sont celles de ton appareil (voix de synthèse). La musique des radios est composée par le jeu.</p>' +
+    '<p>🦉 Plumo ne se moque jamais de toi : il se moque de lui, des mots et de la ville. Les voix anglaises sont celles de ton appareil (voix de synthèse). La musique des radios est composée par le jeu.</p>' +
     '<p>🌅 Le temps passe : la nuit, les néons et les lampadaires s’allument.</p><button class="fermer" data-m="fermer">C’est parti !</button>');
 }
 $('#panneau').addEventListener('click', ev => {

@@ -1,9 +1,9 @@
 # Vannes proposées par l'IA (Claude), validées par un adulte
 
 L'IA ne publie rien toute seule. Trois filtres :
-1. **Les règles données à l'IA** (taquiner la confusion ou Ami, jamais la personne ni sa famille, pas de gros mots,
+1. **Les règles données à l'IA** (taquiner la confusion ou Plumo, jamais la personne ni sa famille, pas de gros mots,
    pas de violence, pas de marques ni de personnes réelles).
-2. **Le juge d'Ami** (`js/juge.js`) revérifie chaque proposition sur l'appareil et retire les mauvaises.
+2. **Le juge de Plumo** (`js/juge.js`) revérifie chaque proposition sur l'appareil et retire les mauvaises.
 3. **Un adulte** choisit dans l'Espace parents : ✅ garder ou ❌ jeter. Seules les vannes gardées entrent dans le jeu
    (avec les vannes de la famille), et la famille peut encore les noter 🙄 pour qu'elles disparaissent.
 
@@ -31,4 +31,4 @@ Le code d'abonnement (anonyme), le thème choisi et le ton. Rien sur l'enfant, r
 
 ## Pourquoi pas de vannes « cherchées sur le net »
 Les vannes trouvées en ligne sont souvent méchantes, protégées par le droit d'auteur, ou visent des gens.
-L'IA invente des vannes neuves dans le style d'Ami, et un adulte garde le dernier mot.
+L'IA invente des vannes neuves dans le style de Plumo, et un adulte garde le dernier mot.
