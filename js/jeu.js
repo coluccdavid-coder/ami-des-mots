@@ -607,12 +607,19 @@
   }
 
   // Les 4 portes de l'accueil simplifié.
+  // v6.38 : à chaque visite, l'appli s'ouvre sur la table des matières (OUVRIR_MATIERES dans config-site.js) ;
+  // « Qui joue ? » passe d'abord s'il y a plusieurs profils. Le premier passage y demande la classe.
+  function accueilDepart(){
+    if(CONFIG.OUVRIR_MATIERES && window.MATIERES){ if(base.joueurs.length > 1 && !accueil.choisi) return quiJoue(); return matieresAccueil(); }
+    return accueil();
+  }
   function portesAccueil(){
     const en = base.ui === 'en', porte = (a, ic, titre, sous, cls) => '<button class="porte ' + cls + '" data-a="' + a + '"><span class="porte-ic" aria-hidden="true">' + ic + '</span><strong>' + titre + '</strong><small>' + sous + '</small></button>';
     return '<div class="portes">' +
       porte('porte-mots', '🗣️', esc(progTx('porteLangues')) + ' · ' + esc(LANGUES_APPRENDRE[base.cible] || ''), esc(progTx('porteLanguesSous')), 'porte-mots') +
-      (window.MATHS ? porte('maths', '🔢', TXT('Maths'), en ? 'Year 6 to final exam · Prof Pi teases' : TXT('De la 6e au bac · Prof Pi te vanne'), 'porte-maths') : '') +
-      (window.MATIERES ? porte('matieres', '📚', en ? 'Subjects' : TXT('Matières'), en ? 'French, history, biology, physics, exams' : TXT('Français, histoire-géo, SVT, physique, brevet & bac'), 'porte-sciences')
+      (CONFIG.OUVRIR_MATIERES && window.MATIERES ? porte('matieres', '📚', TXT('Mes matières'), TXT('Toutes tes matières, à ta classe, et l’aide aux devoirs'), 'porte-sciences') : '') +
+      (window.MATHS && !CONFIG.OUVRIR_MATIERES ? porte('maths', '🔢', TXT('Maths'), en ? 'Year 6 to final exam · Prof Pi teases' : TXT('De la 6e au bac · Prof Pi te vanne'), 'porte-maths') : '') +
+      (CONFIG.OUVRIR_MATIERES ? '' : window.MATIERES ? porte('matieres', '📚', en ? 'Subjects' : TXT('Matières'), en ? 'French, history, biology, physics, exams' : TXT('Français, histoire-géo, SVT, physique, brevet & bac'), 'porte-sciences')
         : window.SCIENCES ? porte('sciences', '🚀', TXT('Sciences'), en ? 'Planets, rockets, human body' : TXT('Planètes, fusées, corps humain'), 'porte-sciences') : '') +
       // v6.22 : le professeur IA (anglais ET maths) a sa propre porte : on ne le découvrait qu'en ouvrant « Mots & anglais ».
       '<a class="porte porte-prof" href="professeur.html"><span class="porte-ic" aria-hidden="true">🧑‍🏫</span><strong>' + esc(progTx('profIA')) + '</strong><small>' + esc(progTx('profIASous')) + '</small></a>' +
@@ -3482,7 +3489,7 @@
     const e = etatMaths(), niv = M.carte.niveaux[e.niveau], doms = [];
     for(const c of niv.chapitres){ let d = doms.find(x => x.d === c[1]); if(!d) doms.push(d = { d:c[1], l:[] }); d.l.push(c); }
     const etoiles = id => { const s = e.chap[id]; if(!s || !s.n) return ''; const p = s.ok / s.n; return s.n >= 10 && p >= .9 ? '⭐⭐⭐' : p >= .7 ? '⭐⭐' : '⭐'; };
-    poser(barre('accueil') + '<main class="coin-anglais coin-maths"><div class="prof-entete"><div class="ami-moyen">' + profPi('fier') + TXT('</div><div><h2>🔢 Le coin maths de Prof Pi</h2>') +
+    poser(barre(CONFIG.OUVRIR_MATIERES ? 'matieres' : 'accueil') + '<main class="coin-anglais coin-maths"><div class="prof-entete"><div class="ami-moyen">' + profPi('fier') + TXT('</div><div><h2>🔢 Le coin maths de Prof Pi</h2>') +
       TXT('<p class="pieges-intro">Trompe-toi : je vanne. Réussis : je m’incline. Programme ') + esc(M.carte.annee) + '.</p></div></div>' +
       '<div class="onglets-niveaux" role="tablist">' + M.NIVEAUX.map(n => '<button role="tab" aria-selected="' + (n === e.niveau) + '" class="onglet' + (n === e.niveau ? ' actif' : '') + '" data-a="maths-niveau" data-v="' + n + '">' + n + '</button>').join('') + '</div>' +
       '<p class="petit">📚 ' + esc(M.tr.niveau(e.niveau)) + ' — ' + esc(M.tr.niveau(e.niveau, 'note') || '') + '</p>' +
@@ -3549,10 +3556,15 @@
     const fc = filtreClasse(), voit = (a, v) => !fc || (a === 'matiere' ? M.chapitres(v, fc).length > 0 : a === 'maths' ? !!(window.MATHS && MATHS.NIVEAUX.includes(fc)) : true);
     const c = (a, v, ic, t1, t2) => !voit(a, v) ? '' : '<button class="carte-anglais" data-a="' + a + '"' + (v ? ' data-v="' + v + '"' : '') + (a === 'matiere' || a === 'maths' ? ' data-o="classe"' : '') + '><span class="ic">' + ic + '</span><strong>' + t1 + '</strong><small>' + t2 + '</small></button>';
     const cs = (a, v, ic, t1, t2) => '<button class="carte-anglais" data-a="' + a + '"' + (v ? ' data-v="' + v + '"' : '') + (a === 'matiere' || a === 'maths' ? ' data-o="classe"' : '') + '><span class="ic">' + ic + '</span><strong>' + t1 + '</strong><small>' + t2 + '</small></button>';
-    poser(barre('accueil') + TXT('<main class="coin-anglais matieres-ecran"><h2>📚 Matières</h2><p class="pieges-intro">Le programme de la 6e au bac, avec Plumo qui vanne les erreurs (jamais toi) et t’explique la bonne réponse.</p>') +
-      (window.EPREUVES ? ongletsExamens('matieres') : '') + choixClasse('matieres') +
-      '<div class="cartes-anglais">' + cartesModules('matiere') +
-        ((J().carnet || []).length ? c('carnet-erreurs', '', '🎯', 'Mes erreurs (' + J().carnet.length + ')', TXT('Les questions ratées, à revoir avant un contrôle : une bonne réponse les retire')) : '') +
+    // v6.38 : la table des matières est l'écran d'arrivée (OUVRIR_MATIERES) ; l'aide aux devoirs est mise en avant ;
+    // les outils de révision sont regroupés sous les matières ; les jeux ont leur propre bouton.
+    const heros = CONFIG.OUVRIR_MATIERES || MODULES.actions.devoirs ? '<button class="devoirs-hero" data-a="devoirs"><span class="ic" aria-hidden="true">📚</span><span><strong>' + TXT('Un devoir à faire ? On t’aide à démarrer') + '</strong><small>' +
+      TXT('Aide aux devoirs, toutes les matières : comprendre la consigne, retrouver la leçon, trouver la méthode — sans faire le devoir à ta place') + '</small></span></button>' : '';
+    const outils = cartesModules('matiere') + ((J().carnet || []).length ? c('carnet-erreurs', '', '🎯', 'Mes erreurs (' + J().carnet.length + ')', TXT('Les questions ratées, à revoir avant un contrôle : une bonne réponse les retire')) : '') +
+      (window.SCIENCES ? c('sciences', '', '🚀', TXT('Sciences rigolotes'), TXT('Planètes, fusées, médecine… avec des clashs')) : '');
+    poser(barre(CONFIG.OUVRIR_MATIERES ? '' : 'accueil') + TXT('<main class="coin-anglais matieres-ecran"><h2>📚 Matières</h2><p class="pieges-intro">Le programme de la 6e au bac, avec Plumo qui vanne les erreurs (jamais toi) et t’explique la bonne réponse.</p>') +
+      heros + (window.EPREUVES ? ongletsExamens('matieres') : '') + choixClasse('matieres') +
+      '<div class="cartes-anglais">' +
         c('matiere', 'francais', '📝', TXT('Français'), TXT('Conjugaison, orthographe, grammaire, figures de style, littérature')) +
         (M.trouver('lespagnol') ? c('matiere', 'lespagnol', '🇪🇸', TXT('Espagnol (LVB, 5e → bac)'), TXT('Ser ou estar, passé, subjonctif, faux amis')) : '') +
         (M.trouver('lallemand') ? c('matiere', 'lallemand', '🇩🇪', TXT('Allemand (LVB, 5e → bac)'), TXT('Cas, place du verbe, parfait, Konjunktiv II')) : '') +
@@ -3570,10 +3582,10 @@
         (M.trouver('arts') ? c('matiere', 'arts', '🎨', TXT('Arts plastiques, musique, histoire des arts'), TXT('Couleurs, mouvements, instruments, grandes œuvres pour l’oral du brevet')) : '') +
         (M.trouver('eps') ? c('matiere', 'eps', '🏃', TXT('EPS (connaissances)'), TXT('Échauffement, santé, sécurité, règles des sports')) : '') +
         (M.trouver('lca') ? c('matiere', 'lca', '🏛️', TXT('Latin et grec (5e → 3e)'), TXT('Premiers mots, mythologie, Rome, racines grecques')) : '') +
-        (window.SCIENCES ? c('sciences', '', '🚀', TXT('Sciences rigolotes'), TXT('Planètes, fusées, médecine… avec des clashs')) : '') +
-      '</div>' + (M.trouver('medecine') && (!fc || fc === 'Tle' || fc === 'Sup') ? TXT('<section class="domaine"><h3>🎓 Après le bac</h3><div class="cartes-anglais">') +
+      '</div>' + (outils ? '<section class="domaine outils-revision"><h3>' + TXT('🧰 Outils pour réviser') + '</h3><div class="cartes-anglais">' + outils + '</div></section>' : '') + (M.trouver('medecine') && (!fc || fc === 'Tle' || fc === 'Sup') ? TXT('<section class="domaine"><h3>🎓 Après le bac</h3><div class="cartes-anglais">') +
         cs('matiere', 'medecine', '🩺', TXT('Médecine'), TXT('Anatomie, physiologie, études de santé')) + cs('matiere', 'droit', '⚖️', TXT('Droit'), TXT('Institutions, bases du droit, métiers')) +
-        cs('matiere', 'astro', '🔭', 'Astrophysique', 'Étoiles, galaxies, calculs d’astrophysicien') + '</div></section>' : '') + '</main>');
+        cs('matiere', 'astro', '🔭', 'Astrophysique', 'Étoiles, galaxies, calculs d’astrophysicien') + '</div></section>' : '') +
+      (CONFIG.OUVRIR_MATIERES ? '<p class="jeux-lien"><button class="gros" data-a="accueil">' + TXT('🎮 Jeux et entraînement') + '</button><br><small>' + TXT('Mots en images, défi du jour, battles, professeur IA') + '</small></p>' : '') + '</main>');
   }
   function matiereAccueil(id){
     qz = null; const M = window.MATIERES, m = M && M.trouver(id); if(!m) return matieresAccueil();
@@ -3953,6 +3965,7 @@
       case 'betisier': return betisier();
       case 'best-suivant': if(best){ best.i++; } return afficherBest();
       case 'matieres': return matieresAccueil();
+      case 'devoirs': return matieresAccueil();   // v6.38 : sans le module d'aide aux devoirs (js/mod-devoirs.js), retour aux matières
       case 'matiere': { const e = window.MATIERES && etatMatieres();
         // v6.33 : depuis l'écran Matières, la matière s'ouvre directement à la classe de l'élève.
         if(e && v && b.dataset.o === 'classe' && e.classe && MATIERES.chapitres(v, e.classe).length) e.niveau = e.classe;
@@ -4106,7 +4119,7 @@
       case 'vestiaire': return vestiaire();
       case 'reglages': case 'apropos': return reglages();
       case 'qui': accueil.choisi = false; return quiJoue();
-      case 'choisir-joueur': base.actif = Number(v); garder(); accueil.choisi = true; return accueil();
+      case 'choisir-joueur': base.actif = Number(v); garder(); accueil.choisi = true; return accueilDepart();
       case 'nouveau-joueur': return base.joueurs.length >= CONFIG.JOUEURS_GRATUITS && !plus() && !(base.joueurs.length === 1 && !base.joueurs[0].nom) ? ecranPlus('reglages') : formJoueur(null);
       case 'plus': return ecranPlus(v || 'accueil');
       case 'plus-acheter': if(achatsNatifs()) return acheterPlus(v); return;
@@ -4218,5 +4231,9 @@
     else{ try{ sessionStorage.setItem('ami_depuis3d', '1'); }catch(e){} ouvrirDepuis3D(lienAller); }
   }
   else if(!location.search && !CONFIG.VILLAGE_CACHE && accueil3DAuto() && coinOuvert('village3d')) location.replace('monde-3d.html');
-  else accueil();
+  else{
+    accueilDepart();
+    // Les modules (aide aux devoirs, outils de révision) se chargent après jeu.js : on redessine l'écran d'arrivée une fois la page prête.
+    if(CONFIG.OUVRIR_MATIERES && document.readyState === 'loading') document.addEventListener('DOMContentLoaded', () => { if(!partie && document.querySelector('main.matieres-ecran')) matieresAccueil(); }, { once:true });
+  }
 })();

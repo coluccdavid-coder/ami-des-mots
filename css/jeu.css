@@ -1907,3 +1907,12 @@ html[data-texte="tres-grand"]{ font-size:125%; } html[data-texte="tres-grand"] b
 .devoirs label{ display:block; }
 #dev-methode{ text-align:left; max-width:760px; margin:12px auto; padding:14px 18px; border-radius:16px; background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.14); }
 .devoirs textarea{ color:#1d1640; background:#fff; }
+/* v6.38 : aide aux devoirs mise en avant en tête de la table des matières */
+.devoirs-hero{ display:flex; align-items:center; gap:16px; width:100%; max-width:900px; margin:4px auto 18px; padding:18px 22px; border:0; border-radius:20px; cursor:pointer; text-align:left; font:inherit;
+  color:#1d1640; background:linear-gradient(120deg, #ffd36b, #7ff0c8); box-shadow:0 6px 0 rgba(0,0,0,.18); }
+.devoirs-hero .ic{ font-size:2.4em; }
+.devoirs-hero strong{ display:block; font-size:1.25em; font-weight:900; }
+.devoirs-hero small{ display:block; margin-top:4px; font-size:.95em; opacity:.85; }
+.devoirs-hero:focus-visible{ outline:3px solid #fff; outline-offset:3px; }
+.outils-revision{ margin-top:22px; }
+.jeux-lien{ text-align:center; margin:26px 0 8px; }

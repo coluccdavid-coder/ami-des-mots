@@ -2952,6 +2952,24 @@ await test('v6.36 : histoire-géographie du collège étoffée (4 langues), comp
     for(const L of ['en', 'es', 'de']) assert.strictEqual(T[L].q['histoire/' + id].length, c.banque.length, L + ' ' + id);
   }
 });
+await test('v6.38 : l’appli s’ouvre sur la table des matières, l’aide aux devoirs en tête, plus de doublons avec l’accueil des jeux', async () => {
+  const w = page('fr', { MODE_PAYANT:false, OUVRIR_MATIERES:true, ACCUEIL_SIMPLE:true }), d = w.document; await w.AmiDesMotsPret;
+  const m = d.querySelector('main.matieres-ecran'); assert.ok(m, 'arrivée sur la table des matières');
+  const heros = m.querySelector('.devoirs-hero[data-a="devoirs"]'); assert.ok(heros, 'aide aux devoirs mise en avant');
+  assert.ok(m.firstElementChild.nextElementSibling.nextElementSibling === heros || m.querySelector('h2 ~ .devoirs-hero'), 'en tête');
+  assert.ok(d.querySelector('.outils-revision [data-a]'), 'outils de révision regroupés'); assert.ok(!d.querySelector('.barre [data-a="accueil"]'), 'pas de retour : c’est l’écran d’arrivée');
+  d.querySelector('.jeux-lien [data-a="accueil"]').click();
+  assert.ok(d.querySelector('.portes [data-a="matieres"]'), 'porte « Mes matières »'); assert.ok(!d.querySelector('.portes [data-a="maths"]'), 'plus de Maths en double');
+  { const x = d.createElement('button'); x.dataset.a = 'maths'; d.body.appendChild(x); x.click(); x.remove(); }
+  assert.ok(d.querySelector('.barre [data-a="matieres"]'), 'Maths revient à la table des matières');
+  // Plusieurs profils : « Qui joue ? » d'abord, puis la table des matières.
+  const w2 = page('fr', { MODE_PAYANT:false, OUVRIR_MATIERES:true }, x => x.localStorage.setItem('amidesmots:v2', JSON.stringify({ ui:'fr', cible:'en', son:true, actif:0, joueurs:[{ nom:'Léa', couleur:0, plumes:0, etoiles:{}, jours:[], porte:[], mots:{}, trophees:[], defis:[] }, { nom:'Tom', couleur:1, plumes:0, etoiles:{}, jours:[], porte:[], mots:{}, trophees:[], defis:[] }] })));
+  await w2.AmiDesMotsPret; assert.ok(w2.document.querySelector('[data-a="choisir-joueur"]'), 'qui joue'); w2.document.querySelector('[data-a="choisir-joueur"][data-v="1"]').click();
+  assert.ok(w2.document.querySelector('main.matieres-ecran'), 'puis la table des matières');
+  // Sans le réglage : l'ancien accueil, inchangé.
+  const w3 = page(); assert.ok(!w3.document.querySelector('main.matieres-ecran'));
+  assert.match(lire('js/config-site.js'), /OUVRIR_MATIERES:true/);
+});
 console.log(`\n${ok} réussi(s), ${ko} échoué(s)`);
 process.exit(ko ? 1 : 0);
 })();
