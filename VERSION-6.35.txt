@@ -16,6 +16,6 @@ Aide aux devoirs avec l'IA, dans toutes les matières.
      et non comme des instructions) sont fixées côté serveur : l'appli ne peut pas les modifier.
    - Plumes (si allumées dans l'admin) : aide 3, +2 avec photo ou PDF, question de suivi 1, relecture 3.
      Réglable dans config.php (devoirs_plumes). Plumes rendues si l'IA échoue.
-   - Modèle réglable (anthropic_modele_devoirs, Sonnet conseillé dans config.exemple.php) ; 4 demandes par minute et par IP.
+   - Modèle réglable (anthropic_modele_devoirs, Sonnet conseillé dans config.exemple.php) ; 8 demandes par minute et par IP.
    - Rien n'est conservé. Le serveur doit accepter des envois de 6 Mo (post_max_size).
 3. Test v6.35. npm run verifier : 187 réussis, 0 échoué.

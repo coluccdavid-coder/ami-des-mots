@@ -16,7 +16,7 @@ const SYSTEME_EXPLIQUE = "Tu es Plumo, le hibou prof d'« Ami des mots », un je
 $d = ami_corps_json(4096);
 $txt = fn($v, int $max) => mb_substr(trim(preg_replace('/\s+/u', ' ', str_replace(['<', '>', '{', '}'], '', (string) $v))), 0, $max);
 $question = $txt($d['question'] ?? '', 300); $bonne = $txt($d['bonne'] ?? '', 120); $regle = $txt($d['regle'] ?? '', 300); $sujet = $txt($d['sujet'] ?? '', 40);
-$langue = in_array($d['langue'] ?? 'fr', ['fr', 'en', 'es', 'de', 'it', 'pt'], true) ? $d['langue'] : 'fr';
+$langue = in_array($d['langue'] ?? 'fr', ['fr', 'en', 'es', 'de', 'it', 'pt'], true) ? ($d['langue'] ?? 'fr') : 'fr';
 if ($question === '' || $bonne === '') ami_json(['erreur' => 'question'], 400);
 try {
   $db = ami_db(); $jour = gmdate('Y-m-d');

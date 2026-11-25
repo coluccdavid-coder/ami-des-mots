@@ -18,7 +18,7 @@ $d = ami_corps_json(8192);
 $txt = fn($v, int $max) => mb_substr(trim(str_replace(['<', '>'], '', (string) $v)), 0, $max);
 $sorte = ($d['sorte'] ?? '') === 'francais' ? 'francais' : 'anglais';
 $texte = $txt($d['texte'] ?? '', 1200); $consigne = $txt($d['consigne'] ?? '', 200); $niveau = $txt($d['niveau'] ?? '', 6);
-$langue = in_array($d['langue'] ?? 'fr', ['fr', 'en', 'es', 'de', 'it', 'pt'], true) ? $d['langue'] : 'fr';
+$langue = in_array($d['langue'] ?? 'fr', ['fr', 'en', 'es', 'de', 'it', 'pt'], true) ? ($d['langue'] ?? 'fr') : 'fr';
 if (mb_strlen($texte) < 20) ami_json(['erreur' => 'trop_court'], 400);
 $garde = ami_credits_garde($d['code'] ?? '', 5);
 $noms = ['fr' => 'français', 'en' => 'anglais', 'es' => 'espagnol', 'de' => 'allemand', 'it' => 'italien', 'pt' => 'portugais'];

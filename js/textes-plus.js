@@ -1,5 +1,5 @@
 // Ami des mots — v5.95 : textes des écrans récents (Plus, codes cadeaux, liens légaux, bilan des parents)
-// dans les 11 langues de l'interface. À faire relire par des locuteurs natifs (comme textes.js).
+// dans les 6 langues de l'interface (fr, en, es, it, pt, de ; arabe, turc, polonais, ukrainien et japonais retirés en v6.34). À faire relire par des locuteurs natifs (comme textes.js).
 // TT(cle, langue, ...valeurs) : texte de la langue, sinon anglais (jamais le français à la place d'une autre langue).
 (function(){
   'use strict';

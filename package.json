@@ -1,13 +1,14 @@
 {
   "name": "ami-des-mots",
-  "version": "6.35.0",
+  "version": "6.37.0",
   "private": true,
   "description": "Ami des mots — un jeu pour apprendre des mots en images.",
   "scripts": {
     "test": "node tests/jeu.test.js && node tests/apprentissage-adaptatif.test.js && node tests/tuteur-pedagogique.test.js && node tests/professeur-ia.test.js",
     "sw": "node outils/construire-sw.js",
     "cles": "node outils/generer-cles.js",
-    "verifier": "node outils/construire-sw.js && node outils/construire-catalogue.js && npm test"
+    "verifier": "node outils/construire-sw.js && node outils/construire-catalogue.js && npm test",
+    "test:serveur": "bash outils/tests-serveur/lancer-local.sh"
   },
   "devDependencies": {
     "jsdom": "24.1.3"
