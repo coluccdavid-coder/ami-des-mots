@@ -1,0 +1,16 @@
+Ami des mots — version 6.13
+
+Matières « après le bac » entièrement traduites en anglais :
+- Droit : 19 chapitres, 92 questions (institutions, introduction au droit,
+  constitutionnel, administratif, libertés, finances publiques, droit européen
+  et international, personnes et famille, obligations, biens, pénal, affaires,
+  travail, organisation de la justice…). Les institutions françaises gardent
+  leur nom (Cour de cassation, Conseil d'État…), expliqué en anglais.
+- Médecine : 14 chapitres, 66 questions, plus le calcul du débit cardiaque.
+- Astrophysique : 10 chapitres, 52 questions, plus les 6 calculs
+  d'astrophysicien (lumière, années-lumière, Wien, Kepler, Hubble, parallaxe),
+  fabriqués directement en anglais avec le point décimal.
+- Plus aucun badge 🇫🇷 sur ces trois matières en anglais ; en français, rien ne change.
+
+Nouveau fichier : js/mat-trad-en-sup.js. Test v6.12-v6.13 étendu.
+Vérification : npm run verifier → 174 tests réussis, 0 échec.

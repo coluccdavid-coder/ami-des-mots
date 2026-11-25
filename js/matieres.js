@@ -19,23 +19,27 @@
   const LANGUE = () => { let l = 'fr'; try{ l = window.AmiDesMots.base.ui; }catch(e){ try{ l = document.documentElement.lang; }catch(e2){} } return l !== 'fr' && window.MATIERES_LANGUES && window.MATIERES_LANGUES[l] ? l : 'fr'; };
   const D = () => { const l = LANGUE(); return l === 'fr' ? null : window.MATIERES_LANGUES[l]; };
   const trad = (m, ch, i) => { const d = D(); const t = d && d.q && d.q[m.id + '/' + ch.id]; return t && i != null && t[i] ? t[i] : null; };
-  const traduit = (m, ch) => { const d = D(); const t = d && d.q && d.q[m.id + '/' + ch.id]; return !!(t && ch.banque && t.length === ch.banque.length); };
+  const banqueTraduite = (m, ch) => { const d = D(); const t = d && d.q && d.q[m.id + '/' + ch.id]; return !!(t && ch.banque && t.length === ch.banque.length); };
+  // v6.12 : un générateur peut savoir parler d'autres langues (ch.genLangues = ['en', 'es', …]).
+  const genTraduit = ch => !!(ch.gen && ch.genLangues && ch.genLangues.includes(LANGUE()));
+  const traduit = (m, ch) => LANGUE() !== 'fr' && (banqueTraduite(m, ch) || genTraduit(ch)) && (!ch.banque || !ch.banque.length || banqueTraduite(m, ch));
   const langueDe = (m, ch) => (ch ? traduit(m, ch) : m && m.chapitres.some(c => traduit(m, c))) ? LANGUE() : 'fr';
   const nom = m => { const d = D(), x = d && d.noms && d.noms[m.id]; return (x && x.nom) || m.nom; };
   const nomChap = (m, c) => { const d = D(), x = d && d.noms && d.noms[m.id]; return (x && x.ch && x.ch[c.id]) || c.nom; };
   const nomDom = (m, dom) => { const d = D(), x = d && d.noms && d.noms[m.id]; return (x && x.dom && x.dom[dom]) || dom; };
   function enQuestion(m, ch, x, ton, r, idx){
     const t = trad(m, ch, idx); if(t) x = t;
+    const lx = t ? LANGUE() : (x && x.lang) || 'fr';
     const base = Array.isArray(x) ? { enonce:x[0], bon:x[1], faux:x[2].map(f => ({ en:f[0], vanne:f[1] })), regle:x[3], consigne:x[4] } : x;
     const faux = base.faux.filter(f => f && f.en !== base.bon).slice(0, 3).map(f => {
       let v = String(f.vanne || 'Raté !').replace(/\{f\}/g, f.en).replace(/\{j\}/g, base.bon);
-      const dd = t ? D() : null, DX = dd && dd.doux || DOUX, CX = dd && dd.cash || CASH;
+      const dd = lx !== 'fr' ? D() : null, DX = dd && dd.doux || DOUX, CX = dd && dd.cash || CASH;
       if(ton === 'doux') v = DX[Math.floor(r() * DX.length)] + ' ' + (base.regle || '');
       else if(ton === 'sanspitie') v = CX[Math.floor(r() * CX.length)] + ' ' + v;
       return { en:f.en, vanne:v };
     });
-    return { id:m.id + ':' + ch.id + ':' + (idx != null ? '#' + idx : base.enonce.slice(0, 40)), chap:ch.id, matiere:m.id, lang:t ? LANGUE() : 'fr',
-      consigne:(m.ic + ' ' + (base.consigne || (t ? nomChap(m, ch) : ch.nom))), enonce:base.enonce, bon:base.bon, faux, regle:base.regle };
+    return { id:m.id + ':' + ch.id + ':' + (idx != null ? '#' + idx : base.enonce.slice(0, 40)), chap:ch.id, matiere:m.id, lang:lx,
+      consigne:(m.ic + ' ' + (base.consigne || (lx !== 'fr' ? nomChap(m, ch) : ch.nom))), enonce:base.enonce, bon:base.bon, faux, regle:base.regle };
   }
   function trouver(id){ return LISTE.find(m => m.id === id) || null; }
   // Chapitres d'un niveau (on garde ceux des niveaux d'avant quand le chapitre continue).
@@ -54,8 +58,10 @@
       const ch = ordre[out.length % ordre.length];
       let x = null, idx = null;
       // Langue traduite : on ne mélange pas des questions générées en français avec la banque traduite.
-      if(ch.gen && (!ch.banque || r() < .6) && !(traduit(m, ch) && !ch.genLangues)) x = ch.gen(r, niveau);
-      else if(ch.banque && ch.banque.length){ idx = Math.floor(r() * ch.banque.length); x = ch.banque[idx]; }
+      // Dans une autre langue : seulement ce qui est traduit (générateur et/ou banque), sinon tout en français.
+      const tr = traduit(m, ch), genOk = ch.gen && (!tr || genTraduit(ch)), bqOk = ch.banque && ch.banque.length && (!tr || banqueTraduite(m, ch));
+      if(genOk && (!bqOk || r() < .6)) x = ch.gen(r, niveau, tr ? LANGUE() : 'fr');
+      else if(bqOk){ idx = Math.floor(r() * ch.banque.length); x = ch.banque[idx]; }
       if(!x) continue;
       const q = enQuestion(m, ch, x, ton, r, idx); if(vus.has(q.enonce + '|' + q.bon) || !q.faux.length) continue;
       vus.add(q.enonce + '|' + q.bon); out.push(q);

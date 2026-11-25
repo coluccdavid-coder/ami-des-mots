@@ -3,36 +3,73 @@
 (function(){
   'use strict';
   if(!window.MATIERES) return;
-  const nb = x => String(Math.round(x * 1000) / 1000).replace('.', ',');
   const ent = (r, a, b) => a + Math.floor(r() * (b - a + 1));
+  // v6.12 : les calculs de physique parlent les langues en ligne (fr, en, es, de, it, pt).
+  const nbL = (x, l) => { const s = String(Math.round(x * 1000) / 1000); return l === 'en' ? s : s.replace('.', ','); };
+  const nb = x => nbL(x, 'fr');
+  const rempl = (s, v, l) => s.replace(/\{(\w+)\}/g, (a, k) => k in v ? (typeof v[k] === 'number' ? nbL(v[k], l) : v[k]) : a);
+  const TXG = {
+    fr:{ consigne:'Calcul',
+      ohm:['Une résistance de {R} Ω est traversée par un courant de {I} A. Quelle est la tension U à ses bornes ?', 'Tu as divisé R par I. La loi d’Ohm, c’est U = R × I : on multiplie ! Ta tension a explosé le compteur. ⚡', 'I ÷ R ? La formule est U = R × I. Là, ta tension est minuscule, même une pile de montre rigole. 🔋', 'Additionner des ohms et des ampères ? Ça donne des patates et des carottes. U = R × I. 🥕', 'Loi d’Ohm : U = R × I (U en volts, R en ohms, I en ampères).'],
+      puissance:['Un appareil fonctionne sous {U} V et est traversé par {I} A. Quelle est sa puissance ?', 'P = U × I, pas U ÷ I. Ton grille-pain ne chauffe plus. 🍞', 'On multiplie, on n’additionne pas : P = U × I. ⚡', 'Pourquoi multiplier par 1 000 ? Ton appareil se prend pour une centrale nucléaire. ☢️', 'Puissance électrique : P = U × I (en watts).'],
+      vitesse:['Une voiture parcourt {d} km en {t} h. Quelle est sa vitesse moyenne ?', 'd × t ? Ta voiture roule plus vite qu’une fusée. La vitesse, c’est v = d ÷ t. 🚀', 't ÷ d ? Ta voiture avance moins vite qu’un escargot endormi. v = d ÷ t. 🐌', 'Soustraire des km et des heures ? Les unités font la grimace. v = d ÷ t. 😬', 'Vitesse moyenne : v = d ÷ t.'],
+      masseVol:['Un objet a une masse de {m} g et un volume de {V} cm³. Quelle est sa masse volumique ?', 'm × V ? Ton objet devient plus lourd qu’une baleine. ρ = m ÷ V. 🐋', 'V ÷ m, c’est l’inverse. ρ = m ÷ V. 🔄', 'On divise, on ne soustrait pas : ρ = m ÷ V. ➗', 'Masse volumique : ρ = m ÷ V. L’eau : 1 g/cm³.'],
+      energie:['Un appareil de {P} W fonctionne pendant {t} h. Quelle énergie consomme-t-il ?', 'P ÷ t ? Plus il fonctionne longtemps, moins il consomme ? Ton compteur rêve. E = P × t. 💡', 'On multiplie : E = P × t. Additionner des watts et des heures, ça ne se fait pas. ⏱️', 'Pourquoi × 60 ? Ici le temps est déjà en heures. E = P × t en Wh. 🕐', 'Énergie : E = P × t (W × h = Wh).'],
+      poids:['Quel est le poids, sur Terre, d’un objet de {m} kg ? (g = 10 N/kg)', 'Ça, c’est la masse, en kg ! Le poids se calcule : P = m × g. ⚖️', 'Divisé par 10 ? Ton objet flotte comme sur la Lune… en pire. P = m × g. 🌙', 'On multiplie par g, on n’ajoute pas. 🧮', 'Poids : P = m × g (g ≈ 10 N/kg sur Terre). La masse ne change pas, le poids si.'] },
+    en:{ consigne:'Calculation',
+      ohm:['A {R} Ω resistor has a current of {I} A flowing through it. What is the voltage U across it?', 'You divided R by I. Ohm’s law is U = R × I: you multiply! Your voltage went off the scale. ⚡', 'I ÷ R? The formula is U = R × I. Now your voltage is so tiny that even a watch battery is laughing. 🔋', 'Adding ohms and amperes? That’s adding potatoes and carrots. U = R × I. 🥕', 'Ohm’s law: U = R × I (U in volts, R in ohms, I in amperes).'],
+      puissance:['A device runs on {U} V with a current of {I} A. What is its power?', 'P = U × I, not U ÷ I. Your toaster has gone cold. 🍞', 'You multiply, you don’t add: P = U × I. ⚡', 'Why multiply by 1,000? Your device thinks it’s a power station. 🏭', 'Electrical power: P = U × I (in watts).'],
+      vitesse:['A car travels {d} km in {t} h. What is its average speed?', 'd × t? Your car is faster than a rocket. Speed is v = d ÷ t. 🚀', 't ÷ d? Your car is slower than a sleepy snail. v = d ÷ t. 🐌', 'Subtracting km and hours? The units are pulling faces. v = d ÷ t. 😬', 'Average speed: v = d ÷ t.'],
+      masseVol:['An object has a mass of {m} g and a volume of {V} cm³. What is its density?', 'm × V? Your object is now heavier than a whale. ρ = m ÷ V. 🐋', 'V ÷ m is the wrong way round. ρ = m ÷ V. 🔄', 'You divide, you don’t subtract: ρ = m ÷ V. ➗', 'Density: ρ = m ÷ V. Water: 1 g/cm³.'],
+      energie:['A {P} W device runs for {t} h. How much energy does it use?', 'P ÷ t? The longer it runs, the less it uses? Your meter is dreaming. E = P × t. 💡', 'You multiply: E = P × t. Watts and hours don’t add up. ⏱️', 'Why × 60? The time is already in hours here. E = P × t in Wh. 🕐', 'Energy: E = P × t (W × h = Wh).'],
+      poids:['What is the weight, on Earth, of a {m} kg object? (g = 10 N/kg)', 'That’s the mass, in kg! Weight is calculated: W = m × g. ⚖️', 'Divided by 10? Your object is floating like on the Moon… only worse. W = m × g. 🌙', 'You multiply by g, you don’t add it. 🧮', 'Weight: W = m × g (g ≈ 10 N/kg on Earth). Mass doesn’t change; weight does.'] },
+    es:{ consigne:'Cálculo',
+      ohm:['Por una resistencia de {R} Ω circula una corriente de {I} A. ¿Cuál es la tensión U entre sus extremos?', 'Has dividido R entre I. La ley de Ohm es U = R × I: ¡se multiplica! Tu tensión se ha salido de la escala. ⚡', '¿I ÷ R? La fórmula es U = R × I. Ahora tu tensión es tan pequeña que hasta una pila de reloj se ríe. 🔋', '¿Sumar ohmios y amperios? Es como sumar patatas y zanahorias. U = R × I. 🥕', 'Ley de Ohm: U = R × I (U en voltios, R en ohmios, I en amperios).'],
+      puissance:['Un aparato funciona a {U} V y por él circulan {I} A. ¿Cuál es su potencia?', 'P = U × I, no U ÷ I. Tu tostadora ya no calienta. 🍞', 'Se multiplica, no se suma: P = U × I. ⚡', '¿Por qué multiplicar por 1000? Tu aparato se cree una central eléctrica. 🏭', 'Potencia eléctrica: P = U × I (en vatios).'],
+      vitesse:['Un coche recorre {d} km en {t} h. ¿Cuál es su velocidad media?', '¿d × t? Tu coche va más rápido que un cohete. La velocidad es v = d ÷ t. 🚀', '¿t ÷ d? Tu coche va más despacio que un caracol dormido. v = d ÷ t. 🐌', '¿Restar km y horas? Las unidades ponen mala cara. v = d ÷ t. 😬', 'Velocidad media: v = d ÷ t.'],
+      masseVol:['Un objeto tiene una masa de {m} g y un volumen de {V} cm³. ¿Cuál es su densidad?', '¿m × V? Tu objeto pesa ahora más que una ballena. ρ = m ÷ V. 🐋', 'V ÷ m es al revés. ρ = m ÷ V. 🔄', 'Se divide, no se resta: ρ = m ÷ V. ➗', 'Densidad: ρ = m ÷ V. El agua: 1 g/cm³.'],
+      energie:['Un aparato de {P} W funciona durante {t} h. ¿Cuánta energía consume?', '¿P ÷ t? ¿Cuanto más funciona, menos consume? Tu contador está soñando. E = P × t. 💡', 'Se multiplica: E = P × t. Vatios y horas no se suman. ⏱️', '¿Por qué × 60? Aquí el tiempo ya está en horas. E = P × t en Wh. 🕐', 'Energía: E = P × t (W × h = Wh).'],
+      poids:['¿Cuál es el peso, en la Tierra, de un objeto de {m} kg? (g = 10 N/kg)', '¡Eso es la masa, en kg! El peso se calcula: P = m × g. ⚖️', '¿Dividido entre 10? Tu objeto flota como en la Luna… o peor. P = m × g. 🌙', 'Se multiplica por g, no se suma. 🧮', 'Peso: P = m × g (g ≈ 10 N/kg en la Tierra). La masa no cambia; el peso, sí.'] },
+    de:{ consigne:'Rechnung',
+      ohm:['Durch einen Widerstand von {R} Ω fließt ein Strom von {I} A. Wie groß ist die Spannung U an ihm?', 'Du hast R durch I geteilt. Das ohmsche Gesetz lautet U = R × I: Es wird multipliziert! Deine Spannung sprengt die Skala. ⚡', 'I ÷ R? Richtig wäre U = R × I. Jetzt ist deine Spannung so winzig, dass sogar eine Uhrenbatterie lacht. 🔋', 'Ohm und Ampere addieren? Das sind Äpfel und Birnen. U = R × I. 🍐', 'Ohmsches Gesetz: U = R × I (U in Volt, R in Ohm, I in Ampere).'],
+      puissance:['Ein Gerät läuft mit {U} V, und es fließen {I} A. Wie groß ist seine Leistung?', 'P = U × I, nicht U ÷ I. Dein Toaster bleibt kalt. 🍞', 'Man multipliziert, man addiert nicht: P = U × I. ⚡', 'Warum mal 1000? Dein Gerät hält sich für ein Kraftwerk. 🏭', 'Elektrische Leistung: P = U × I (in Watt).'],
+      vitesse:['Ein Auto fährt {d} km in {t} h. Wie groß ist seine Durchschnittsgeschwindigkeit?', 'd × t? Dein Auto ist schneller als eine Rakete. Geschwindigkeit ist v = d ÷ t. 🚀', 't ÷ d? Dein Auto ist langsamer als eine schläfrige Schnecke. v = d ÷ t. 🐌', 'Kilometer minus Stunden? Da verziehen sogar Einheiten das Gesicht. v = d ÷ t. 😬', 'Durchschnittsgeschwindigkeit: v = d ÷ t.'],
+      masseVol:['Ein Gegenstand hat eine Masse von {m} g und ein Volumen von {V} cm³. Wie groß ist seine Dichte?', 'm × V? Dein Gegenstand ist jetzt schwerer als ein Wal. ρ = m ÷ V. 🐋', 'V ÷ m ist andersherum. ρ = m ÷ V. 🔄', 'Man teilt, man subtrahiert nicht: ρ = m ÷ V. ➗', 'Dichte: ρ = m ÷ V. Wasser: 1 g/cm³.'],
+      energie:['Ein Gerät mit {P} W läuft {t} h lang. Wie viel Energie verbraucht es?', 'P ÷ t? Je länger es läuft, desto weniger verbraucht es? Dein Zähler träumt. E = P × t. 💡', 'Man multipliziert: E = P × t. Watt und Stunden addiert man nicht. ⏱️', 'Warum × 60? Hier rechnet man schon in Stunden. E = P × t in Wh. 🕐', 'Energie: E = P × t (W × h = Wh).'],
+      poids:['Wie groß ist die Gewichtskraft eines Gegenstands von {m} kg auf der Erde? (g = 10 N/kg)', 'Das ist bloß Masse, in kg! Für das Gewicht rechnet man F = m × g. ⚖️', 'Durch 10 geteilt? Dein Gegenstand schwebt wie auf dem Mond… nur schlimmer. F = m × g. 🌙', 'Man multipliziert mit g, man addiert es nicht. 🧮', 'Gewichtskraft: F = m × g (g ≈ 10 N/kg auf der Erde). Masse bleibt gleich, Gewichtskraft nicht.'] },
+    it:{ consigne:'Calcolo',
+      ohm:['In un resistore da {R} Ω passa una corrente di {I} A. Qual è la tensione U ai suoi capi?', 'Hai diviso R per I. La legge di Ohm è U = R × I: si moltiplica! La tua tensione è uscita dalla scala. ⚡', 'I ÷ R? La formula è U = R × I. Ora la tua tensione è così piccola che ride perfino una pila da orologio. 🔋', 'Sommare ohm e ampere? È come sommare patate e carote. U = R × I. 🥕', 'Legge di Ohm: U = R × I (U in volt, R in ohm, I in ampere).'],
+      puissance:['Un apparecchio funziona a {U} V ed è attraversato da {I} A. Qual è la sua potenza?', 'P = U × I, non U ÷ I. Il tuo tostapane non scalda più. 🍞', 'Si moltiplica, non si somma: P = U × I. ⚡', 'Perché moltiplicare per 1000? Il tuo apparecchio si crede una centrale elettrica. 🏭', 'Potenza elettrica: P = U × I (in watt).'],
+      vitesse:['Un’auto percorre {d} km in {t} h. Qual è la sua velocità media?', 'd × t? La tua auto va più veloce di un razzo. La velocità è v = d ÷ t. 🚀', 't ÷ d? La tua auto va più piano di una lumaca assonnata. v = d ÷ t. 🐌', 'Sottrarre km e ore? Le unità fanno una smorfia. v = d ÷ t. 😬', 'Velocità media: v = d ÷ t.'],
+      masseVol:['Un oggetto ha una massa di {m} g e un volume di {V} cm³. Qual è la sua densità?', 'm × V? Il tuo oggetto ora pesa più di una balena. ρ = m ÷ V. 🐋', 'V ÷ m è al contrario. ρ = m ÷ V. 🔄', 'Si divide, non si sottrae: ρ = m ÷ V. ➗', 'Densità: ρ = m ÷ V. L’acqua: 1 g/cm³.'],
+      energie:['Un apparecchio da {P} W funziona per {t} h. Quanta energia consuma?', 'P ÷ t? Più funziona, meno consuma? Il tuo contatore sogna. E = P × t. 💡', 'Si moltiplica: E = P × t. Watt e ore non si sommano. ⏱️', 'Perché × 60? Qui il tempo è già in ore. E = P × t in Wh. 🕐', 'Energia: E = P × t (W × h = Wh).'],
+      poids:['Qual è il peso, sulla Terra, di un oggetto di {m} kg? (g = 10 N/kg)', 'Questa è la massa, in kg! Il peso si calcola: P = m × g. ⚖️', 'Diviso per 10? Il tuo oggetto galleggia come sulla Luna… anzi peggio. P = m × g. 🌙', 'Si moltiplica per g, non si somma. 🧮', 'Peso: P = m × g (g ≈ 10 N/kg sulla Terra). La massa non cambia, il peso sì.'] },
+    pt:{ consigne:'Cálculo',
+      ohm:['Uma resistência de {R} Ω é percorrida por uma corrente de {I} A. Qual é a tensão U nos seus terminais?', 'Dividiste R por I. A lei de Ohm é U = R × I: multiplica-se! A tua tensão saiu da escala. ⚡', 'I ÷ R? A fórmula é U = R × I. Agora a tua tensão é tão pequena que até uma pilha de relógio se ri. 🔋', 'Somar ohms e amperes? É somar batatas e cenouras. U = R × I. 🥕', 'Lei de Ohm: U = R × I (U em volts, R em ohms, I em amperes).'],
+      puissance:['Um aparelho funciona a {U} V e é percorrido por {I} A. Qual é a sua potência?', 'P = U × I, não U ÷ I. A tua torradeira já não aquece. 🍞', 'Multiplica-se, não se soma: P = U × I. ⚡', 'Porquê multiplicar por 1000? O teu aparelho julga-se uma central elétrica. 🏭', 'Potência elétrica: P = U × I (em watts).'],
+      vitesse:['Um carro percorre {d} km em {t} h. Qual é a sua velocidade média?', 'd × t? O teu carro anda mais depressa do que um foguetão. A velocidade é v = d ÷ t. 🚀', 't ÷ d? O teu carro anda mais devagar do que um caracol ensonado. v = d ÷ t. 🐌', 'Subtrair km e horas? As unidades fazem caretas. v = d ÷ t. 😬', 'Velocidade média: v = d ÷ t.'],
+      masseVol:['Um objeto tem uma massa de {m} g e um volume de {V} cm³. Qual é a sua massa volúmica?', 'm × V? O teu objeto fica mais pesado do que uma baleia. ρ = m ÷ V. 🐋', 'V ÷ m é ao contrário. ρ = m ÷ V. 🔄', 'Divide-se, não se subtrai: ρ = m ÷ V. ➗', 'Massa volúmica: ρ = m ÷ V. A água: 1 g/cm³.'],
+      energie:['Um aparelho de {P} W funciona durante {t} h. Quanta energia consome?', 'P ÷ t? Quanto mais tempo funciona, menos consome? O teu contador está a sonhar. E = P × t. 💡', 'Multiplica-se: E = P × t. Watts e horas não se somam. ⏱️', 'Porquê × 60? Aqui o tempo já está em horas. E = P × t em Wh. 🕐', 'Energia: E = P × t (W × h = Wh).'],
+      poids:['Qual é o peso, na Terra, de um objeto de {m} kg? (g = 10 N/kg)', 'Isso é a massa, em kg! O peso calcula-se: P = m × g. ⚖️', 'Dividido por 10? O teu objeto flutua como na Lua… ou pior. P = m × g. 🌙', 'Multiplica-se por g, não se soma. 🧮', 'Peso: P = m × g (g ≈ 10 N/kg na Terra). A massa não muda; o peso, sim.'] }
+  };
+  const GEN_LANGUES = ['en', 'es', 'de', 'it', 'pt'];
   // Fabrique une question de calcul : la bonne réponse et trois erreurs classiques, chacune avec sa vanne.
-  const calc = (enonce, bon, unite, erreurs, regle) => ({ consigne:'Calcul', enonce, bon:nb(bon) + ' ' + unite, regle,
-    faux:erreurs.filter(e => isFinite(e[0]) && Math.abs(e[0] - bon) > 1e-9).map(e => ({ en:nb(e[0]) + ' ' + (e[2] || unite), vanne:e[1] })) });
+  const calc = (cle, v, bon, unite, erreurs, l) => { l = TXG[l] ? l : 'fr'; const t = TXG[l][cle];
+    return { consigne:TXG[l].consigne, enonce:rempl(t[0], v, l), bon:nbL(bon, l) + ' ' + unite, regle:t[4], lang:l,
+      faux:erreurs.map((e, i) => [e, t[i + 1]]).filter(([e]) => isFinite(e) && Math.abs(e - bon) > 1e-9).map(([e, vanne]) => ({ en:nbL(e, l) + ' ' + unite, vanne })) }; };
   const GEN = {
-    ohm:r => { const R = [10, 20, 50, 100, 220, 470][ent(r, 0, 5)], I = [0.1, 0.2, 0.5, 0.02, 0.05][ent(r, 0, 4)];
-      return calc('Une résistance de ' + R + ' Ω est traversée par un courant de ' + nb(I) + ' A. Quelle est la tension U à ses bornes ?', R * I, 'V',
-        [[R / I, 'Tu as divisé R par I. La loi d’Ohm, c’est U = R × I : on multiplie ! Ta tension a explosé le compteur. ⚡'], [I / R, 'I ÷ R ? La formule est U = R × I. Là, ta tension est minuscule, même une pile de montre rigole. 🔋'], [R + I, 'Additionner des ohms et des ampères ? Ça donne des patates et des carottes. U = R × I. 🥕']],
-        'Loi d’Ohm : U = R × I (U en volts, R en ohms, I en ampères).'); },
-    puissance:r => { const U = [6, 12, 230][ent(r, 0, 2)], I = [0.5, 2, 5, 10][ent(r, 0, 3)];
-      return calc('Un appareil fonctionne sous ' + U + ' V et est traversé par ' + nb(I) + ' A. Quelle est sa puissance ?', U * I, 'W',
-        [[U / I, 'P = U × I, pas U ÷ I. Ton grille-pain ne chauffe plus. 🍞'], [U + I, 'On multiplie, on n’additionne pas : P = U × I. ⚡'], [U * I * 1000, 'Pourquoi multiplier par 1 000 ? Ton appareil se prend pour une centrale nucléaire. ☢️']],
-        'Puissance électrique : P = U × I (en watts).'); },
-    vitesse:r => { const d = [100, 150, 240, 360, 600][ent(r, 0, 4)], t = [2, 3, 4, 5][ent(r, 0, 3)];
-      return calc('Une voiture parcourt ' + d + ' km en ' + t + ' h. Quelle est sa vitesse moyenne ?', d / t, 'km/h',
-        [[d * t, 'd × t ? Ta voiture roule plus vite qu’une fusée. La vitesse, c’est v = d ÷ t. 🚀'], [t / d, 't ÷ d ? Ta voiture avance moins vite qu’un escargot endormi. v = d ÷ t. 🐌'], [d - t, 'Soustraire des km et des heures ? Les unités font la grimace. v = d ÷ t. 😬']],
-        'Vitesse moyenne : v = d ÷ t.'); },
-    masseVol:r => { const m = [200, 270, 540, 790, 1000][ent(r, 0, 4)], V = [100, 200, 250][ent(r, 0, 2)];
-      return calc('Un objet a une masse de ' + m + ' g et un volume de ' + V + ' cm³. Quelle est sa masse volumique ?', m / V, 'g/cm³',
-        [[m * V, 'm × V ? Ton objet devient plus lourd qu’une baleine. ρ = m ÷ V. 🐋'], [V / m, 'V ÷ m, c’est l’inverse. ρ = m ÷ V. 🔄'], [m - V, 'On divise, on ne soustrait pas : ρ = m ÷ V. ➗']],
-        'Masse volumique : ρ = m ÷ V. L’eau : 1 g/cm³.'); },
-    energie:r => { const P = [60, 100, 1000, 2000][ent(r, 0, 3)], t = [2, 3, 5][ent(r, 0, 2)];
-      return calc('Un appareil de ' + P + ' W fonctionne pendant ' + t + ' h. Quelle énergie consomme-t-il ?', P * t, 'Wh',
-        [[P / t, 'P ÷ t ? Plus il fonctionne longtemps, moins il consomme ? Ton compteur rêve. E = P × t. 💡'], [P + t, 'On multiplie : E = P × t. Additionner des watts et des heures, ça ne se fait pas. ⏱️'], [P * t * 60, 'Pourquoi × 60 ? Ici le temps est déjà en heures. E = P × t en Wh. 🕐']],
-        'Énergie : E = P × t (W × h = Wh).'); },
-    poids:r => { const m = [2, 5, 10, 50, 70][ent(r, 0, 4)];
-      return calc('Quel est le poids, sur Terre, d’un objet de ' + m + ' kg ? (g = 10 N/kg)', m * 10, 'N',
-        [[m, 'Ça, c’est la masse, en kg ! Le poids se calcule : P = m × g. ⚖️'], [m / 10, 'Divisé par 10 ? Ton objet flotte comme sur la Lune… en pire. P = m × g. 🌙'], [m + 10, 'On multiplie par g, on n’ajoute pas. 🧮']],
-        'Poids : P = m × g (g ≈ 10 N/kg sur Terre). La masse ne change pas, le poids si.'); }
+    ohm:(r, l) => { const R = [10, 20, 50, 100, 220, 470][ent(r, 0, 5)], I = [0.1, 0.2, 0.5, 0.02, 0.05][ent(r, 0, 4)];
+      return calc('ohm', { R, I }, R * I, 'V', [R / I, I / R, R + I], l); },
+    puissance:(r, l) => { const U = [6, 12, 230][ent(r, 0, 2)], I = [0.5, 2, 5, 10][ent(r, 0, 3)];
+      return calc('puissance', { U, I }, U * I, 'W', [U / I, U + I, U * I * 1000], l); },
+    vitesse:(r, l) => { const d = [100, 150, 240, 360, 600][ent(r, 0, 4)], t = [2, 3, 4, 5][ent(r, 0, 3)];
+      return calc('vitesse', { d, t }, d / t, 'km/h', [d * t, t / d, d - t], l); },
+    masseVol:(r, l) => { const m = [200, 270, 540, 790, 1000][ent(r, 0, 4)], V = [100, 200, 250][ent(r, 0, 2)];
+      return calc('masseVol', { m, V }, m / V, 'g/cm³', [m * V, V / m, m - V], l); },
+    energie:(r, l) => { const P = [60, 100, 1000, 2000][ent(r, 0, 3)], t = [2, 3, 5][ent(r, 0, 2)];
+      return calc('energie', { P, t }, P * t, 'Wh', [P / t, P + t, P * t * 60], l); },
+    poids:(r, l) => { const m = [2, 5, 10, 50, 70][ent(r, 0, 4)];
+      return calc('poids', { m }, m * 10, 'N', [m, m / 10, m + 10], l); }
   };
   // [question, bonne, [[mauvaise, vanne]…], explication]
   const CHIMIE = [
@@ -73,9 +110,9 @@
   window.MATIERES.ajouter({ id:'physique', nom:'Physique-chimie', ic:'⚗️', examens:{},
     chapitres:[
       { id:'matiere', nom:'La matière et ses états', dom:'Chimie', niv:['5e', '4e', '3e', '2nde'], banque:CHIMIE },
-      { id:'elec', nom:'Électricité', dom:'Physique', niv:['5e', '4e', '3e'], banque:ELEC, gen:r => (r() < .5 ? GEN.ohm : GEN.puissance)(r) },
-      { id:'mouvement', nom:'Vitesse et poids', dom:'Physique', niv:['4e', '3e', '2nde'], gen:r => (r() < .5 ? GEN.vitesse : GEN.poids)(r) },
-      { id:'energie', nom:'Énergie', dom:'Physique', niv:['3e', '2nde'], gen:GEN.energie },
-      { id:'masse-vol', nom:'Masse volumique', dom:'Chimie', niv:['4e', '3e', '2nde'], gen:GEN.masseVol }
+      { id:'elec', nom:'Électricité', dom:'Physique', niv:['5e', '4e', '3e'], banque:ELEC, gen:(r, n, l) => (r() < .5 ? GEN.ohm : GEN.puissance)(r, l), genLangues:GEN_LANGUES },
+      { id:'mouvement', nom:'Vitesse et poids', dom:'Physique', niv:['4e', '3e', '2nde'], gen:(r, n, l) => (r() < .5 ? GEN.vitesse : GEN.poids)(r, l), genLangues:GEN_LANGUES },
+      { id:'energie', nom:'Énergie', dom:'Physique', niv:['3e', '2nde'], gen:(r, n, l) => GEN.energie(r, l), genLangues:GEN_LANGUES },
+      { id:'masse-vol', nom:'Masse volumique', dom:'Chimie', niv:['4e', '3e', '2nde'], gen:(r, n, l) => GEN.masseVol(r, l), genLangues:GEN_LANGUES }
     ] });
 })();

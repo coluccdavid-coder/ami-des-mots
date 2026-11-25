@@ -1,0 +1,14 @@
+Ami des mots — version 6.11
+
+Nouveau chapitre d'histoire, tiré du cours de 3e de l'élève :
+« Cours de 3e : la Seconde Guerre mondiale, une guerre d'anéantissement »
+- 18 questions (niveaux 3e et 1re), en français, anglais et espagnol.
+- Contenus : Axe et Alliés, les deux phases et le tournant de 1942-1943
+  (Stalingrad, Midway), juin 1940, juin 1941, Katyn, Nankin, génocide des
+  Tsiganes, guerre idéologique, projet Manhattan, V1/V2, Victory Program,
+  Hollywood, travail forcé, bilan humain (60 à 80 millions de morts),
+  pays et régions les plus touchés.
+- Vannes relues pour passer le juge (pas de plages d'années, pas de
+  vocabulaire violent dans les pièges).
+
+Vérification : npm run verifier → 173 tests réussis, 0 échec.

@@ -2915,7 +2915,7 @@
     // v6.9 : punchlines arrogantes sur une bonne réponse : éclair (< 3 s), mot difficile (long), ou de temps en temps dans les jeux de mots.
     const frQ = !anglaisSeul && (q.lang || z.lang || 'fr') === 'fr', difQ = /^[\p{L}’'-]{11,}$/u.test(String(q.bon || '')) && !z.prof && !q.matiere;
     if(juste && !bravoTrash && TT && TT.arrogant && frQ && tonQ !== 'doux'){
-      if((dtQ > 0 && dtQ < 3000) || difQ) bravoTrash = TT.arrogant({ rapide:dtQ > 0 && dtQ < 3000, difficile:difQ }, memoireVannes());
+      if((dtQ > 0 && dtQ < 3000) || difQ) bravoTrash = TT.arrogant({ rapide:dtQ > 0 && dtQ < 3000, difficile:difQ }, memoireVannes()) + (z.bravo ? ' ' + z.bravo() : '');   // le bravo du prof reste
       else if(!z.prof && !q.matiere && Math.random() < 0.35) bravoTrash = TT.arrogant({ mots:true }, memoireVannes());
       else if(dtQ > 25000 && TT.lent) bravoTrash = TT.lent(memoireVannes()) + ' Mais c’est juste ! ✅';
     }
@@ -3812,6 +3812,7 @@
           base.cibleMasquee = d.cible;
           base.cible = base.ui === 'fr' ? 'en' : 'fr';
         }
+        if(base.cible === base.ui) base.cible = base.ui === 'en' ? 'fr' : 'en';   // v6.10 : jamais « Je parle » = « J'apprends » après une restauration
         // Le code d'abonnement revient ; le certificat sera redemandé au serveur.
         if(d.abo && /^AMI-[A-Z0-9]{4}-[A-Z0-9]{4}-[A-Z0-9]{4}$/.test(d.abo.code)){ base.abo = { code:d.abo.code, jeton:'', verifie:'' }; droits = null; }
         garder(); annonce('💾 ' + t('restaure_ok')); accueil.choisi = false; accueil(); rafraichir(true);
