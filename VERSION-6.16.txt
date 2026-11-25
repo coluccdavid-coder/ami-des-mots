@@ -1,0 +1,12 @@
+Ami des mots — version 6.16
+
+Programme français suivi en espagnol :
+- SVT : 9 chapitres (62 questions) ; physique-chimie : 8 chapitres (38 questions,
+  plus les calculs déjà fabriqués en espagnol) ; philosophie : 2 chapitres de
+  révision et les 17 notions (88 questions). Plus aucun badge 🇫🇷 sur ces trois
+  matières en espagnol.
+- Typographie espagnole (¿ ?, « », virgule décimale), titres d'œuvres sous leur
+  nom espagnol (Discurso del método, El contrato social…).
+
+Nouveau fichier : js/mat-trad-es-sciences.js. Test v6.12-v6.13 complété pour l'espagnol.
+Vérification : npm run verifier → 174 tests réussis, 0 échec.

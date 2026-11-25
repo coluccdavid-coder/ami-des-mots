@@ -8,9 +8,9 @@
   // v6.13 : les calculs (débit cardiaque, astrophysique) existent aussi en anglais (l = 'en').
   let LG = 'fr';
   const nb = (x, d = 2) => { const t = String(Math.round(x * 10 ** d) / 10 ** d); return LG === 'en' ? t : t.replace('.', ','); };
-  const E = (fr, en) => LG === 'en' ? en : fr;
-  const G = (enonce, bon, faux, regle) => ({ enonce, bon:String(bon), faux:faux.filter(f => String(f[0]) !== String(bon)).map(([en, vanne]) => ({ en:String(en), vanne })), regle, lang:LG, consigne:LG === 'en' ? 'Calculation' : undefined });
-  const enLangue = f => (r, l) => { LG = l === 'en' ? 'en' : 'fr'; try{ return f(r); } finally { LG = 'fr'; } };
+  const E = (fr, en, es) => LG === 'en' ? en : LG === 'es' ? es : fr;   // v6.17 : et l’espagnol
+  const G = (enonce, bon, faux, regle) => ({ enonce, bon:String(bon), faux:faux.filter(f => String(f[0]) !== String(bon)).map(([en, vanne]) => ({ en:String(en), vanne })), regle, lang:LG, consigne:LG === 'en' ? 'Calculation' : LG === 'es' ? 'Cálculo' : undefined });
+  const enLangue = f => (r, l) => { LG = l === 'en' || l === 'es' ? l : 'fr'; try{ return f(r); } finally { LG = 'fr'; } };
 
   // ═══════════════ MÉDECINE ═══════════════
   const ANATOMIE = [
@@ -34,9 +34,9 @@
     ['Combien d’années dure au minimum la formation d’un médecin généraliste ?', '10 ans environ', [['3 ans', 'Bien plus long !'], ['20 ans', 'Long, mais pas à ce point.']], 'Premier, deuxième et troisième cycles.']
   ];
   const genDebit = enLangue(r => { const fc = un(r, [60, 70, 80]), ves = un(r, [60, 70, 80]), d = fc * ves / 1000;
-    return G(E('Fréquence cardiaque ' + fc + ' battements/min, volume d’éjection systolique ' + ves + ' mL. Débit cardiaque ?', 'Heart rate ' + fc + ' beats/min, stroke volume ' + ves + ' mL. Cardiac output?'), nb(d, 1) + ' L/min',
-      [[nb(fc + ves) + ' L/min', E('Débit = FC × VES : on multiplie.', 'Output = HR × SV: you multiply.')], [nb(fc * ves) + ' L/min', E('Ce sont des mL : divise par 1 000 pour des litres.', 'Those are mL: divide by 1,000 to get litres.')]],
-      E('Débit = fréquence × volume d’éjection.', 'Cardiac output = heart rate × stroke volume.')); });
+    return G(E('Fréquence cardiaque ' + fc + ' battements/min, volume d’éjection systolique ' + ves + ' mL. Débit cardiaque ?', 'Heart rate ' + fc + ' beats/min, stroke volume ' + ves + ' mL. Cardiac output?', 'Frecuencia cardiaca ' + fc + ' latidos/min, volumen sistólico ' + ves + ' mL. ¿Gasto cardiaco?'), nb(d, 1) + ' L/min',
+      [[nb(fc + ves) + ' L/min', E('Débit = FC × VES : on multiplie.', 'Output = HR × SV: you multiply.', 'Gasto = FC × VS: se multiplica.')], [nb(fc * ves) + ' L/min', E('Ce sont des mL : divise par 1 000 pour des litres.', 'Those are mL: divide by 1,000 to get litres.', 'Son mL: divide entre 1000 para tener litros.')]],
+      E('Débit = fréquence × volume d’éjection.', 'Cardiac output = heart rate × stroke volume.', 'Gasto cardiaco = frecuencia × volumen sistólico.')); });
 
   // ═══════════════ DROIT ═══════════════
   const INSTITUTIONS = [
@@ -66,31 +66,31 @@
     ['Pour devenir astrophysicien, il faut en général :', 'Un doctorat (bac + 8) en astrophysique', [['Un CAP', 'Cette réponse a pris le mauvais train. Direction : nulle part, terminus : raté.'], ['Un télescope et c’est tout', 'Il faut aussi beaucoup de maths et de physique.']], 'Master puis thèse.']
   ];
   const ASTRO_GEN = [
-    r => { const [nom, d] = un(r, [[E('la Lune', 'the Moon'), 384000], [E('le Soleil', 'the Sun'), 150e6], [E('Mars (au plus près)', 'Mars (at its closest)'), 54.6e6]]), t = d / 300000;
-      return G(E('La lumière va à 300 000 km/s. Combien de temps met-elle pour venir de ' + nom + ' (' + nb(d / 1e6, 3) + ' millions de km) ?', 'Light travels at 300,000 km/s. How long does it take to come from ' + nom + ' (' + nb(d / 1e6, 3) + ' million km)?'),
-        t < 60 ? nb(t, 2) + ' s' : nb(t / 60, 1) + ' min', [[t < 60 ? nb(t * 60, 0) + ' s' : nb(t, 0) + ' min', E('Problème de conversion : les secondes et les minutes se sont mélangées.', 'A conversion problem: the seconds and the minutes got mixed up.')], [t < 60 ? nb(t / 60, 3) + ' s' : nb(t / 3600, 2) + ' min', E('Une division de trop.', 'One division too many.')]], E('Durée = distance ÷ vitesse.', 'Time = distance ÷ speed.')); },
+    r => { const [nom, d] = un(r, [[E('la Lune', 'the Moon', 'la Luna'), 384000], [E('le Soleil', 'the Sun', 'el Sol'), 150e6], [E('Mars (au plus près)', 'Mars (at its closest)', 'Marte (en su punto más cercano)'), 54.6e6]]), t = d / 300000;
+      return G(E('La lumière va à 300 000 km/s. Combien de temps met-elle pour venir de ' + nom + ' (' + nb(d / 1e6, 3) + ' millions de km) ?', 'Light travels at 300,000 km/s. How long does it take to come from ' + nom + ' (' + nb(d / 1e6, 3) + ' million km)?', 'La luz viaja a 300 000 km/s. ¿Cuánto tarda en llegar desde ' + nom + ' (' + nb(d / 1e6, 3) + ' millones de km)?'),
+        t < 60 ? nb(t, 2) + ' s' : nb(t / 60, 1) + ' min', [[t < 60 ? nb(t * 60, 0) + ' s' : nb(t, 0) + ' min', E('Problème de conversion : les secondes et les minutes se sont mélangées.', 'A conversion problem: the seconds and the minutes got mixed up.', 'Problema de conversión: los segundos y los minutos se han mezclado.')], [t < 60 ? nb(t / 60, 3) + ' s' : nb(t / 3600, 2) + ' min', E('Une division de trop.', 'One division too many.', 'Una división de más.')]], E('Durée = distance ÷ vitesse.', 'Time = distance ÷ speed.', 'Tiempo = distancia ÷ velocidad.')); },
     r => { const al = un(r, [4.2, 8.6, 25]), km = al * 9.46e12;
       const e = Math.floor(Math.log10(km)), m = km / 10 ** e;
-      return G(E('Une année-lumière vaut environ 9,46 × 10^12 km. Combien de km pour ' + nb(al, 1) + ' années-lumière ?', 'A light year is about 9.46 × 10^12 km. How many km in ' + nb(al, 1) + ' light years?'), nb(m, 2) + ' × 10^' + e + ' km',
-        [[nb(al * 9.46, 2) + ' km', E('Et la puissance de 10 ? L’étoile serait dans ton jardin.', 'And the power of 10? The star would be in your garden.')], [nb(m, 2) + ' × 10^' + (e + 1) + ' km', E('Une puissance de 10 en trop : l’étoile s’éloigne toute seule.', 'One power of 10 too many: the star is drifting away on its own.')]], 'd = ' + nb(al, 1) + E(' × 9,46 × 10^12 km.', ' × 9.46 × 10^12 km.')); },
+      return G(E('Une année-lumière vaut environ 9,46 × 10^12 km. Combien de km pour ' + nb(al, 1) + ' années-lumière ?', 'A light year is about 9.46 × 10^12 km. How many km in ' + nb(al, 1) + ' light years?', 'Un año luz equivale a unos 9,46 × 10^12 km. ¿Cuántos km hay en ' + nb(al, 1) + ' años luz?'), nb(m, 2) + ' × 10^' + e + ' km',
+        [[nb(al * 9.46, 2) + ' km', E('Et la puissance de 10 ? L’étoile serait dans ton jardin.', 'And the power of 10? The star would be in your garden.', '¿Y la potencia de 10? La estrella estaría en tu jardín.')], [nb(m, 2) + ' × 10^' + (e + 1) + ' km', E('Une puissance de 10 en trop : l’étoile s’éloigne toute seule.', 'One power of 10 too many: the star is drifting away on its own.', 'Una potencia de 10 de más: la estrella se aleja ella solita.')]], 'd = ' + nb(al, 1) + E(' × 9,46 × 10^12 km.', ' × 9.46 × 10^12 km.', ' × 9,46 × 10^12 km.')); },
     r => { const lam = un(r, [290, 500, 725, 966]), T = 2.898e-3 / (lam * 1e-9);
-      return G(E('Loi de Wien : λmax × T = 2,898 × 10^-3 m·K. Une étoile émet surtout à λmax = ' + lam + ' nm. Température de surface ?', 'Wien’s law: λmax × T = 2.898 × 10^-3 m·K. A star emits mostly at λmax = ' + lam + ' nm. Surface temperature?'), nb(T, -2).replace(/,/, '') + ' K',
-        [[nb(T / 1000, 1) + ' K', E('Conversion nm → m oubliée : 1 nm = 10^-9 m.', 'nm → m conversion forgotten: 1 nm = 10^-9 m.')], [nb(lam * 2.898, 0) + ' K', E('Il faut DIVISER par λ.', 'You have to DIVIDE by λ.')]], E('T = 2,898 × 10^-3 ÷ λmax.', 'T = 2.898 × 10^-3 ÷ λmax.')); },
-    r => { const a = un(r, [4, 9, 16, 25]), T = Math.pow(a, 1.5), an = E(' ans', ' years');
-      return G(E('3e loi de Kepler (autour du Soleil) : T² = a³, avec T en années et a en unités astronomiques. Période d’une planète à a = ' + a + ' UA ?', 'Kepler’s third law (around the Sun): T² = a³, with T in years and a in astronomical units. Period of a planet at a = ' + a + ' AU?'), String(T) + an,
-        [[String(a * a) + an, E('T² = a³, donc T = a^(3/2), pas a².', 'T² = a³, so T = a^(3/2), not a².')], [String(a) + an, E('Non : T dépend de a puissance 3/2.', 'No: T depends on a to the power 3/2.')]], 'T = √(' + a + '³) = ' + T + '.'); },
+      return G(E('Loi de Wien : λmax × T = 2,898 × 10^-3 m·K. Une étoile émet surtout à λmax = ' + lam + ' nm. Température de surface ?', 'Wien’s law: λmax × T = 2.898 × 10^-3 m·K. A star emits mostly at λmax = ' + lam + ' nm. Surface temperature?', 'Ley de Wien: λmax × T = 2,898 × 10^-3 m·K. Una estrella emite sobre todo a λmax = ' + lam + ' nm. ¿Temperatura de superficie?'), nb(T, -2).replace(/,/, '') + ' K',
+        [[nb(T / 1000, 1) + ' K', E('Conversion nm → m oubliée : 1 nm = 10^-9 m.', 'nm → m conversion forgotten: 1 nm = 10^-9 m.', 'Olvidaste convertir nm → m: 1 nm = 10^-9 m.')], [nb(lam * 2.898, 0) + ' K', E('Il faut DIVISER par λ.', 'You have to DIVIDE by λ.', 'Hay que DIVIDIR entre λ.')]], E('T = 2,898 × 10^-3 ÷ λmax.', 'T = 2.898 × 10^-3 ÷ λmax.', 'T = 2,898 × 10^-3 ÷ λmax.')); },
+    r => { const a = un(r, [4, 9, 16, 25]), T = Math.pow(a, 1.5), an = E(' ans', ' years', ' años');
+      return G(E('3e loi de Kepler (autour du Soleil) : T² = a³, avec T en années et a en unités astronomiques. Période d’une planète à a = ' + a + ' UA ?', 'Kepler’s third law (around the Sun): T² = a³, with T in years and a in astronomical units. Period of a planet at a = ' + a + ' AU?', 'Tercera ley de Kepler (alrededor del Sol): T² = a³, con T en años y a en unidades astronómicas. ¿Periodo de un planeta a a = ' + a + ' UA?'), String(T) + an,
+        [[String(a * a) + an, E('T² = a³, donc T = a^(3/2), pas a².', 'T² = a³, so T = a^(3/2), not a².', 'T² = a³, así que T = a^(3/2), no a².')], [String(a) + an, E('Non : T dépend de a puissance 3/2.', 'No: T depends on a to the power 3/2.', 'No: T depende de a elevado a 3/2.')]], 'T = √(' + a + '³) = ' + T + '.'); },
     r => { const d = un(r, [10, 100, 500]), v = 70 * d;
-      return G(E('Loi de Hubble : v = H0 × d avec H0 ≈ 70 km/s/Mpc. Vitesse d’éloignement d’une galaxie à ' + d + ' Mpc ?', 'Hubble’s law: v = H0 × d with H0 ≈ 70 km/s/Mpc. How fast is a galaxy at ' + d + ' Mpc moving away?'), v + ' km/s',
-        [[nb(70 / d, 2) + ' km/s', E('On multiplie par la distance.', 'You multiply by the distance.')], [String(70 + d) + ' km/s', E('On multiplie, pas on additionne.', 'You multiply, you don’t add.')]], 'v = 70 × ' + d + '.'); },
+      return G(E('Loi de Hubble : v = H0 × d avec H0 ≈ 70 km/s/Mpc. Vitesse d’éloignement d’une galaxie à ' + d + ' Mpc ?', 'Hubble’s law: v = H0 × d with H0 ≈ 70 km/s/Mpc. How fast is a galaxy at ' + d + ' Mpc moving away?', 'Ley de Hubble: v = H0 × d con H0 ≈ 70 km/s/Mpc. ¿A qué velocidad se aleja una galaxia situada a ' + d + ' Mpc?'), v + ' km/s',
+        [[nb(70 / d, 2) + ' km/s', E('On multiplie par la distance.', 'You multiply by the distance.', 'Se multiplica por la distancia.')], [String(70 + d) + ' km/s', E('On multiplie, pas on additionne.', 'You multiply, you don’t add.', 'Se multiplica, no se suma.')]], 'v = 70 × ' + d + '.'); },
     r => { const p = un(r, [0.1, 0.2, 0.25, 0.5]), d = 1 / p;
-      return G(E('Une étoile a une parallaxe de ' + nb(p) + ' seconde d’arc. Sa distance en parsecs ?', 'A star has a parallax of ' + nb(p) + ' arcseconds. What is its distance in parsecs?'), nb(d) + ' pc',
-        [[nb(p) + ' pc', E('d = 1 ÷ p : plus la parallaxe est petite, plus l’étoile est loin.', 'd = 1 ÷ p: the smaller the parallax, the farther away the star.')], [nb(p * 10) + ' pc', E('Non : on prend l’inverse.', 'No: you take the reciprocal.')]], E('d (pc) = 1 ÷ p (″).', 'd (pc) = 1 ÷ p (″).')); }
+      return G(E('Une étoile a une parallaxe de ' + nb(p) + ' seconde d’arc. Sa distance en parsecs ?', 'A star has a parallax of ' + nb(p) + ' arcseconds. What is its distance in parsecs?', 'Una estrella tiene una paralaje de ' + nb(p) + ' segundos de arco. ¿Cuál es su distancia en pársecs?'), nb(d) + ' pc',
+        [[nb(p) + ' pc', E('d = 1 ÷ p : plus la parallaxe est petite, plus l’étoile est loin.', 'd = 1 ÷ p: the smaller the parallax, the farther away the star.', 'd = 1 ÷ p: cuanto más pequeña es la paralaje, más lejos está la estrella.')], [nb(p * 10) + ' pc', E('Non : on prend l’inverse.', 'No: you take the reciprocal.', 'No: hay que tomar el inverso.')]], E('d (pc) = 1 ÷ p (″).', 'd (pc) = 1 ÷ p (″).', 'd (pc) = 1 ÷ p (″).')); }
   ].map(enLangue);
 
 
   M.ajouter({ id:'medecine', nom:'Médecine', ic:'🩺', examens:{}, chapitres:[
     { id:'anatomie', nom:'Anatomie', dom:'Le corps humain', niv:['Sup'], banque:ANATOMIE },
-    { id:'physio', nom:'Physiologie, microbes et essais cliniques', dom:'Le corps humain', niv:['Sup'], banque:PHYSIO, gen:(r, n, l) => genDebit(r, l), genLangues:['en'] },
+    { id:'physio', nom:'Physiologie, microbes et essais cliniques', dom:'Le corps humain', niv:['Sup'], banque:PHYSIO, gen:(r, n, l) => genDebit(r, l), genLangues:['en', 'es'] },
     { id:'etudes', nom:'Les études de santé', dom:'Orientation', niv:['Sup'], banque:ETUDES_SANTE }
   ] });
   M.ajouter({ id:'droit', nom:'Droit', ic:'⚖️', examens:{}, chapitres:[
@@ -99,7 +99,7 @@
   ] });
   M.ajouter({ id:'astro', nom:'Astrophysique', ic:'🔭', examens:{}, chapitres:[
     { id:'etoiles', nom:'Étoiles, galaxies et Univers', dom:'Connaissances', niv:['Sup'], banque:ASTRO },
-    { id:'calculs', nom:'Calculs d’astrophysicien', dom:'Calculs', niv:['Sup'], gen:(r, n, l) => un(r, ASTRO_GEN)(r, l), genLangues:['en'] },
+    { id:'calculs', nom:'Calculs d’astrophysicien', dom:'Calculs', niv:['Sup'], gen:(r, n, l) => un(r, ASTRO_GEN)(r, l), genLangues:['en', 'es'] },
     // v6.3 : les études pour travailler dans le spatial (NASA, ESA, CNES).
     { id:'nasa', nom:'Travailler à la NASA, à l’ESA ou au CNES', dom:'Métiers', niv:['1re', 'Tle', 'Sup'], banque:[
       ['Pour devenir astronaute de la NASA, il faut…', 'être citoyen américain', [['avoir n’importe quelle nationalité', 'Les postes d’astronaute de la NASA sont réservés aux citoyens américains (les doubles nationaux peuvent postuler).'], ['avoir moins de 25 ans', 'Il n’y a pas de limite d’âge officielle.']], 'Les Européens passent par l’ESA, l’Agence spatiale européenne.'],

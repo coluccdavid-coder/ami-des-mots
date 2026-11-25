@@ -49,7 +49,8 @@
   function serie(id, cible, niveau, n, graine, ton){
     const m = trouver(id); if(!m) return [];
     const r = hasard(graine || Math.floor(Math.random() * 1e9));
-    const chs = cible === 'melange' || cible === 'examen' ? chapitres(id, niveau) : m.chapitres.filter(c => c.id === cible);
+    // v6.19 : les chapitres « Par thème » regroupent des questions déjà présentes ailleurs : on ne les compte pas deux fois dans le mélange.
+    const chs = cible === 'melange' || cible === 'examen' ? chapitres(id, niveau).filter(c => !c.theme) : m.chapitres.filter(c => c.id === cible);
     if(!chs.length) return [];
     const out = [], vus = new Set(); let essais = 0;
     // On fait tourner les chapitres pour couvrir tout le programme du niveau.
