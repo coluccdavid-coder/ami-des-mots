@@ -246,7 +246,7 @@
   if(M){ if(!M.NIVEAUX.includes('Sup')) M.NIVEAUX.push('Sup');
     const niv = id => ['parcours', 'metiers', 'exploration', 'anglais', 'geopolitique', 'geops'].includes(id) ? ['2nde', '1re', 'Tle', 'Sup'] : ['1re', 'Tle', 'Sup'];
     M.ajouter({ id:'nasa', nom:'Objectif NASA', ic:'🚀', examens:{}, chapitres:CH.map(([id, fr, , dom]) => ({ id, nom:fr.replace(/^\S+ /, ''), dom:{ Parcours:'Parcours', Exercices:'Exercices', Culture:'Culture spatiale', Geo:'Géosciences (GEOPS)' }[dom], niv:niv(id),
-      banque:FR[id], gen:GEN[id] ? r => un(r, GEN[id])(r, 'fr') : undefined })) });
+      banque:FR[id], gen:GEN[id] ? (r, n, l) => { const lg = l === 'en' ? 'en' : 'fr', x = un(r, GEN[id])(r, lg); x.lang = lg; if(lg === 'en') x.consigne = 'Calculation'; return x; } : undefined, genLangues:GEN[id] ? ['en'] : undefined })) });
     // L'ancien chapitre « nasa » de l'astrophysique est remplacé par cette matière complète.
     const astro = M.trouver('astro'); if(astro) astro.chapitres = astro.chapitres.filter(c => c.id !== 'nasa'); }
   // Anglais : « Road to NASA » (Year 10 → University).
@@ -261,5 +261,6 @@
     if(E.EXAMENS) E.EXAMENS['uni-nasa'] = { titre:'Road to NASA: knowledge & calculations', ic:'🚀', niveau:'Uni', note:'alevel', papers:[
       { titre:'Rockets, orbits & communications', duree:'—', points:null, matiere:'gb-nasa', chapitres:['fusees', 'orbites', 'communications', 'unites'], n:10, niveau:'Uni' },
       { titre:'Routes, missions & geopolitics', duree:'—', points:null, matiere:'gb-nasa', chapitres:['parcours', 'exploration', 'geopolitique', 'survie', 'geops'], n:10, niveau:'Uni' }] }; }
-  window.NASA_GEN = GEN;   // pour les tests
+  window.NASA_GEN = GEN;
+  window.NASA_EN = EN;   // v6.14 : repris pour traduire « Objectif NASA » quand c'est la même question   // pour les tests
 })();
