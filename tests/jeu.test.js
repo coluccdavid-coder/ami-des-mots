@@ -21,7 +21,7 @@ function page(langue, config, avant){
   w.TextEncoder = TextEncoder; w.TextDecoder = TextDecoder;
   w.__fetch = []; w.fetch = async (u) => { w.__fetch.push(String(u)); return { ok:true, json:async () => (w.__reponse || { actif:false }) }; };
   if(avant) avant(w);
-  for(const f of ['js/donnees.js', 'js/voix.js', 'js/phrases-enregistrees.js', 'js/textes.js', 'js/textes-plus.js', 'js/textes-ecrans.js', 'js/articulation.js', 'js/genres.js', 'js/confusions.js', 'js/vannes.js', 'js/pieges.js', 'js/anglais.js', 'js/clash.js', 'js/histoires.js', 'js/blagues-en.js', 'js/parcours.js', 'js/rigolade.js', 'js/clash-plus.js', 'js/salon.js', 'js/juge.js', 'js/vannes-libres.js', 'js/maths-en.js', 'js/maths-es.js', 'js/maths-de.js', 'js/maths-it.js', 'js/maths-pt.js', 'js/maths.js', 'js/sciences-en.js', 'js/sciences-es.js', 'js/sciences-de.js', 'js/sciences-it.js', 'js/sciences-pt.js', 'js/sciences.js', 'js/trash-talk.js', 'js/vannes-arrogantes.js', 'js/bande-images.js', 'js/bande-plumo.js', 'js/achats.js', 'js/rappels.js', 'js/epreuves.js', 'js/epreuves-spe.js', 'js/epreuves-plus.js', 'js/epreuves-oraux.js', 'js/epreuves-pro.js', 'js/matieres.js', 'js/mat-trad-es.js', 'js/mat-trad-en.js', 'js/mat-trad-en-sciences.js', 'js/mat-trad-en-sup.js', 'js/mat-trad-en-langues.js', 'js/mat-trad-en-francais.js', 'js/mat-trad-communs.js', 'js/mat-trad-es-sciences.js', 'js/mat-trad-es-sup.js', 'js/mat-trad-es-specialites.js', 'js/mat-trad-es-allemand.js', 'js/mat-francais.js', 'js/mat-histoire.js', 'js/mat-histoire-sgm.js', 'js/mat-svt-pc.js', 'js/mat-sup.js', 'js/mat-anglais.js', 'js/mat-renfort.js', 'js/mat-langues.js', 'js/mat-specialites.js', 'js/mat-anglais-sup.js', 'js/mat-sup-droit.js', 'js/mat-sup-medecine.js', 'js/mat-sup-astro.js', 'js/mat-philo-notions.js', 'js/vannes-cash.js', 'js/vannes-ironie.js', 'js/vannes-mots.js', 'js/offre.js', 'js/jeu.js', 'js/mod-base.js', 'js/mod-ligue.js', 'js/mod-saisons.js', 'js/mod-veille.js', 'js/mod-oral.js', 'js/mod-classe.js', 'js/mod-parrainage.js', 'js/mod-ia.js', 'js/gb-moteur.js', 'js/gb-maths.js', 'js/gb-english.js', 'js/gb-sciences.js', 'js/gb-humanites.js', 'js/gb-options.js', 'js/gb-plus.js', 'js/gb-programme.js', 'js/gb-programme-plus.js', 'js/gb-examens.js', 'js/gb-sats-reels.js', 'js/gb-options2.js', 'js/nasa.js', 'js/mat-trad-en-nasa.js', 'js/mat-trad-es-nasa.js', 'js/themes.js', 'js/mod-angleterre.js']) w.eval(lire(f));
+  for(const f of ['js/donnees.js', 'js/voix.js', 'js/phrases-enregistrees.js', 'js/textes.js', 'js/textes-plus.js', 'js/textes-ecrans.js', 'js/articulation.js', 'js/genres.js', 'js/confusions.js', 'js/vannes.js', 'js/pieges.js', 'js/anglais.js', 'js/clash.js', 'js/histoires.js', 'js/blagues-en.js', 'js/parcours.js', 'js/rigolade.js', 'js/clash-plus.js', 'js/salon.js', 'js/juge.js', 'js/vannes-libres.js', 'js/maths-en.js', 'js/maths-es.js', 'js/maths-de.js', 'js/maths-it.js', 'js/maths-pt.js', 'js/maths.js', 'js/sciences-en.js', 'js/sciences-es.js', 'js/sciences-de.js', 'js/sciences-it.js', 'js/sciences-pt.js', 'js/sciences.js', 'js/trash-talk.js', 'js/vannes-arrogantes.js', 'js/bande-images.js', 'js/bande-plumo.js', 'js/achats.js', 'js/rappels.js', 'js/epreuves.js', 'js/epreuves-spe.js', 'js/epreuves-plus.js', 'js/epreuves-oraux.js', 'js/epreuves-pro.js', 'js/matieres.js', 'js/mat-trad-es.js', 'js/mat-trad-en.js', 'js/mat-trad-en-sciences.js', 'js/mat-trad-en-sup.js', 'js/mat-trad-en-langues.js', 'js/mat-trad-en-francais.js', 'js/mat-trad-communs.js', 'js/mat-trad-es-sciences.js', 'js/mat-trad-es-sup.js', 'js/mat-trad-es-specialites.js', 'js/mat-trad-es-allemand.js', 'js/mat-trad-es-francais.js', 'js/mat-trad-de-histoire.js', 'js/mat-trad-de-sciences.js', 'js/mat-francais.js', 'js/mat-histoire.js', 'js/mat-histoire-sgm.js', 'js/mat-svt-pc.js', 'js/mat-sup.js', 'js/mat-anglais.js', 'js/mat-renfort.js', 'js/mat-langues.js', 'js/mat-specialites.js', 'js/mat-anglais-sup.js', 'js/mat-sup-droit.js', 'js/mat-sup-medecine.js', 'js/mat-sup-astro.js', 'js/mat-philo-notions.js', 'js/vannes-cash.js', 'js/vannes-ironie.js', 'js/vannes-mots.js', 'js/offre.js', 'js/jeu.js', 'js/mod-base.js', 'js/mod-ligue.js', 'js/mod-saisons.js', 'js/mod-veille.js', 'js/mod-oral.js', 'js/mod-classe.js', 'js/mod-parrainage.js', 'js/mod-ia.js', 'js/gb-moteur.js', 'js/gb-maths.js', 'js/gb-english.js', 'js/gb-sciences.js', 'js/gb-humanites.js', 'js/gb-options.js', 'js/gb-plus.js', 'js/gb-programme.js', 'js/gb-programme-plus.js', 'js/gb-examens.js', 'js/gb-sats-reels.js', 'js/gb-options2.js', 'js/nasa.js', 'js/mat-trad-en-nasa.js', 'js/mat-trad-es-nasa.js', 'js/mat-histoire-pgm.js', 'js/themes.js', 'js/mod-angleterre.js']) w.eval(lire(f));
   return w;
 }
 // Certificats d'abonnement comme les signe le serveur (même format que serveur/functions/ami-abonnement).
@@ -1136,11 +1136,15 @@ await test('sauvegarde piégée : valeurs absurdes bornées, clés inconnues ign
 });
 await test('langues : seules les langues activées sont visibles, les autres restent dans les données', () => {
   const w = page(); const d = w.document;
+  // v6.22 : la langue apprise se choisit dans la porte « Langues » ; l'accueil propose « Ma langue » et « Mon programme ».
+  assert.ok(d.querySelector('#programme'), 'le choix du programme doit être sur l’accueil');
+  const optsUi = Array.from(d.querySelector('#ui').options).map(o => o.value);
+  { const x = d.createElement('button'); x.dataset.a = 'porte-mots'; d.body.appendChild(x); x.click(); x.remove(); }
   const choix = d.querySelector('#cible');
   assert.ok(choix, 'le sélecteur de langue doit être présent');
   // v5.99.2 : « J'apprends » = langues enseignées à l'école (sauf celle qu'on parle) ; « Je parle » = français + ces langues.
   assert.deepStrictEqual(Array.from(choix.options).map(o => o.value), ['en', 'es', 'de', 'it', 'pt']);
-  assert.deepStrictEqual(Array.from(d.querySelector('#ui').options).map(o => o.value), ['fr', 'en', 'es', 'de', 'it', 'pt'], 'v5.99.3 : arabe retiré des listes pour l’instant');
+  assert.deepStrictEqual(optsUi, ['fr', 'en', 'es', 'de', 'it', 'pt'], 'v5.99.3 : arabe retiré des listes pour l’instant');
   assert.ok(w.TEXTES.ar && w.MOTS['🐱'].ar, 'l’arabe reste dans les données');
   assert.ok(w.TEXTES.uk && w.TEXTES.ja && w.TEXTES.tr && w.TEXTES.pl, 'les langues retirées des listes restent dans les données');
   assert.strictEqual(w.MOTS['🐱'].ko, '고양이', 'le coréen reste conservé dans les données');
@@ -1892,7 +1896,7 @@ await test('v5.75 : accueil en 4 portes, résumé de la semaine, avis sur les va
   const clic = (a, v) => { const b = w.document.createElement('button'); b.dataset.a = a; if(v != null) b.dataset.v = v; w.document.body.appendChild(b); b.click(); b.remove(); };
   assert.match(lire('js/config-site.js'), /ACCUEIL_SIMPLE:true/);
   Object.assign(A.CONFIG, { ACCUEIL_SIMPLE:true, VILLAGE_CACHE:true, MOTS_CITY_CACHE:true }); A.base.ui = 'fr'; A.base.cible = 'en'; A.accueil();
-  assert.deepStrictEqual($$('.porte').map(b => b.dataset.a), ['porte-mots', 'maths', 'matieres', 'potes'], '4 portes');
+  assert.deepStrictEqual($$('.porte').map(b => b.dataset.a), ['porte-mots', 'maths', 'matieres', undefined, 'potes'], 'les portes (v6.22 : + professeur IA, un lien)'); assert.ok($('a.porte-prof[href="professeur.html"]'), 'porte du professeur IA');
   assert.ok($('[data-a="defi"]') && $('[data-a="lecon"]'), 'défi et 5 mots restent visibles');
   assert.ok($('.mot-jour') && $('nav.raccourcis [data-a="reglages"]') && $('nav.raccourcis [data-a="carnet"]') && $('nav.raccourcis [data-a="parents"]'), 'mot du jour, carnet, réglages, parents');
   assert.ok(!$('nav.raccourcis [data-a="vestiaire"]') && !$('nav.raccourcis [data-a="trophees"]') && !$('nav.raccourcis [data-a="astuces"]') && !$('.carte-jour:not(.mot-jour)'), 'ce qui ne sert pas pour l’instant est rangé');
@@ -2307,7 +2311,8 @@ await test('v5.99 : plumes magiques — offre filtrée, solde lu au serveur, ach
 await test('v5.99.2 : une langue d’interface retirée de la liste reste choisie et affichée ; on n’apprend jamais la langue qu’on parle', () => {
   const w = page('uk'); const d = w.document;
   assert.ok(Array.from(d.querySelector('#ui').options).some(o => o.value === 'uk' && o.selected));
-  const w2 = page('en'); assert.ok(!Array.from(w2.document.querySelector('#cible').options).some(o => o.value === 'en'));
+  const w2 = page('en'); { const x = w2.document.createElement('button'); x.dataset.a = 'porte-mots'; w2.document.body.appendChild(x); x.click(); x.remove(); }
+  assert.ok(!Array.from(w2.document.querySelector('#cible').options).some(o => o.value === 'en'));
   assert.ok(Array.from(w2.document.querySelector('#cible').options).some(o => o.value === 'fr'));
   assert.notStrictEqual(w2.AmiDesMots.base.cible, 'en');
 });
@@ -2697,11 +2702,16 @@ await test('v6.12-v6.13 : SVT, physique-chimie, philosophie, droit, médecine et
     }
   }
   // v6.16 : SVT, physique-chimie et philosophie entièrement en espagnol.
-  { const ws = page('es'), Ms = ws.MATIERES; for(const mid of ['svt', 'physique', 'philo', 'droit', 'medecine', 'astro', 'nasa', 'ses', 'hggsp', 'hlp', 'nsi', 'lallemand']) for(const c of Ms.trouver(mid).chapitres) assert.ok(Ms.traduit(Ms.trouver(mid), c), 'es ' + mid + '/' + c.id + ' non traduit');
+  { const ws = page('es'), Ms = ws.MATIERES; for(const mid of ['svt', 'physique', 'philo', 'droit', 'medecine', 'astro', 'nasa', 'ses', 'hggsp', 'hlp', 'nsi', 'lallemand', 'francais']) for(const c of Ms.trouver(mid).chapitres) assert.ok(Ms.traduit(Ms.trouver(mid), c), 'es ' + mid + '/' + c.id + ' non traduit');
     // v6.18 : calculs d'Objectif NASA fabriqués en espagnol (virgule décimale, aucun mot français, vannes validées).
     for(const cid of ['fusees', 'orbites', 'communications', 'unites', 'survie']) Ms.serie('nasa', cid, 'Tle', 12, 9, 'taquin').forEach(q => { assert.strictEqual(q.lang, 'es', 'nasa/' + cid);
       const t = q.enonce + ' ' + q.regle + ' ' + q.faux.map(f => f.vanne).join(' '); assert.ok(!/(?<![\p{L}’])(une|est|combien|vitesse|lumière|pour|avec|quel|quelle|sur|dans)(?![\p{L}’])/iu.test(t), t);
       q.faux.forEach(f => assert.ok(ws.JUGE.juger(f.vanne).ok, f.vanne)); }); }
+  // v6.21 : histoire-géo, SVT et physique-chimie entièrement en allemand (thèmes compris).
+  { const wd = page('de'), Md = wd.MATIERES; for(const mid of ['histoire', 'svt', 'physique']) for(const c of Md.trouver(mid).chapitres){ assert.ok(Md.traduit(Md.trouver(mid), c), 'de ' + mid + '/' + c.id + ' non traduit'); assert.notStrictEqual(Md.nomChap(Md.trouver(mid), c), c.nom, 'de ' + mid + '/' + c.id + ' : nom'); } }
+  // v6.20 : conjugaison française expliquée en espagnol.
+  { const ws = page('es'); ws.MATIERES.serie('francais', 'conjugaison', '4e', 12, 7, 'taquin').forEach(q => { assert.strictEqual(q.lang, 'es'); assert.ok(/^Conjuga «/.test(q.enonce), q.enonce);
+    q.faux.forEach(f => { assert.ok(!/(?<![\p{L}’])(mauvaise|verbe|temps|bonne|pour)(?![\p{L}’])/iu.test(f.vanne), f.vanne); assert.ok(ws.JUGE.juger(f.vanne.replace('{f}', f.en)).ok, f.vanne); }); }); }
   // Conjugaison française expliquée en anglais : formes françaises, consigne et vannes en anglais.
   for(const niv of ['6e', '4e', '2nde']) Me.serie('francais', 'conjugaison', niv, 12, 7, 'taquin').forEach(q => { assert.strictEqual(q.lang, 'en');
     assert.ok(/^Conjugate “/.test(q.enonce), q.enonce); q.faux.forEach(f => { assert.ok(!/(?<![\p{L}’])(mauvaise|verbe|temps|bonne)(?![\p{L}’])/iu.test(f.vanne), f.vanne); assert.ok(we.JUGE.juger(f.vanne.replace('{f}', f.en)).ok, f.vanne); }); });

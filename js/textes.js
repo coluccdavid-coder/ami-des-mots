@@ -8,7 +8,7 @@ window.LANGUES_APPRENDRE = {
 };
 window.TEXTES = {
 fr:{
-  accroche:"Des mots en images, et un hibou pour jouer.",
+  accroche:"Toutes les matières, de la 6e au bac, avec un hibou qui te vanne.",
   je_parle:"Je parle", j_apprends:"J'apprends", jouer:"Jouer", plumes:"plumes",
   serie:n => n > 1 ? `${n} jours de suite` : `1 jour`, objectif:"Objectif du jour : une partie", objectif_fait:"Objectif du jour atteint ✓",
   th_animaux:"Animaux", th_manger:"À table", th_maison:"La maison", th_habits:"Habits", th_nature:"Nature", th_ville:"En ville", th_musique:"Musique et fête", th_atelier:"Atelier et sciences",
@@ -25,7 +25,7 @@ fr:{
   effacer_progres:"Effacer mes progrès", confirmer:"Touchez encore pour confirmer"
 },
 en:{
-  accroche:"Words in pictures, and an owl to play with.",
+  accroche:"Every subject, from Year 7 to the final exams, with an owl who teases you.",
   je_parle:"I speak", j_apprends:"I'm learning", jouer:"Play", plumes:"feathers",
   serie:n => n > 1 ? `${n} days in a row` : `1 day`, objectif:"Today's goal: one game", objectif_fait:"Today's goal reached ✓",
   th_animaux:"Animals", th_manger:"At the table", th_maison:"The house", th_habits:"Clothes", th_nature:"Nature", th_ville:"In town", th_musique:"Music and fun", th_atelier:"Workshop and science",
@@ -42,7 +42,7 @@ en:{
   effacer_progres:"Erase my progress", confirmer:"Tap again to confirm"
 },
 es:{
-  accroche:"Palabras en imágenes, y un búho para jugar.",
+  accroche:"Todas las asignaturas, del colegio al bachillerato, con un búho que te pica.",
   je_parle:"Hablo", j_apprends:"Aprendo", jouer:"Jugar", plumes:"plumas",
   serie:n => n > 1 ? `${n} días seguidos` : `1 día`, objectif:"Objetivo de hoy: una partida", objectif_fait:"Objetivo de hoy cumplido ✓",
   th_animaux:"Animales", th_manger:"A la mesa", th_maison:"La casa", th_habits:"Ropa", th_nature:"Naturaleza", th_ville:"En la ciudad", th_musique:"Música y fiesta", th_atelier:"Taller y ciencias",
@@ -59,7 +59,7 @@ es:{
   effacer_progres:"Borrar mi progreso", confirmer:"Toca otra vez para confirmar"
 },
 it:{
-  accroche:"Parole in immagini, e un gufo per giocare.",
+  accroche:"Tutte le materie, dalla scuola media alla maturità, con un gufo che ti prende in giro.",
   je_parle:"Parlo", j_apprends:"Imparo", jouer:"Gioca", plumes:"piume",
   serie:n => n > 1 ? `${n} giorni di fila` : `1 giorno`, objectif:"Obiettivo di oggi: una partita", objectif_fait:"Obiettivo di oggi raggiunto ✓",
   th_animaux:"Animali", th_manger:"A tavola", th_maison:"La casa", th_habits:"Vestiti", th_nature:"Natura", th_ville:"In città", th_musique:"Musica e festa", th_atelier:"Laboratorio e scienze",
@@ -76,7 +76,7 @@ it:{
   effacer_progres:"Cancella i miei progressi", confirmer:"Tocca di nuovo per confermare"
 },
 pt:{
-  accroche:"Palavras em imagens, e um mocho para brincar.",
+  accroche:"Todas as disciplinas, do 2.º ciclo ao secundário, com um mocho que te provoca.",
   je_parle:"Falo", j_apprends:"Aprendo", jouer:"Jogar", plumes:"penas",
   serie:n => n > 1 ? `${n} dias seguidos` : `1 dia`, objectif:"Objetivo de hoje: um jogo", objectif_fait:"Objetivo de hoje cumprido ✓",
   th_animaux:"Animais", th_manger:"À mesa", th_maison:"A casa", th_habits:"Roupa", th_nature:"Natureza", th_ville:"Na cidade", th_musique:"Música e festa", th_atelier:"Oficina e ciências",
@@ -93,7 +93,7 @@ pt:{
   effacer_progres:"Apagar o meu progresso", confirmer:"Toca outra vez para confirmar"
 },
 de:{
-  accroche:"Wörter in Bildern – und eine Eule zum Spielen.",
+  accroche:"Alle Fächer, von der Unterstufe bis zum Abitur – mit einer Eule, die dich neckt.",
   je_parle:"Ich spreche", j_apprends:"Ich lerne", jouer:"Spielen", plumes:"Federn",
   serie:n => n > 1 ? `${n} Tage in Folge` : `1 Tag`, objectif:"Ziel für heute: ein Spiel", objectif_fait:"Ziel für heute erreicht ✓",
   th_animaux:"Tiere", th_manger:"Bei Tisch", th_maison:"Das Haus", th_habits:"Kleidung", th_nature:"Natur", th_ville:"In der Stadt", th_musique:"Musik und Feste", th_atelier:"Werkstatt und Wissenschaft",

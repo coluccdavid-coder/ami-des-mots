@@ -1,0 +1,13 @@
+Ami des mots — version 6.21
+
+Programme français suivi en allemand, premières matières complètes :
+- Histoire-géo & EMC : les 16 chapitres (128 questions, dont le cours de 3e
+  sur la Seconde Guerre mondiale) et les 13 chapitres « Nach Themen ».
+- SVT : 9 chapitres (62 questions) et les 6 thèmes.
+- Physique-chimie : 8 chapitres (38 questions, les calculs l'étaient déjà)
+  et les 7 thèmes.
+- Plus aucun badge 🇫🇷 sur ces trois matières en allemand. Guillemets
+  allemands „ “, virgule décimale, noms allemands (Code civil, Vichy… expliqués).
+
+Nouveaux fichiers : js/mat-trad-de-histoire.js, js/mat-trad-de-sciences.js.
+Vérification : npm run verifier → 175 tests réussis, 0 échec.

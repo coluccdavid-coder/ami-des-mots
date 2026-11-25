@@ -1880,3 +1880,10 @@ html[data-texte="tres-grand"]{ font-size:125%; } html[data-texte="tres-grand"] b
 /* v6.1 : programme anglais — Times tables check */
 .mtc-question{font-size:clamp(2.2rem,9vw,3.6rem);font-weight:800;margin:.4em 0;font-variant-numeric:tabular-nums}
 .mtc #mtc-rep{color:#1a1440;background:#fff;font-size:2rem;width:5.5ch;text-align:center;padding:.2em .3em;border-radius:12px;border:2px solid currentColor}
+/* v6.22 : la langue apprise se choisit dans « Langues ». */
+.choix-langue-apprise{ text-align:center; margin:0 0 14px; }
+.choix-langue-apprise label{ display:inline-flex; flex-wrap:wrap; align-items:center; justify-content:center; gap:8px; font-weight:800; color:#C9BFFF; }
+.choix-langue-apprise select{ font-size:1rem; font-weight:800; padding:10px 14px; border-radius:14px; border:1px solid var(--bord); background:rgba(255,255,255,.1); color:#fff; }
+.choix-langue-apprise select option{ color:#111; }
+.porte-prof{ background:linear-gradient(135deg, #7af0c8, #5aa9ff); text-decoration:none; }
+.ton-aide{ max-width:640px; margin:4px auto 10px; text-align:center; opacity:.85; }

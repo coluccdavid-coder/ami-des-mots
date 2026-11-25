@@ -610,10 +610,12 @@
   function portesAccueil(){
     const en = base.ui === 'en', porte = (a, ic, titre, sous, cls) => '<button class="porte ' + cls + '" data-a="' + a + '"><span class="porte-ic" aria-hidden="true">' + ic + '</span><strong>' + titre + '</strong><small>' + sous + '</small></button>';
     return '<div class="portes">' +
-      porte('porte-mots', '🇬🇧', en ? 'Words & English' : TXT('Mots & anglais'), en ? 'Games, sentences, traps, teacher' : TXT('Jeux, phrases, pièges, professeur'), 'porte-mots') +
+      porte('porte-mots', '🗣️', esc(progTx('porteLangues')) + ' · ' + esc(LANGUES_APPRENDRE[base.cible] || ''), esc(progTx('porteLanguesSous')), 'porte-mots') +
       (window.MATHS ? porte('maths', '🔢', TXT('Maths'), en ? 'Year 6 to final exam · Prof Pi teases' : TXT('De la 6e au bac · Prof Pi te vanne'), 'porte-maths') : '') +
       (window.MATIERES ? porte('matieres', '📚', en ? 'Subjects' : TXT('Matières'), en ? 'French, history, biology, physics, exams' : TXT('Français, histoire-géo, SVT, physique, brevet & bac'), 'porte-sciences')
         : window.SCIENCES ? porte('sciences', '🚀', TXT('Sciences'), en ? 'Planets, rockets, human body' : TXT('Planètes, fusées, corps humain'), 'porte-sciences') : '') +
+      // v6.22 : le professeur IA (anglais ET maths) a sa propre porte : on ne le découvrait qu'en ouvrant « Mots & anglais ».
+      '<a class="porte porte-prof" href="professeur.html"><span class="porte-ic" aria-hidden="true">🧑‍🏫</span><strong>' + esc(progTx('profIA')) + '</strong><small>' + esc(progTx('profIASous')) + '</small></a>' +
       (window.MATHS || A_EN() ? porte('potes', '⚔️', 'Battle', en ? 'With friends: maths, English, comebacks' : 'Entre potes : maths, anglais, vannes', 'porte-battle') : '') +
       '</div>';
   }
@@ -622,7 +624,10 @@
     const en = base.ui === 'en', rev = aRevoir().length, c = (a, ic, t1, t2, href) => href
       ? '<a class="carte-anglais" href="' + href + '"><span class="ic">' + ic + '</span><strong>' + t1 + '</strong><small>' + t2 + '</small></a>'
       : '<button class="carte-anglais" data-a="' + a + '"><span class="ic">' + ic + '</span><strong>' + t1 + '</strong><small>' + t2 + '</small></button>';
-    poser(barre('accueil') + '<main class="coin-anglais porte-mots-ecran"><h2><span class="emoji-titre" aria-hidden="true">🇬🇧</span> ' + (en ? 'Words & English' : TXT('Mots & anglais')) + '</h2><div class="cartes-anglais">' +
+    const optsCible = apprendreVisibles().map(l => '<option value="' + l + '"' + (l === base.cible ? ' selected' : '') + '>' + esc(LANGUES_APPRENDRE[l]) + '</option>').join('');
+    setTimeout(() => { const sel = document.getElementById('cible'); if(sel) sel.addEventListener('change', ev => { base.cible = ev.target.value; garder(); prefs(); porteMots(); }); });
+    poser(barre('accueil') + '<main class="coin-anglais porte-mots-ecran"><h2><span class="emoji-titre" aria-hidden="true">🗣️</span> ' + esc(progTx('porteLangues')) + '</h2>' +
+      '<p class="choix-langue-apprise"><label>' + esc(progTx('langueApprise')) + ' <select id="cible">' + optsCible + '</select></label></p><div class="cartes-anglais">' +
       c('lecon', '📚', esc(t('apprendre')), en ? '5 new words with pictures' : TXT('5 nouveaux mots en images')) +
       c('themes', '▶️', esc(t('jouer')), en ? 'All the word games' : TXT('Tous les jeux de mots')) +
       c('revoir', '🔁', esc(t('revoir')) + (rev ? ' (' + rev + ')' : ''), en ? 'Words to practise again' : TXT('Les mots à retravailler')) +
@@ -646,8 +651,8 @@
         '<h1>Ami des mots</h1>' +
         (J().nom ? '<p class="joueur">' + esc(t('bonjour', J().nom)) + (base.joueurs.length > 1 ? ' · <button class="lien" data-a="qui">' + esc(t('changer_joueur')) + '</button>' : '') + '</p>' : '<p class="accroche">' + esc(t('accroche')) + '</p>') +
         '<div class="choix-langues">' +
-          '<label>' + esc(t('je_parle')) + '<select id="ui">' + opts(parleVisibles(), base.ui) + '</select></label>' +
-          '<label>' + esc(t('j_apprends')) + '<select id="cible">' + opts(apprendreVisibles(), base.cible) + '</select></label>' +
+          '<label>' + esc(progTx('maLangue')) + '<select id="ui">' + opts(parleVisibles(), base.ui) + '</select></label>' +
+          '<label>' + esc(progTx('monProg')) + '<select id="programme">' + ['fr', 'gb'].map(k => '<option value="' + k + '"' + ((base.programme === 'gb' ? 'gb' : 'fr') === k ? ' selected' : '') + '>' + esc(progTx(k + 'Court')) + '</option>').join('') + '</select></label>' +
         '</div></div></section>' +
       '<main class="accueil">' + cartesModules('accueil') +
         (s >= 2 && !fait ? '<p class="serie-danger" role="status">' + esc(tt('serie_danger', s)) + '</p>' : '') +
@@ -688,7 +693,7 @@
         '<p class="liens-legaux"><a href="legal.html#confidentialite">' + esc(tt('confidentialite')) + '</a> · <a href="legal.html#cgu">' + esc(tt('regles')) + '</a> · <a href="legal.html#mentions">' + esc(tt('mentions')) + '</a></p>' +
       '</main>', 'accueil');
     $('#ui').addEventListener('change', ev => { base.ui = ev.target.value; if(base.cible === base.ui) base.cible = base.ui === 'en' ? 'fr' : 'en'; garder(); accueil(); });
-    $('#cible').addEventListener('change', ev => { base.cible = ev.target.value; garder(); prefs(); accueil(); });
+    $('#programme').addEventListener('change', ev => { base.programme = ev.target.value === 'gb' ? 'gb' : 'fr'; garder(); accueil(); });
   }
   // Le décor de l'accueil : aurore, collines, lucioles, une étoile filante.
   function paysage(){
@@ -3289,6 +3294,16 @@
       de:'Unabhängig von der App-Sprache: Wähle das Land, dessen Lehrplan du folgst.', it:'Indipendente dalla lingua dell’app: scegli il Paese di cui segui il programma.', pt:'Independente da língua da aplicação: escolhe o país cujo programa segues.' },
     fr:{ fr:'🇫🇷 France (6e → bac)', en:'🇫🇷 France (6e → baccalauréat)', es:'🇫🇷 Francia (6e → bac)', de:'🇫🇷 Frankreich (6e → Bac)', it:'🇫🇷 Francia (6e → bac)', pt:'🇫🇷 França (6e → bac)' },
     gb:{ fr:'🏴 Angleterre (Year 6 → A level)', en:'🏴 England (Year 6 → A level)', es:'🏴 Inglaterra (Year 6 → A level)', de:'🏴 England (Year 6 → A level)', it:'🏴 Inghilterra (Year 6 → A level)', pt:'🏴 Inglaterra (Year 6 → A level)' },
+    // v6.22 : l'accueil ne parle plus de « Je parle / J'apprends » : on choisit sa langue et son programme ; la langue étrangère se choisit dans « Langues ».
+    maLangue:{ fr:'🌐 Ma langue', en:'🌐 My language', es:'🌐 Mi idioma', de:'🌐 Meine Sprache', it:'🌐 La mia lingua', pt:'🌐 A minha língua' },
+    monProg:{ fr:'📚 Mon programme', en:'📚 My curriculum', es:'📚 Mi programa', de:'📚 Mein Lehrplan', it:'📚 Il mio programma', pt:'📚 O meu programa' },
+    frCourt:{ fr:'🇫🇷 France · 6e → bac', en:'🇫🇷 France · 6e → bac', es:'🇫🇷 Francia · 6e → bac', de:'🇫🇷 Frankreich · 6e → Bac', it:'🇫🇷 Francia · 6e → bac', pt:'🇫🇷 França · 6e → bac' },
+    gbCourt:{ fr:'🏴 Angleterre · Year 6 → A level', en:'🏴 England · Year 6 → A level', es:'🏴 Inglaterra · Year 6 → A level', de:'🏴 England · Year 6 → A level', it:'🏴 Inghilterra · Year 6 → A level', pt:'🏴 Inglaterra · Year 6 → A level' },
+    langueApprise:{ fr:'🗣️ La langue que j’apprends', en:'🗣️ The language I’m learning', es:'🗣️ El idioma que aprendo', de:'🗣️ Die Sprache, die ich lerne', it:'🗣️ La lingua che imparo', pt:'🗣️ A língua que aprendo' },
+    porteLangues:{ fr:'Langues', en:'Languages', es:'Idiomas', de:'Sprachen', it:'Lingue', pt:'Línguas' },
+    porteLanguesSous:{ fr:'Vocabulaire, phrases, pièges, professeur', en:'Vocabulary, sentences, traps, teacher', es:'Vocabulario, frases, trampas, profesor', de:'Wortschatz, Sätze, Fallen, Lehrer', it:'Vocabolario, frasi, trappole, professore', pt:'Vocabulário, frases, armadilhas, professor' },
+    profIA:{ fr:'Le professeur IA', en:'The AI teacher', es:'El profesor IA', de:'Der KI-Lehrer', it:'Il professore IA', pt:'O professor IA' },
+    profIASous:{ fr:'Anglais et maths, des leçons qui s’adaptent à toi', en:'English and maths, lessons that adapt to you', es:'Inglés y matemáticas, clases que se adaptan a ti', de:'Englisch und Mathe, Lektionen, die sich dir anpassen', it:'Inglese e matematica, lezioni che si adattano a te', pt:'Inglês e matemática, aulas que se adaptam a ti' },
     pasTraduit:{ en:'Not translated yet: in French', es:'Aún sin traducir: en francés', de:'Noch nicht übersetzt: auf Französisch', it:'Non ancora tradotto: in francese', pt:'Ainda não traduzido: em francês' }
   };
   const progTx = k => (PROG_TX[k] && (PROG_TX[k][base.ui] || PROG_TX[k].en)) || '';
@@ -3443,6 +3458,14 @@
       '<path d="M30 22 L60 10 L90 22 L60 34 Z" fill="#1f1757"/><path d="M84 24 L88 40" stroke="#ffc93c" stroke-width="3"/><circle cx="88" cy="42" r="3" fill="#ffc93c"/>' +
       '<text x="60" y="27" font-size="10" text-anchor="middle" fill="#ffc93c" font-weight="900">π</text></svg>';
   }
+  // v6.22 : un testeur demandait « le ton de Prof Pi, c'est quoi ? » → une phrase d'explication sous les boutons.
+  const TON_AIDE = { fr:'Le ton change seulement la façon de réagir à tes réponses : 🧸 encourage, 😏 petite vanne, 🔥 direct, 🥊 vannes piquantes (jamais méchantes). Les questions restent les mêmes.',
+    en:'The tone only changes how your answers are greeted: 🧸 encouraging, 😏 a little tease, 🔥 straight talk, 🥊 spicy comebacks (never mean). The questions stay the same.',
+    es:'El tono solo cambia cómo se reacciona a tus respuestas: 🧸 te anima, 😏 una pequeña broma, 🔥 directo, 🥊 pullas picantes (nunca crueles). Las preguntas son las mismas.',
+    de:'Der Ton ändert nur, wie auf deine Antworten reagiert wird: 🧸 ermutigend, 😏 ein kleiner Spruch, 🔥 direkt, 🥊 freche Sprüche (nie gemein). Die Fragen bleiben gleich.',
+    it:'Il tono cambia solo il modo di reagire alle tue risposte: 🧸 incoraggia, 😏 una piccola battuta, 🔥 diretto, 🥊 battute pepate (mai cattive). Le domande restano le stesse.',
+    pt:'O tom só muda a forma de reagir às tuas respostas: 🧸 encoraja, 😏 uma pequena piada, 🔥 direto, 🥊 provocações picantes (nunca maldosas). As perguntas são as mesmas.' };
+  const tonAide = () => '<p class="petit ton-aide">' + esc(TON_AIDE[base.ui] || TON_AIDE.en) + '</p>';
   const TONS_PROF = [['doux', '🧸 Tout doux'], ['taquin', '😏 Taquin'], ['sanspitie', '🔥 Cash (ados)']].concat(window.TRASH_TALK ? [['trash', '🥊 Trash talk']] : []);
   function etatMaths(){
     const j = J(), o = j.maths && typeof j.maths === 'object' ? j.maths : {}, M = window.MATHS;
@@ -3468,7 +3491,7 @@
       TXT('<p class="pieges-intro">Trompe-toi : je vanne. Réussis : je m’incline. Programme ') + esc(M.carte.annee) + '.</p></div></div>' +
       '<div class="onglets-niveaux" role="tablist">' + M.NIVEAUX.map(n => '<button role="tab" aria-selected="' + (n === e.niveau) + '" class="onglet' + (n === e.niveau ? ' actif' : '') + '" data-a="maths-niveau" data-v="' + n + '">' + n + '</button>').join('') + '</div>' +
       '<p class="petit">📚 ' + esc(M.tr.niveau(e.niveau)) + ' — ' + esc(M.tr.niveau(e.niveau, 'note') || '') + '</p>' +
-      TXT('<p class="ton-prof">Ton de Prof Pi : ') + TONS_PROF.map(([k, l]) => '<button class="petit-bouton' + (k === e.ton ? ' actif' : '') + '" data-a="maths-ton" data-v="' + k + '" aria-pressed="' + (k === e.ton) + '">' + TXT(l) + '</button>').join(' ') + '</p>' +
+      TXT('<p class="ton-prof">Ton de Prof Pi : ') + TONS_PROF.map(([k, l]) => '<button class="petit-bouton' + (k === e.ton ? ' actif' : '') + '" data-a="maths-ton" data-v="' + k + '" aria-pressed="' + (k === e.ton) + '">' + TXT(l) + '</button>').join(' ') + '</p>' + tonAide() +
       TXT('<div class="actions serrees"><button class="moyen plein" data-a="maths-melange">🔁 Entraînement mélangé</button>') +
         (niv.examen && M.EXAMENS[niv.examen] ? '<button class="moyen" data-a="maths-examen">📝 ' + esc(M.tr.examen(niv.examen)) + (e.examens[e.niveau] != null ? ' (' + window.MATHS.nb(e.examens[e.niveau], 1) + '/20)' : '') + '</button>' : '') +
         TXT('<button class="moyen" data-a="maths-defi">🔗 Défier un pote</button></div>') +
@@ -3550,7 +3573,7 @@
       (pr ? '<p class="petit ref-programme">📜 Programme officiel (' + esc(pr[0]) + ') : ' + esc(pr[2]) + ' · <a href="' + esc(pr[1]) + TXT('" target="_blank" rel="noopener">voir sur éduscol</a></p>') : '') +
       '<div class="onglets-niveaux" role="tablist">' + niveaux.map(n => { const vide = !M.chapitres(id, n).length;
         return '<button role="tab" aria-selected="' + (n === e.niveau) + '" class="onglet' + (n === e.niveau ? ' actif' : '') + (vide ? ' vide' : '') + '" data-a="matiere-niveau" data-v="' + id + '|' + n + '">' + n + '</button>'; }).join('') + '</div>' +
-      TXT('<p class="ton-prof">Ton de Plumo : ') + TONS_PROF.map(([k, l]) => '<button class="petit-bouton' + (k === ton ? ' actif' : '') + '" data-a="maths-ton-matiere" data-v="' + id + '|' + k + '" aria-pressed="' + (k === ton) + '">' + TXT(l) + '</button>').join(' ') + '</p>' +
+      TXT('<p class="ton-prof">Ton de Plumo : ') + TONS_PROF.map(([k, l]) => '<button class="petit-bouton' + (k === ton ? ' actif' : '') + '" data-a="maths-ton-matiere" data-v="' + id + '|' + k + '" aria-pressed="' + (k === ton) + '">' + TXT(l) + '</button>').join(' ') + '</p>' + tonAide() +
       (chs.length ? '<div class="actions serrees"><button class="moyen plein" data-a="matiere-melange" data-v="' + id + TXT('">🔁 Entraînement mélangé</button>') +
         (ex ? '<button class="moyen" data-a="matiere-examen" data-v="' + id + '">📝 ' + esc(ex) + (e.notes[id + '-' + e.niveau] != null ? ' (' + String(e.notes[id + '-' + e.niveau]).replace('.', ',') + '/20)' : '') + '</button>' : '') + '</div>' +
         '<div class="domaines">' + doms.map(d => '<section class="domaine"><h3>' + esc(M.nomDom(m, d.d)) + ' <small>' + d.l.length + '</small></h3><div class="liste-chap">' +
