@@ -649,18 +649,7 @@
     if(typeof arreterBeat === 'function'){ arreterBeat(); quitterSalon(); }
     if(base.joueurs.length > 1 && !accueil.choisi) return quiJoue();
     const fait = J().jours.includes(jour()), s = serie(), rev = aRevoir().length, defiFait = J().defis.includes(jour());
-    const opts = (liste, choisi, compter) => liste.map(l => '<option value="' + l + '"' + (l === choisi ? ' selected' : '') + '>' + esc(LANGUES_APPRENDRE[l]) + (compter ? ' · ' + esc(t('nb_mots', nbMots(l))) : '') + '</option>').join('');
-    poser('<section class="ciel">' + barre('') +
-      paysage() +
-      '<div class="ciel-in">' +
-        '<div class="perchoir"><span class="lune" aria-hidden="true"></span><span class="branche" aria-hidden="true"></span>' +
-        '<button class="ami-grand" data-a="vestiaire" aria-label="' + esc(t('vestiaire')) + '">' + ami('content') + '</button></div>' +
-        '<h1>Ami des mots</h1>' +
-        (J().nom ? '<p class="joueur">' + esc(t('bonjour', J().nom)) + (base.joueurs.length > 1 ? ' · <button class="lien" data-a="qui">' + esc(t('changer_joueur')) + '</button>' : '') + '</p>' : '<p class="accroche">' + esc(t('accroche')) + '</p>') +
-        '<div class="choix-langues">' +
-          '<label>' + esc(progTx('maLangue')) + '<select id="ui">' + opts(parleVisibles(), base.ui) + '</select></label>' +
-          '<label>' + esc(progTx('monProg')) + '<select id="programme">' + ['fr', 'gb'].map(k => '<option value="' + k + '"' + ((base.programme === 'gb' ? 'gb' : 'fr') === k ? ' selected' : '') + '>' + esc(progTx(k + 'Court')) + '</option>').join('') + '</select></label>' +
-        '</div></div></section>' +
+    poser(cielAccueil() +
       '<main class="accueil">' + cartesModules('accueil') +
         (s >= 2 && !fait ? '<p class="serie-danger" role="status">' + esc(tt('serie_danger', s)) + '</p>' : '') +
         (function(){ const b = bilanAdaptatif(); return b.total ? '<section class="carte-apprentissage" aria-label="Progression adaptative"><strong>🧠 Ton apprentissage</strong><span>' + b.aRevoir + TXT(' notion(s) à revoir · ') + b.maitrisees + TXT(' maîtrisée(s) · ') + b.total + ' suivie(s)</span></section>' : ''; })() +
@@ -699,8 +688,28 @@
         '</nav>' +
         '<p class="liens-legaux"><a href="legal.html#confidentialite">' + esc(tt('confidentialite')) + '</a> · <a href="legal.html#cgu">' + esc(tt('regles')) + '</a> · <a href="legal.html#mentions">' + esc(tt('mentions')) + '</a></p>' +
       '</main>', 'accueil');
-    $('#ui').addEventListener('change', ev => { base.ui = ev.target.value; if(base.cible === base.ui) base.cible = base.ui === 'en' ? 'fr' : 'en'; garder(); accueil(); });
-    $('#programme').addEventListener('change', ev => { base.programme = ev.target.value === 'gb' ? 'gb' : 'fr'; garder(); accueil(); });
+    brancherLangues(accueil);
+  }
+  // v6.39 : le ciel de l'accueil (Plumo sur sa branche, bonjour, choix de la langue) est partagé avec l'écran d'ouverture,
+  // pour que le personnage reste là quand l'appli s'ouvre directement sur la table des matières.
+  function cielAccueil(){
+    const opts = (liste, choisi) => liste.map(l => '<option value="' + l + '"' + (l === choisi ? ' selected' : '') + '>' + esc(LANGUES_APPRENDRE[l]) + '</option>').join('');
+    return '<section class="ciel">' + barre('') +
+      paysage() +
+      '<div class="ciel-in">' +
+        '<div class="perchoir"><span class="lune" aria-hidden="true"></span><span class="branche" aria-hidden="true"></span>' +
+        '<button class="ami-grand" data-a="vestiaire" aria-label="' + esc(t('vestiaire')) + '">' + ami('content') + '</button></div>' +
+        '<h1>Ami des mots</h1>' +
+        (J().nom ? '<p class="joueur">' + esc(t('bonjour', J().nom)) + (base.joueurs.length > 1 ? ' · <button class="lien" data-a="qui">' + esc(t('changer_joueur')) + '</button>' : '') + '</p>' : '<p class="accroche">' + esc(t('accroche')) + '</p>') +
+        '<div class="choix-langues">' +
+          '<label>' + esc(progTx('maLangue')) + '<select id="ui">' + opts(parleVisibles(), base.ui) + '</select></label>' +
+          '<label>' + esc(progTx('monProg')) + '<select id="programme">' + ['fr', 'gb'].map(k => '<option value="' + k + '"' + ((base.programme === 'gb' ? 'gb' : 'fr') === k ? ' selected' : '') + '>' + esc(progTx(k + 'Court')) + '</option>').join('') + '</select></label>' +
+        '</div></div></section>';
+  }
+  function brancherLangues(redessiner){
+    const ui = $('#ui'), pr = $('#programme');
+    if(ui) ui.addEventListener('change', ev => { base.ui = ev.target.value; if(base.cible === base.ui) base.cible = base.ui === 'en' ? 'fr' : 'en'; garder(); redessiner(); });
+    if(pr) pr.addEventListener('change', ev => { base.programme = ev.target.value === 'gb' ? 'gb' : 'fr'; garder(); redessiner(); });
   }
   // Le décor de l'accueil : aurore, collines, lucioles, une étoile filante.
   function paysage(){
@@ -3562,7 +3571,7 @@
       TXT('Aide aux devoirs, toutes les matières : comprendre la consigne, retrouver la leçon, trouver la méthode — sans faire le devoir à ta place') + '</small></span></button>' : '';
     const outils = cartesModules('matiere') + ((J().carnet || []).length ? c('carnet-erreurs', '', '🎯', 'Mes erreurs (' + J().carnet.length + ')', TXT('Les questions ratées, à revoir avant un contrôle : une bonne réponse les retire')) : '') +
       (window.SCIENCES ? c('sciences', '', '🚀', TXT('Sciences rigolotes'), TXT('Planètes, fusées, médecine… avec des clashs')) : '');
-    poser(barre(CONFIG.OUVRIR_MATIERES ? '' : 'accueil') + TXT('<main class="coin-anglais matieres-ecran"><h2>📚 Matières</h2><p class="pieges-intro">Le programme de la 6e au bac, avec Plumo qui vanne les erreurs (jamais toi) et t’explique la bonne réponse.</p>') +
+    poser((CONFIG.OUVRIR_MATIERES ? cielAccueil() : barre('accueil')) + TXT('<main class="coin-anglais matieres-ecran"><h2>📚 Matières</h2><p class="pieges-intro">Le programme de la 6e au bac, avec Plumo qui vanne les erreurs (jamais toi) et t’explique la bonne réponse.</p>') +
       heros + (window.EPREUVES ? ongletsExamens('matieres') : '') + choixClasse('matieres') +
       '<div class="cartes-anglais">' +
         c('matiere', 'francais', '📝', TXT('Français'), TXT('Conjugaison, orthographe, grammaire, figures de style, littérature')) +
@@ -3585,7 +3594,8 @@
       '</div>' + (outils ? '<section class="domaine outils-revision"><h3>' + TXT('🧰 Outils pour réviser') + '</h3><div class="cartes-anglais">' + outils + '</div></section>' : '') + (M.trouver('medecine') && (!fc || fc === 'Tle' || fc === 'Sup') ? TXT('<section class="domaine"><h3>🎓 Après le bac</h3><div class="cartes-anglais">') +
         cs('matiere', 'medecine', '🩺', TXT('Médecine'), TXT('Anatomie, physiologie, études de santé')) + cs('matiere', 'droit', '⚖️', TXT('Droit'), TXT('Institutions, bases du droit, métiers')) +
         cs('matiere', 'astro', '🔭', 'Astrophysique', 'Étoiles, galaxies, calculs d’astrophysicien') + '</div></section>' : '') +
-      (CONFIG.OUVRIR_MATIERES ? '<p class="jeux-lien"><button class="gros" data-a="accueil">' + TXT('🎮 Jeux et entraînement') + '</button><br><small>' + TXT('Mots en images, défi du jour, battles, professeur IA') + '</small></p>' : '') + '</main>');
+      (CONFIG.OUVRIR_MATIERES ? '<p class="jeux-lien"><button class="gros" data-a="accueil">' + TXT('🎮 Jeux et entraînement') + '</button><br><small>' + TXT('Mots en images, défi du jour, battles, professeur IA') + '</small></p>' : '') + '</main>', CONFIG.OUVRIR_MATIERES ? 'ouverture' : undefined);
+    if(CONFIG.OUVRIR_MATIERES) brancherLangues(matieresAccueil);
   }
   function matiereAccueil(id){
     qz = null; const M = window.MATIERES, m = M && M.trouver(id); if(!m) return matieresAccueil();

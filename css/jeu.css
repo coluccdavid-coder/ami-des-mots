@@ -546,6 +546,14 @@ html[data-facile] .lire-consigne{ width:46px; height:46px; font-size:1.2rem; bac
   #app[data-ecran=accueil] .gros.apprendre{ font-size:1.5rem; padding:22px; }
   #app[data-ecran=accueil] .actions.serrees .moyen{ font-size:1.25rem; padding:18px; max-width:none; }
   #app[data-ecran=accueil] .objectif{ justify-content:flex-start; }
+  /* v6.39 : écran d'ouverture = le ciel d'Ami à gauche (fixe), la table des matières à droite */
+  #app[data-ecran=ouverture]{ display:grid; grid-template-columns:minmax(0, .8fr) minmax(0, 1.2fr); min-height:100vh; align-items:start; }
+  #app[data-ecran=ouverture] .ciel{ border-radius:0 64px 64px 0; padding-bottom:0; display:flex; flex-direction:column; position:sticky; top:0; height:100vh; }
+  #app[data-ecran=ouverture] .ciel .barre{ width:100%; max-width:none; }
+  #app[data-ecran=ouverture] .ciel-in{ margin:auto; padding-bottom:110px; }
+  #app[data-ecran=ouverture] .perchoir{ transform:scale(1.25); margin:40px auto 36px; }
+  #app[data-ecran=ouverture] .collines{ height:160px; }
+  #app[data-ecran=ouverture] .matieres-ecran{ max-width:none; width:100%; margin:0; padding:40px clamp(24px, 3vw, 56px); }
   #app[data-ecran=accueil] .carte-jour{ grid-column:auto; margin:0; }
   #app[data-ecran=accueil] .raccourcis{ grid-template-columns:repeat(5, 1fr); }
   .raccourcis{ grid-template-columns:repeat(5, 1fr); max-width:760px; }
@@ -1916,3 +1924,9 @@ html[data-texte="tres-grand"]{ font-size:125%; } html[data-texte="tres-grand"] b
 .devoirs-hero:focus-visible{ outline:3px solid #fff; outline-offset:3px; }
 .outils-revision{ margin-top:22px; }
 .jeux-lien{ text-align:center; margin:26px 0 8px; }
+
+/* v6.39 : sur téléphone, le ciel d'Ami reste plus court au-dessus de la table des matières */
+@media (max-width:1099px){
+  #app[data-ecran=ouverture] .ciel{ padding-bottom:40px; }
+  #app[data-ecran=ouverture] .ciel h1{ font-size:clamp(2.2rem, 9vw, 3rem); }
+}
