@@ -2872,6 +2872,26 @@ await test('v6.32 : espagnol et allemand du collège — 16 questions par leçon
     for(const n of col) for(const c of M.chapitres(mid, n).filter(c => ids.includes(c.id))){ const s = M.serie(mid, c.id, n, 10, 9, 'taquin'); assert.strictEqual(new Set(s.map(q => q.enonce + q.bon)).size, s.length, 'répétition : ' + c.id); }
   }
 });
+await test('v6.33 : « Ma classe » — l’écran Matières ne montre que les matières de la classe, qui s’ouvrent à ce niveau', () => {
+  const w = page(), d = w.document;
+  const clic = (a, v, o) => { const b = d.createElement('button'); b.dataset.a = a; if(v != null) b.dataset.v = v; if(o) b.dataset.o = o; d.body.appendChild(b); b.click(); b.remove(); };
+  const carte = id => d.querySelector('[data-a="matiere"][data-v="' + id + '"]');
+  clic('matieres'); assert.ok(d.querySelector('.ma-classe [data-a="ma-classe"][data-v="6e|matieres"]'), 'choix de la classe proposé');
+  assert.ok(carte('philo') && carte('lespagnol'), 'sans classe : toutes les matières');
+  clic('ma-classe', '6e|matieres');
+  for(const id of ['francais', 'histoire', 'svt', 'physique', 'langlais', 'arts', 'eps']) assert.ok(carte(id), '6e : ' + id + ' affiché');
+  for(const id of ['philo', 'ses', 'nsi', 'hggsp', 'lespagnol', 'lallemand', 'lca', 'techno']) assert.ok(!carte(id), '6e : ' + id + ' masqué');
+  assert.ok(d.querySelector('[data-a="maths"]'), '6e : maths'); assert.ok(d.querySelector('[data-a="ma-classe"][aria-pressed="true"][data-v="6e|matieres"]'), 'classe active');
+  clic('matieres-tout', 'matieres'); assert.ok(carte('philo'), 'voir toutes les matières'); clic('matieres-tout', 'matieres'); assert.ok(!carte('philo'), 'retour à ma classe');
+  clic('ma-classe', '4e|matieres'); assert.ok(carte('lespagnol') && carte('lca') && carte('techno'), '4e : LV2, latin, techno');
+  carte('histoire').click(); const actif = d.querySelector('.onglets-niveaux .onglet.actif'); assert.ok(actif && /4e/.test(actif.textContent), 'histoire s’ouvre en 4e');
+  clic('matiere-niveau', 'histoire|6e'); clic('matieres'); carte('svt').click(); assert.ok(/4e/.test(d.querySelector('.onglets-niveaux .onglet.actif').textContent), 'chaque matière revient à la classe');
+  clic('matieres'); d.querySelector('[data-a="maths"]').click(); assert.ok(/4e|Quatrième/.test(d.querySelector('main').textContent), 'maths en 4e');
+  clic('ma-classe', '6e|examens'); assert.ok(d.querySelector('[data-a="examen-go"][data-v="brevet"]'), '6e : brevet blanc'); assert.ok(!d.querySelector('[data-a="examen-go"][data-v="tle-philo"]'), '6e : pas de bac de Tle');
+  clic('annales'); assert.ok(d.querySelector('[data-a="annale-go"][data-v^="dnb26"]') && !d.querySelector('[data-a="annale-go"][data-v="bac26-philo"]'), 'annales de la classe');
+  clic('ma-classe', 'Tle|examens'); assert.ok(d.querySelector('[data-a="examen-go"][data-v="tle-philo"]') && !d.querySelector('[data-a="examen-go"][data-v="brevet"]'), 'Tle : bac, pas de brevet');
+  clic('ma-classe', 'Tle|matieres'); assert.ok(carte('philo') && carte('medecine') && !carte('lca'), 'Tle : philo et après le bac');
+});
 console.log(`\n${ok} réussi(s), ${ko} échoué(s)`);
 process.exit(ko ? 1 : 0);
 })();

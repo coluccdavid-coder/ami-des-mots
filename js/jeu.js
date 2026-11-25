@@ -261,7 +261,7 @@
     tournoi:['tournoi', 'tournoi-go', 'tournoi-go-memes', 'potes', 'potes-go', 'potes-joue', 'potes-revanche', 'potes-trash'], 'defi-pote':['defi-pote', 'defi-pote-go'],
     salon:['salon', 'salon-creer', 'salon-rejoindre', 'salon-public', 'salon-entrer-public'],
     trompe:['trompe'], oreilles:['oreilles'], vraifaux:['vraifaux'], avent:['avent'], betisier:['betisier'], maison:['maison'],
-    maths:['maths', 'maths-chap', 'maths-melange', 'maths-examen', 'maths-defi'], sciences:['sciences', 'sciences-theme', 'matieres', 'matiere', 'matiere-niveau', 'matiere-chap', 'matiere-melange', 'matiere-examen', 'examens', 'examen-go', 'examen-suite', 'annales', 'annale-go', 'annale-suite', 'bac-tle', 'bac-tle-spe', 'bac-tle-go', 'officiel'],
+    maths:['maths', 'maths-chap', 'maths-melange', 'maths-examen', 'maths-defi'], sciences:['sciences', 'sciences-theme', 'matieres', 'matiere', 'matiere-niveau', 'matiere-chap', 'matiere-melange', 'matiere-examen', 'examens', 'examen-go', 'examen-suite', 'annales', 'annale-go', 'annale-suite', 'bac-tle', 'bac-tle-spe', 'bac-tle-go', 'officiel', 'ma-classe', 'matieres-tout'],
     village3d:['accueil-3d'], motscity:[]
   };
   const COIN_DE = {}; for(const c in COINS) for(const a of COINS[c]) COIN_DE[a] = c;
@@ -3530,14 +3530,32 @@
     const chap = {}; if(o.chap && typeof o.chap === 'object') for(const [k, v] of Object.entries(o.chap)) if(/^[0-9a-z-]{1,20}:[0-9a-z-]{1,30}$/.test(k) && v && typeof v === 'object') chap[k] = { ok:Math.min(1e5, Math.max(0, Math.floor(+v.ok || 0))), n:Math.min(1e5, Math.max(0, Math.floor(+v.n || 0))) };
     const notes = {}; if(o.notes && typeof o.notes === 'object') for(const [k, v] of Object.entries(o.notes)) if(/^[0-9a-z-]{1,40}$/.test(k) && Number.isFinite(+v)) notes[k] = Math.min(20, Math.max(0, +v));
     const derniere = window.MATIERES && MATIERES.trouver(o.derniere) ? o.derniere : '';
-    j.matieres = { niveau, chap, notes, derniere }; return j.matieres;
+    // v6.33 : la classe de l'élève (une par profil) et « voir toutes les matières ».
+    const classe = N.includes(o.classe) ? o.classe : '', tout = o.tout === true;
+    j.matieres = { niveau, chap, notes, derniere, classe, tout }; return j.matieres;
   }
   const noteSur20 = z => Math.round(20 * z.bonnes / Math.max(1, z.liste.length) * 10) / 10;
+  // v6.33 : « Ma classe » — l'écran Matières ne montre que les matières de la classe, et chacune s'ouvre à ce niveau.
+  const nomClasse = n => n === 'Sup' ? TXT('Après le bac') : n;
+  const filtreClasse = () => { const e = etatMatieres(); return e.classe && !e.tout ? e.classe : ''; };
+  // Un examen de niveau n est-il pour la classe choisie ? Avant la 3e, on prépare déjà le brevet ; en 2nde, les épreuves de 1re.
+  const examenPourClasse = n => { const c = filtreClasse(); if(!c || c === 'Sup') return true;
+    return n === c || (['6e', '5e', '4e'].includes(c) && n === '3e') || (c === '2nde' && n === '1re') || (c === 'Tle' && /^Tle/.test(n)); };
+  function choixClasse(ecran){
+    const M = window.MATIERES, e = etatMatieres(); if(!M) return '';
+    const chips = M.NIVEAUX.map(n => '<button class="petit-bouton' + (n === e.classe ? ' actif' : '') + '" data-a="ma-classe" data-v="' + n + '|' + ecran + '" aria-pressed="' + (n === e.classe) + '">' + esc(nomClasse(n)) + '</button>').join('');
+    return (e.classe ? '' : '<p class="pieges-intro ma-classe-question">🎒 ' + TXT('Tu es en quelle classe ? Choisis-la : on ne te montre que tes matières, et chacune s’ouvre directement à ton niveau.') + '</p>') +
+      '<div class="ma-classe" role="group" aria-label="' + esc(TXT('Ma classe :')) + '">' +
+      (e.classe ? '<span class="petit">🎒 ' + TXT('Ma classe :') + '</span> ' : '') +
+      chips + (e.classe ? ' <button class="petit-bouton lien-tout" data-a="matieres-tout" data-v="' + ecran + '">' + (e.tout ? TXT('Seulement ma classe') : TXT('Voir toutes les matières')) + '</button>' : '') + '</div>';
+  }
   function matieresAccueil(){
     qz = null; const M = window.MATIERES; if(!M) return accueil();
-    const c = (a, v, ic, t1, t2) => '<button class="carte-anglais" data-a="' + a + '"' + (v ? ' data-v="' + v + '"' : '') + '><span class="ic">' + ic + '</span><strong>' + t1 + '</strong><small>' + t2 + '</small></button>';
+    const fc = filtreClasse(), voit = (a, v) => !fc || (a === 'matiere' ? M.chapitres(v, fc).length > 0 : a === 'maths' ? !!(window.MATHS && MATHS.NIVEAUX.includes(fc)) : true);
+    const c = (a, v, ic, t1, t2) => !voit(a, v) ? '' : '<button class="carte-anglais" data-a="' + a + '"' + (v ? ' data-v="' + v + '"' : '') + (a === 'matiere' || a === 'maths' ? ' data-o="classe"' : '') + '><span class="ic">' + ic + '</span><strong>' + t1 + '</strong><small>' + t2 + '</small></button>';
+    const cs = (a, v, ic, t1, t2) => '<button class="carte-anglais" data-a="' + a + '"' + (v ? ' data-v="' + v + '"' : '') + (a === 'matiere' || a === 'maths' ? ' data-o="classe"' : '') + '><span class="ic">' + ic + '</span><strong>' + t1 + '</strong><small>' + t2 + '</small></button>';
     poser(barre('accueil') + TXT('<main class="coin-anglais matieres-ecran"><h2>📚 Matières</h2><p class="pieges-intro">Le programme de la 6e au bac, avec Plumo qui vanne les erreurs (jamais toi) et t’explique la bonne réponse.</p>') +
-      (window.EPREUVES ? ongletsExamens('matieres') : '') +
+      (window.EPREUVES ? ongletsExamens('matieres') : '') + choixClasse('matieres') +
       '<div class="cartes-anglais">' + cartesModules('matiere') +
         ((J().carnet || []).length ? c('carnet-erreurs', '', '🎯', 'Mes erreurs (' + J().carnet.length + ')', TXT('Les questions ratées, à revoir avant un contrôle : une bonne réponse les retire')) : '') +
         c('matiere', 'francais', '📝', TXT('Français'), TXT('Conjugaison, orthographe, grammaire, figures de style, littérature')) +
@@ -3558,9 +3576,9 @@
         (M.trouver('eps') ? c('matiere', 'eps', '🏃', TXT('EPS (connaissances)'), TXT('Échauffement, santé, sécurité, règles des sports')) : '') +
         (M.trouver('lca') ? c('matiere', 'lca', '🏛️', TXT('Latin et grec (5e → 3e)'), TXT('Premiers mots, mythologie, Rome, racines grecques')) : '') +
         (window.SCIENCES ? c('sciences', '', '🚀', TXT('Sciences rigolotes'), TXT('Planètes, fusées, médecine… avec des clashs')) : '') +
-      '</div>' + (M.trouver('medecine') ? TXT('<section class="domaine"><h3>🎓 Après le bac</h3><div class="cartes-anglais">') +
-        c('matiere', 'medecine', '🩺', TXT('Médecine'), TXT('Anatomie, physiologie, études de santé')) + c('matiere', 'droit', '⚖️', TXT('Droit'), TXT('Institutions, bases du droit, métiers')) +
-        c('matiere', 'astro', '🔭', 'Astrophysique', 'Étoiles, galaxies, calculs d’astrophysicien') + '</div></section>' : '') + '</main>');
+      '</div>' + (M.trouver('medecine') && (!fc || fc === 'Tle' || fc === 'Sup') ? TXT('<section class="domaine"><h3>🎓 Après le bac</h3><div class="cartes-anglais">') +
+        cs('matiere', 'medecine', '🩺', TXT('Médecine'), TXT('Anatomie, physiologie, études de santé')) + cs('matiere', 'droit', '⚖️', TXT('Droit'), TXT('Institutions, bases du droit, métiers')) +
+        cs('matiere', 'astro', '🔭', 'Astrophysique', 'Étoiles, galaxies, calculs d’astrophysicien') + '</div></section>' : '') + '</main>');
   }
   function matiereAccueil(id){
     qz = null; const M = window.MATIERES, m = M && M.trouver(id); if(!m) return matieresAccueil();
@@ -3611,18 +3629,18 @@
   function examensAccueil(){
     qz = null; blanc = null; const E = window.EPREUVES, e = etatMatieres(); if(!E) return matieresAccueil();
     poser(barre('matieres') + TXT('<main class="coin-anglais matieres-ecran"><h2>📝 Brevet & bac blancs</h2><p class="pieges-intro">Construits comme les vrais sujets 2026 : mêmes parties, mêmes types d’exercices, même barème. Une note sur 20 par épreuve, puis la moyenne avec les coefficients officiels. Et Plumo qui vanne chaque erreur. 😏</p>') +
-      ongletsExamens('examens') + '<div class="cartes-anglais">' + Object.entries(E.BLANCS).filter(([k, x]) => !x.tle && !x.techno && !x.pro && !/^(oral-dnb|oral-eaf|grand-oral)$/.test(k)).map(([k, x]) => '<button class="carte-anglais" data-a="examen-go" data-v="' + k + '"><span class="ic">' + x.ic + '</span><strong>' + esc(x.titre) + '</strong><small>' + esc(x.niveau) + ' · ' +
+      ongletsExamens('examens') + choixClasse('examens') + (['6e', '5e', '4e'].includes(filtreClasse()) ? '<p class="petit">' + TXT('Le brevet se passe en fin de 3e : ces sujets te montrent ce qui t’attend.') + '</p>' : '') + '<div class="cartes-anglais">' + Object.entries(E.BLANCS).filter(([k, x]) => !x.tle && !x.techno && !x.pro && !/^(oral-dnb|oral-eaf|grand-oral)$/.test(k) && examenPourClasse(x.niveau)).map(([k, x]) => '<button class="carte-anglais" data-a="examen-go" data-v="' + k + '"><span class="ic">' + x.ic + '</span><strong>' + esc(x.titre) + '</strong><small>' + esc(x.niveau) + ' · ' +
         x.epreuves.map(p => esc(E.EPREUVES[p[0]].titre)).join(', ') + (e.notes['blanc-' + k] != null ? TXT(' · dernière note : ') + virg(e.notes['blanc-' + k]) + '/20' : '') + '</small></button>').join('') + '</div>' +
-      (E.SPES ? TXT('<section class="domaine"><h3>🎒 Terminale : spécialités et philosophie</h3><div class="cartes-anglais"><button class="carte-anglais" data-a="bac-tle"><span class="ic">🎓</span><strong>Bac blanc de terminale</strong><small>2 spécialités au choix + philosophie, coefficients officiels') +
+      (E.SPES && examenPourClasse('Tle') ? TXT('<section class="domaine"><h3>🎒 Terminale : spécialités et philosophie</h3><div class="cartes-anglais"><button class="carte-anglais" data-a="bac-tle"><span class="ic">🎓</span><strong>Bac blanc de terminale</strong><small>2 spécialités au choix + philosophie, coefficients officiels') +
         (e.notes['blanc-bac-tle'] != null ? TXT(' · dernière note : ') + virg(e.notes['blanc-bac-tle']) + '/20' : '') + '</small></button>' +
         Object.entries(E.BLANCS).filter(([, x]) => x.tle).map(([k, x]) => '<button class="carte-anglais" data-a="examen-go" data-v="' + k + '"><span class="ic">' + x.ic + '</span><strong>' + esc(x.titre) + '</strong><small>' + esc(E.EPREUVES[x.epreuves[0][0]].officiel) +
           (e.notes['blanc-' + k] != null ? ' · ' + virg(e.notes['blanc-' + k]) + '/20' : '') + '</small></button>').join('') + '</div></section>' : '') +
-      (E.BLANCS['grand-oral'] ? '<section class="domaine"><h3>🎤 Les oraux</h3><div class="cartes-anglais">' + ['oral-dnb', 'oral-eaf', 'grand-oral'].map(k => { const x = E.BLANCS[k], ep = E.EPREUVES[x.epreuves[0][0]];
+      (E.BLANCS['grand-oral'] ? '<section class="domaine"><h3>🎤 Les oraux</h3><div class="cartes-anglais">' + ['oral-dnb', 'oral-eaf', 'grand-oral'].filter(k => examenPourClasse(E.BLANCS[k].niveau)).map(k => { const x = E.BLANCS[k], ep = E.EPREUVES[x.epreuves[0][0]];
         return '<button class="carte-anglais" data-a="examen-go" data-v="' + k + '"><span class="ic">🎤</span><strong>' + esc(x.titre) + '</strong><small>' + esc(x.niveau) + ' · ' + esc(ep.duree) + '</small></button>'; }).join('') + '</div></section>' : '') +
-      (E.BLANCS['bac-pro'] ? '<section class="domaine"><h3>🔧 Voie professionnelle</h3><div class="cartes-anglais">' + ['bac-pro', 'cap'].map(k => { const x = E.BLANCS[k];
+      (E.BLANCS['bac-pro'] && (!filtreClasse() || ['2nde', '1re', 'Tle', 'Sup'].includes(filtreClasse())) ? '<section class="domaine"><h3>🔧 Voie professionnelle</h3><div class="cartes-anglais">' + ['bac-pro', 'cap'].map(k => { const x = E.BLANCS[k];
         return '<button class="carte-anglais" data-a="examen-go" data-v="' + k + '"><span class="ic">' + x.ic + '</span><strong>' + esc(x.titre) + '</strong><small>' + x.epreuves.map(p => esc(E.EPREUVES[p[0]].titre.replace(/^(Bac pro|CAP) · /, ''))).join(', ') +
           (e.notes['blanc-' + k] != null ? ' · ' + virg(e.notes['blanc-' + k]) + '/20' : '') + '</small></button>'; }).join('') + '</div></section>' : '') +
-      (E.SERIES_TECHNO ? '<section class="domaine"><h3>🛠️ Bac technologique</h3><div class="cartes-anglais">' + Object.entries(E.BLANCS).filter(([, x]) => x.techno).map(([k, x]) => '<button class="carte-anglais" data-a="examen-go" data-v="' + k + '"><span class="ic">' + x.ic + '</span><strong>' + esc(x.titre) + '</strong><small>' +
+      (E.SERIES_TECHNO && examenPourClasse('Tle') ? '<section class="domaine"><h3>🛠️ Bac technologique</h3><div class="cartes-anglais">' + Object.entries(E.BLANCS).filter(([, x]) => x.techno).map(([k, x]) => '<button class="carte-anglais" data-a="examen-go" data-v="' + k + '"><span class="ic">' + x.ic + '</span><strong>' + esc(x.titre) + '</strong><small>' +
         x.epreuves.map(p => esc(E.EPREUVES[p[0]].titre)).join(' + ') + (e.notes['blanc-' + k] != null ? ' · ' + virg(e.notes['blanc-' + k]) + '/20' : '') + '</small></button>').join('') + '</div></section>' : '') + '</main>');
   }
   // Bac blanc de terminale : l'élève choisit ses 2 spécialités, la philosophie est ajoutée.
@@ -3645,7 +3663,7 @@
     const groupe = (t, l) => '<section class="domaine"><h3>' + t + '</h3><div class="cartes-anglais">' + l.map(a => '<div class="carte-annale"><button class="carte-anglais" data-a="annale-go" data-v="' + a.id + '"><span class="ic">🗂️</span><strong>' + esc(a.titre) + TXT('</strong><small>Jumeau du sujet ') + esc(a.ref) +
       (e.notes['annale-' + a.id] != null ? TXT(' · ta note : ') + virg(e.notes['annale-' + a.id]) + '/20' : '') + '</small></button><a class="lien-officiel" href="' + esc(a.url) + '" target="_blank" rel="noopener">📄 Sujet officiel (PDF)</a></div>').join('') + '</div></section>';
     poser(barre('matieres') + TXT('<main class="coin-anglais matieres-ecran"><h2>🗂️ Annales 2026</h2><p class="pieges-intro">Pour chaque vrai sujet 2026 : un sujet jumeau construit pareil, avec d’autres nombres et d’autres textes. Le vrai sujet officiel est à côté, sur le site du ministère.</p>') +
-      ongletsExamens('annales') + '<div class="domaines">' + groupe('🎓 Brevet 2026', E.ANNALES.filter(a => /^dnb/.test(a.id))) + groupe(TXT('🎒 Bac 2026 · épreuves anticipées de 1re'), E.ANNALES.filter(a => !/^dnb/.test(a.id) && !a.tle)) + groupe(TXT('🎓 Bac 2026 · terminale : spécialités et philo'), E.ANNALES.filter(a => a.tle)) + '</div></main>');
+      ongletsExamens('annales') + choixClasse('annales') + '<div class="domaines">' + (examenPourClasse('3e') ? groupe('🎓 Brevet 2026', E.ANNALES.filter(a => /^dnb/.test(a.id))) : '') + (examenPourClasse('1re') ? groupe(TXT('🎒 Bac 2026 · épreuves anticipées de 1re'), E.ANNALES.filter(a => !/^dnb/.test(a.id) && !a.tle)) : '') + (examenPourClasse('Tle') ? groupe(TXT('🎓 Bac 2026 · terminale : spécialités et philo'), E.ANNALES.filter(a => a.tle)) : '') + '</div></main>');
   }
   // Une épreuve (ou une annale) se joue avec le moteur de questions ; chaque question rapporte ses points.
   function jouerEpreuve(ep, retour, fin){
@@ -3905,7 +3923,7 @@
         return ajouterAuPaquet(clashL.vanne.fr, '').then(r => { const z = $('#cl-garde'); if(z) z.textContent = r.msg; });
       }
       case 'installer': if(installation){ const ev = installation; installation = null; ev.prompt(); ev.userChoice.finally(() => accueil()); } return;
-      case 'maths': return mathsAccueil();
+      case 'maths': { const e = window.MATIERES && etatMatieres(); if(e && b.dataset.o === 'classe' && e.classe && window.MATHS && MATHS.NIVEAUX.includes(e.classe)) etatMaths().niveau = e.classe; return mathsAccueil(); }
       case 'maths-niveau': if(window.MATHS && MATHS.NIVEAUX.includes(v)){ etatMaths().niveau = v; garder(); } return mathsAccueil();
       case 'programme-choix': base.programme = v === 'gb' ? 'gb' : 'fr'; garder(); return reglages();
       case 'maths-ton': if(TONS_PROF.some(x => x[0] === v)){ etatMaths().ton = v; garder(); } return mathsAccueil();
@@ -3940,7 +3958,15 @@
       case 'betisier': return betisier();
       case 'best-suivant': if(best){ best.i++; } return afficherBest();
       case 'matieres': return matieresAccueil();
-      case 'matiere': return matiereAccueil(v || (window.MATIERES && etatMatieres().derniere) || 'francais');
+      case 'matiere': { const e = window.MATIERES && etatMatieres();
+        // v6.33 : depuis l'écran Matières, la matière s'ouvre directement à la classe de l'élève.
+        if(e && v && b.dataset.o === 'classe' && e.classe && MATIERES.chapitres(v, e.classe).length) e.niveau = e.classe;
+        return matiereAccueil(v || (e && e.derniere) || 'francais'); }
+      case 'ma-classe': { const [n, ecran] = String(v).split('|'), M = window.MATIERES;
+        if(M && M.NIVEAUX.includes(n)){ const e = etatMatieres(); e.classe = n; e.niveau = n; e.tout = false; if(window.MATHS && MATHS.NIVEAUX.includes(n)) etatMaths().niveau = n; garder(); }
+        return ecran === 'examens' ? examensAccueil() : ecran === 'annales' ? annalesAccueil() : matieresAccueil(); }
+      case 'matieres-tout': { if(window.MATIERES){ const e = etatMatieres(); e.tout = !e.tout; garder(); }
+        return v === 'examens' ? examensAccueil() : v === 'annales' ? annalesAccueil() : matieresAccueil(); }
       case 'matiere-niveau': { const [id, n] = String(v).split('|'); if(window.MATIERES && MATIERES.NIVEAUX.includes(n)){ etatMatieres().niveau = n; garder(); } return matiereAccueil(id); }
       case 'maths-ton-matiere': { const [id, k] = String(v).split('|'); if(TONS_PROF.some(x => x[0] === k)){ etatMaths().ton = k; garder(); } return matiereAccueil(id); }
       case 'matiere-chap': { const [id, c] = String(v).split('|'), m = window.MATIERES && MATIERES.trouver(id), ch = m && m.chapitres.find(x => x.id === c); return ch ? matiereSerie(id, c, 10, m.ic + ' ' + MATIERES.nomChap(m, ch)) : matieresAccueil(); }

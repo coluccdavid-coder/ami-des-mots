@@ -1,0 +1,17 @@
+Ami des mots — v6.33.0
+
+« Ma classe » sur l'écran Matières.
+
+1. Un sélecteur de classe (6e, 5e, 4e, 3e, 2nde, 1re, Tle, Après le bac) en haut de Matières, Blancs et Annales.
+   Au premier passage, l'écran demande « Tu es en quelle classe ? ». La classe est gardée par profil.
+2. Matières : seules les matières de la classe sont affichées (en 6e : pas de philo, spécialités, LV2, latin, technologie).
+   Les cartes Mes erreurs, Veille de contrôle, Défi de classe, England curriculum, Sciences rigolotes restent.
+   « Voir toutes les matières » / « Seulement ma classe » pour basculer.
+3. Chaque matière, maths comprises, s'ouvre directement à la classe ; les onglets de niveau restent pour réviser une autre année.
+4. Blancs et Annales suivent la classe : brevet de la 6e à la 3e (avec une phrase d'explication avant la 3e),
+   épreuves anticipées en 2nde et 1re, bac de terminale en Tle. L'onglet Officiel ne change pas.
+5. Correction : les équivalences de classes en anglais étaient décalées d'un an dans plusieurs titres
+   (6e = Year 7 … 3e = Year 10, comme dans le reste de l'appli).
+6. Test v6.33. npm run verifier : 184 réussis, 0 échoué.
+
+Suite prévue : v6.34 SVT et physique-chimie, v6.35 histoire-géographie, v6.36 français, arts, EPS, latin-grec.

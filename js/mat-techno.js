@@ -26,7 +26,7 @@
     ['Que permet le tri des déchets ?', 'recycler les matériaux et réduire la pollution', [['augmenter les déchets', 'C’est l’inverse. 🗑️'], ['rendre les objets plus lourds', 'Non. ⚖️'], ['éviter de fabriquer des objets', 'Pas directement. 🏭']], 'Un objet facile à démonter et à réparer est plus durable.'],
     ['Comment appelle-t-on un dessin d’objet réalisé avec un logiciel en 3D ?', 'une modélisation (CAO)', [['un croquis à main levée', 'Il se fait au crayon. ✏️'], ['une photographie', 'Elle montre un objet réel. 📷'], ['une carte mentale', 'Elle organise des idées. 🧠']], 'La conception assistée par ordinateur permet ensuite l’impression 3D ou la découpe.']
   ] }, {
-    en:['Year 7 lesson: technical objects, needs, materials, energy, first programs', [
+    en:['Year 8 lesson: technical objects, needs, materials, energy, first programs', [
       ['What is a technical object for?', 'meeting a need', [['only decorating', 'Some decorate, but they all meet a need. 🎀'], ['nothing in particular', 'It always has a function. 🔧'], ['replacing nature', 'No. 🌳']], 'A scooter meets the need to travel; a lamp, the need for light.'],
       ['What is an object’s main function, described by a verb, called?', 'its function of use', [['its esteem function', 'That is about looks and pleasure. ✨'], ['its price function', 'That term does not exist. 💶'], ['its colour function', 'No. 🎨']], 'Example: “a pen lets you write”.'],
       ['Which document lists the requirements an object must meet?', 'the specification (design brief)', [['the user manual', 'It explains how to use the object. 📘'], ['the invoice', 'It shows a price paid. 🧾'], ['the logbook', 'It records how a project went. 📓']], 'It sets out the functions, the constraints and the criteria to check.'],
@@ -84,7 +84,7 @@
     ['Qu’est-ce qu’un serveur ?', 'un ordinateur qui fournit des services ou des données à d’autres', [['un employé de restaurant uniquement', 'Pas en informatique ! 🍽️'], ['un câble réseau', 'Non. 🔌'], ['un écran', 'Non. 🖥️']], 'Quand tu ouvres un site, ton navigateur (client) interroge un serveur.'],
     ['Pourquoi faut-il un mot de passe solide ?', 'pour protéger ses données contre les intrusions', [['pour aller plus vite', 'Il ne change pas la vitesse. 🐢'], ['pour décorer l’écran', 'Non. 🎨'], ['pour le partager avec tout le monde', 'Il doit rester secret. 🤐']], 'Long, varié (lettres, chiffres, symboles) et différent pour chaque compte.']
   ] }, {
-    en:['Year 8 lesson: information and energy chains, sensors, programming, networks', [
+    en:['Year 9 lesson: information and energy chains, sensors, programming, networks', [
       ['What are the three blocks of the information chain?', 'acquire, process, communicate', [['supply, distribute, convert', 'That is the energy chain. ⚡'], ['draw, make, sell', 'Those are project stages. 🏭'], ['read, write, count', 'No. 📚']], 'A sensor acquires, a programmable board processes, a screen or light communicates.'],
       ['What are the blocks of the energy chain?', 'supply, distribute, convert, transmit', [['acquire, process, communicate', 'That is the information chain. 📡'], ['heat, cool', 'No. 🌡️'], ['switch on, switch off', 'No. 💡']], 'Battery → switch or relay → motor → gears, for example.'],
       ['Which component detects a physical quantity (light, temperature…)?', 'a sensor', [['an actuator', 'It acts: motor, lamp, buzzer. ⚙️'], ['a battery', 'It supplies power. 🔋'], ['a cable', 'It carries a signal. 🔌']], 'Examples: light-dependent resistor, temperature sensor, push button.'],
@@ -142,7 +142,7 @@
     ['Que représente l’indice de réparabilité affiché sur certains appareils ?', 'la facilité à réparer l’appareil, notée sur 10', [['sa vitesse', 'Non. 🏎️'], ['son prix', 'Non. 💶'], ['sa couleur', 'Non. 🎨']], 'Il aide à choisir des objets plus durables.'],
     ['Que signifie « RGPD » ?', 'un règlement européen qui protège les données personnelles', [['un réseau de télévision', 'Non. 📺'], ['un type de moteur', 'Non. ⚙️'], ['un jeu vidéo', 'Non. 🎮']], 'Il donne à chacun des droits sur ses données (accès, effacement…).']
   ] }, {
-    en:['Year 9 lesson: project, innovation, automated systems, connected objects, final exam', [
+    en:['Year 10 lesson: project, innovation, automated systems, connected objects, final exam', [
       ['How long is the science paper of the French end-of-collège exam (brevet)?', '1 hour', [['3 hours', 'That is the French paper. 📝'], ['2 hours', 'That is the maths paper. 🔢'], ['30 minutes per subject', 'The whole paper lasts 1 h. ⏱️']], 'It covers two of the three subjects: physics-chemistry, biology, technology.'],
       ['What is an innovation?', 'an improvement or a novelty put on the market', [['an exact copy of an object', 'That is not new. 📋'], ['a breakdown', 'No. 🔧'], ['an idea never carried out', 'That is just an invention or an idea. 💡']], 'The smartphone was an innovation combining phone, camera and computer.'],
       ['What is an automated system?', 'a system that works by itself following a program and sensors', [['an object with no electricity', 'No. 🔌'], ['an object only handled by hand', 'It acts on its own. 🤖'], ['a technical drawing', 'No. 📐']], 'An automatic gate, traffic lights or a robot vacuum are examples.'],
