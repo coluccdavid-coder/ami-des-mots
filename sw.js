@@ -1,7 +1,7 @@
 // GÉNÉRÉ par outils/construire-sw.js — ne pas éditer.
 // Les ressources locales sont gardées pour jouer hors connexion. Le module 3D charge Three.js en ligne. Les voix (autre site)
 // ne sont pas gardées ici : sans réseau, c'est la voix du téléphone.
-const CACHE = 'amidesmots-878a2de985';
+const CACHE = 'amidesmots-ba12eb80bc';
 const FICHIERS = [
  "./",
  "index.html",
@@ -79,6 +79,7 @@ const FICHIERS = [
  "js/maths-2026-5e.js",
  "js/maths-2026-2nde.js",
  "js/maths-2026-1re.js",
+ "js/maths-2026-autres.js",
  "js/sciences-en.js",
  "js/sciences-es.js",
  "js/sciences-de.js",

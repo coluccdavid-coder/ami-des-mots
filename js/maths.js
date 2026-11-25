@@ -51,7 +51,7 @@
   // Une question : énoncé, bonne réponse, et mauvaises réponses typiques [valeur, clé d'erreur].
   function Q(enonce, bon, faux, expl, o){
     const vus = new Set([String(bon)]), f = [];
-    for(const [v, cle] of faux){ const s = String(v); if(!s || /NaN|undefined|Infinity/.test(s) || vus.has(s)) continue; vus.add(s); f.push({ v:s, cle }); }
+    for(const [v, cle] of faux){ const s = String(v).replace(/(\d+)([,.])(\d{4,})/g, (m, a, sep, d) => nb(Math.round(Number(a + '.' + d) * 1000) / 1000)); if(!s || /NaN|undefined|Infinity/.test(s) || vus.has(s)) continue; vus.add(s); f.push({ v:s, cle }); }
     // Cas rares où les erreurs typiques tombent sur la bonne réponse : on complète avec des voisins.
     const m = String(bon).match(EN() ? /^(.*?)(−?[\d,]+(?:\.\d+)?)(.*)$/ : /^(.*?)(−?[\d\u202F]+(?:,\d+)?)(.*)$/);
     if(f.length < 2 && m){ const x = Number(EN() ? m[2].replace(/,/g, '').replace('−', '-') : m[2].replace(/\u202F/g, '').replace('−', '-').replace(',', '.'));
@@ -236,7 +236,7 @@
     return C(r, [() => Q(T('Calcule : ') + a + ' + ' + b + ' × ' + c, nb(a + b * c), [[nb((a + b) * c), 'priorites'], [nb(a + b + c), 'priorites']], T('On commence par ') + b + ' × ' + c + ' = ' + (b * c) + '.'),
       () => Q(T('Calcule : ') + (a + b * c) + ' − ' + b + ' × ' + c, nb(a), [[nb((a + b * c - b) * c), 'priorites']], T('D’abord ') + b + ' × ' + c + ' = ' + (b * c) + T(', puis ') + (a + b * c) + ' − ' + (b * c) + '.')])(); };
   G['6-fraction-de'] = r => { const d = C(r, [2, 3, 4, 5, 6, 8, 10]), n = E(r, 1, d - 1) || 1, N = d * E(r, 2, 12);
-    return Q(T('Combien font ') + n + '/' + d + T(' de ') + N + ' ?', nb(N / d * n), [[nb(N * n), 'fraction-de-oubli-div'], [nb(N / d), 'fraction-de-oubli-mult'], [nb(N / n * d), 'fraction-de-inverse']], N + ' ÷ ' + d + ' = ' + (N / d) + T(', puis × ') + n + '.'); };
+    return Q(T('Combien font ') + n + '/' + d + T(' de ') + N + ' ?', nb(N / d * n), [[nb(N * n), 'fraction-de-oubli-div'], [nb(N / d), 'fraction-de-oubli-mult'], [nb(N / n * d, 2), 'fraction-de-inverse']], N + ' ÷ ' + d + ' = ' + (N / d) + T(', puis × ') + n + '.'); };
   G['6-fractions-multiples'] = r => { const b = C(r, [2, 3, 4, 5]), k = C(r, [2, 3, 4]), a = E(r, 1, b - 1) || 1, c = E(r, 1, b * k - 1);
     return Q(T('Calcule : ') + a + '/' + b + ' + ' + c + '/' + (b * k), fr(a * k + c, b * k), [[fr(a + c, b + b * k), 'fractions-add-den'], [fr(a + c, b * k), 'fractions-oubli-mult']], a + '/' + b + ' = ' + (a * k) + '/' + (b * k) + T(', donc ') + (a * k) + '/' + (b * k) + ' + ' + c + '/' + (b * k) + ' = ' + frb(a * k + c, b * k) + '.'); };
   G['6-fractions-somme'] = r => { let b = E(r, 2, 7), d = E(r, 2, 7); while(d === b) d = E(r, 2, 7); const a = E(r, 1, 6), c = E(r, 1, 6);
