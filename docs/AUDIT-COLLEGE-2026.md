@@ -2,6 +2,13 @@
 
 Date : 25 novembre 2026. Année scolaire de référence : 2026-2027.
 
+## Suivi — v6.32 : étoffer chaque leçon (2/5, espagnol et allemand)
+
+- **Espagnol (5e-3e) :** 6 leçons passent à 16 questions (bases, présent, vocabulaire, passé, culture, grammaire), en français et en anglais.
+- **Allemand (5e-3e) :** 5 leçons passent à 16 questions (bases, vocabulaire, grammaire du collège, culture, grammaire), en français, anglais et espagnol.
+- 109 questions ajoutées (61 en espagnol, 48 en allemand), chacune traduite dans le même ordre (js/mat-langues-college-plus.js). Les cours de classe (cours-e5…, cours-d5…) restent à 12.
+- Test v6.32 : 16 questions minimum, mêmes nombres dans chaque traduction, pas de doublon.
+
 ## Suivi — v6.31 : étoffer chaque leçon (1/5, anglais)
 
 Objectif : environ 16 à 20 questions par leçon, pour couvrir toute la leçon et qu’une série de 10 ne tourne pas en rond.

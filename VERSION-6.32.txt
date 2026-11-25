@@ -1,0 +1,14 @@
+Ami des mots — v6.32.0
+
+Étoffer chaque leçon du collège (2/5) : l'espagnol et l'allemand.
+
+1. Espagnol (5e-3e) : 6 leçons passent à 16 questions — se présenter et gustar, présent irrégulier, vocabulaire,
+   passé et futur proche, culture du monde hispanique, grammaire de 4e-3e. 61 questions ajoutées, en français et en anglais.
+2. Allemand (5e-3e) : 5 leçons passent à 16 questions — bases, vocabulaire, modaux, parfait et datif, culture,
+   grammaire de 4e-3e. 48 questions ajoutées, en français, anglais et espagnol.
+3. Chaque question a 3 pièges, une vanne et la règle ; les traductions suivent exactement le même ordre.
+4. Nouveau fichier : js/mat-langues-college-plus.js.
+5. Test v6.32 : au moins 16 questions par leçon, mêmes nombres dans chaque traduction, pas de doublon.
+   npm run verifier : 183 réussis, 0 échoué.
+
+Suite prévue : v6.33 SVT et physique-chimie, v6.34 histoire-géographie, v6.35 français, arts, EPS, latin-grec.
