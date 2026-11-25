@@ -1,0 +1,11 @@
+Ami des mots — v6.27.0
+
+Lycée et spécialités : un cours de l'année par classe (12 questions chacun).
+- Français : 2nde (de l'humanisme au XXe siècle, outils d'analyse) et 1re (épreuve anticipée : écrit, oral, méthode, grands repères). fr / en / es.
+- Histoire-géographie : 2nde, 1re, Tle (Méditerranée médiévale → monde depuis 1945 ; risques, métropolisation, mers et océans, mondialisation). fr / en / es / de.
+- SVT : 2nde, 1re, Tle (cellule, génome, géologie, immunité, climat, cerveau, plantes). fr / en / es / de.
+- Physique-chimie : 2nde, 1re, Tle (mole, lois de Newton, ondes, oxydoréduction, acides-bases, cinétique, thermodynamique). fr / en / es / de.
+- Spécialités 1re-Tle : SES, HGGSP, HLP, NSI. fr / en / es.
+Nouveaux fichiers : js/mat-cours-lycee-lettres.js, js/mat-cours-lycee-sciences.js, js/mat-cours-specialites.js (chargés avant themes.js, ajoutés au service worker).
+Nouveau test « v6.27 » : présence par classe, 3 pièges, juge, traductions en/es.
+Vérification : npm run verifier → 177 réussi(s), 0 échoué(s).
