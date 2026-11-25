@@ -1,0 +1,14 @@
+Ami des mots — v6.30.0
+
+Collège de A à Z : audit relancé, 0 notion absente, 2 partielles (sur 179), 177 couvertes.
+
+1. Maths : 16 générateurs ajoutés (6e, 4e, 3e) dont algorithmique et Python (js/maths-2026-college.js).
+2. Notions partielles complétées : monothéisme juif, Capétiens, matériaux, Univers, groupe nominal, entrées de 5e (js/mat-cpl-partiels.js).
+3. Langues vivantes : grammaire et culture en anglais, espagnol, allemand (js/mat-langues-cpl.js).
+4. Brevet : l'épreuve de sciences tire 2 disciplines sur 3, dont la technologie (js/epreuves-dnb-techno.js).
+   Correction de l'audit v6.28 : les épreuves, l'oral et le brevet blanc existaient déjà.
+5. Nouvelles matières : arts (arts plastiques, musique, histoire des arts), EPS (connaissances), latin et grec,
+   en français, anglais et espagnol (js/mat-arts-eps-lca.js).
+6. Test v6.30 ajouté. npm run verifier : 181 réussis, 0 échoué.
+
+Reste : italien et portugais hors maths ; allemand pour arts, EPS, latin-grec ; titres de certains thèmes en 6e.

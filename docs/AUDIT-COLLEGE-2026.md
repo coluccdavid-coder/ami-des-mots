@@ -1,6 +1,32 @@
-# Audit du programme du collège — Ami des mots v6.28
+# Audit du programme du collège — Ami des mots v6.28 (suivi jusqu’à v6.30)
 
 Date : 25 novembre 2026. Année scolaire de référence : 2026-2027.
+
+## Suivi — v6.30
+
+| | v6.28 | v6.29 | v6.30 |
+|---|---|---|---|
+| ❌ notions absentes | 13 | 0 | **0** |
+| 🟠 notions partielles | 18 | 11 | **2** |
+| ✅ notions couvertes | 148 | 168 | **177** |
+
+- **Maths :** 16 générateurs ajoutés (js/maths-2026-college.js).
+  - 6e : tableaux, droites, quadrilatères, angles, patrons.
+  - 4e : translation et rotation, racine carrée, notion de fonction, étendue, algorithmique.
+  - 3e : homothétie, latitude et longitude, sections de solides, débit et vitesse, lecture graphique, Python.
+- **Notions partielles complétées** (js/mat-cpl-partiels.js) : monothéisme juif, Capétiens, familles de matériaux, composition de l’Univers, groupe nominal et lexique, entrées de 5e.
+- **Langues vivantes** (js/mat-langues-cpl.js) : grammaire et axes culturels en anglais (6e-3e), espagnol et allemand.
+- **Brevet — correction de l’audit.** Le point 7 ci-dessous était **faux** : l’appli proposait déjà les épreuves du brevet au format réel (français, maths, histoire-géo, EMC, sciences), l’oral et un brevet blanc complet (js/epreuves.js, js/epreuves-oraux.js). Le seul manque réel était la technologie dans l’épreuve de sciences. C’est corrigé : l’épreuve tire au sort 2 disciplines sur 3 (js/epreuves-dnb-techno.js).
+- **Matières ajoutées** (js/mat-arts-eps-lca.js), en français, anglais et espagnol :
+  - Arts : arts plastiques, éducation musicale, histoire des arts pour l’oral ;
+  - EPS (connaissances) : échauffement, santé, sécurité, règles ;
+  - Latin (5e-3e) et grec (3e).
+- **Reste partiel :** unités d’information (bit, octet) et futur/passé antérieur (2 questions chacun).
+- **Reste à faire, hors programme du collège lui-même :**
+  - italien et portugais pour les matières autres que les maths ;
+  - allemand pour arts, EPS, latin et grec ;
+  - certains titres de chapitres « Par thème » (ex. « Cellule, ADN et génétique ») restent affichés en 6e, même si leurs questions sont bien filtrées par classe.
+  - Les nouvelles matières (arts, EPS, latin-grec) restent un socle de connaissances : 8 à 10 questions par chapitre, à étoffer.
 
 ## Suivi — v6.29
 
@@ -157,6 +183,8 @@ Les chapitres de maths sont nombreux (6e : 26, 5e : 37, 4e : 18, 3e : 17), mais 
 - Langues vivantes autres que l’anglais, l’espagnol et l’allemand (italien, portugais, arabe, chinois, langues régionales).
 
 ## 7. Brevet
+
+> **Erreur de l’audit v6.28, corrigée en v6.30 :** ce point était faux. Les épreuves au format réel, l’oral et le brevet blanc existaient déjà. Voir le suivi v6.30 en haut.
 
 - **Absent :** préparation à l’oral (soutenance de projet, 15 min, coefficient 2) : méthode, questions types, grille.
 - **Absent :** épreuves blanches complètes au format réel :
