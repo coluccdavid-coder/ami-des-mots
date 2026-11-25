@@ -1,6 +1,0 @@
-AMI DES MOTS — VERSION 5.65
-- La voix ne lit plus les émojis (😂, 🔥, drapeaux…) ni les guillemets : elle dit seulement la phrase.
-- PC : l'image d'une question tient dans l'écran (38 % de la hauteur au plus, 520 px de large) ; la carte
-  « Découvrir » rapetisse aussi, les boutons restent visibles sans défiler.
-- « Voir la bouche » : l'animation ne part plus avant le son. Les petits silences au début et à la fin des
-  enregistrements sont retirés du calcul, la bouche bouge en même temps que la voix.

@@ -1917,8 +1917,14 @@ html[data-texte="tres-grand"]{ font-size:125%; } html[data-texte="tres-grand"] b
 .outils-revision{ margin-top:22px; }
 .jeux-lien{ text-align:center; margin:26px 0 8px; }
 
+/* v6.44 : la page d'accueil prend toute la largeur de l'écran, liens légaux en bas */
+#app[data-ecran=bienvenue] > section{ width:100%; max-width:none; margin:0; }
+#app[data-ecran=bienvenue] .ciel{ min-height:calc(100vh - 56px); }
+.liens-legaux-accueil{ display:flex; flex-wrap:wrap; justify-content:center; gap:6px 28px; padding:16px 20px; background:#fff; box-shadow:0 -6px 24px rgba(0,0,0,.18); }
+.liens-legaux-accueil a{ color:#4B5563; font-weight:800; font-size:.95rem; text-decoration:none; padding:4px 2px; }
+.liens-legaux-accueil a:hover,.liens-legaux-accueil a:focus-visible{ color:#1B1446; text-decoration:underline; }
 /* v6.40 : page d'accueil en plein écran (Plumo, langue, programme, bouton « Entrer ») — future page du profil et du mot de passe */
-#app[data-ecran=bienvenue] .ciel{ min-height:100vh; border-radius:0; padding-bottom:0; display:flex; flex-direction:column; }
+#app[data-ecran=bienvenue] .ciel{ border-radius:0; padding-bottom:0; display:flex; flex-direction:column; }
 #app[data-ecran=bienvenue] .ciel-in{ margin:auto; padding-bottom:120px; }
 #app[data-ecran=bienvenue] .perchoir{ transform:scale(1.2); margin:30px auto 34px; }
 #app[data-ecran=bienvenue] .collines{ height:150px; }
@@ -1928,3 +1934,12 @@ html[data-texte="tres-grand"]{ font-size:125%; } html[data-texte="tres-grand"] b
 .gros.entrer:hover,.gros.entrer:focus-visible{ transform:translateY(-2px); box-shadow:0 14px 36px rgba(0,0,0,.4); }
 @media (min-width:1100px){ #app[data-ecran=bienvenue] .perchoir{ transform:scale(1.5); margin:60px auto 56px; } #app[data-ecran=bienvenue] .ciel h1{ font-size:clamp(4rem, 6vw, 6rem); } }
 @media (prefers-reduced-motion:reduce){ .gros.entrer:hover,.gros.entrer:focus-visible{ transform:none; } }
+
+/* v6.47 : le défi rétro (années 70) */
+.retro-ecran .retro-avert{ opacity:.8; font-style:italic; }
+.retro-programme .retro-bloc{ background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.12); border-radius:18px; padding:14px 18px; margin:14px 0; text-align:left; }
+.retro-programme .retro-bloc h3{ margin:0 0 8px; }
+.retro-programme .retro-bloc ul{ margin:0; padding-left:1.2em; }
+.retro-programme .retro-bloc li{ margin:6px 0; line-height:1.45; }
+.retro-programme .retro-sources a{ color:inherit; text-decoration:underline; }
+.retro-fin .gros-score{ font-size:clamp(2.4rem, 8vw, 3.4rem); margin:.2em 0; }

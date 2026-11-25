@@ -621,7 +621,11 @@
   }
   function bienvenue(){
     qz = null;
-    poser(cielAccueil('<p class="entrer-zone"><button class="gros entrer" data-a="entrer">' + TXT('Entrer') + ' <span aria-hidden="true">→</span></button></p>'), 'bienvenue');
+    // v6.44 : les liens légaux en bas de la page d'accueil (mentions, confidentialité, conditions, cookies).
+    const legal = '<nav class="liens-legaux-accueil" aria-label="' + esc(TXT('Informations légales')) + '">' +
+      [['mentions', TXT('Mentions légales')], ['confidentialite', TXT('Confidentialité')], ['cgu', TXT('Conditions d’utilisation')], ['cookies', TXT('Cookies')]]
+        .map(([id, l]) => '<a href="legal.html#' + id + '">' + esc(l) + '</a>').join('') + '</nav>';
+    poser(cielAccueil('<p class="entrer-zone"><button class="gros entrer" data-a="entrer">' + TXT('Entrer') + ' <span aria-hidden="true">→</span></button></p>') + legal, 'bienvenue');
     brancherLangues(bienvenue);
   }
   function portesAccueil(){
@@ -3748,14 +3752,14 @@
     qz = null; const SC = window.SCIENCES; if(!SC) return accueil();
     poser(barre('accueil') + TXT('<main class="coin-anglais coin-sciences"><h2>🚀 Le labo des sciences</h2><p class="pieges-intro">Planètes, fusées, corps humain, médecine. Ici, les mauvaises réponses se font démonter… mais les explications restent sérieuses.</p>') +
       '<div class="cartes-anglais">' + SC.THEMES.map(t => '<button class="carte-anglais" data-a="sciences-theme" data-v="' + t.id + '"><strong>' + t.e + ' ' + esc(t.titre) + '</strong><span>' + esc(t.sous) + '</span></button>').join('') +
-      TXT('<button class="carte-anglais" data-a="sciences-theme" data-v="tout"><strong>🎲 Tout mélangé</strong><span>10 questions</span></button></div></main>'), 'sciences');
+      TXT('<button class="carte-anglais" data-a="sciences-theme" data-v="tout"><strong>🎲 Tout mélangé</strong><span>20 questions</span></button></div></main>'), 'sciences');
   }
   function sciencesGo(theme){
     const SC = window.SCIENCES; if(!SC) return accueil();
-    const ton = etatMaths().ton, liste = SC.serie(theme, 10, Math.floor(Math.random() * 1e9), ton), t = SC.THEMES.find(x => x.id === theme);
+    const ton = etatMaths().ton, liste = SC.serie(theme, SERIE_N, Math.floor(Math.random() * 1e9), ton), t = SC.THEMES.find(x => x.id === theme);
     questionsGo(liste, { titre:(t ? t.e + ' ' + t.titre : TXT('🎲 Sciences')), retour:'sciences', lang:SC.langue ? SC.langue() : 'fr', humeurFaux:'mdr', bravo:SC.bravo && SC.bravo() ? () => SC.bravo() : undefined,
       onReponse:(juste, q) => { if(!juste) noterErreur('sciences:' + q.id); },
-      fin:z => { J().plumes += z.bonnes; garder(); bruit('fin'); poser(barre('sciences') + '<main class="centre"><div class="ami-moyen">' + ami(z.bonnes >= 8 ? 'fete' : 'mdr') + TXT('</div><h2>🔬 Résultat du labo</h2><p class="gros-score">') + z.bonnes + '/' + z.liste.length + '</p><p>' + (z.bonnes >= 8 ? TXT('Le labo s’incline : prix Nobel de la récré ! 🏅') : TXT('Le labo a bien rigolé. Revanche ?')) + '</p><p>🪶 +' + z.bonnes + ' plumes</p><div class="actions serrees"><button class="moyen plein" data-a="sciences-theme" data-v="' + esc(theme) + TXT('">🔁 Encore</button><button class="moyen" data-a="sciences">🚀 Labo</button></div></main>')); } });
+      fin:z => { J().plumes += z.bonnes; garder(); bruit('fin'); poser(barre('sciences') + '<main class="centre"><div class="ami-moyen">' + ami(z.bonnes >= Math.ceil(z.liste.length * .8) ? 'fete' : 'mdr') + TXT('</div><h2>🔬 Résultat du labo</h2><p class="gros-score">') + z.bonnes + '/' + z.liste.length + '</p><p>' + (z.bonnes >= Math.ceil(z.liste.length * .8) ? TXT('Le labo s’incline : prix Nobel de la récré ! 🏅') : TXT('Le labo a bien rigolé. Revanche ?')) + '</p><p>🪶 +' + z.bonnes + ' plumes</p><div class="actions serrees"><button class="moyen plein" data-a="sciences-theme" data-v="' + esc(theme) + TXT('">🔁 Encore</button><button class="moyen" data-a="sciences">🚀 Labo</button></div></main>')); } });
   }
 
   // ── Ami des mots Plus ─────────────────────────────────────────────

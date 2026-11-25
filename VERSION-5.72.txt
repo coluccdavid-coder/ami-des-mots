@@ -1,8 +1,0 @@
-AMI DES MOTS — VERSION 5.72
-Village caché pour l'instant
-
-- Les boutons « Explorer le village » et « Jouer dans le village 3D » ne s'affichent plus sur l'accueil.
-- Le jeu n'ouvre plus le village 3D tout seul au démarrage ; une ancienne adresse monde-3d.html ramène à l'accueil.
-- Rien n'est supprimé : pour le remettre, passer VILLAGE_CACHE à false dans js/config-site.js
-  (ou ouvrir monde-3d.html?voir=1 pour le tester sans le montrer aux joueurs).
-- Mots City, maths, sciences, professeur et battles restent là. Tests : 115/115.

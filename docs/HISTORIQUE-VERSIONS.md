@@ -1,0 +1,2810 @@
+# Ami des mots — historique des versions
+
+Toutes les notes de version, de la plus récente à la plus ancienne.
+Avant la v6.44, chaque version avait son propre fichier VERSION-x.y.txt à la racine du projet ; ils sont tous réunis ici, sans modification.
+
+---
+
+## Version 6.49
+
+```text
+Ami des mots — version 6.49
+- Labo des sciences : 20 questions par thème (avant : 9 à 12). 39 nouvelles questions,
+  en français, anglais, espagnol, allemand, italien et portugais (js/sciences-plus.js).
+  · Planètes et espace : face cachée de la Lune, étoiles filantes, le Soleil est une étoile,
+    la Voie lactée, traces de pas sur la Lune, Olympus Mons, poids sur la Lune, Neptune.
+  · Fusées et astronautes : Spoutnik 1, Laïka, Valentina Terechkova, Apollo 11, Hubble, GPS,
+    carburant, étages, rovers sur Mars, miettes en apesanteur.
+  · Corps humain : battements du cœur, muscles, pupille, colonne vertébrale, cage thoracique,
+    crâne, plaquettes, estomac, neurones, sommeil.
+  · Médecine et microbes : taille des virus, fièvre, Jenner, Marie Curie, microscope,
+    groupes sanguins, scorbut, thermomètre, caries, IRM, échographie.
+- Séries du labo à 20 questions (« Tout mélangé » aussi) ; la fête du résultat à 80 % de bonnes réponses.
+- Test : 20 questions par thème, traduites dans les 5 langues, série de 20 jouée en entier.
+```
+
+---
+
+## Version 6.48
+
+```text
+Ami des mots — version 6.48
+- Labo des sciences, corps humain : la question « Combien d’enfants ont-ils de dents de lait ? »
+  (qui demandait en fait un nombre d'enfants) devient « Combien de dents de lait un enfant a-t-il ? ».
+  Les traductions (en, es, de, it, pt) étaient déjà justes.
+- Test ajouté contre la tournure « Combien d’X ont-ils de… » dans le labo des sciences.
+```
+
+---
+
+## Version 6.47
+
+```text
+Ami des mots — version 6.47
+
+📼 Le défi rétro : l'école des années 70, pour le fun et en famille (js/mod-retro.js), en français seulement.
+- Carte « 📼 Le défi rétro » dans les outils de la table des matières (masquée si l'appli est dans une autre langue).
+- Cinq épreuves de 20 questions : dictée et orthographe d'autrefois (imparfait du subjonctif, pluriels pièges),
+  analyse logique et grammaticale (avec les termes d'époque), maths modernes (ensembles, bases de numération),
+  calcul mental et mesures (preuve par neuf, ares, stères, quintaux, nouveau franc), géographie par cœur
+  (préfectures, fleuves, affluents, numéros de départements).
+- « 🎓 Le Grand BEPC rétro » : 4 questions de chaque épreuve, note sur 20 et mention (assez bien, bien, très bien).
+- « 📜 Le programme des années 70 » : tiers-temps de 1969, mercredi libéré en 1972, maths modernes (programme du
+  2 janvier 1970, allègement fin des années 1970), loi Haby du 11 juillet 1975 et collège unique en 1977, BEPC,
+  latin repoussé en 4e (1968-1969), programmes du primaire de 1977-1980. Chaque repère est sourcé (liens en bas de page).
+Les questions sont inspirées des programmes de l'époque : ce ne sont pas de vrais sujets d'examen.
+Tests : 198 réussis (npm run verifier).
+```
+
+---
+
+## Version 6.46
+
+```text
+Ami des mots — version 6.46
+
+Histoire de 3e complète : toutes les leçons ont 20 questions, en français, anglais, espagnol et allemand
+(js/mat-histoire-3e-plus.js). L'histoire du collège (6e à 3e) est donc entièrement à 20 questions par leçon.
+- Années 1920-1930 : fascisme, Mein Kampf, Gestapo, goulag, collectivisation, propagande, culte du chef,
+  6 février 1934, accords Matignon, Nuit de cristal, crise de 1929, New Deal.
+- Guerre froide et décolonisation : plan Marshall, pacte de Varsovie, rideau de fer, blocus de Berlin, Corée, Chine 1949,
+  course aux armements, Spoutnik, Diên Biên Phu, Gandhi, Bandung, détente.
+- France depuis 1945 : Giscard, abolition de la peine de mort, cohabitation, Pompidou, euro, choc pétrolier, Chirac,
+  quinquennat, Édith Cresson, TGV, immigration de travail, parité.
+- 14-18 (+5), 39-45 (+6) ; XXe siècle (+12), révisions (+13), cours de l'année (+8).
+Règle respectée : les questions qui parlent de guerre sont seulement dans les chapitres 14-18, 39-45 et guerre froide.
+Tests : 197 réussis (npm run verifier).
+```
+
+---
+
+## Version 6.45
+
+```text
+Ami des mots — version 6.45
+
+Histoire 6e-5e-4e complète : toutes les leçons ont maintenant 20 questions, en français, anglais, espagnol et allemand
+(js/mat-histoire-6-4-suite.js).
+- Antiquité 6e (12 → 20) : Hammurabi, momification, Rê, Achille, Périclès, Pompéi, Constantinople, routes de la soie.
+- Moyen Âge 5e (13 → 20) : cathédrale, Notre-Dame, Reconquista, 1453, mosquée, Coran, foires de Champagne.
+- Révolution 4e (14 → 20) : Louis XVI, serment du Jeu de paume, Marseillaise, système métrique, départements, île d'Elbe.
+- Cours de l'année 6e, 5e et 4e (12 → 20 chacun) : polythéisme, mythes, esclavage antique, Sparte, oracle, apôtres ;
+  clergé, paroisse, dîme, Compostelle, Renaissance, Florence, monarchie absolue, Incas ;
+  traite atlantique, commerce triangulaire, 1776, suffrage censitaire, syndicats, Schœlcher, Germinal, électricité.
+Tests : 196 réussis (npm run verifier).
+```
+
+---
+
+## Version 6.44
+
+```text
+Ami des mots — version 6.44
+
+1. Histoire 6e-5e-4e : six leçons passent à 20 questions, en français, anglais, espagnol et allemand
+   (js/mat-histoire-6-4-plus.js) : Hébreux (6e), Capétiens et Valois (5e), conditions des femmes au XIXe siècle (4e),
+   révisions de 6e, de 5e et de 4e. Les chapitres « Par thème » (Antiquité, Moyen Âge, XIXe siècle) les reprennent.
+2. Page d'accueil sur toute la largeur de l'écran, avec en bas : Mentions légales, Confidentialité,
+   Conditions d'utilisation, Cookies (liens vers legal.html, traduits dans les 5 langues).
+3. Ménage : les 111 fichiers VERSION-*.txt de la racine sont réunis dans un seul document,
+   docs/HISTORIQUE-VERSIONS.md (de la plus récente à la plus ancienne). Rien n'est perdu.
+Tests : 195 réussis (npm run verifier).
+```
+
+---
+
+## Version 6.43
+
+```text
+Ami des mots — version 6.43
+
+Histoire-géo, partie 1 : EMC et géographie à 20 questions par classe (6e, 5e, 4e, 3e), en français, anglais,
+espagnol et allemand (js/mat-geo-emc-plus.js).
+
+- EMC (5 → 20) : maire et conseil municipal, suffrage universel, Premier ministre, palais Bourbon, Luxembourg,
+  Élysée, la loi, droit à l'image, instruction obligatoire, 112, drapeau européen, impôt, service public, article 1er de 1789.
+- Géographie 6e (+13) : continents, déserts, Everest, Nil, espaces ruraux, milieux polaires, carte (légende, nord),
+  station balnéaire, altitude, Atlantique.
+- Géographie 5e (+13) : réchauffement climatique, énergies fossiles, espérance de vie, montée des mers, ressources
+  renouvelables, agriculture bio, malnutrition, pays émergents, Nigeria, recyclage, dessalement, inondations, empreinte écologique.
+- Géographie 4e (+13) : conteneur, exode rural, réfugiés, Internet, façades maritimes, Northern Range, hubs,
+  canal de Panama, quartier d'affaires, ville durable, délocalisation, « made in monde », mobilités pendulaires.
+- Géographie 3e (+10) : mont Blanc, Commission européenne, métropoles régionales, espaces productifs, tertiaire,
+  Marseille, PAC, Guyane, parcs nationaux, TGV.
+
+Chaque question est rattachée à sa classe ; les chapitres « Par thème » (géographie, EMC) les reprennent sans doublon.
+Tests : 194 réussis (npm run verifier).
+Suite : histoire 6e-5e-4e (v6.44), puis histoire 3e (v6.45).
+```
+
+---
+
+## Version 6.42
+
+```text
+Ami des mots — version 6.42
+
+Arts, EPS, latin et grec : 20 questions par leçon (au lieu de 8 à 10), en français, anglais et espagnol.
+Les séries de 20 de ces leçons sont donc complètes, sans répétition.
+
+- Arts plastiques (+10) : nature morte, couleurs chaudes et froides, camaïeu, cadrage, ronde-bosse, bas-relief, pointillisme, esquisse.
+- Éducation musicale (+10) : quatuor, cuivres, nuance piano, canon, refrain, durées des notes, clé de sol, gamme, Beethoven.
+- Histoire des arts 3e (+10) : Joconde, Nuit étoilée, Versailles, surréalisme, fresque, Louvre, chapelle Sixtine, art roman, vitrail, Impression soleil levant.
+- EPS santé (+10) : hydratation, entorse, endurance, essoufflement, chaussures, petit-déjeuner, récupération, plongeon, parade, casque.
+- EPS règles (+12) : football, basket, tennis de table, faux départ, zone du handball, orientation, volley, badminton, saut en hauteur, relais.
+- Latin 5e (+12), latin 4e-3e (+12), grec ancien 3e (+12) : vocabulaire, chiffres romains, dieux, vie romaine, cas, racines grecques.
+
+Toutes les vannes passent le juge ; aucun mot français dans les traductions ; aucun doublon.
+Tests : 193 réussis (npm run verifier).
+```
+
+---
+
+## Version 6.41
+
+```text
+Ami des mots — version 6.41
+
+Mise à jour visible dès la première visite.
+L'appli garde ses fichiers pour fonctionner hors connexion (sw.js). Jusqu'ici, après une mise à jour, le premier
+chargement montrait encore l'ancienne version ; il fallait revenir une deuxième fois.
+Maintenant, quand la nouvelle version prend la main, la page se recharge une seule fois, seulement sur la page
+d'accueil ou dans les 15 premières secondes (jamais au milieu d'une série). Le navigateur va aussi toujours chercher
+le dernier sw.js (updateViaCache:'none').
+
+Contient aussi tout le contenu de la v6.40 (page d'accueil avec « Entrer », séries de 20 questions, traductions).
+Tests : 192 réussis (npm run verifier).
+```
+
+---
+
+## Version 6.40
+
+```text
+Ami des mots — version 6.40
+
+1. Une vraie page d'accueil, en plein écran
+   À chaque visite : Plumo, « Ami des mots », le choix de la langue et du programme, et un bouton « Entrer ».
+   « Entrer » mène à la table des matières (après « Qui joue ? » s'il y a plusieurs profils).
+   La flèche en haut de la table des matières ramène à cette page d'accueil.
+   C'est sur cette page que viendront plus tard le profil et le mot de passe.
+
+2. Séries de 20 questions
+   Une série d'exercices (chapitre, entraînement mélangé, maths) compte maintenant 20 questions au lieu de 10,
+   sans jamais reposer deux fois la même : une leçon de 16 questions donne une série de 16.
+   Le bouton de chaque chapitre affiche le vrai nombre (▶ 20, ▶ 16…).
+
+3. Traductions
+   - Titres des blancs, des épreuves et des annales, et tout l'écran « Officiel » : anglais, espagnol, allemand,
+     italien, portugais (js/textes-examens.js). Les sigles officiels (brevet, bac, CAP, BO, STMG…) restent tels quels.
+   - Noms des 297 chapitres et des domaines en italien et en portugais (js/mat-noms-it-pt.js).
+   Les questions elles-mêmes restent en français en italien et en portugais (le drapeau 🇫🇷 le signale) : prochaine étape.
+   Traductions à faire relire par des locuteurs natifs.
+
+Tests : 191 réussis (npm run verifier).
+```
+
+---
+
+## Version 6.39
+
+```text
+Ami des mots — version 6.39
+
+1. Plumo revient sur l'écran d'ouverture
+   L'appli s'ouvre toujours sur la table des matières, mais avec le ciel d'Ami en tête :
+   Plumo sur sa branche, « Bonjour… », le choix de la langue et du programme.
+   Sur ordinateur : Plumo à gauche (fixe), les matières à droite. Sur téléphone : Plumo au-dessus.
+   Changer de langue reste sur l'écran d'ouverture. L'accueil des jeux est toujours derrière « 🎮 Jeux et entraînement ».
+
+2. Français : 16 questions par leçon
+   Nature des mots, fonctions dans la phrase, vocabulaire et accord du participe passé passent de 5-8 à 16 questions,
+   en français, anglais et espagnol (js/mat-college-plus-final.js).
+
+3. Test du serveur dans Codespaces
+   outils/tests-serveur/lancer-local.sh lance MariaDB sans AIO natif (--innodb-use-native-aio=0) :
+   c'était la cause du « Segmentation fault » dans les conteneurs. Si MariaDB ne démarre pas, le script affiche
+   la fin du journal au lieu d'une erreur de socket.
+
+Tests : 190 réussis (npm run verifier) ; test serveur local 43/43.
+Suite prévue : arts, EPS, latin-grec à 14-16 questions ; titres d'examens et écran « Officiel » en italien et portugais.
+```
+
+---
+
+## Version 6.38
+
+```text
+Ami des mots — v6.38.0
+
+La table des matières devient l'écran d'arrivée ; l'aide aux devoirs est mise en avant ; plus de doublons.
+
+1. À chaque visite, l'appli s'ouvre sur la table des matières (OUVRIR_MATIERES:true dans js/config-site.js).
+   - Plusieurs profils : « Qui joue ? » d'abord, puis la table des matières.
+   - Premier passage : la question « Tu es en quelle classe ? ».
+   - Tout passe par une seule fonction (accueilDepart dans js/jeu.js) : c'est là que se branchera plus tard
+     l'écran de connexion (profil et mot de passe).
+2. En tête de la table des matières : une grande carte « Un devoir à faire ? On t'aide à démarrer » (aide aux devoirs).
+3. Sous les matières : une ligne « Outils pour réviser » (Veille de contrôle, Mes erreurs, Défi de classe,
+   Correction par Plumo, England curriculum, Sciences rigolotes), puis un bouton « Jeux et entraînement ».
+4. Accueil des jeux : Maths et Matières n'y sont plus en double ; une porte « Mes matières » ramène à la table.
+   Maths ramène aussi à la table des matières.
+5. Options cachées inchangées (paiement, village 3D, voix de Plumo, bouche, Mots City) : choix confirmé.
+6. Textes nouveaux traduits en anglais, espagnol, allemand, italien et portugais.
+7. Test v6.38. npm run verifier : 189 réussis, 0 échoué.
+```
+
+---
+
+## Version 6.37
+
+```text
+Ami des mots — v6.37.0
+
+Consolidation après l'audit de la v6.35.
+
+1. Serveur PHP réellement testé sur une base MariaDB : 43 vérifications réussies sur 43
+   (abonnements Stripe, certificats Plus, vannes IA, salon, veille, coin admin, aide aux devoirs).
+   - Nouveau : bash outils/tests-serveur/lancer-local.sh (ou npm run test:serveur) crée une base JETABLE,
+     des clés et une config de test, lance le test, puis efface tout. Sans prérequis, le test explique quoi installer
+     au lieu d'échouer 14 fois.
+   - 6 nouvelles vérifications sur devoirs.php (règles envoyées par le serveur, signes < gardés, photo, fichier refusé,
+     balises neutralisées, plumes rendues si l'IA échoue).
+2. Défauts corrigés grâce à ce test :
+   - devoirs.php, correction.php, explique.php : avertissement PHP et langue vide quand l'appli n'envoyait pas de langue.
+   - devoirs.php : 8 demandes par minute au lieu de 4 (aide + question + relecture d'affilée étaient bloquées).
+3. npm test sans « npm install » : message clair au lieu de « Cannot find module 'jsdom' ».
+4. Traductions : nom de chaque matière en anglais, espagnol, allemand, italien et portugais (js/mat-noms.js) ;
+   commentaire de textes-plus.js corrigé (6 langues d'interface, et non 11).
+5. npm run verifier : 188 réussis, 0 échoué.
+```
+
+---
+
+## Version 6.36
+
+```text
+Ami des mots — v6.36.0
+
+Étoffer chaque leçon du collège (4/5) : l'histoire-géographie, en français, anglais, espagnol et allemand.
+
+1. Antiquité (6e) 4 → 12 questions : écriture, Égypte, Athènes, Homère, Rome, Constantin.
+2. Moyen Âge (5e) 5 → 13 : seigneurie, hommage, chevaliers, islam, Byzance, art roman, Saint Louis.
+3. Révolution et Empire (4e) 6 → 14 : Ancien Régime, 4 août, Déclaration des droits, République, Code civil,
+   sacre de 1804, suffrage universel masculin, abolition de l'esclavage (1848).
+4. Géographie : +3 questions par classe, chacune à sa classe (6e métropoles, littoraux, déserts ; 5e population,
+   développement durable, eau ; 4e urbanisation, migrations, tourisme ; 3e espaces productifs, Union européenne, régions).
+5. 3e : trois compléments rangés dans leurs chapitres « Par thème » :
+   crise de 1929, régimes totalitaires et Front populaire ; guerre froide et décolonisation ; France depuis 1945.
+   Entre-deux-guerres 4 → 12, guerre froide 6 → 14, France depuis 1945 7 → 15 questions en 3e.
+6. Test v6.36. npm run verifier : 188 réussis, 0 échoué.
+
+Suite prévue : v6.37 français, arts, EPS, latin-grec.
+```
+
+---
+
+## Version 6.35
+
+```text
+Ami des mots — v6.35.0
+
+Aide aux devoirs avec l'IA, dans toutes les matières.
+
+1. Nouvelle carte « Aide aux devoirs » en tête de l'écran Matières (js/mod-devoirs.js).
+   - L'élève choisit la matière (selon sa classe) et colle l'énoncé, ou envoie une photo ou un PDF.
+   - L'IA ne fait pas le devoir : elle reformule la consigne, rappelle la leçon à revoir, propose une méthode
+     en étapes, pose des questions pour avancer et donne une liste de vérifications avant de rendre.
+   - L'élève peut poser une question sur une étape, puis coller sa réponse pour la faire relire
+     (ce qui est réussi, ce qui est à revoir et pourquoi, comment s'y prendre) — sans correction à sa place.
+   - Ton sérieux : aucune vanne, aucune blague sur cet écran.
+   - Mentions affichées : ne photographier que la feuille (pas de visage, pas de nom) ; l'IA peut se tromper.
+   - Sans serveur : une méthode de travail par matière, sans IA (traduite en 5 langues).
+2. Serveur : serveur-php/devoirs.php.
+   - Les règles (jamais la réponse, exemple différent de l'exercice, pas de blague, devoir traité comme un contenu
+     et non comme des instructions) sont fixées côté serveur : l'appli ne peut pas les modifier.
+   - Plumes (si allumées dans l'admin) : aide 3, +2 avec photo ou PDF, question de suivi 1, relecture 3.
+     Réglable dans config.php (devoirs_plumes). Plumes rendues si l'IA échoue.
+   - Modèle réglable (anthropic_modele_devoirs, Sonnet conseillé dans config.exemple.php) ; 8 demandes par minute et par IP.
+   - Rien n'est conservé. Le serveur doit accepter des envois de 6 Mo (post_max_size).
+3. Test v6.35. npm run verifier : 187 réussis, 0 échoué.
+```
+
+---
+
+## Version 6.34
+
+```text
+Ami des mots — v6.34.0
+
+1. SVT et physique-chimie du collège étoffées (4 langues : français, anglais, espagnol, allemand).
+   - Le vivant 5 → 16 questions, le corps humain 3 → 15, la Terre 2 → 15, la génétique 4 → 15,
+     la matière 6 → 16, l'électricité 3 → 15. 69 questions, chacune avec 3 pièges, une vanne et la règle.
+   - Chaque question a sa classe : en électricité, la loi d'Ohm arrive en 4e, la puissance et l'énergie en 3e.
+   - Un chapitre « Par thème » n'apparaît dans une classe que s'il y a au moins 4 questions de cette classe
+     (« Cellule, ADN et génétique » ne s'affiche plus en 6e).
+2. Langues retirées (demande explicite) : arabe, turc, polonais, ukrainien, japonais.
+   Retirées de l'interface, des mots à apprendre, des voix et de l'outil d'import depuis ReParole.
+   Un appareil réglé dans l'une de ces langues ouvre l'appli en français ; un élève qui en apprenait une passe à l'anglais.
+   Restent : français, anglais, espagnol, allemand, italien, portugais (et, dans les données seulement, coréen, kabyle,
+   darijas algérienne, marocaine et tunisienne, comme avant).
+3. package-lock.json réparé : il était resté à 5.49.0, il porte maintenant la version de package.json. Un test le vérifie.
+4. Tests v6.34 ; 6 anciens tests qui vérifiaient ces langues ont été réécrits pour vérifier leur retrait.
+   npm run verifier : 186 réussis, 0 échoué.
+
+Suite prévue : v6.35 histoire-géographie, v6.36 français, arts, EPS, latin-grec.
+```
+
+---
+
+## Version 6.33
+
+```text
+Ami des mots — v6.33.0
+
+« Ma classe » sur l'écran Matières.
+
+1. Un sélecteur de classe (6e, 5e, 4e, 3e, 2nde, 1re, Tle, Après le bac) en haut de Matières, Blancs et Annales.
+   Au premier passage, l'écran demande « Tu es en quelle classe ? ». La classe est gardée par profil.
+2. Matières : seules les matières de la classe sont affichées (en 6e : pas de philo, spécialités, LV2, latin, technologie).
+   Les cartes Mes erreurs, Veille de contrôle, Défi de classe, England curriculum, Sciences rigolotes restent.
+   « Voir toutes les matières » / « Seulement ma classe » pour basculer.
+3. Chaque matière, maths comprises, s'ouvre directement à la classe ; les onglets de niveau restent pour réviser une autre année.
+4. Blancs et Annales suivent la classe : brevet de la 6e à la 3e (avec une phrase d'explication avant la 3e),
+   épreuves anticipées en 2nde et 1re, bac de terminale en Tle. L'onglet Officiel ne change pas.
+5. Correction : les équivalences de classes en anglais étaient décalées d'un an dans plusieurs titres
+   (6e = Year 7 … 3e = Year 10, comme dans le reste de l'appli).
+6. Test v6.33. npm run verifier : 184 réussis, 0 échoué.
+
+Suite prévue : v6.34 SVT et physique-chimie, v6.35 histoire-géographie, v6.36 français, arts, EPS, latin-grec.
+```
+
+---
+
+## Version 6.32
+
+```text
+Ami des mots — v6.32.0
+
+Étoffer chaque leçon du collège (2/5) : l'espagnol et l'allemand.
+
+1. Espagnol (5e-3e) : 6 leçons passent à 16 questions — se présenter et gustar, présent irrégulier, vocabulaire,
+   passé et futur proche, culture du monde hispanique, grammaire de 4e-3e. 61 questions ajoutées, en français et en anglais.
+2. Allemand (5e-3e) : 5 leçons passent à 16 questions — bases, vocabulaire, modaux, parfait et datif, culture,
+   grammaire de 4e-3e. 48 questions ajoutées, en français, anglais et espagnol.
+3. Chaque question a 3 pièges, une vanne et la règle ; les traductions suivent exactement le même ordre.
+4. Nouveau fichier : js/mat-langues-college-plus.js.
+5. Test v6.32 : au moins 16 questions par leçon, mêmes nombres dans chaque traduction, pas de doublon.
+   npm run verifier : 183 réussis, 0 échoué.
+
+Suite prévue : v6.33 SVT et physique-chimie, v6.34 histoire-géographie, v6.35 français, arts, EPS, latin-grec.
+```
+
+---
+
+## Version 6.31
+
+```text
+Ami des mots — v6.31.0
+
+Étoffer chaque leçon du collège (1/5) : l'anglais.
+
+1. Les 19 leçons d'anglais de la 6e à la 3e passent de 2-6 questions à 16-18 (244 questions ajoutées) :
+   be/have got, présent simple, there is, can et impératif, possessifs, vocabulaire de 6e, be + -ing, prétérit,
+   comparatifs, quantités, culture, present perfect, futur, modaux, passif, conditionnel, discours indirect,
+   relatifs, faux amis. Chaque question a 3 pièges, une vanne bienveillante et la règle.
+2. Nouveaux fichiers : js/mat-anglais-college-plus.js (6e-5e), js/mat-anglais-college-plus2.js (4e-3e).
+3. Test v6.31 : au moins 16 questions par leçon d'anglais du collège, pas de doublon, pas de répétition dans une série de 10.
+   npm run verifier : 182 réussis, 0 échoué.
+
+Suite prévue : v6.32 espagnol et allemand, v6.33 SVT et physique-chimie, v6.34 histoire-géographie,
+v6.35 français, arts, EPS, latin-grec.
+```
+
+---
+
+## Version 6.30
+
+```text
+Ami des mots — v6.30.0
+
+Collège de A à Z : audit relancé, 0 notion absente, 2 partielles (sur 179), 177 couvertes.
+
+1. Maths : 16 générateurs ajoutés (6e, 4e, 3e) dont algorithmique et Python (js/maths-2026-college.js).
+2. Notions partielles complétées : monothéisme juif, Capétiens, matériaux, Univers, groupe nominal, entrées de 5e (js/mat-cpl-partiels.js).
+3. Langues vivantes : grammaire et culture en anglais, espagnol, allemand (js/mat-langues-cpl.js).
+4. Brevet : l'épreuve de sciences tire 2 disciplines sur 3, dont la technologie (js/epreuves-dnb-techno.js).
+   Correction de l'audit v6.28 : les épreuves, l'oral et le brevet blanc existaient déjà.
+5. Nouvelles matières : arts (arts plastiques, musique, histoire des arts), EPS (connaissances), latin et grec,
+   en français, anglais et espagnol (js/mat-arts-eps-lca.js).
+6. Test v6.30 ajouté. npm run verifier : 181 réussis, 0 échoué.
+
+Reste : italien et portugais hors maths ; allemand pour arts, EPS, latin-grec ; titres de certains thèmes en 6e.
+```
+
+---
+
+## Version 6.29
+
+```text
+Ami des mots — v6.29.0
+
+Suite de l'audit du collège (docs/AUDIT-COLLEGE-2026.md) : 0 notion absente au lieu de 13.
+
+1. Questions hors niveau corrigées
+   - Les chapitres « Par thème » ne proposent plus que les questions de la classe choisie (niveau gardé par question : nivQ).
+   - Classe précise pour quelques questions de chapitres larges (js/mat-niveaux.js).
+   - Plus d'ADN, d'allèles, de pH ni de radioactivité en 6e et en 5e ; la 3e garde la génétique.
+2. EMC : un cours par classe, programme 2024 (6e démocratie au collège, 5e égalité-fraternité-solidarité,
+   4e droits et libertés, 3e faire vivre la démocratie : élections, sondages, infox, IA, engagement). fr/en/es/de.
+3. Notions ajoutées :
+   - histoire 4e : les femmes au XIXe siècle ;
+   - SVT 6e : jour et nuit, saisons, volcans, séismes ;
+   - sciences 6e : premiers algorithmes ;
+   - physique-chimie 4e-3e : sécurité électrique, signaux et information ;
+   - technologie : numérique et IA, énergie et fabrication, projet et validation ;
+   - français : types et formes de phrases, subjonctif/impératif/conditionnel/temps composés,
+     orthographe rectifiée de 1990, « Dire l'amour » (4e) ;
+   - conditionnel ajouté au générateur de conjugaison de 5e.
+Nouveaux fichiers : js/mat-cours-emc.js, js/mat-cpl-sciences.js, js/mat-cpl-lettres.js, js/mat-niveaux.js.
+Tests : 2 nouveaux tests v6.29. npm run verifier → 180 réussi(s), 0 échoué(s).
+```
+
+---
+
+## Version 6.28
+
+```text
+Ami des mots — v6.28.0
+
+Collège complet : chaque matière du collège a son cours de l'année dans chaque classe (12 questions, 3 pièges, règle expliquée).
+- NOUVELLE MATIÈRE : Technologie (5e, 4e, 3e) — objets techniques, cahier des charges, matériaux, énergie, chaîne d'information et d'énergie,
+  capteurs et actionneurs, programmation (Scratch, conditions, variables, événements), réseaux, objets connectés, écoconception, RGPD,
+  épreuve de sciences du brevet. Examens de 5e, 4e et brevet blanc. fr / en / es / de. Carte dans l'écran Matières.
+- Physique-chimie 6e : cours « Sciences et technologie » (états de la matière, mélanges, masse, énergie, mouvement, circuit, son et lumière). fr / en / es / de.
+- Anglais LV1 : cours de 6e, 5e, 4e et 3e (be/have got, présent simple et be + -ing, prétérit, present perfect, modaux, relatifs, conditionnel, passif, discours rapporté, culture).
+- Espagnol LV2 : cours de 5e, 4e et 3e (A1 → A2). fr / en.
+- Allemand LV2 : cours de 5e, 4e et 3e (A1 → A2). fr / en / es.
+Récapitulatif collège : français, histoire, géographie, EMC, SVT, physique-chimie, technologie, maths, anglais, espagnol, allemand.
+Nouveaux fichiers : js/mat-cours-college-fin.js, js/mat-techno.js (chargés avant themes.js, ajoutés au service worker).
+Nouveau test « v6.28 » : un cours de l'année par matière et par classe du collège, pièges, juge, traductions, carte Technologie.
+Vérification : npm run verifier → 178 réussi(s), 0 échoué(s).
+```
+
+---
+
+## Version 6.27
+
+```text
+Ami des mots — v6.27.0
+
+Lycée et spécialités : un cours de l'année par classe (12 questions chacun).
+- Français : 2nde (de l'humanisme au XXe siècle, outils d'analyse) et 1re (épreuve anticipée : écrit, oral, méthode, grands repères). fr / en / es.
+- Histoire-géographie : 2nde, 1re, Tle (Méditerranée médiévale → monde depuis 1945 ; risques, métropolisation, mers et océans, mondialisation). fr / en / es / de.
+- SVT : 2nde, 1re, Tle (cellule, génome, géologie, immunité, climat, cerveau, plantes). fr / en / es / de.
+- Physique-chimie : 2nde, 1re, Tle (mole, lois de Newton, ondes, oxydoréduction, acides-bases, cinétique, thermodynamique). fr / en / es / de.
+- Spécialités 1re-Tle : SES, HGGSP, HLP, NSI. fr / en / es.
+Nouveaux fichiers : js/mat-cours-lycee-lettres.js, js/mat-cours-lycee-sciences.js, js/mat-cours-specialites.js (chargés avant themes.js, ajoutés au service worker).
+Nouveau test « v6.27 » : présence par classe, 3 pièges, juge, traductions en/es.
+Vérification : npm run verifier → 177 réussi(s), 0 échoué(s).
+```
+
+---
+
+## Version 6.26
+
+```text
+Ami des mots — v6.26 : SVT et physique-chimie du collège, un cours de l'année par classe
+
+- SVT : 6e (sciences), 5e, 4e, 3e — 12 questions chacun.
+- Physique-chimie : 5e, 4e, 3e — 12 questions chacun.
+Traduits en anglais, espagnol et allemand, et rangés dans les chapitres « Par thème » de chaque matière
+(cellule et génétique, corps humain, Terre, électricité, mouvement, énergie, ondes…).
+
+Avec la v6.25, chaque classe du collège a désormais un cours de l'année en français, histoire, géographie,
+EMC, SVT et physique-chimie, en plus des maths complètes.
+
+Tests : npm run verifier → 176 réussis, 0 échoué.
+```
+
+---
+
+## Version 6.25
+
+```text
+Ami des mots — v6.25 : cours de l'année en français, histoire, géographie et EMC (collège)
+
+Nouveaux chapitres « Cours de l'année », au niveau de la classe, traduits (anglais, espagnol ; allemand pour l'histoire-géo-EMC) :
+- Français : 6e, 5e (programme 2026), 4e, 3e — 15 questions chacun (grammaire, orthographe, conjugaison, lexique, œuvres).
+- Histoire : 6e, 5e, 4e, 3e — 12 questions chacun (de la Préhistoire à la Ve République).
+- Géographie : 6e, 5e, 4e, 3e — 12 questions chacun.
+- EMC : cycle 3 (6e-5e) et cycle 4 (4e-3e) — 12 questions chacun.
+Les questions d'histoire sont aussi rangées dans les chapitres « Par thème » (une période ou une guerre = un chapitre),
+la géographie et l'EMC dans leurs thèmes.
+
+Tests : npm run verifier → 176 réussis, 0 échoué.
+```
+
+---
+
+## Version 6.24
+
+```text
+Ami des mots — v6.24 : maths complètes de la 6e à la terminale
+
+Nouveaux chapitres (tous traduits en anglais, espagnol, allemand, italien, portugais) :
+- 6e (26 chapitres) : rang des chiffres dans les grands nombres, droite graduée (fractions et décimaux), calculer avec les
+  décimaux (× et ÷ par 10, 100, 1 000), division euclidienne, longueur du cercle, axes de symétrie, solides (faces, arêtes, sommets).
+- 4e (18 chapitres) : diviser des relatifs, puissances de 10, quatrième proportionnelle, moyenne pondérée, probabilités avec deux dés,
+  réciproque de Pythagore, cosinus, volumes de la pyramide et du cône.
+- 3e (17 chapitres) : fractions irréductibles, calcul en notation scientifique, inéquations, fonctions affines (antécédent,
+  coefficient), agrandissement et réduction (k² et k³), sphère et boule.
+- Terminale (18 chapitres) : équations avec exp et ln, croissances comparées, convexité, théorème des valeurs intermédiaires,
+  dérivées de sinus et cosinus, primitives de eˣ et 1/x, loi binomiale (espérance, variance), représentation paramétrique d'une droite.
+
+Avec la v6.23 (5e, seconde, première) : 160 chapitres de maths en tout.
+Correctif : plus jamais de décimales à rallonge (ex. 58,666666667) dans les mauvaises réponses proposées.
+
+Tests : npm run verifier → 176 réussis, 0 échoué.
+```
+
+---
+
+## Version 6.23
+
+```text
+Ami des mots — v6.23 : programmes de maths 2026 de 5e, seconde et première au complet
+
+Maths 5e (nouveau programme de cycle 4, BO n° 10 du 5 mars 2026) : 37 chapitres (27 nouveaux)
+- Calcul : enchaîner des opérations, distributivité, division par un décimal
+- Nombres : nombres premiers, décomposition en facteurs premiers, relatifs (comparer, opposé), droite graduée, carrés et cubes
+- Fractions : comparer, additionner et soustraire
+- Algèbre : développer/factoriser k(a + b), tester une égalité, équations x + b = c et ax = c, contre-exemple, suites de motifs
+- Fonctions (« en fonction de »), ratio, fréquences, probabilités (équiprobabilité)
+- Grandeurs : unités de volume, aire du disque, volumes (pavé, prisme, cylindre)
+- Géométrie : angles et parallélisme, triangles, parallélogrammes, symétrie centrale
+- Pensée informatique : boucles et conditions
+
+Maths seconde (BO n° 14 du 2 avril 2026) : 25 chapitres (18 nouveaux)
+ensembles de nombres, valeur absolue, encadrement de racines, quotient nul, tableaux de signes, fonctions de référence,
+déterminant et colinéarité, norme, équation cartésienne, coefficient multiplicateur, taux d'évolution, proportion de proportion,
+quartiles et étendue, fréquences conditionnelles, tests de dépistage (sensibilité, spécificité), probabilités conditionnelles,
+ensembles et logique (réciproque, contraposée), Python (for, range, while, fonctions).
+
+Maths première spécialité (BO n° 14 du 2 avril 2026) : 19 chapitres (12 nouveaux)
+discriminant, forme canonique, signe du trinôme, récurrence, sommes de termes, tangente, dérivée d'un produit,
+variations, trigonométrie (cercle, radians, valeurs remarquables), produit scalaire avec angle, équation de cercle, espérance.
+
+Chaque question est fabriquée et corrigée par le calcul ; chaque mauvaise réponse est une erreur classique avec son
+explication et sa vanne de Prof Pi (doux, taquin, cash, trash). Tout est traduit en anglais, espagnol, allemand, italien, portugais.
+Les programmes Python s'affichent ligne par ligne, avec l'indentation.
+
+Tests : npm run verifier → 176 réussis, 0 échoué (nouveau test v6.23 : chapitres, corrections recalculées, traductions).
+```
+
+---
+
+## Version 6.22
+
+```text
+Ami des mots — version 6.22
+
+Accueil repensé (l'appli n'est plus seulement un jeu de vocabulaire) :
+- « Je parle / J'apprends » remplacés par « 🌐 Ma langue » et « 📚 Mon programme »
+  (France 6e → bac ou Angleterre Year 6 → A level), directement sur l'accueil.
+- La langue étrangère apprise se choisit maintenant dans la porte « 🗣️ Langues »
+  (anciennement « Mots & anglais »), qui affiche la langue choisie.
+- Nouvelle phrase d'accroche : « Toutes les matières, de la 6e au bac, avec un
+  hibou qui te vanne » (6 langues).
+
+Retours d'un testeur :
+- « Le ton de Prof Pi, c'est quoi ? » : une phrase explique maintenant les tons
+  sous les boutons (maths et matières), en 6 langues.
+- Le professeur IA (anglais ET maths) a sa propre porte sur l'accueil ; on ne le
+  trouvait qu'en ouvrant « Mots & anglais ».
+
+Plus de questions dans les cours :
+- Nouveau chapitre « Cours de 3e : la Première Guerre mondiale, une guerre
+  totale » (15 questions, FR/EN/ES/DE), rangé aussi dans le thème 14-18, qui
+  passe de 3 à 18 questions.
+
+Vérification : npm run verifier → 175 tests réussis, 0 échec ; captures dans Chrome
+sans erreur (accueil, histoire 3e avec « Par thème », porte Langues).
+```
+
+---
+
+## Version 6.21
+
+```text
+Ami des mots — version 6.21
+
+Programme français suivi en allemand, premières matières complètes :
+- Histoire-géo & EMC : les 16 chapitres (128 questions, dont le cours de 3e
+  sur la Seconde Guerre mondiale) et les 13 chapitres « Nach Themen ».
+- SVT : 9 chapitres (62 questions) et les 6 thèmes.
+- Physique-chimie : 8 chapitres (38 questions, les calculs l'étaient déjà)
+  et les 7 thèmes.
+- Plus aucun badge 🇫🇷 sur ces trois matières en allemand. Guillemets
+  allemands „ “, virgule décimale, noms allemands (Code civil, Vichy… expliqués).
+
+Nouveaux fichiers : js/mat-trad-de-histoire.js, js/mat-trad-de-sciences.js.
+Vérification : npm run verifier → 175 tests réussis, 0 échec.
+```
+
+---
+
+## Version 6.20
+
+```text
+Ami des mots — version 6.20
+
+Programme français suivi en espagnol : c'est complet.
+- Matière « Français » pour un hispanophone : les 9 chapitres (90 questions).
+  Les phrases, mots et titres étudiés restent en français ; consignes, vannes
+  et explications sont en espagnol.
+- Conjugaison générée en espagnol : formes françaises vérifiées, temps nommés
+  en espagnol avec leur nom français (imperfecto (imparfait)…).
+- En anglais comme en espagnol, seules restent en français la matière
+  « Anglais » (l'anglais appris par un élève français) et, en espagnol,
+  la matière « Espagnol » (l'espagnol appris par un élève français), comme prévu.
+
+Nouveau fichier : js/mat-trad-es-francais.js. Tests complétés.
+Vérification : npm run verifier → 175 tests réussis, 0 échec.
+```
+
+---
+
+## Version 6.19
+
+```text
+Ami des mots — version 6.19
+
+Chaque sujet à sa place :
+- Histoire-géo & EMC : nouvelle rubrique « Par thème », en tête de la matière.
+  Une guerre = un chapitre : Première Guerre mondiale, Seconde Guerre mondiale
+  (toutes les questions réunies : xxe, cours de 3e, chapitre 1939-1945),
+  guerre froide et décolonisation. Et aussi : Antiquité, Moyen Âge,
+  Renaissance-Lumières, Révolution et Empire, XIXe siècle, entre-deux-guerres,
+  France depuis 1945, Europe-ONU-mondialisation, géographie, EMC.
+- SVT (6 thèmes) et physique-chimie (7 thèmes) : les questions des chapitres
+  de révision sont aussi rangées par sujet (cellule et ADN, immunité, corps
+  humain, Terre ; matière, chimie, pH, électricité, mouvement, énergie, ondes).
+- Rien n'est supprimé : les questions restent aussi dans leur chapitre d'origine,
+  et l'entraînement mélangé ne les compte pas deux fois. Les doublons sont écartés.
+- Les thèmes sont traduits automatiquement en anglais et en espagnol.
+
+Espagnol : la matière Allemand (37 questions) est expliquée en espagnol.
+
+Nouveaux fichiers : js/themes.js, js/mat-trad-es-allemand.js. Nouveau test v6.19.
+Vérification : npm run verifier → 175 tests réussis, 0 échec.
+```
+
+---
+
+## Version 6.18
+
+```text
+Ami des mots — version 6.18
+
+Programme français suivi en espagnol, suite :
+- Objectif NASA : les 12 chapitres en espagnol (67 questions) et les calculs
+  (fusées, orbites, communications, unités, vie à bord) fabriqués directement
+  en espagnol, avec la virgule décimale.
+- Spécialités du bac : SES, HGGSP, HLP et NSI en espagnol (46 questions).
+- Plus aucun badge 🇫🇷 sur ces matières en espagnol.
+
+Nouveaux fichiers : js/mat-trad-es-nasa.js, js/mat-trad-es-specialites.js ;
+js/nasa.js : calculs en français, anglais et espagnol.
+Test : chapitres espagnols complets et calculs NASA en espagnol vérifiés (aucun mot français, vannes validées).
+Vérification : npm run verifier → 174 tests réussis, 0 échec.
+```
+
+---
+
+## Version 6.17
+
+```text
+Ami des mots — version 6.17
+
+Programme français suivi en espagnol, matières « après le bac » :
+- Droit : 19 chapitres, 92 questions. Les institutions françaises gardent leur
+  nom (Cour de cassation, Conseil d'État, prud'hommes…), expliqué en espagnol.
+- Médecine : 14 chapitres, 66 questions, plus le calcul du débit cardiaque en espagnol.
+- Astrophysique : 10 chapitres, 52 questions, plus les 6 calculs d'astrophysicien
+  fabriqués directement en espagnol (virgule décimale).
+- Plus aucun badge 🇫🇷 sur ces trois matières en espagnol.
+
+Nouveau fichier : js/mat-trad-es-sup.js ; js/mat-sup.js : calculs en fr, en, es.
+Vérification : npm run verifier → 174 tests réussis, 0 échec.
+```
+
+---
+
+## Version 6.16
+
+```text
+Ami des mots — version 6.16
+
+Programme français suivi en espagnol :
+- SVT : 9 chapitres (62 questions) ; physique-chimie : 8 chapitres (38 questions,
+  plus les calculs déjà fabriqués en espagnol) ; philosophie : 2 chapitres de
+  révision et les 17 notions (88 questions). Plus aucun badge 🇫🇷 sur ces trois
+  matières en espagnol.
+- Typographie espagnole (¿ ?, « », virgule décimale), titres d'œuvres sous leur
+  nom espagnol (Discurso del método, El contrato social…).
+
+Nouveau fichier : js/mat-trad-es-sciences.js. Test v6.12-v6.13 complété pour l'espagnol.
+Vérification : npm run verifier → 174 tests réussis, 0 échec.
+```
+
+---
+
+## Version 6.15
+
+```text
+Ami des mots — version 6.15
+
+Matière « Français » (programme français) pour un anglophone :
+- Les 9 chapitres : homophones (37), accord du participe passé, nature et
+  fonction des mots, vocabulaire, figures de style, auteurs et mouvements,
+  œuvres et épreuve du bac (90 questions).
+- Les phrases, mots et titres étudiés restent en français ; consignes, vannes
+  et explications sont en anglais (« Conjugate… », « In “Le chat dort”, what is “dort”? »).
+- La conjugaison générée parle aussi anglais : formes françaises vérifiées,
+  temps nommés en anglais avec leur nom français (the imperfect (imparfait)…),
+  mêmes erreurs typiques expliquées en anglais.
+
+Côté anglais, seule la matière « Anglais » (l'anglais appris par un élève
+français) reste volontairement en français.
+Test v6.7 : pour la matière « Français », aucun mot français hors des citations.
+Vérification : npm run verifier → 174 tests réussis, 0 échec.
+```
+
+---
+
+## Version 6.14
+
+```text
+Ami des mots — version 6.14
+
+Programme français suivi en anglais, suite :
+- Objectif NASA : les 12 chapitres en anglais (67 questions et les 5 familles
+  de calculs : fusées, orbites, communications, unités, vie à bord).
+  Les chapitres identiques à « Road to NASA » reprennent ses questions ; les
+  chapitres propres au parcours français (parcours depuis la France, anglais de
+  mission, géopolitique de l'espace) sont traduits à part.
+- Espagnol (LVB) : 7 chapitres, 38 questions ; Allemand (LVB) : 6 chapitres,
+  37 questions. Les réponses restent en espagnol ou en allemand ; consignes,
+  vannes et explications sont en anglais (faux amis adaptés : embarazada,
+  constipado, bekommen, Gymnasium).
+
+Nouveaux fichiers : js/mat-trad-en-nasa.js, js/mat-trad-en-langues.js.
+Il ne reste en français, côté anglais, que les matières « Français » et « Anglais ».
+Vérification : npm run verifier → 174 tests réussis, 0 échec.
+```
+
+---
+
+## Version 6.13
+
+```text
+Ami des mots — version 6.13
+
+Matières « après le bac » entièrement traduites en anglais :
+- Droit : 19 chapitres, 92 questions (institutions, introduction au droit,
+  constitutionnel, administratif, libertés, finances publiques, droit européen
+  et international, personnes et famille, obligations, biens, pénal, affaires,
+  travail, organisation de la justice…). Les institutions françaises gardent
+  leur nom (Cour de cassation, Conseil d'État…), expliqué en anglais.
+- Médecine : 14 chapitres, 66 questions, plus le calcul du débit cardiaque.
+- Astrophysique : 10 chapitres, 52 questions, plus les 6 calculs
+  d'astrophysicien (lumière, années-lumière, Wien, Kepler, Hubble, parallaxe),
+  fabriqués directement en anglais avec le point décimal.
+- Plus aucun badge 🇫🇷 sur ces trois matières en anglais ; en français, rien ne change.
+
+Nouveau fichier : js/mat-trad-en-sup.js. Test v6.12-v6.13 étendu.
+Vérification : npm run verifier → 174 tests réussis, 0 échec.
+```
+
+---
+
+## Version 6.12
+
+```text
+Ami des mots — version 6.12
+
+Traductions des matières (programme français suivi dans une autre langue) :
+- Anglais : SVT (9 chapitres), physique-chimie (8 chapitres) et philosophie
+  (2 chapitres de révision + les 17 notions) entièrement traduites.
+  Plus aucun badge 🇫🇷 sur ces trois matières en anglais.
+- Calculs de physique (vitesse, poids, énergie, masse volumique, loi d'Ohm,
+  puissance) fabriqués directement en anglais, espagnol, allemand, italien et
+  portugais, avec virgule ou point décimal selon la langue.
+- Allemand, italien, portugais : socle commun (phrases douces, cash, bravo,
+  noms de la physique-chimie) pour que ces calculs restent 100 % dans la langue.
+- Moteur des matières : un chapitre traduit ne mélange jamais une question
+  française avec des questions traduites ; un chapitre non traduit reste
+  entièrement en français avec le badge 🇫🇷.
+
+Nouveaux fichiers : js/mat-trad-en-sciences.js, js/mat-trad-communs.js.
+Nouveau test v6.12 (traductions anglaises complètes, calculs dans les 5 langues,
+aucun mot français, vannes validées par le juge).
+
+Vérification : npm run verifier → 174 tests réussis, 0 échec.
+```
+
+---
+
+## Version 6.11
+
+```text
+Ami des mots — version 6.11
+
+Nouveau chapitre d'histoire, tiré du cours de 3e de l'élève :
+« Cours de 3e : la Seconde Guerre mondiale, une guerre d'anéantissement »
+- 18 questions (niveaux 3e et 1re), en français, anglais et espagnol.
+- Contenus : Axe et Alliés, les deux phases et le tournant de 1942-1943
+  (Stalingrad, Midway), juin 1940, juin 1941, Katyn, Nankin, génocide des
+  Tsiganes, guerre idéologique, projet Manhattan, V1/V2, Victory Program,
+  Hollywood, travail forcé, bilan humain (60 à 80 millions de morts),
+  pays et régions les plus touchés.
+- Vannes relues pour passer le juge (pas de plages d'années, pas de
+  vocabulaire violent dans les pièges).
+
+Vérification : npm run verifier → 173 tests réussis, 0 échec.
+```
+
+---
+
+## Version 6.10
+
+```text
+Ami des mots — version 6.10 : matières du programme français en anglais (1er lot)
+
+- 🇬🇧 Interface en anglais + programme français : traduits en anglais, avec vannes, explications, noms de chapitres :
+  - Histoire-géographie & EMC (15 chapitres, 92 questions, Seconde Guerre mondiale comprise) ;
+  - HGGSP (dont « Puissance, frontières, ONU »), SES, HLP, NSI (spécialités de 1re et Tle, 46 questions).
+- 🔤 Sécurité langues : après une restauration de sauvegarde, « Je parle » et « J'apprends » ne peuvent plus être
+  la même langue.
+- 🦉 Prof Pi garde son « Bravo » même quand une punchline de réponse éclair s'affiche.
+
+Reste à traduire : SVT, physique-chimie, philosophie, droit, médecine, astrophysique, NASA, français (consignes) en
+anglais ; puis tout en allemand, italien, portugais ; et l'espagnol pour tout sauf l'histoire.
+```
+
+---
+
+## Version 6.9
+
+```text
+Ami des mots — version 6.9 : punchlines arrogantes sur les bonnes réponses, nouvelles vannes et blagues
+
+- 😎 Bonne réponse : des punchlines bien arrogantes (« Une performance aussi insolente devrait être taxée. »).
+  - Réponse éclair (moins de 3 secondes) : série spéciale (« Le chrono vient de déposer sa démission. »).
+  - Mot difficile trouvé (mot long) : série spéciale (« CE MOT ?! Même les profs ont dû vérifier ! »).
+  - Dans les jeux de mots, de temps en temps : « Le dictionnaire demande ton autographe. »
+  - Séries : « {k} d’affilée ! Tu comptes laisser quelque chose aux autres ? »
+- 🐢 Réponse lente (plus de 25 secondes) : « On attend la réponse ou on commande une pizza ? »
+- 💥 Mauvaise réponse : 19 nouvelles expressions sur la RÉPONSE (« Erreur 404 : bonne réponse introuvable. »).
+- 🥊 Battles : nouvelles provocations avant chaque tour et nouvelles fins de match (gagnant et dernier).
+- 😂 Blagues de Plumo : 13 nouvelles devinettes et jeux de mots, 4 nouvelles chutes absurdes.
+- Tri selon la règle du jeu : on chambre la réponse, la situation ou Plumo, jamais la personne. Les phrases qui
+  insultaient le joueur (« deux neurones », « la bêtise comme sport », « criminel », « massacre »…) ont été écartées
+  ou réécrites. Le ton « Tout doux » ne reçoit aucune de ces vannes. Toutes passent le juge.
+```
+
+---
+
+## Version 6.8
+
+```text
+Ami des mots — version 6.8 : Droit, Médecine, Astrophysique et Philosophie complétés
+
+- ⚖️ Droit (licence) : 16 nouveaux chapitres, 76 questions : introduction au droit, histoire du droit, méthodologie
+  (cas pratique, fiche d'arrêt, dissertation), droit constitutionnel, droit administratif, libertés fondamentales,
+  finances publiques, droit de l'Union européenne et CEDH, droit international public, droit des personnes et de la
+  famille, contrats et responsabilité, droit des biens, droit pénal et procédure pénale, droit des affaires,
+  droit du travail, organisation de la justice et métiers. Nouveau « Partiel blanc de droit ».
+- 🩺 Médecine (PASS / LAS) : 10 nouveaux chapitres, 48 questions : biochimie, biologie cellulaire, histologie et
+  embryologie, génétique, biophysique et imagerie, pharmacologie, santé publique et biostatistiques, sémiologie,
+  premiers secours, éthique et droit de la santé. Nouveau « Concours blanc PASS / LAS ».
+- 🔭 Astrophysique : 9 nouveaux chapitres, 41 questions : système solaire, lumière et spectroscopie, gravitation et
+  lois de Kepler, vie des étoiles, galaxies et matière noire, cosmologie, exoplanètes, télescopes et missions,
+  trous noirs et ondes gravitationnelles. Nouveau « Partiel blanc d'astrophysique ».
+- 🤔 Philosophie (Tle) : les 17 notions du programme, chacune son chapitre (68 questions avec auteurs et œuvres) :
+  l'art, le bonheur, la conscience, le devoir, l'État, l'inconscient, la justice, le langage, la liberté, la nature,
+  la raison, la religion, la science, la technique, le temps, le travail, la vérité.
+- Toutes les vannes passent le juge ; les nouveaux chapitres sont marqués 🇫🇷 dans les autres langues tant qu'ils ne
+  sont pas traduits.
+```
+
+---
+
+## Version 6.7
+
+```text
+Ami des mots — version 6.7 : programme du pays et langue de l'appli séparés, début de la traduction des matières
+
+- 📚 Réglages : nouveau choix « Programme scolaire suivi » (🇫🇷 France ou 🏴 Angleterre), indépendant de la langue de
+  l'appli, dans les 6 langues. Un Anglais peut suivre le programme français, un Français le programme anglais, etc.
+- 🌍 Matières du programme français : système de traduction (js/mat-trad-xx.js), même ordre que la banque française.
+  Une série traduite ne mélange jamais de questions françaises ; les vannes françaises ne s'ajoutent pas.
+  Noms de la matière, des domaines et des chapitres traduits ; bravo de Plumo dans la langue.
+- 🇪🇸 Premier lot : toute l'Histoire-géographie & EMC en espagnol (15 chapitres, 92 questions, y compris
+  la Seconde Guerre mondiale).
+- 🏷️ Pas de mélange caché : un chapitre pas encore traduit est marqué 🇫🇷 ; dans le programme anglais, une ligne
+  indique clairement que le contenu est encore en anglais quand l'appli est dans une autre langue.
+- ✅ Nouveau test : pour chaque langue traduite, même nombre de questions et de pièges que le français, aucun mot
+  français, toutes les vannes validées par le juge, et les séries sortent bien dans la langue.
+
+Reste à faire (prochaines versions) : les autres matières et langues (SVT, physique-chimie, philo, SES, HGGSP, HLP, NSI,
+médecine, droit, astro, NASA en es/de/it/pt/en ; histoire en de/it/pt/en) ; les références officielles affichées en
+haut des matières ; la traduction du programme anglais vers le français et les autres langues ; puis tout le
+programme 2026 de A à Z (maths lycée, maths 5e, français, histoire-géo-EMC, sciences, spécialités).
+```
+
+---
+
+## Version 6.6
+
+```text
+Ami des mots — version 6.6 : maths et sciences traduites dans toutes les langues en ligne, GEOPS, Seconde Guerre mondiale
+
+- 🌍 Coin maths de Prof Pi et labo des sciences entièrement traduits dans les 5 langues proposées dans l'appli :
+  anglais, espagnol, allemand, italien, portugais (js/maths-xx.js, js/sciences-xx.js).
+  - Maths : énoncés, réponses, règles, les 118 erreurs classiques avec leurs vannes, la montée en pression,
+    niveaux, domaines, 73 chapitres, examens blancs.
+  - Sciences : 41 questions, 82 vannes, explications, thèmes, punchlines « cash » et « bravo » propres à chaque langue
+    (exemples adaptés : Alexander Gerst en allemand, Samantha Cristoforetti en italien, Tim Peake en anglais).
+  - Écriture : point décimal en anglais, virgule ailleurs ; « ¿ » en espagnol ; heures en 16:47 ; guillemets „ “ en allemand.
+  - Les vannes françaises (trash talk, bande de Plumo) ne s'affichent plus sur une question traduite.
+- 🐛 Corrigé au passage (aussi en français) : « 110°° », « 17,5 € € », « 12 cm³ cubes » dans certaines vannes ;
+  suite géométrique annoncée avec une « différence » au lieu d'une « raison » en anglais ; le « bravo » de Prof Pi
+  remplacé par « Yes! » en interface non française.
+- 🪨 GEOPS (Géosciences Paris-Saclay, UMR 8148, CNRS / Université Paris-Saclay) : nouveau chapitre dans
+  « Objectif NASA » et « Road to NASA » : les 4 thèmes du labo (Bassins & Ressources, Évolution de la Terre et des
+  Planètes, Paléoclimats & Dynamique sédimentaire, Zone critique), les formations (licence Sciences de la Terre,
+  double diplôme Géosciences-Physique, master Sciences de la Terre et des Planètes, Environnement), géologie de Mars,
+  de la Lune et de la Terre (15 questions en français, 15 en anglais).
+- 🏛️ Histoire : nouveau chapitre « La Seconde Guerre mondiale (1939-1945) » (3e, 1re, Tle), 16 questions : début et
+  fin, appel du 18 juin, Vichy et collaboration, Jean Moulin, Shoah, Vél d'Hiv, Auschwitz-Birkenau, Stalingrad,
+  Pearl Harbor, Débarquement, Libération de Paris, Hiroshima et Nagasaki, guerre d'anéantissement, Nuremberg.
+  Sur la Shoah et les crimes nazis : aucune blague, une correction simple.
+- ✅ Test : dans chacune des 5 langues, écrans, 7 niveaux × 3 tons de maths et les 41 questions de sciences générés sans
+  un mot de français, et toutes les vannes passent le juge.
+
+Pas fait : les langues cachées pour l'instant (arabe, turc, polonais, ukrainien, japonais) ; les matières du programme
+français (histoire, SVT…) restent en français dans les autres langues d'interface.
+```
+
+---
+
+## Version 6.5
+
+```text
+Ami des mots — version 6.5 : le coin maths et le labo des sciences entièrement en anglais quand l'appli est en anglais
+
+- 🔢 Coin maths de Prof Pi (6e → Terminale) : avec l'interface en anglais, TOUT passe en anglais.
+  - Énoncés, réponses, mauvaises réponses, règles : 199 morceaux de phrases traduits (226 emplacements) (js/maths-en.js).
+  - Les 118 erreurs classiques : explication + vannes taquines + vannes cash, réécrites en anglais
+    (toutes passent le juge, elles visent l'erreur, jamais l'élève).
+  - Niveaux (6e = Year 7…), domaines, 73 chapitres et examens blancs (Mock brevet, Mock bac…) traduits.
+  - Typographie anglaise : 12.5 au lieu de 12,5 ; 1,200 au lieu de 1 200 ; €12.50 ; 16:47 au lieu de 16 h 47 ;
+    intervalles [2, 5) au lieu de [2 ; 5[ ; pas d'espace avant ? ! : %.
+  - La montée en pression (même erreur refaite) a sa version anglaise ; les listes de vannes françaises
+    (trash talk, expressions imagées, bande de Plumo) ne s'affichent plus sur une question de maths en anglais.
+  - Défi de maths entre potes : les questions suivent la langue de l'interface.
+  - En français, rien ne change (même graine = mêmes questions).
+- 🚀 Labo des sciences : les 41 questions (planètes, fusées, corps humain, médecine), leurs 82 vannes, les explications,
+  les thèmes et les punchlines « cash » traduits (js/sciences-en.js). Exemple adapté : Thomas Pesquet → Tim Peake.
+- 🌍 Traductions d'écrans : les guillemets français « » dans 17 textes anglais remplacés par “ ”.
+- ✅ Nouveau test : avec l'interface en anglais, 7 niveaux × 3 tons × 25 questions générés sans un mot de français ;
+  écran du coin maths, question, retour et examen blanc vérifiés ; les 41 questions de sciences dans les 3 tons aussi.
+  Parcours automatique des écrans principaux en anglais : plus aucun écran avec du français (hors « mot du jour », qui est
+  le mot français à apprendre).
+
+Pas encore fait : si on choisit le programme FRANÇAIS en interface anglaise, ses matières (histoire, SVT, physique…) et
+ses épreuves restent en français (le programme anglais, lui, est en anglais). En espagnol, allemand, italien et portugais,
+les écrans sont traduits mais les exercices de maths et de sciences restent en français.
+```
+
+---
+
+## Version 6.4
+
+```text
+Ami des mots — version 6.4 : Objectif NASA, anglais « Sup », et la bande de Plumo une seule fois
+
+- 🚀 Nouvelle matière « Objectif NASA » (programme français, 2nde → Sup) et « Road to NASA » (programme anglais, Year 10 → University) :
+  parcours et diplômes (conditions NASA 2026 : citoyenneté américaine, master STEM, 3 ans d'expérience ; stages OSTEM/Pathways
+  réservés aux Américains ; voie européenne : ESA Graduate Trainee, CNES, industrie), métiers, et tous les exercices :
+  fusées (Tsiolkovski, poussée/poids), orbites (vitesse, période, libération, gravité en altitude), communications (délais radio,
+  antennes), unités (lbf, mph, °F — l'erreur de Mars Climate Orbiter), vie à bord (oxygène, eau recyclée), missions (Apollo, ISS,
+  Artemis II d'avril 2026, Mars, Webb), anglais de mission, code et logiciels de vol, géopolitique de l'espace.
+  Calculs générés et vérifiés par les tests. Examen blanc « Road to NASA » au niveau University.
+- 🇬🇧 Anglais (programme français) : niveau « Sup » — certifications (TOEIC, IELTS, Cambridge, CLES), anglais universitaire,
+  anglais scientifique (et de la NASA), anglais professionnel, grammaire et expressions C1, test de niveau C1.
+- 📞 La bande de potes de Plumo ne débarque plus qu'une fois par série (fini le rappel à 8, 12… bonnes réponses).
+171 tests.
+```
+
+---
+
+## Version 6.3
+
+```text
+Ami des mots — version 6.3 : toutes les matières du français, côté anglais, et les études pour la NASA
+
+Programme anglais (England) :
+- 🇪🇸 Spanish et 🇩🇪 German : KS3, nouveau GCSE (premières épreuves 2026 : dictée, lecture à voix haute) et A level.
+- 🤔 Philosophy, 🗳️ Politics, 👥 Sociology (A level), à côté d'Economics et Psychology.
+- Nouveau niveau « University » (après le A level) : 🩺 Medicine (anatomie, éthique, NHS, UCAT 2025+ sans Abstract
+  Reasoning), ⚖️ Law (système juridique anglais, contrat, responsabilité, pénal, LNAT : 42 QCM + essai), 🔭 Astrophysics.
+- Examens blancs : GCSE Spanish/German, A level Philosophy/Politics/Sociology, entrée à l'université (UCAT, LNAT).
+- 🚀 « Careers in space: NASA & ESA » : conditions NASA (citoyenneté américaine, master STEM, 3 ans d'expérience),
+  la voie européenne (ESA), les A levels et diplômes qui mènent au spatial ; liens officiels NASA et ESA.
+Programme français :
+- 🚀 Astrophysique : nouveau chapitre « Travailler à la NASA, à l'ESA ou au CNES » (1re, Tle, Sup).
+Plus de 1 500 questions anglaises ; 169 tests.
+```
+
+---
+
+## Version 6.2
+
+```text
+Ami des mots — version 6.2 : le vrai programme anglais et les vrais SATs
+
+- ✅ Vrais sujets SATs 2025 et 2026 (Standards and Testing Agency, Open Government Licence v3.0) :
+  calcul (36 questions, 40 points, réponses officielles vérifiées par le calcul), grammaire et ponctuation,
+  dictée (20 mots lus à voix haute). Jouables en examen blanc, score estimé avec les seuils officiels 2025 et 2026.
+  Raisonnement (schémas) et lecture (textes d'auteurs, hors licence) : sujets jumeaux.
+- GCSE et A level : les sujets appartiennent à AQA, Pearson et OCR (copie interdite) → sujets jumeaux + liens officiels.
+- 📜 Programme officiel point par point dans chaque matière (National Curriculum 2014, contenus GCSE et A level) :
+  29 chapitres ajoutés (dont l'Holocauste, obligatoire en KS3, traité sans blague), chaque partie couverte,
+  au moins 8 questions par chapitre. ~1 300 questions au total.
+- Mention de licence OGL dans le jeu et dans la page légale.
+```
+
+---
+
+## Version 6.1
+
+```text
+Ami des mots — version 6.1 : le programme anglais (England)
+
+Comme le programme français, mais pour l'Angleterre, tout en anglais (Plumo vanne en anglais) :
+- 📚 Matières → « 🏴 England curriculum » (on revient avec « 🇫🇷 Programme français »).
+- 📖 Revise : Year 6 → Year 13 (KS2, KS3, GCSE, A level), 12 matières : Maths (questions générées), English, Biology,
+  Chemistry, Physics, History, Geography, Citizenship & RE, Computer Science, French (nouveau GCSE 2026),
+  Economics et Psychology (A level). Chapitres par domaine, étoiles, entraînement mélangé, quiz d'examen avec grade estimé.
+- 📝 Mocks : KS2 SATs (GPS, Reading, Maths : mêmes papers, durées et points que 2026, scaled score estimé avec les
+  seuils 2026 publiés), GCSE (Maths Foundation/Higher, English Language/Literature, Combined Science, History,
+  Geography, Computer Science, French), A level (Maths, Sciences, English, Economics/Psychology/CS). Grades estimés.
+- ✖️ Multiplication tables check (Year 4) : 25 questions, 6 secondes chacune, réponse tapée.
+- 🗂️ Past papers 2026 : un sujet jumeau pour chaque vraie session 2026 + lien vers le vrai sujet (gov.uk, AQA, Pearson).
+- 🏛️ Official : programme national (2014, toujours en vigueur), rapport de 2025 (nouveau programme en septembre 2028),
+  annales officielles.
+- ⏱️ Veille de contrôle (« Night before the test ») et carnet d'erreurs marchent aussi avec le programme anglais.
+- English Language : après la lecture, la partie écriture renvoie vers « ✍️ Correction par Plumo ».
+
+Technique : js/gb-*.js (moteur, contenus, examens) + js/mod-angleterre.js (écrans). ~1 000 questions (479 écrites + générateurs).
+Toutes les vannes passent le juge de Plumo. Tests : 166 (dont 6 pour l'Angleterre) + test navigateur test-angleterre.js.
+```
+
+---
+
+## Version 6.0
+
+```text
+Ami des mots — version 6.0
+
+Nouveautés
+- 🏆 Ligue de la semaine entre potes : chaque bonne réponse = 1 point, classement remis à zéro le lundi, lien d'invitation.
+- 🏅 Saisons : 150 bonnes réponses dans le mois = un badge et une tenue exclusive pour Plumo (bonnet, fleur, casquette, chapeau de sorcière).
+- ⏱️ Veille de contrôle : 15 minutes chrono sur un chapitre, les erreurs du carnet en premier, note sur 20.
+- 🎙️ Oral noté en anglais : 5 phrases, Plumo dit si on te comprend ; seulement si un parent l'autorise (Espace parents).
+- 👩‍🏫 Défi de classe : le prof crée un défi (code + clé), toute la classe a la même série, le prof voit scores et moyenne.
+- 🤝 Parrainage : un mois offert quand une famille invitée prend Plus ; entonnoir de Plus suivi dans l'admin.
+- 🦉 Plumo réexplique autrement après 3 erreurs sur la même notion (IA ; sans serveur : la règle et les bonnes réponses).
+- ✍️ Correction par Plumo : texte en anglais ou paragraphe de dissertation, noté, avec points forts, conseils et version corrigée.
+- 🎁 Admin : offrir Plus à qui tu veux (1 à 12 mois ou à vie) et le retirer.
+- Ami des mots est séparé de ReParole : sons dans audio/ (outils/copier-sons.js), contact réglable (outils/configurer.js --contact).
+
+Technique
+- Les nouveautés sont dans des modules (js/mod-*.js) branchés sur jeu.js (actions, cartes, accessoires, crochets) :
+  jeu.js n'a pas été découpé entièrement, mais il ne grossit plus.
+- Serveur : ligue.php, classe.php, parrainage.php, explique.php, correction.php ; tables dans schema.sql.
+- Tests : 160 (dont 10 pour la v6.0) ; parcours serveur vérifiés de bout en bout (SQLite + faux Stripe/Claude).
+
+À faire sur le serveur après la mise à jour : exécuter les nouvelles tables de serveur-php/schema.sql (CREATE TABLE IF NOT EXISTS).
+```
+
+---
+
+## Version 5.99.3
+
+```text
+Ami des mots 5.99.3
+
+🌍 Écrans traduits en anglais, espagnol, allemand, italien et portugais (js/textes-ecrans.js, ≈600 textes) :
+  accueil, portes, coin anglais, pièges, situations, dictée, battles (potes, famille, rap, Clash libre, défis, salon),
+  maths, matières, brevet & bac blancs, annales, sciences, maison, réglages, espace parents, bilan.
+  Le contenu scolaire français (questions, programmes officiels, sujets) reste en français ; les vannes suivent
+  le réglage « Langue des blagues » (français ou anglais).
+🦉 Le hibou s'appelle aussi Plumo en allemand, polonais, ukrainien, japonais et arabe (il restait « Ami »).
+🎒 Arabe retiré des listes « Je parle » / « J'apprends » pour l'instant (gardé dans les données).
+Vérifié : 150 tests, dont un balayage des écrans en espagnol et en allemand (plus de phrases françaises hors contenu
+  scolaire) et le contrôle des balises HTML de chaque traduction. À faire relire par des locuteurs natifs.
+```
+
+---
+
+## Version 5.99.2
+
+```text
+Ami des mots 5.99.2
+
+🎒 Langues de l'école seulement dans les listes de l'accueil :
+  - « Je parle » : français, anglais, espagnol, allemand, italien, portugais, arabe.
+  - « J'apprends » : anglais, espagnol, allemand, italien, portugais, arabe (+ français pour les élèves qui parlent
+    une autre langue). On n'apprend jamais la langue qu'on parle.
+  - Turc, polonais, ukrainien, japonais et les autres restent dans les données (rien n'est supprimé) ; un joueur qui
+    les avait déjà choisis les garde.
+Vérifié : 149 tests ; les jeux de mots se lancent dans chaque langue scolaire (français → espagnol, allemand, italien,
+  portugais, arabe ; espagnol → anglais ; arabe → français).
+```
+
+---
+
+## Version 5.99.1
+
+```text
+Ami des mots 5.99.1
+
+Retiré : la mention « dans 16 langues » (description du site, « À propos » dans les 11 langues de l'interface,
+manifeste de l'appli, README, message des phrases relues). Les langues elles-mêmes sont toutes conservées.
+Le manifeste dit maintenant « Plumo le hibou » (il restait « Ami le hibou »).
+```
+
+---
+
+## Version 5.99
+
+```text
+Ami des mots 5.99.0
+
+🪶 Plumes magiques (crédits d'IA), éteintes tant que tu ne les allumes pas dans le coin admin.
+  - Une vanne écrite par l'IA = 1 plume (le tri d'une vanne du Clash libre aussi). Si l'IA ne livre pas, la plume est rendue.
+  - Quota mensuel inclus dans Plus (réglable), puis le solde acheté. Sans plumes : Plumo garde ses vannes, rien n'est bloqué.
+  - Packs (petit / moyen / grand) : Stripe sur le site (reconnu par le prix price_… — un pack n'ouvre jamais Plus « à vie »),
+    produits consommables Google Play / App Store vérifiés auprès des stores. Chaque achat crédité une seule fois ;
+    un remboursement Stripe retire le pack.
+  - Solde gardé sur le serveur (plumes.php), retrait atomique ; achat derrière une question pour adultes ; textes en 11 langues.
+  - Admin : réglages des plumes dans l'offre (signée), suivi du mois, « offrir des plumes » à un code.
+  - CGV : section plumes. docs/ADMIN.md : comment entrer dans l'admin et mettre les plumes en route.
+Vérifié : 148 tests ; essai réel PHP + SQLite avec faux Stripe / Google / Apple / IA : achat Stripe (rejoué : 1 seul crédit),
+  pack ≠ « à vie », quota Plus, plumes rendues, Google (valide, rejoué, faux), Apple, remboursement, 6 appels simultanés,
+  plumes éteintes = comportement d'avant ; enregistrement des réglages dans l'admin (valeurs pirates écartées).
+À la mise en ligne : relancer schema.sql (tables ami_credits, ami_credits_mouvements).
+```
+
+---
+
+## Version 5.98
+
+```text
+Ami des mots 5.98.0
+
+🤖 Chaque vanne écrite par l'IA est marquée « 🤖 » : le joueur sait quand il lit une IA (obligatoire pour un produit
+  utilisé par des mineurs selon les règles d'Anthropic). Page de confidentialité mise à jour.
+🎯 Carnet d'erreurs : les questions de matières ratées sont gardées (80 au plus, sur l'appareil). Carte « Mes erreurs (N) »
+  dans Matières : 20 questions au hasard pour réviser avant un contrôle ; une bonne réponse retire la question du carnet.
+🔠 Taille du texte réglable (A, A+, A++) dans les réglages, en 11 langues.
+🎩 Chapeau et 👑 couronne redessinés en relief (dégradés, reflets, pierres).
+Vérifié : 147 tests ; accessibilité 10/10.
+```
+
+---
+
+## Version 5.97
+
+```text
+Ami des mots 5.97.0
+
+🚀 Mise en ligne automatique chez OVH (.github/workflows/ovh.yml) : à chaque fusion sur main, tests puis envoi
+  du jeu et du serveur en SFTP dans www/. Ne fait rien tant que les secrets OVH ne sont pas réglés. N'envoie jamais
+  config-ami.php ni les clés ; s'arrête s'il trouve un secret ; n'efface rien chez OVH ; vérifie l'empreinte du
+  serveur ; contrôle à la fin que le site répond et que serveur/lib.php est interdit.
+🔧 Corrigé : le serveur cherchait config-ami.php dans www/ au lieu d'un dossier au-dessus (comme le dit la doc).
+🔒 .htaccess : HTTPS obligatoire ; fichiers de réglages et clés jamais lisibles depuis le web.
+📋 docs/MISE-EN-LIGNE-OVH.md (liste à cocher, de la commande au site en ligne) et docs/IA.md (ce que fait l'IA).
+Vérifié : 146 tests.
+```
+
+---
+
+## Version 5.96
+
+```text
+Ami des mots 5.96.0
+
+🦉 Plumo ne saute plus quand la souris passe dessus. Cause : avec les graphismes « ultra », l'effet de survol
+  des boutons remplaçait le centrage de Plumo ; il partait sur le côté, la souris ne le touchait plus, il revenait,
+  et ainsi de suite. Survol : maintenant un simple halo doré, sans mouvement.
+👓 Nouvelles lunettes dessinées sur l'image 3D : un verre centré sur chaque œil, inclinées comme la tête,
+  l'œil droit plus petit (vu de trois quarts), reflets dans les verres.
+🧣 Écharpe redessinée autour du cou (dégradé, pan qui tombe, franges) ; ombre douce sous tous les accessoires.
+Vérifié : 145 tests ; survol testé dans un navigateur avec les graphismes « ultra » (Plumo immobile).
+```
+
+---
+
+## Version 5.95
+
+```text
+Ami des mots 5.95.0
+
+🌍 Traductions : écran Plus (formules, restaurer, code cadeau, messages d'achat), liens légaux et bilan des parents
+  dans les 11 langues de l'interface (js/textes-plus.js, à faire relire par des locuteurs natifs).
+  Clash libre : en français pour l'interface française, en anglais pour toutes les autres (la ligne 🇫🇷 des vannes
+  n'apparaît qu'en interface française).
+
+♿ Accessibilité : audit axe-core (WCAG 2.1 A et AA) sur 9 écrans + la page légale (outils/tests-navigateur/
+  test-accessibilite.js). Seul défaut grave trouvé et corrigé : contraste des listes déroulantes dans les réglages.
+
+📈 Fréquentation anonyme : serveur-php/visite.php (+ table ami_visites). Au plus une « ouverture » et une « partie »
+  par jour et par appareil ; ni cookie, ni identifiant, ni IP gardée ; « Ne pas me suivre » respecté.
+  Tableau des 30 derniers jours dans le compte admin (📈). Page de confidentialité mise à jour.
+
+⏰ Rappels pour revenir jouer (appli Android / iPhone) : réglage « Rappel » (heure au choix), désactivé par défaut,
+  permission demandée seulement à l'activation ; alerte « série en danger » à 20 h si on n'a pas joué.
+  Notifications locales, sans serveur (@capacitor/local-notifications ajouté à la fabrication Android).
+  Sur l'accueil (site et appli) : bandeau « 🔥 Ta série de N jours est en danger ».
+  Les questions des matières comptent maintenant aussi pour la série de jours.
+
+📚 Contenu : spécialités du lycée SES, HGGSP, HLP, NSI (1re et Tle, bacs blancs de connaissances, générateur
+  binaire ↔ décimal en NSI) ; renfort philo (6 questions), droit (4), médecine (4).
+
+🧪 Solidité : test « scènes absurdes » rendu reproductible ; contrôles de cohérence (chaque script de la page existe,
+  est en cache hors ligne et est testé ; chaque bouton data-a a sa réponse dans le jeu).
+
+Vérifié : 144 tests ; tests navigateur (accessibilité 10/10, maths-sciences, quêtes, coin anglais, hors ligne) ;
+essai réel PHP de visite.php (comptage, refus des valeurs inconnues, limite 429, affichage admin).
+À la mise en ligne : relancer schema.sql (table ami_visites).
+```
+
+---
+
+## Version 5.94
+
+```text
+Ami des mots 5.94.0
+
+💳 Tous les moyens de payer Plus (réglés dans le compte admin, voir docs/PAIEMENT.md)
+- Formules : mensuel, annuel, famille, à vie (paiement unique). Prix, lien Stripe, texte d'essai gratuit et « proposée
+  dans les stores » pour chacune. Écran Plus : une carte par formule.
+- Site : Stripe (abonnements + paiement unique « à vie » ; codes promo Stripe ; portail de résiliation).
+  Webhook : paiement unique → Plus à vie ; remboursement → accès coupé.
+- Codes cadeaux : créés par lots dans le compte admin (nombre, durée, nom du lot), CADEAU-XXXX-XXXX, à usage unique,
+  cumulables, gardés seulement en empreinte ; saisis dans « ✨ Plus » → « J'ai un code cadeau » (serveur : cadeau.php).
+- Appli Android / iPhone : Google Play Billing et achat intégré Apple (module cordova-plugin-purchase, ajouté à la
+  fabrication Android). Pas de lien Stripe dans l'appli des stores. Chaque achat est VÉRIFIÉ par le serveur
+  (magasin.php) directement chez Google (compte de service) ou Apple (App Store Server API) ; « Restaurer mes achats » ;
+  abonnement renouvelé repris automatiquement.
+- Toujours : Plus seulement par certificat signé par le serveur ; aucun secret dans le jeu.
+- Nouvelles tables : ami_cadeaux, ami_magasin (schema.sql). Nouveaux réglages : config.exemple.php.
+- Pages légales : formules, à vie, essai, codes cadeaux, paiement dans les stores.
+
+😈 La bande vanne Plumo version CASH (18 répliques) ; version douce gardée pour le ton « Tout doux ».
+
+Vérifié : 138 tests (dont achat Google simulé, code cadeau, formules) ; essai réel PHP : achats Google (abonnement,
+à vie, faux jeton refusé), Apple (valide, achat d'une autre appli refusé), restauration sur un nouveau code,
+codes cadeaux (créés dans l'admin, déjà utilisé, prolongation, compte à vie), Stripe « à vie » + remboursement,
+webhook mal signé refusé.
+Contient aussi les v5.84 à v5.93.
+```
+
+---
+
+## Version 5.93
+
+```text
+Ami des mots 5.93.0
+
+🦉 Plumo plus beau et plus calme
+- Toujours le Plumo en 3D (img/ami-3d-560.webp), même avec les accessoires du vestiaire, posés par-dessus l'image.
+- Il respire doucement au lieu de flotter et de sauter ; fête et surprise en un seul petit mouvement.
+- La bande (Pico, Zaza, Rocket) est dessinée (plus d'émojis) et rit doucement. Le jeu affiche automatiquement des images 3D
+  dans le style de Plumo dès qu'elles sont déposées dans img/bande/ (voir docs/PERSONNAGES.md, descriptions prêtes).
+
+🔒 Pages légales (legal.html, liens sur l'accueil et l'espace parents, dispo hors ligne)
+- Mentions légales, confidentialité (mineurs, voix jamais envoyée, tableau de ce qui part au serveur), conditions d'utilisation
+  (règles des vannes, 3018), conditions de vente de Plus. Champs à compléter surlignés ; à faire relire par un juriste.
+
+👪 Bilan de la semaine (espace parents)
+- Comparaison avec la semaine d'avant, dernières notes (évaluations, brevet et bacs blancs), conseil de Plumo sur la matière
+  à retravailler, bouton « Partager le bilan » (partage du téléphone ou copie).
+
+⚡ Chargement
+- Image de Plumo : 375 Ko → 77 Ko. Scripts chargés sans bloquer l'affichage (defer).
+- Premier chargement en 4G moyenne : environ 20 s → 10 s sans compression ; .htaccess pour OVH (compression : 1,5 Mo de scripts → ~500 Ko, cache).
+
+🇪🇸🇩🇪 Espagnol et allemand (LVB) de la 5e au bac
+- 54 questions, une évaluation par niveau (A1 en 5e, A2 en 3e, B1 en Tle), vannes validées par le juge.
+
+📋 Pour la suite
+- docs/RELECTURE-PROFS.md (message prêt, quoi vérifier) ; les listes à relire contiennent désormais TOUTES les questions écrites.
+- docs/TEST-ADOS.md (déroulé de 20 min, questions, grille).
+- docs/STORES.md (fiche Play Store, formulaires, point bloquant du paiement) + 5 captures dans docs/stores/captures/.
+
+Corrigé : « Ami des Mots » (M majuscule) était devenu « Plumo des Mots » sur quelques pages.
+Vérifié : 136 tests ; navigateur : maths-sciences 7/7, quêtes 9/9, coin anglais 7/7, hors ligne OK.
+Contient aussi les v5.84 à v5.92.
+```
+
+---
+
+## Version 5.92
+
+```text
+Ami des mots 5.92.0
+
+🦉 Le hibou s'appelle maintenant PLUMO (l'appli reste « Ami des mots »)
+- Renommé partout : écrans, vannes, bande de potes (« Plumo, tu nous as appelés pour ça ? »), bêtisier, boutique,
+  coins de l'admin, serveur (consignes de l'IA), guides et tests — 988 remplacements.
+- Français : « d'Ami » → « de Plumo », « qu'Ami » → « que Plumo ». Turc décliné : « Plumo'nun », « Plumo'yu ».
+- « Hooty » écarté : c'est le hibou d'une série Disney (The Owl House).
+- Test navigateur du coin anglais rendu fiable (la réplique de battle peut venir des clashs).
+Vérifié : 134 tests ; suites navigateur maths-sciences 7/7, quêtes 9/9, coin anglais 7/7, hors ligne OK.
+Contient aussi les v5.84 à v5.91.
+```
+
+---
+
+## Version 5.91
+
+```text
+Ami des mots 5.91.0
+
+📞 « J'appelle mes potes ! » (toutes les matières, maths, épreuves)
+- 3 bonnes réponses d'affilée : « Wwwwaaaaa, t'es un ouf toi !! La prochaine bonne réponse, j'appelle mes potes… 📞 »
+  (version douce en « Tout doux » : il appelle ses amis pour applaudir).
+- La 4e : la bande d'Ami débarque (2 ou 3 personnages, bulles qui arrivent une à une) et vanne… Ami, pas le joueur :
+  🦔 Pico le hérisson, 🐸 Zaza la grenouille, 🦊 Rocket le renard (4 répliques chacun). Ami prend un air surpris.
+- Se répète toutes les 4 bonnes réponses (annonce à 7, bande à 8…).
+- Erreur juste après l'annonce : « 😮‍💨 Ouf ! J'ai raccroché, mes potes ne viendront pas cette fois. »
+- Animation coupée si l'appareil demande moins de mouvement. Toutes les répliques passent le juge.
+Vérifié : 134 tests (dont 4 bonnes réponses réelles d'affilée puis l'erreur après l'annonce), captures sur téléphone.
+Contient aussi les v5.84 à v5.90.
+```
+
+---
+
+## Version 5.90
+
+```text
+Ami des mots 5.90.0
+
+😏 Des vannes aussi quand la réponse est BONNE (toutes les matières, maths, épreuves, anglais)
+- Tout doux : compliments rigolos (« Même la cloche de la récré veut ton autographe ») ;
+  taquin : « Juste. Bon, je vérifie quand même que tu n'as pas regardé sur le voisin… 👀 » ;
+  cash : « Wesh, t'es un ouf : bonne réponse ! Bon, calme-toi, c'en est qu'une. 🔥 » ; trash talk : inchangé.
+- Séries : « 3 bonnes d'affilée ! Ami appelle les renforts. 🚨 ». Jeux en anglais : vannes en anglais (« No cap, that was clean »).
+- Boutons 😂 / 🙄 aussi sur ces vannes (l'IA apprend ce qui fait rire).
+
+📚 Renfort des matières (nouveau fichier js/mat-renfort.js, ~150 questions)
+- Histoire-géo-EMC : repères de la 6e à la Tle (Néolithique, Rome, Hégire, 1492, 1789, 1848, 1918, 1940, 1958, 1989, 1929, plan Marshall, traité de Rome…).
+- SVT : 6e (besoins des plantes, cellule, classification), 5e-4e (effort, digestion, séismes, puberté, microbiote), 2nde, 1re, Tle (méiose, évolution, climat, synapse, glycémie).
+- Physique-chimie : 6e (états de la matière, mélanges, circuits, énergies), 1re (moles, énergies, ondes, Lewis, lentilles), Tle (Newton, pH, radioactivité, condensateur, gaz parfaits, Kepler).
+- Français de 1re : œuvres, mouvements, épreuve du bac de français.
+- Nouvelle matière 🤔 Philosophie (Tle) : auteurs, notions, méthode, bac blanc.
+- Une évaluation sur 20 à chaque niveau où la matière existe.
+- Sujets graves (guerres) : la vanne vise la confusion de date, jamais l'événement.
+Vérifié : 133 tests ; toutes les vannes passent le juge.
+Contient aussi les v5.84 à v5.89.
+```
+
+---
+
+## Version 5.89
+
+```text
+Ami des mots 5.89.0
+
+🇬🇧 Anglais du programme, de la 6e au bac (Matières → Anglais (6e → bac))
+- 36 chapitres, 110 questions écrites à la main + un générateur de verbes irréguliers (30 verbes, prétérit et participe passé).
+  Chaque mauvaise réponse a sa vanne (sur la réponse, jamais l'élève) et chaque question son explication.
+- Progression calée sur les niveaux européens (CECRL) : 6e A1 (be, have got, présent simple, there is, can, possessifs, heures, jours…),
+  5e (be + -ing, prétérit, comparatifs, much/many), 4e A2 (irréguliers, present perfect for/since, will/going to, modaux),
+  3e A2→B1 (passif, conditionnel, discours indirect, relatives, faux amis), 2nde B1 (have been + -ing, déduction, wish, phrasal verbs,
+  mots de liaison, axes de 2nde), 1re-Tle B2 (If… had…, have something done, V-ing ou to, pièges de traduction, inversion,
+  It's time / I'd rather, insistance, axes du cycle terminal, compréhension de l'écrit, méthode du bac).
+- Une évaluation sur 20 par niveau (20 questions) : fin de 6e, 5e, 4e ; fin de 3e « A2, socle du brevet » (le brevet n'a pas
+  d'épreuve écrite d'anglais) ; fin de 2nde B1 ; bac blanc de 1re ; bac blanc LVA de Tle (B2, logique de l'attestation :
+  au bac, l'anglais compte en contrôle continu, avec une attestation par compétence).
+- Battle entre potes : nouveau mode « 🎓 Anglais du programme » (questions du niveau choisi), avec les vannes.
+- Toutes les vannes passent le juge d'Ami (test automatique). « sing / sang » remplacé par « ring / rang » (le juge lit « sang » en français).
+Vérifié : 131 tests, captures sur téléphone.
+Contient aussi les v5.84 à v5.88.
+```
+
+---
+
+## Version 5.88
+
+```text
+Ami des mots 5.88.0
+
+🗯️ Clash libre : +65 vannes (sélection de David), en anglais ET en français — 124 vannes en tout
+- Nouvelles catégories : 🧠 Réparties du tac au tac, 🌀 Absurde, 📐 Matières (maths, français, philo, langues, histoire-géo,
+  HGGSP, physique-chimie, SVT, NSI, SI, arts, SES), 📝 Contrôles, bac & Parcoursup, 🏫 Vie de classe.
+- Triées comme le ferait l'IA du jeu : on garde ce qui vise la copie, les révisions, le code, les excuses ;
+  reformulé ce qui visait la personne (« ton cerveau », « ton QI », « t'es inutile » → « ta réponse », « ta copie », « tes excuses ») ;
+  écartées : famille (« ton père / ta mère »), bégaiement, accent et « pays d'origine », vêtements « moches », QI, conscience morale,
+  « l'évolution a fait marche arrière », cimetière, minute de silence, frontières coloniales.
+- Les marques remplacées quand ce n'est pas utile (Siri → l'assistant vocal, Ikea → la notice).
+- Toutes passent le juge d'Ami (test automatique).
+Contient aussi les v5.84 à v5.87.
+```
+
+---
+
+## Version 5.87
+
+```text
+Ami des mots 5.87.0
+
+⭐ Ajouter ses vannes au paquet du Clash libre — l'IA trie
+- Clash libre → « ➕ Ajouter des vannes au paquet » : la vanne en français (+ l'anglais si on sait).
+  Après une vanne écrite en jeu : « ➕ Garder cette vanne dans le paquet ».
+- Tri en deux temps :
+  1. le juge d'Ami (règles, tout de suite, même hors ligne) : gros mots, insultes, physique, famille, origine, religion, argent, violence, infos perso ;
+  2. l'IA du serveur (serveur-php/vanne-juge.php) : refuse ce que les règles ne voient pas (moquerie déguisée, harcèlement,
+     sous-entendu, verlan, personne réelle visée…), « dans le doute, refuse », et corrige l'anglais s'il est faux.
+     Elle garde les vannes qui piquent fort tant qu'elles visent ce que la personne FAIT.
+- Serveur muet : la vanne est « en attente » et ne sort pas en jeu ; elle repasse devant l'IA à la prochaine ouverture du clash.
+  Sans serveur configuré : le juge d'Ami seul.
+- Les vannes ⭐ sortent dans les cartes comme une catégorie. « 🚫 Là, c'est trop méchant » sur une vanne ⭐ la retire du paquet.
+- Liste des vannes du paquet avec leur état (🤖✅ IA / ✅ juge d'Ami / ⏳ attend l'IA) et bouton 🗑️. 100 vannes au plus, gardées sur l'appareil.
+- Seul le texte de la vanne part au serveur (ni prénom, ni code). Limites : 20 par minute, 60 par jour par appareil (vanne_juge_par_jour).
+
+Vérifié : 130 tests ; essai réel de vanne-juge.php avec une fausse IA (acceptée + anglais corrigé, refusée, GET refusé, prénom non transmis).
+Contient aussi les v5.84 à v5.86.
+```
+
+---
+
+## Version 5.86
+
+```text
+Ami des mots 5.86.0
+
+🗯️ Clash libre : on se vanne, tout simplement (coin Battle de vannes, première carte)
+- Deux joueurs, un téléphone, chacun son tour : 3, 5 ou 8 vannes chacun.
+- 3 cartes à chaque tour (catégories différentes) : « Wesh gros (ça pique) », Skill issue (le jeu), Aura & NPC,
+  Devoirs & école, Téléphone & réseaux, La vie de tous les jours, Ripostes — 59 vannes, toutes en anglais ET en français.
+- « ✍️ J'écris la mienne » : vanne libre (140 caractères), passée au juge d'Ami.
+- Celui qui reçoit réagit : 😂 Wesh, il m'a eu (+3 d'aura), 🔥 T'es un ouf, quelle punchline (+5), 🙄 Bof, gros (0),
+  🚫 Là, c'est trop méchant (−2 et carton jaune).
+- Fin : gagnant, titres (Apprenti vanneur → Aura infinie), et la liste de l'anglais appris pendant le clash. Revanche avec les mêmes noms.
+- Règle d'or : on vise ce que fait l'autre, jamais qui il est. Refusé : physique, famille, origine, religion, argent,
+  insultes, gros mots, violence, infos personnelles.
+- Juge d'Ami : « wesh gros », « …, gros » (on interpelle un pote) ne sont plus pris pour une moquerie ; « t'es gros » reste refusé.
+- docs/a-relire : les vannes du Clash libre sont ajoutées aux listes à faire relire.
+
+Vérifié : 129 tests (dont une partie complète), captures sur téléphone.
+Contient aussi la v5.85 (compte admin, offre signée) et la v5.84 (voie pro).
+```
+
+---
+
+## Version 5.85
+
+```text
+Ami des mots 5.85.0
+
+🔐 Compte admin du serveur : régler le payant EN DIRECT
+- https://ton-domaine.fr/serveur/admin/ (mot de passe haché dans config-ami.php, hors www ; session, jeton anti-falsification,
+  limite d'essais) : nouvelle section « 💰 Offre et paiement ».
+- On y règle : payant activé ou non, prix affiché, joueurs gratuits (1 à 6), lien de paiement Stripe, portail client Stripe,
+  coins réservés à Plus (21), thèmes gratuits (8), jeux gratuits (19). « Enregistrer et publier » : en ligne à la prochaine ouverture.
+- serveur-php/offre.php : donne l'offre au jeu, SIGNÉE avec la clé privée du serveur. Le jeu la vérifie (CLE_PUBLIQUE) et
+  ne l'applique que si la signature est bonne ; copie signée gardée pour le hors-ligne (une copie trafiquée est ignorée).
+- L'offre ne dit que ce qui est payant : elle n'ouvre jamais Plus (Plus = certificat d'abonnement signé, inchangé).
+- Le serveur n'accepte que des valeurs connues : serveur-php/admin/catalogue.json, refait depuis le jeu (outils/construire-catalogue.js,
+  lancé par npm run verifier). Liens acceptés : uniquement https://buy.stripe.com/… et https://billing.stripe.com/…
+- Quand le payant s'allume, l'abonnement de chaque joueur est revérifié tout de suite.
+- admin.html (sans serveur) et js/offre.js restent possibles.
+
+Vérifié : 128 tests ; essai réel PHP (SQLite) : mauvais mot de passe refusé, envoi sans jeton refusé (403), coin inventé et lien
+non Stripe rejetés, signature PHP acceptée par le jeu, Plus jamais ouvert par l'offre.
+Contient aussi la v5.84 (voie professionnelle, vannes) — voir VERSION-5.84.txt.
+```
+
+---
+
+## Version 5.84
+
+```text
+Ami des mots 5.84.0
+
+🔧 Voie professionnelle
+- Bac pro blanc (épreuves générales) : français, histoire-géo-EMC, maths et physique-chimie, PSE (secours, risques professionnels, budget),
+  économie-droit / économie-gestion (contrat de travail, prud'hommes, facture et TVA), langue vivante (anglais professionnel).
+- CAP blanc (épreuves générales) : français et HG-EMC, maths et physique-chimie, PSE.
+- Espace Officiel : pages du bac pro et du CAP, base nationale des sujets de l'enseignement professionnel.
+- Les épreuves professionnelles (propres à chaque métier) ne sont pas couvertes : leurs sujets ne sont pas publics, sauf en CAP.
+
+😂 Vannes : 124 vannes plates (« Non. ») remplacées par de vraies vannes ; un test vérifie qu'il n'en reste plus aucune.
+Tests : 127 tests unitaires OK.
+```
+
+---
+
+## Version 5.83
+
+```text
+Ami des mots 5.83.0
+
+🏛️ Espace « Officiel » (nouvel onglet dans Matières)
+- Liens directs vers tous les programmes officiels : cycle 3, cycle 4, lycée général et technologique, spécialités, maths, langues, SVT, séries technologiques.
+- Liens directs vers toutes les annales officielles : brevet depuis 2018, bac général et technologique depuis 2021, tous les sujets 2026,
+  définitions officielles des épreuves (brevet, bac général, bac technologique, Grand oral).
+
+📜 Dans chaque matière : la référence du programme officiel du niveau (BO) et le lien éduscol.
+
+🎤 Les oraux
+- Oral du brevet (15 min, noté sur 20), oral de français (20 min), Grand oral (20 min) : déroulé, attendus et méthode, avec Ami qui vanne.
+- Le brevet blanc inclut maintenant l'oral (coefficient 2), comme le vrai DNB ; le bac blanc de terminale inclut le Grand oral (coefficient 8 à partir de 2027).
+
+Limites : l'appli ne peut pas noter une prise de parole ni recopier les sujets officiels (droits du ministère) : elle renvoie vers eux et propose des sujets jumeaux.
+Tests : 126 tests unitaires OK ; captures Chrome (téléphone) sans erreur.
+```
+
+---
+
+## Version 5.82
+
+```text
+Ami des mots 5.82.0
+
+🎒 Toutes les spécialités du bac général
+- Ajoutées : arts (histoire des arts, cinéma-audiovisuel, musique, théâtre, arts plastiques, danse), biologie-écologie, EPPCS (sport),
+  LLCA latin et grec, LLCER espagnol, allemand, italien, portugais et anglais monde contemporain (les langues qui ont une épreuve écrite de spécialité).
+- Elles rejoignent maths, physique-chimie, SVT, SES, HGGSP, HLP, NSI, SI, LLCER anglais : 24 épreuves de spécialité, toutes disponibles
+  dans le bac blanc de terminale (2 spécialités au choix + philo).
+
+🛠️ Bac technologique (7 séries)
+- STMG (gestion : coût, TVA, marge, seuil de rentabilité ; droit et économie), STI2D, ST2S, STL (dilutions), STD2A, STHR (coût matière, ratio), S2TMD.
+- Un bac techno blanc par série : spécialités coefficient 16 + philosophie.
+
+🎓 Après le bac : Médecine, Droit, Astrophysique
+- Nouvelles matières (niveau « Sup ») dans la porte Matières :
+  médecine (anatomie, physiologie, essais cliniques, études de santé PASS/L.AS), droit (institutions, bases du droit, métiers),
+  astrophysique (étoiles, galaxies, Univers + calculs : vitesse de la lumière, années-lumière, loi de Wien, 3e loi de Kepler, loi de Hubble, parallaxe).
+
+😂 Vannes : une vanne trop courte (« Non. ») est maintenant toujours relevée par une expression imagée ou de la tchatche.
+
+Limites : les parties créatives ou rédigées (dissertations, synthèses, pratique artistique ou sportive) restent sur papier ;
+pas de LLCER en arabe, chinois, russe ou langues régionales tant qu'un locuteur ne peut pas relire.
+Tests : 125 tests unitaires OK ; captures Chrome (téléphone) sans erreur.
+```
+
+---
+
+## Version 5.81
+
+```text
+Ami des mots 5.81.0
+
+😂 Expressions imagées : 36 de plus (66 au total)
+- Après recherche des expressions françaises, belges et québécoises les plus connues :
+  « ne pas être une lumière », « ne pas avoir inventé le fil à couper le beurre », « pédaler dans la choucroute », « sauter du coq à l'âne »,
+  « se mettre le doigt dans l'œil », « raconter des salades », « en faire tout un fromage », « c'est la fin des haricots »,
+  « parler à travers son chapeau » et « avoir de la broue dans le toupet » (Québec), « carabistouille » (Belgique), « partir à Pétaouchnok »…
+- Toujours retournées sur la RÉPONSE ou sur Ami, jamais sur le joueur ; expressions grossières écartées. Tests : juge, pas de doublon, cible.
+Tests : 123 tests unitaires OK.
+```
+
+---
+
+## Version 5.80
+
+```text
+Ami des mots 5.80.0
+
+😂 Expressions imagées
+- 30 nouvelles vannes avec des expressions françaises détournées : « cette réponse n'a pas la lumière à tous les étages »,
+  « elle pédale dans la semoule », « elle est complètement à l'ouest », « elle a une araignée au plafond », « elle cherche midi à quatorze heures »…
+- Elles visent toujours la RÉPONSE (ou Ami lui-même, en autodérision), jamais le joueur : un test le vérifie.
+- Où : en ton Trash talk (mélangées aux phrases de champion et à la tchatche), et de temps en temps en ton Taquin ou Cash
+  dans les maths, les matières et les examens blancs.
+- L'IA (quand le serveur sera en ligne) a aussi ce style dans sa boîte à outils.
+
+Tests : 123 tests unitaires OK.
+```
+
+---
+
+## Version 5.79
+
+```text
+Ami des mots 5.79.0
+
+🎓 Bac de terminale : toutes les spécialités de la voie générale + philosophie
+- 9 spécialités construites comme les sujets 2026 :
+  maths (4 exercices : probabilités et loi binomiale, vrai/faux justifié, géométrie dans l'espace, fonction + intégrale),
+  physique-chimie (diffraction, solaire, circuit RC, électrolyse, titrage), SVT (connaissances pour la synthèse + datation isotopique),
+  SES (épreuve composée : connaissances, étude de document chiffrée, raisonnement), HGGSP, HLP, NSI (SQL, Python, réseaux RIP/OSPF, chiffrement, objets),
+  sciences de l'ingénieur (catamaran électrique + sciences physiques), LLCER anglais (traduction, faux amis, méthode de synthèse).
+- Philosophie : notions, auteurs, méthode ; sujets 2026 proposés sur papier.
+- Bac blanc de terminale : l'élève choisit ses 2 spécialités, la philo s'ajoute ; coefficients officiels 16 + 16 + 8.
+- Annales : 10 jumeaux de sujets de terminale 2026 avec le lien vers le PDF officiel.
+- Les parties rédigées (dissertations, synthèses, essais) sont proposées à faire sur papier ; l'appli entraîne et note ce qui se corrige automatiquement.
+- Les données « de dossier » (SES…) sont inventées pour l'entraînement et indiquées comme telles.
+- Calculs vérifiés par les tests (loi binomiale, électrolyse, puissance…), toutes les vannes passent le juge.
+
+À relire par un prof : docs/a-relire/epreuves.csv (contient maintenant les spécialités).
+Pas encore couvert : arts, LLCA (latin, grec), biologie-écologie, EPPCS, autres langues en LLCER.
+Tests : 122 tests unitaires OK ; captures Chrome (téléphone) sans erreur.
+```
+
+---
+
+## Version 5.78
+
+```text
+Ami des mots 5.78.0
+
+📝 Brevet & bac blancs construits comme les vrais sujets 2026
+- Brevet blanc en 5 épreuves, avec les coefficients officiels du DNB 2026 : français (2), maths (2), histoire-géographie (1,5), EMC (0,5, note séparée), sciences (2).
+  Une note sur 20 par épreuve, puis la moyenne et la mention.
+- Maths du brevet : partie 1 « automatismes » (6 pts, QCM et réponses directes), puis exercices de résolution de problèmes (14 pts) :
+  géométrie (Pythagore, trigonométrie, Thalès, homothétie), programme de calcul et Scratch, tarifs et tableur, fonctions, statistiques et écriture scientifique, programmation.
+- Français du brevet : compréhension et grammaire sur un texte (50 pts), dictée (10 pts) ; la rédaction (40 pts) est proposée, à faire sur papier.
+- Histoire-géo : documents de géographie, développement construit, repères ; EMC : situation pratique.
+- Sciences : physique-chimie (10 pts) + SVT (10 pts), comme la session 2026.
+- Bac : épreuve anticipée de maths de 1re (nouvelle en 2026), 8 automatismes en QCM (6 pts) + exercices (14 pts), versions avec et sans spécialité ;
+  bac de français : œuvres au programme 2026-2027, méthode du commentaire et de la dissertation, question de grammaire de l'oral.
+- Toutes les valeurs sont tirées au hasard : un nouveau sujet à chaque fois, avec des calculs justes (vérifiés par les tests).
+
+🗂️ Annales 2026
+- Nouvel onglet : pour 8 vrais sujets 2026 (brevet maths ×2, français, histoire-géo-EMC, sciences ; bac maths spé et sans spé, français),
+  un sujet jumeau construit pareil, avec le lien vers le sujet officiel sur education.gouv.fr.
+- Les textes et les nombres sont différents des sujets officiels : les sujets du ministère ne peuvent pas être repris dans une appli payante sans licence.
+
+😂 Vannes
+- L'IA s'adapte toute seule à la famille : elle reçoit les vannes notées 😂 (le style qui fait rire) et 🙄 (à éviter).
+- Nouvelles techniques d'humour pour l'IA : stand-up, roast, règle de trois, pince-sans-rire, tchatche, chambrage de copains, conférence de presse et commentaire de combat.
+  Ce sont des techniques : l'IA n'imite aucun humoriste ni aucun sportif réel et ne reprend aucun sketch.
+- Trash talk : 16 nouvelles phrases « tchatche » (débit rapide, autodérision, jeux de mots).
+
+Correction : l'énoncé de l'exercice s'affiche avant la question ; les longs titres ne débordent plus sur téléphone.
+À relire par un prof : docs/a-relire/epreuves.csv.
+Tests : 121 tests unitaires OK ; maths-sciences 7/7 et hors ligne OK dans Chrome.
+```
+
+---
+
+## Version 5.77
+
+```text
+Ami des mots 5.77.0
+
+🥊 Trash talk
+- Nouveau ton « 🥊 Trash talk » (maths, français, histoire-géo, SVT, physique, brevet & bac blancs) : Ami se la raconte comme un champion de ring
+  (pesée, face-à-face, conférence de presse, ceinture), chambre les mauvaises réponses et fait semblant de ne pas être impressionné par les bonnes.
+- Séries : 3 bonnes réponses d'affilée → Ami panique ; 3 erreurs d'affilée → Ami relance pour le comeback.
+- Battle entre potes : interrupteur « 🥊 Trash talk : ON/OFF » ; Ami chambre avant chaque tour (le score à battre) et à la fin.
+- Règle : on chambre la réponse ou le score, jamais la personne. Perso inventé, aucun vrai combattant imité. Toutes les phrases passent le juge ;
+  un test refuse les mots qui viseraient la personne. Ami ne répète pas ses phrases tant qu'il en a des neuves.
+
+Corrections
+- Le brevet/bac blanc (v5.76) avait une fonction du même nom que l'examen d'anglais : l'une écrasait l'autre. Renommée, et un test empêche que ça revienne.
+
+Tests : 120 tests unitaires OK ; captures Chrome (téléphone) sans erreur.
+```
+
+---
+
+## Version 5.76
+
+```text
+Ami des mots 5.76.0
+
+Nouvelles matières du programme (6e → bac), avec vannes et explications :
+- 📝 Français : conjugaison (tableaux vérifiés), homophones, accords, nature des mots, figures de style, vocabulaire, littérature.
+- 🏛️ Histoire-géo & EMC : repères de l'Antiquité au XXe siècle, géographie, citoyenneté.
+- 🧬 SVT : le vivant, le corps humain, la Terre, la génétique.
+- ⚗️ Physique-chimie : matière, électricité (loi d'Ohm et puissance calculées), vitesse, poids, énergie, masse volumique.
+- Accueil : la porte « Sciences » devient « 📚 Matières » (les sciences rigolotes sont dedans).
+- Onglet « 📝 Brevet & bac blancs » : brevet blanc en 4 épreuves (français, maths, histoire-géo, sciences) avec une note /20 chacune et la moyenne + mention ; bac de français blanc (1re) ; maths 1re et terminale.
+- Examen blanc par matière quand il existe pour le niveau (note /20 gardée).
+- Battle entre potes : nouveau mode « 📚 Culture G ».
+- Espace parents : le résumé de la semaine compte les nouvelles matières ; erreurs fréquentes lisibles.
+- docs/a-relire/francais.csv, histoire.csv, svt.csv, physique.csv : à faire relire par un prof.
+
+À savoir : le lycée est encore léger (français en terminale et physique-chimie en 1re/Tle arrivent plus tard).
+Tests : 118 tests unitaires OK, maths-sciences 7/7 et hors ligne OK dans Chrome.
+```
+
+---
+
+## Version 5.75
+
+```text
+AMI DES MOTS — VERSION 5.75
+L'essentiel, mieux rangé
+
+Accueil (ACCUEIL_SIMPLE:true dans js/config-site.js — false = ancien accueil)
+- Défi du jour, Apprendre 5 mots, puis 4 grandes portes : 🇬🇧 Mots & anglais, 🔢 Maths, 🚀 Sciences, ⚔️ Battle.
+  Derrière « Mots & anglais » : jouer, à revoir, atelier des phrases, coin anglais, professeur (et village /
+  Mots City quand ils reviendront). « À revoir » reste sur l'accueil quand il y a des mots à revoir.
+- Rangés pour l'instant : l'astuce d'Ami, Trophées, Vestiaire, Astuces. Restent : mot du jour, Mon carnet,
+  Réglages, et un nouveau raccourci 👪 Parents.
+
+Après une erreur, tout se voit
+- La bulle de vanne n'apparaissait qu'une fois sur quatre (selon l'humeur d'Ami) et se cachait parfois sous l'écran
+  ou sous « J'ai compris » : le plateau de jeu (#app, .partie) avait un contexte 3D qui capturait les éléments
+  fixes. Corrigé : la bulle est au-dessus, puis une rangée « Je la garde · J'ai compris — continuer · Pas drôle ».
+
+Maths : chapitres rangés en blocs par domaine (Analyse, Suites, Probabilités…) côte à côte.
+Titres : l'émoji au début d'un titre en dégradé n'est plus un carré blanc.
+
+Parents (👪, protégé par une multiplication)
+- « Cette semaine » : jours de jeu, minutes, une barre par jour, réussite par matière (mots, anglais, maths,
+  sciences), et les vannes notées 😂 / 🙄. Les vannes de maths, sciences et anglais ont maintenant 😂 / 🙄.
+
+Chargement plus léger : la 3D (≈ 10 Mo : village, Mots City, three.js, modèles) n'est plus téléchargée d'avance ;
+l'essentiel (≈ 6 Mo) reste disponible hors connexion.
+
+Listes de travail (node outils/listes-a-relire.js)
+- docs/a-relire/maths-6e … maths-Tle.csv et sciences.csv : à faire relire par un prof (colonnes OK / remarque).
+- docs/a-enregistrer/phrases-en.csv : 360 phrases des jeux d'écoute, avec le nom du MP3 attendu. Une fois
+  enregistrées : colonne « oui » puis node outils/marquer-enregistrees.js → le jeu joue le vrai enregistrement.
+Tests : 117/117.
+```
+
+---
+
+## Version 5.74
+
+```text
+AMI DES MOTS — VERSION 5.74
+Exception : les jeux d'écoute restent
+
+- Les jeux où il faut écouter reviennent, avec leur voix : Écoute, Écoute le mot, la dictée, Répète après Ami,
+  le jeu des oreilles, les questions « qu'a dit Ami ? » des battles. Les boutons 🔊 🐢 🎤 reviennent partout,
+  ainsi que le réglage « La voix d'Ami ».
+- VOIX_COUPEES ne coupe plus que les commentaires d'Ami à voix haute : consignes lues, vannes, répliques
+  automatiques, professeur hibou. Nouveau réglage JEUX_ECOUTE_CACHE:false (true pour cacher les jeux d'écoute).
+- Toujours cachés : 👄 « Comment la bouche fait ce mot », Mots City, le village. Tests : 116/116.
+```
+
+---
+
+## Version 5.73
+
+```text
+AMI DES MOTS — VERSION 5.73
+On reste sur l'essentiel pour l'instant (réglages dans js/config-site.js, rien n'est supprimé)
+
+- BOUCHE_CACHE:true — « Comment la bouche fait ce mot » (👄) n'apparaît plus nulle part.
+- VOIX_COUPEES:true — aucune voix : ni enregistrements des mots, ni voix du téléphone (consignes, vannes,
+  professeur). Les boutons 🔊 🐢 🎤 sont cachés ; les jeux qui demandent d'écouter (Écoute, Écoute le mot,
+  dictée, Répète après Ami, Le jeu des oreilles, questions « qu'a dit Ami ? ») sont retirés des menus et des
+  battles ; un ancien lien vers un jeu d'écoute ouvre un jeu d'images. Le prof hibou bouge toujours le bec,
+  sa bulle affiche le texte ; le réglage « La voix d'Ami » est caché.
+- MOTS_CITY_CACHE:true — Mots City n'est plus sur l'accueil ; mots-city.html ramène à l'accueil
+  (mots-city.html?voir=1 pour le tester).
+- Avec VILLAGE_CACHE (v5.72), tout revient en mettant false. Tests : 116/116.
+```
+
+---
+
+## Version 5.72
+
+```text
+AMI DES MOTS — VERSION 5.72
+Village caché pour l'instant
+
+- Les boutons « Explorer le village » et « Jouer dans le village 3D » ne s'affichent plus sur l'accueil.
+- Le jeu n'ouvre plus le village 3D tout seul au démarrage ; une ancienne adresse monde-3d.html ramène à l'accueil.
+- Rien n'est supprimé : pour le remettre, passer VILLAGE_CACHE à false dans js/config-site.js
+  (ou ouvrir monde-3d.html?voir=1 pour le tester sans le montrer aux joueurs).
+- Mots City, maths, sciences, professeur et battles restent là. Tests : 115/115.
+```
+
+---
+
+## Version 5.71
+
+```text
+AMI DES MOTS — VERSION 5.71
+La nuit sur téléphone, le bandeau du village, et Prof Pi qui ironise
+
+Village 3D
+- Nuit en Ultra : l'écran devenait presque noir. L'étalonnage « cinéma » utilisait un contraste qui mettait
+  à zéro toutes les couleurs sombres. Il est remplacé par un contraste qui multiplie (il ne soustrait plus),
+  avec un léger relevé des ombres la nuit ; l'occlusion ambiante est adoucie la nuit.
+- Le bandeau du haut floutait toute la scène derrière lui (bande floue sur téléphone) : seul chaque panneau
+  floute maintenant ce qui est derrière lui.
+- Téléphone : bandeau compact (titre court, mission plus petite), les boutons se rangent derrière ☰ ;
+  l'aide « ZQSD / flèches » est cachée sur écran tactile.
+
+Maths
+- js/vannes-ironie.js : 2 vannes ironiques de plus pour 97 erreurs classiques (médiane, Pythagore, signes,
+  pourcentages, dérivées…). Ex. : « Bravo, 10,6 : superbe moyenne ! Dommage, on avait demandé la médiane.
+  C'est comme apporter des frites quand on a commandé une glace. 🍟 »
+- Prof Pi sort d'abord les vannes qui piquent, puis les plus sages ; l'explication reste dessous.
+- Tests : 114/114.
+```
+
+---
+
+## Version 5.70
+
+```text
+AMI DES MOTS — VERSION 5.70
+Le professeur hibou s'anime comme un dessin animé
+
+- Ami le prof (professeur.html) est maintenant un dessin articulé (js/prof-anime.js) : corps, tête, ailes,
+  aigrettes, paupières, pupilles, sourcils, bec.
+- Au repos : il respire, cligne des yeux (parfois deux fois), suit la souris du regard, remue les aigrettes.
+- Il parle : une bulle affiche la phrase et le bec bouge avec la voix (mot par mot). Bouton « 🦉 Ami m'explique »
+  dans chaque leçon : il lit la leçon et l'exemple. Bouton 🔊 Voix / 🔇 Muet (gardé sur l'appareil).
+- Réactions : il salue en arrivant ; aile au menton et « ? » quand tu réfléchis ; bonne réponse = saut avec
+  écrasement, ailes qui battent, yeux rieurs, étoiles ; erreur = il secoue la tête, lève un sourcil et se tape
+  le front de l'aile ; chatouilles quand on le touche.
+- Un petit hibou identique suit la leçon dans le coin de l'écran quand le grand n'est plus visible.
+- Respecte « moins d'animations » du système ; rien n'est envoyé. Tests : 113/113.
+```
+
+---
+
+## Version 5.69
+
+```text
+AMI DES MOTS — VERSION 5.69
+Battle entre potes : beaucoup plus de questions, beaucoup plus drôle
+
+- Longueur au choix : ⚡ Courte (9 questions par joueur), 🔥 Normale (15), 🏃 Marathon (24) en mélange ;
+  6 / 10 / 16 pour une seule matière.
+- 50 nouveaux clashs d'Ami (js/clash-plus.js) : 80 en tout. Chaque mauvaise réplique contient une vraie erreur
+  d'anglais (passé irrégulier, -s, a/an, its/their…) expliquée par une vanne.
+- 30 nouveaux « vrai ou faux » surprenants et vrais (les pieuvres ont trois cœurs, la tour Eiffel grandit en été,
+  certaines tortues respirent par les fesses…) : 50 en tout.
+- Ami met la pression avant chaque question de maths (« Celle-là, Ami l'a ratée hier. Ne le dis à personne : »)
+  et chambre les bonnes réponses (« Banger ! Ami écrit ton nom en lettres d'or. »).
+- Tout passe le juge d'Ami : on clashe les réponses et Ami, jamais les joueurs. Tests : 112/112.
+```
+
+---
+
+## Version 5.68
+
+```text
+AMI DES MOTS — VERSION 5.68
+⚔️ Battle entre potes, directement sur l'accueil
+
+- Nouveau bouton d'accueil « Battle entre potes — maths, anglais et vannes ».
+- 2 à 4 joueurs sur le même téléphone, chacun son tour. Au choix : Le grand mélange (3 maths, 3 anglais,
+  3 vannes, à tour de rôle), Maths (au niveau choisi, de la 6e à la terminale), Anglais (pièges, oreille,
+  vrai ou faux), Vannes (Ami clashe : trouve la meilleure punchline anglaise).
+- Entre deux joueurs, Ami commente la course (« Score à battre : 6/9. Ami a déjà sorti le pop-corn. »).
+  Podium à la fin avec titres rigolos, et revanche avec de nouvelles questions. Les mauvaises réponses
+  sont vannées comme d'habitude (vannes de l'IA si un serveur est branché).
+- Le même écran regroupe les autres battles : défi par lien (anglais ou maths), salon en direct, contre Ami.
+- Vannes : la remarque « même initiale » ou « ça rime » repasse avant la vanne sur les objets (plus rare, plus maligne).
+- Tests : 111/111.
+```
+
+---
+
+## Version 5.67
+
+```text
+AMI DES MOTS — VERSION 5.67
+Graphismes ULTRA (réglage Auto / Normal / Ultra)
+
+Réglage
+- Réglages › 🎨 Graphismes : Auto (Ultra sur les appareils puissants, Normal ailleurs), Normal, Ultra. Gardé sur
+  l'appareil, partagé par le jeu, le village 3D et Mots City (js/graphismes.js). Le rendu logiciel et les vieux
+  processeurs graphiques restent en Normal. Si le système demande moins d'animations, les effets restent coupés.
+
+Mondes 3D (village + Mots City), mode Ultra
+- Occlusion ambiante GTAO : les coins, le dessous des objets et les pieds des personnages s'assombrissent.
+- Rayons de soleil qui passent entre les arbres et les bâtiments (au lever, au coucher).
+- Rendu « cinéma » : contraste, couleurs plus vives, lumières chaudes, ombres bleutées, vignette, grain fin,
+  légère aberration d'objectif ; lueurs plus fortes ; anticrénelage SMAA ; ombres 4096 sur PC.
+- Poussières dorées qui flottent dans la lumière (lucioles bleutées la nuit).
+- Garde-fou : si ça rame, l'occlusion puis les rayons se retirent tout seuls (message dans le village).
+- Mots City : trois niveaux (Rapide, Haute, Ultra) dans le téléphone.
+- three.js r160 : GTAOPass, SMAAPass et leurs shaders ajoutés dans vendor/jsm (licence MIT) ; GTAOPass modifié
+  pour ignorer étiquettes, sprites, vitres et ciel.
+
+Écrans de jeu, mode Ultra (css/ultra.css, js/ultra-ecrans.js)
+- Fond animé : nébuleuses qui dérivent, étoiles en parallaxe, étoiles filantes (canvas demi-résolution, 30 i/s,
+  en pause quand l'onglet est caché).
+- Bonne réponse : explosion de 90 étincelles avec gravité et double onde de choc ; erreur : secousse et éclair rouge.
+- Images et cartes en relief qui s'inclinent sous la souris, avec reflet ; boutons à reflet qui balaie ;
+  barres de progression qui chatoient ; titres en dégradé ; écrans qui entrent en cascade.
+
+Correctif
+- v5.66 : le bouton « Vannes inventées en direct par l'IA » des réglages ouvrait par erreur le générateur de vannes
+  pour adultes (deux actions portaient le même nom). Renommé ; un test vérifie qu'aucune action n'est en double.
+
+Tests : jeu 110/110 ; navigateur : maths-sciences 7, village 13, collisions 9, quêtes 9, sens city 5, voitures 8,
+Mots City 43, coin anglais 7, accueil 3D, hors ligne : aucune erreur.
+```
+
+---
+
+## Version 5.66
+
+```text
+AMI DES MOTS — VERSION 5.66
+Les vannes sont écrites en direct par l'IA (avec la 5.65 : voix sans émojis, images à la bonne taille sur PC)
+
+- Nouveau serveur-php/vannes-direct.php : dès qu'une question s'affiche (images, maths, sciences, anglais), le jeu
+  demande à Claude une vanne neuve pour chaque mauvaise réponse possible. L'IA reçoit les 30 dernières vannes déjà
+  dites (interdites) et un angle imposé tiré au hasard : elle ne se répète pas.
+- Chaque vanne de l'IA passe le juge d'Ami et ne sert qu'une fois. Sans serveur, hors ligne ou si l'IA tarde,
+  Ami reprend ses propres vannes (aucun blocage du jeu).
+- Rien de personnel n'est envoyé : seulement la question, les réponses, le ton et les vannes déjà dites.
+- Réglages : « Vannes inventées en direct par l'IA » (oui/non), visible quand un serveur est branché.
+- Tests : jeu 109/109 (dont le parcours IA simulé), serveur PHP 36/36 (dont 3 pour les vannes directes).
+```
+
+---
+
+## Version 5.65
+
+```text
+AMI DES MOTS — VERSION 5.65
+- La voix ne lit plus les émojis (😂, 🔥, drapeaux…) ni les guillemets : elle dit seulement la phrase.
+- PC : l'image d'une question tient dans l'écran (38 % de la hauteur au plus, 520 px de large) ; la carte
+  « Découvrir » rapetisse aussi, les boutons restent visibles sans défiler.
+- « Voir la bouche » : l'animation ne part plus avant le son. Les petits silences au début et à la fin des
+  enregistrements sont retirés du calcul, la bouche bouge en même temps que la voix.
+```
+
+---
+
+## Version 5.64
+
+```text
+AMI DES MOTS — VERSION 5.64
+Ombres lisibles, voix moins robot, vannes qui parlent vraiment des objets
+
+- Jeu « Ombres » : l'ancien filtre transformait les photos en bouillie noire. Chaque image a maintenant une vraie
+  silhouette découpée à l'avance (img/ombres, 117 images, outils/fabriquer-ombres.py). Les 5 photos sans fond blanc
+  (plage, piano, tableau, puzzle, fenêtre) passent en « lampe torche » : la scène sort de la nuit petit à petit.
+- Voix : les voix du téléphone/PC sont classées (Natural/Online, Google, Premium d'abord ; Hortense, Zira, eSpeak
+  en dernier). Nouveau réglage « La voix d'Ami » : choisir sa voix et l'essayer, avec l'astuce Edge/Chrome/Android.
+- Vannes françaises : js/vannes-mots.js décrit les 122 objets (ce que c'est, ce qu'on en fait). Ami fabrique des
+  vannes sur LES DEUX mots confondus : « Le soleil ?! Essaie de poser ta serviette sur le soleil, pour voir. 😂 ».
+  4 niveaux, passées au juge, sans répétition. La lecture facile garde les vannes courtes.
+```
+
+---
+
+## Version 5.63
+
+```text
+AMI DES MOTS — VERSION 5.63
+Labo des sciences : des clashs vraiment cash, puis la bonne réponse
+
+- Les 82 clashs du labo (planètes, fusées, corps humain, médecine) sont réécrits : d'abord la punchline, puis la
+  bonne réponse en clair. Ex. « Thomas Pesquet ?! En 1969, il n'était même pas encore au programme : il est né en
+  1978 ! C'est Neil Armstrong. » ; « 3 840 km ? À ce compte-là, on irait sur la Lune en car scolaire pendant les
+  vacances. Il manque deux zéros : 384 000 km. »
+- Les faits restent exacts (dates, chiffres) et chaque clash passe le juge d'Ami : il démonte la réponse, pas la personne.
+```
+
+---
+
+## Version 5.62
+
+```text
+AMI DES MOTS — VERSION 5.62
+Prof Pi ne répète jamais ses vannes, et il s'énerve quand on refait la même erreur
+
+- Mémoire des vannes (par joueur, gardée sur l'appareil) : Prof Pi sort d'abord les vannes jamais dites pour cette
+  erreur, puis les vannes générales, puis la FABRIQUE À VANNES : amorce + « Même … » + chute, plus de 70 000
+  combinaisons (accordées au féminin et au masculin). Testé : 300 erreurs de suite, 300 vannes différentes.
+  Ex. « Allô ? 5,23 ? Même la règle de 30 cm a demandé un remboursement. Réponse officielle : 5,5. »
+- Même erreur refaite dans la série, en ton 🔥 Cash :
+  2e fois : « Encore ?! Mais genre, tu fais exprès ou quoi !!!! 😤 » (ou une variante qui clashe fort) ;
+  3e fois : « Sérieux, tu vas à l'école toi ??? 🏫 » (ou une variante) ;
+  4e fois et plus : « Là, c'est plus une erreur, c'est une tradition. Prof Pi va l'encadrer. 🖼️ »
+  En Taquin, ça reste joueur ; en Tout doux, c'est un encouragement.
+- Labo des sciences (ton Cash) : la punchline ne se répète pas non plus.
+- Toutes les vannes passent le juge d'Ami ; l'explication 💡 reste toujours affichée.
+
+Tests : 107 + 22 réussis ; maths et sciences dans Chrome : OK.
+```
+
+---
+
+## Version 5.61
+
+```text
+AMI DES MOTS — VERSION 5.61
+Vannes plus drôles et plus cash
+
+- 110 nouvelles vannes pour Prof Pi (maths), réparties sur les erreurs les plus fréquentes de la 6e à la Terminale,
+  plus des vannes générales quand l'erreur n'est pas classée. Exemples :
+  « Plus long ≠ plus grand. Sinon le mot « anticonstitutionnellement » serait milliardaire. »
+  « Additionner les dénominateurs ? Avec ta méthode, deux moitiés de pizza font… moins d'une pizza. »
+- Le ton « Sans pitié » s'appelle maintenant « 🔥 Cash (ados) ».
+- Labo des sciences en ton Cash : le clash de chaque mauvaise réponse est suivi d'une punchline qui change.
+- Règle inchangée et testée : on démonte la RÉPONSE, jamais la personne ni sa famille ; chaque vanne passe le juge d'Ami.
+
+Tests : 105 + 22 réussis ; maths et sciences dans Chrome : OK.
+```
+
+---
+
+## Version 5.60
+
+```text
+AMI DES MOTS — VERSION 5.60
+Graphisme, voitures dans le bon sens, clashs plus forts, plein écran sur ordinateur
+
+VOITURES
+- Vérifié une par une (page de contrôle outils/tests-navigateur/garage.html) : chaque véhicule a son avant du côté
+  où il roule. Les bus, le car scolaire et l'ambulance n'avaient pas de phares nommés : leur avant est maintenant
+  donné par leur forme (AVANT_Q dans js/kit3d.js).
+- Nouveau test test-sens-voitures.js : dans le village et dans Mots City, aucun véhicule ne roule en marche arrière
+  (3 relevés par monde).
+- Bus, car scolaire, ambulance, vélo, feux et cônes avaient perdu leurs couleurs (tout gris, vitres « en triangles ») :
+  couleurs d'origine du pack rétablies et découpe des faces corrigée (outils/preparer-nature.mjs).
+
+GRAPHISME
+- Ciel en dégradé franc (bleu profond en haut, clair à l'horizon, halo du soleil, couchant et nuit) dans le village
+  et Mots City, au lieu d'un ciel blanc délavé. La pluie garde son ciel gris.
+- Village : la caméra se place directement derrière le joueur au départ (avant, elle partait de la fontaine) et suit
+  à la même vitesse sur tous les ordinateurs.
+- Portails du village : icônes au-dessus des noms, libellé « Le coin anglais » raccourci (plus de chevauchement).
+
+ORDINATEUR
+- Les écrans utilisent toute la largeur (jusqu'à ~1760 px) au lieu d'une colonne de 1000 px au milieu.
+- Coin anglais, maths, sciences : cartes en grille large. Questions : grande question à gauche, grosses touches de
+  réponse à droite, sur toute la hauteur. Accueil : grands boutons sur deux colonnes.
+- Boutons de choix (ton de Prof Pi…) enfin lisibles. Rien ne change sur téléphone.
+
+CLASHS
+- 30 manches de battle au lieu de 9 (21 nouvelles, originales) : chaque mauvaise réplique cache une vraie erreur
+  d'anglais que la vanne explique.
+- Ami contre-attaque quand tu rates ta réplique (sur la réplique ratée, jamais sur toi).
+- Le public : jauge d'énergie, ovations quand tu réussis du premier coup, séries (« Série de 3 : Ami est KO
+  debout ! »), dernière manche en FINALE.
+
+TESTS : 104 + 22 réussis ; navigateur : voitures (8), sens Mots City (5), village 5.42 (13), collisions (9),
+quêtes (9), maths et sciences (7), Mots City, coin anglais, accueil 3D, hors ligne : OK.
+```
+
+---
+
+## Version 5.59
+
+```text
+AMI DES MOTS — VERSION 5.59
+Remise en ordre après la consolidation 5.58
+
+- Mots City est de retour : dans la 5.58, mots-city.html avait été remplacé par une copie du village 3D
+  (plus de conduite, de missions, de radio, d'étiquettes ni de véhicules Quaternius). Le vrai Mots City est restauré.
+- Direction vérifiée dans un vrai Chrome : flèche droite = le héros (à pied ET en véhicule) tourne vers la droite de
+  l'écran, gauche vers la gauche (nouveau test outils/tests-navigateur/test-sens-city.js).
+- Phase « tout gratuit » conservée. Liste des thèmes gratuits corrigée : elle citait des thèmes qui n'existent pas
+  (corps, école, transports) et oubliait habits, musique et atelier.
+- Tests de l'abonnement Plus : ils activent maintenant eux-mêmes le mode payant, pour continuer à vérifier la
+  protection (certificat signé, triche impossible) même pendant la phase gratuite. Test du coin admin corrigé
+  (une case de coin cochée = gratuit).
+
+Tests : 102 + 22 (moteur adaptatif, tuteur, professeur) réussis ; navigateur : Mots City, sens de direction
+(village et Mots City), village 5.42, collisions, quêtes, maths et sciences, coin anglais, hors ligne : OK.
+```
+
+---
+
+## Version 5.58
+
+```text
+AMI DES MOTS — VERSION 5.58
+
+- Finition transversale de l’interface : confort tactile, focus clavier, lisibilité et adaptation aux grands écrans.
+- Professeur local enrichi avec six leçons supplémentaires : couleurs, division, comparatif anglais, pourcentages, voix passive et discriminant.
+- Les profils, la progression locale, les modules existants et le fonctionnement hors ligne sont conservés.
+
+Limites : cette version n’ajoute pas de pack de modèles 3D photoréalistes ni de carte AAA. Le rendu 4K dépend de l’écran, du navigateur et du GPU. Le professeur reste un tuteur local à contenus vérifiés, pas un modèle génératif connecté. Validation visuelle sur appareils réels encore nécessaire.
+```
+
+---
+
+## Version 5.49
+
+```text
+Ami des Mots v5.49 — Renaissance graphique
+```
+
+---
+
+## Version 5.46
+
+```text
+Ami des mots v5.46 — humour renforcé et refonte visuelle premium
+
+- Punchlines supplémentaires après les erreurs des pièges d’anglais, en français et en anglais.
+- Les répliques visent les phrases, la grammaire et le hibou Ami, jamais l’enfant.
+- Refonte responsive des écrans pièges, coin anglais, cartes et retours : fond glass, profondeur, typographie, boutons et animations légères.
+- Respect de prefers-reduced-motion et conservation des règles pédagogiques existantes.
+```
+
+---
+
+## Version 5.45
+
+```text
+AMI DES MOTS — VERSION 5.45
+Correctifs de direction dans les univers 3D
+
+- La commande droite utilise désormais l'axe horizontal réel de la caméra, pour que droite/gauche restent cohérentes à l'écran même après rotation de la caméra.
+- Les voitures du quartier 3D sont orientées selon leur sens de circulation, y compris les voitures roulant vers -Z.
+- Les roues des voitures animées tournent désormais avec un signe cohérent avec leur sens de déplacement.
+- Dans Mots City, la rotation des roues du trafic tient également compte du sens de circulation.
+- Ajout d'un test navigateur de non-régression : flèche droite, orientation des voitures et rotation des roues.
+
+À vérifier dans Chrome : lancer le serveur local puis exécuter
+node outils/tests-navigateur/test-sens-univers.js
+```
+
+---
+
+## Version 5.44
+
+```text
+AMI DES MOTS — VERSION 5.44
+Maths de la 6e au bac avec Prof Pi, labo des sciences, serveur PHP sans Supabase, appli Android
+
+MATHS (6e → TERMINALE)
+- 🔢 Coin maths : 7 niveaux, 73 sortes d'exercices rattachées aux programmes de la rentrée 2026
+  (6e programme 2025, 5e nouveau cycle 4, 4e/3e cycle 4 en vigueur, 2nde/1re nouveaux programmes, Tle).
+- Exercices fabriqués par le code : nombres au hasard, correction CALCULÉE (jamais devinée), à l'infini.
+- Chaque mauvaise réponse proposée est une erreur classique (dénominateurs additionnés, oubli du double produit,
+  racine oubliée dans Pythagore, signes des racines…), avec sa vanne de Prof Pi (raton laveur prof de maths) ET l'explication.
+- Ton de Prof Pi : tout doux (petits), taquin, sans pitié (ados). Les vannes visent l'erreur, jamais l'élève.
+- Brevet blanc (3e), épreuve anticipée blanche (1re), bac blanc (Tle), note sur 20.
+- Battles de maths : défi par lien (même niveau, mêmes questions), salon en direct (le chef choisit maths).
+- Veille IA : le serveur lit les programmes et sujets OFFICIELS (education.gouv.fr, Eduscol), propose la carte des
+  chapitres et la liste des sujets (liens vers le ministère) ; rien n'est publié sans validation dans admin/.
+
+SCIENCES
+- 🚀 Labo des sciences : 41 questions (planètes et espace, fusées et astronautes, corps humain, médecine et microbes),
+  un clash par mauvaise réponse + l'explication.
+
+SERVEUR PHP (sans Supabase)
+- serveur-php/ : abonnement Stripe (webhook signé, certificats Plus signés), vannes IA, salon des battles
+  (rafraîchissement ~1 s, marche sur un mutualisé OVH), carte des programmes, veille, coin admin protégé.
+- node outils/configurer.js --serveur … : branche le jeu sur le serveur sans toucher au code.
+
+APPLI
+- 📲 Bouton « Installer l'appli » (Android/PC) ; iPhone : Partager → Sur l'écran d'accueil.
+- Appli Android fabriquée par GitHub Actions (Capacitor) : APK de test, AAB Play Store si la clé est fournie.
+  Voix du téléphone dans l'appli, micro pour « Répète après Ami ».
+- Site sur GitHub Pages par GitHub Actions.
+
+TESTS
+- 102 tests automatiques (dont corrections de maths recalculées autrement, 150 tirages par exercice).
+- Serveur PHP : 33 vérifications sur une vraie base MariaDB (Stripe et Claude simulés).
+- Navigateur : maths et sciences (7), salon à deux navigateurs par le serveur PHP (9) et par Supabase simulé (9).
+
+LIMITES
+- L'APK n'a pas pu être compilé ici (outils Android inaccessibles depuis cet environnement) : la fabrique GitHub
+  est prête, le projet Capacitor a été généré et vérifié, la compilation se fera au premier lancement sur GitHub.
+- Serveur testé sur MariaDB locale, pas encore chez OVH. Veille testée avec des documents simulés.
+- Maths : les cartes des programmes de 5e (nouveau) et de lycée (nouveaux programmes 2026) sont à confirmer par la veille.
+```
+
+---
+
+## Version 5.43
+
+```text
+AMI DES MOTS — VERSION 5.43
+Ami propose des vannes (IA), un adulte choisit
+
+- Espace parents → « ✨ Ami propose des vannes (IA) » : on choisit un thème et un ton (tout doux, taquin,
+  corsé), l'IA (Claude) propose 6 vannes, le juge d'Ami retire les mauvaises, et un adulte garde ✅ ou jette ❌.
+  Rien n'entre dans le jeu sans un adulte. Les vannes gardées rejoignent les vannes de la famille.
+- Réservé aux abonnés Plus, 5 demandes par jour. La clé Claude reste sur le serveur (fonction ami-vannes).
+- À brancher : voir VANNES-IA.md (clé API, SQL, déploiement, API_VANNES).
+- Tests : 96 automatiques (dont générateur : juge, adulte, quota, aucune clé dans le client).
+- Limite : la fonction serveur est vérifiée (types, nettoyage des réponses) mais pas encore appelée sur ton
+  vrai Supabase avec ta vraie clé.
+```
+
+---
+
+## Version 5.42
+
+```text
+AMI DES MOTS — VERSION 5.42
+Rire et apprendre en même temps, battles entre potes, salon en ligne, coin admin
+
+POUR RIRE (Coin anglais → 😂 Pour rire)
+- 🦉 Ami se trompe exprès : il dit une bêtise en anglais, à toi de le corriger (il se vexe, il boude…).
+- 👂 Les oreilles d'Ami : 14 paires qui se ressemblent (ship/sheep, beach/…), avec la vanne qui va avec.
+- ✅ Vrai ou faux rigolo : 20 affirmations, réponse et explication en français.
+- 🎄 Calendrier de l'Avent : 24 cases (une par jour en décembre), mot + phrase + vanne, +2 plumes.
+- 📺 Bêtisier : l'émission de tes plus belles confusions de la semaine.
+- 🏠 Maison d'Ami : on achète des objets avec ses plumes en apprenant leur nom anglais.
+- Ami a de nouvelles têtes : vexé, mort de rire, choqué, fier, boudeur, malin, endormi.
+
+BATTLES
+- 🎧 Rap battle (scène, beat boom-bap, foule, applaudimètre) : Ami rappe, tu complètes tes rimes.
+  Paroles 100 % originales ; les vannes visent Ami, jamais une personne.
+- 🏆 Tournoi en famille. 🔗 Défi entre potes : un lien, les mêmes questions, on compare.
+- 🚀 Salon en ligne (Supabase Realtime) : salons privés (code) et publics, réactions, chat privé si un parent
+  l'autorise, filtre, muet. À brancher : voir SALON-EN-LIGNE.md.
+
+AMI APPREND (le juge des vannes)
+- Chaque vanne a un score familial (😂 +2, 🙄 -3) : les mauvaises disparaissent, les bonnes reviennent plus.
+- Le juge refuse les vannes qui visent une personne ou sa famille (« ta mère… »), la violence, les
+  discriminations, les infos personnelles. Les parents ajoutent leurs vannes de famille : le juge dit pourquoi
+  il refuse.
+
+VILLAGE 3D
+- 🏃 Coach Kim : « Ami says » (Jacques a dit en anglais).
+- ☕ Le café (Tom, le serveur) et 🏫 l'école (Mr Brown : « Show me the… ») : on entre vraiment.
+- 🏷️ Étiquettes : on passe près d'une chose, son nom anglais s'affiche (touche pour l'entendre).
+- 🌦️ Météo (soleil, pluie, neige du 1er décembre au 6 janvier) et 📷 mode photo avec légende anglaise
+  (la photo reste sur l'appareil).
+
+MOTS CITY
+- 🏷️ Étiquettes anglaises près des lieux, des palmiers et des véhicules (car, taxi, bus, school bus, ambulance).
+
+COIN ADMIN (admin.html)
+- Choisir ce qui est gratuit et ce qui est dans Plus : thèmes, jeux, coins, joueurs gratuits, prix.
+- Fabrique js/offre.js à remplacer dans le dépôt (voir COIN-ADMIN.md). Ne peut jamais ouvrir Plus.
+
+TESTS
+- 94 tests automatiques (npm run verifier).
+- Navigateur : village v5.42 (13), salon en direct à deux navigateurs sur faux serveur (9), Mots City (43),
+  coin anglais, quêtes, collisions, ruines, Quaternius, accueil 3D, hors ligne : tous OK.
+
+LIMITES
+- Salon testé sur un faux serveur, pas encore sur ton vrai Supabase.
+- Pages 3D : fermées depuis le jeu, mais une adresse tapée à la main y entre encore.
+- Vrai téléphone (fluidité, voix) non testé ici.
+```
+
+---
+
+## Version 5.41
+
+```text
+AMI DES MOTS — VERSION 5.41
+Apprendre plus loin, rire plus fort, un monde plus beau
+
+APPRENTISSAGE (Coin anglais, Français → Anglais)
+- 🧭 Mon parcours : 3 niveaux (Premiers pas · Premières phrases · Petites conversations).
+  Chaque étape se fait en jouant (mots, pièges, situations, histoires, dictée, répéter, battles).
+  Examen de fin de niveau : 8 questions, 6 pour réussir (+10 plumes) ; il ouvre le niveau suivant.
+- 🔁 Ma révision du jour : un seul paquet de 6 à 8 questions avec tout ce qui est fragile
+  (mots dus, pièges ratés, une réplique de situation, une question d'histoire). Série de jours 🔥.
+- 📖 Mini-histoires : 5 histoires originales du village (Ami, Paco, Mina, Captain Finn…),
+  une phrase à la fois avec la voix anglaise et la traduction cachée, puis 2 questions.
+- 🗣️ Répète après Ami : 20 phrases utiles. On écoute, on s'enregistre, on se réécoute, puis Ami.
+  La voix reste sur l'appareil (ni gardée, ni envoyée). Sans micro : « 👍 Bien dit ! ».
+- 👪 Espace parents (petit calcul pour entrer) : niveau, mots, pièges, situations, histoires,
+  dictées, phrases dites, battles, série de révisions, et « Ce qui coince » (confusions fréquentes).
+
+VANNES
+- Elles se souviennent : à la 3e, 5e, 8e fois de la même confusion, Ami le remarque
+  (« C'est la 3e fois que « la tortue » se déguise en « le chat »… carnet secret ! 📒 »).
+  Pièges : « Encore ce piège ! Il t'aime bien, on dirait. »
+- Personnages récurrents : Paco, Mina et Professor Puzzle passent dans les vannes.
+- Petit « boing » avant la vanne (si le son est activé et l'humour pas sur « tout doux »).
+- Scènes animées : dans les scènes absurdes, le bon mot se transforme en mauvais (désactivé si
+  l'appareil demande moins d'animations).
+- 😂 La blague anglaise du jour (20 vraies devinettes : mouse, school, two tired…) avec le jeu de
+  mots expliqué en français.
+- Battle de vannes : contre Ami, EN FAMILLE (équipes 🦊/🐼, 4 manches), ou ✍️ INVENTE TA VANNE
+  (3 choix → une phrase anglaise toujours juste : « Ami, you dance like a penguin on ice skates! »).
+- 🙄 Pas drôle : la vanne notée ne ressort plus.
+
+GRAPHISME
+- Mots City : vraie circulation Quaternius (voitures, taxi, bus, bus scolaire, ambulance),
+  chaque véhicule freine et a une zone de collision à sa taille.
+- Village : 🏛️ les ruines perdues au sud-est (arches, colonnes, statues, coffre…) avec une
+  CHASSE AU TRÉSOR en anglais (« Go through the arch », « Look behind the fox statue »,
+  « Find the barrel next to the column », « Go up the stairs », « Open the chest under the flag! »).
+  Ajoutée au carnet de quêtes.
+- Portails en arches de pierre (même style que les ruines).
+- Vie du village : oiseaux, feuilles qui tombent, étincelles quand on trouve une plume.
+- Qualité automatique : si le téléphone peine (< 25 images/s), on allège (résolution, ombres,
+  feuilles, oiseaux) et on s'en souvient.
+
+Packs Quaternius (CC0) : voitures, transports, ruines. Crédits : assets/3d/CREDITS.md.
+Tests : 81 (npm test) + Chrome : Mots City, habitants, collisions, quêtes, coin anglais,
+ruines et véhicules (14), accueil 3D, jambes, Paco, hors ligne.
+```
+
+---
+
+## Version 5.40
+
+```text
+AMI DES MOTS — VERSION 5.40
+Le coin anglais : parler pour de vrai, en rigolant
+
+Sur l'accueil (Français → Anglais) : un bouton 🇬🇧 Le coin anglais, avec 4 activités.
+
+🪤 Les pièges (v5.39) — 28 erreurs typiques des francophones, une vanne par erreur, révision espacée.
+
+🎤 Battle de vannes (nouveau)
+- Ami se vante en anglais (« I’m the king of this village! ») ; on choisit LA réplique juste et drôle
+  (« The king? You can’t even find your own feathers! »).
+- Les mauvaises répliques sont soit fausses (« can’t even to find » : la vanne explique la règle),
+  soit hors sujet (« I like cheese »). Point seulement du premier coup. 3 manches, 9 répliques.
+- Ami encaisse avec humour (« Ouch! Good one! »). Les vannes visent Ami, jamais l'enfant.
+- Bouton 🇫🇷 Traduire (caché par défaut, pour pousser à comprendre en anglais).
+
+☕ Situations de la vie (nouveau)
+- 5 scènes : Au café, Un nouveau copain, Au magasin, Demander son chemin, Dîner chez un ami.
+- On écoute la personne (voix anglaise), on choisit sa réplique ; une étape de compréhension
+  (« Go straight on, then turn left » : qu’est-ce qu’elle t’a dit ?).
+- Erreur = vanne (« I am two pounds » : tu pèses deux livres ? Léger comme une plume !) et on réessaie.
+
+✍️ Dictée rigolote (nouveau)
+- Ami dit une phrase (🔊 normal ou 🐢 lentement), on l'écrit, on vérifie.
+- Correction tolérante : majuscules, ponctuation, apostrophes, contractions (where's = where is).
+- Les mots faux sont soulignés ; vanne spéciale pour les mots jumeaux (see/sea, sun/son, two/too,
+  ate/eight…) qui explique les deux sens. 14 phrases, 5 par dictée.
+
+Village 3D
+- Nouveau portail 🇬🇧 « Le coin anglais » (au nord, entre « Apprendre 5 mots » et « Atelier des phrases »).
+- Professor Puzzle (anneau orange, au nord-ouest) tend des pièges de l'anglais, avec série de réussites.
+
+Progression (situations réussies, victoires, dictées parfaites) gardée et vérifiée à la restauration.
+Tests : 76 (npm test) + Chrome : coin anglais (7), collisions (9), quêtes (9), habitants (14),
+accueil 3D, jambes, Paco, hors ligne.
+```
+
+---
+
+## Version 5.39
+
+```text
+AMI DES MOTS — VERSION 5.39
+Des vannes qui racontent quelque chose, et les pièges de l'anglais
+
+Vannes : les scènes absurdes
+- Quand on confond deux mots, Ami peut maintenant raconter ce qui arrive avec le MAUVAIS mot :
+  « Tu voulais caresser le chat… et tu caresses la tortue ! Surprise au bout des doigts. »
+  « Tu commandes le fromage au restaurant… et le serveur t’apporte la fourchette sur un plateau ! »
+- Si on apprend l'anglais, la vanne se termine par la bonne phrase anglaise :
+  🇬🇧 « I want to pet the cat. » — on rit ET on apprend une phrase utile.
+- 2 à 3 scènes par thème (animaux, manger, maison, habits, nature, ville, musique, atelier),
+  en français et en anglais, articles et contractions justes (du, de la, de l’).
+- Pas de scènes en Lecture facile (phrases trop longues) ; jamais deux fois la même de suite.
+
+Nouveau : 🪤 Les pièges de l'anglais (français → anglais)
+- 28 erreurs typiques des francophones : « I have 10 years », « I am agree », « a car red »,
+  « two mouses », « I'm eating pain », « library » pour librairie, « actually » pour actuellement…
+- 5 familles : Être, avoir ou faire ? · L'ordre des mots · Les petits mots · Les pluriels rebelles ·
+  Les faux amis.
+- Chaque mauvaise réponse a SA vanne, qui montre ce qu'un anglophone comprendrait
+  (« I call myself Léa » : on dirait que tu te téléphones à toi-même ! 📞), puis la bonne phrase
+  dite à voix haute et la règle en une ligne.
+- Révision espacée : un piège raté revient dès la séance suivante ; un piège réussi revient
+  après 1, 3, 7 puis 21 jours. Score « Pièges déjoués x/28 ». +2 plumes par piège évité.
+- Progression gardée dans la sauvegarde (et vérifiée à la restauration).
+
+Tests : 73 (npm test), dont scènes absurdes, contenu des pièges, révision espacée, écran complet.
+```
+
+---
+
+## Version 5.38
+
+```text
+AMI DES MOTS — VERSION 5.38
+Des quêtes avec un vrai but, et on ne traverse plus les murs
+
+Collisions (village 3D)
+- On ne traverse plus les bâtiments, la fontaine, les arbres, les bancs, les lampadaires,
+  le tableau, les piliers des portails, les habitants, les animaux ni les voitures.
+- Les voitures s'arrêtent quand Ami est devant elles, puis repartent quand la voie est libre.
+- (Mots City avait déjà ses collisions : murs, voitures, véhicules.)
+
+Quête « Les plumes perdues d'Ami » (le but des plumes)
+- Le vent a emporté 10 plumes d'Ami : sans elles, il ne peut plus voler.
+- Les plumes sont maintenant petites, près du sol, cachées (derrière l'école, sous le grand arbre,
+  dans les hautes herbes…) et ne sont plus affichées sur la carte.
+- Pour savoir où chercher : réussir le défi d'un habitant à l'anneau bleu (ou de Paco et Mina).
+  Il donne un INDICE EN ANGLAIS (« Look under the big tree », « It's between the lamp and the bench »)
+  avec la traduction : on pratique behind, under, next to, in front of, on, between…
+- Ami prévient quand une plume dont on a l'indice est tout près.
+- Récompense des 10 plumes : Ami revole (saut géant + vol plané en gardant Espace ou ⤒).
+
+Carnet de quêtes (📖 Quêtes)
+- 4 quêtes, chacune avec son but, sa progression et sa récompense : Aide tes voisins,
+  Les plumes perdues d'Ami (avec la liste des indices, 🔊 pour les réécouter), Hello, village!,
+  Paco et Mina.
+- Les défis déjà réussis avant cette version donnent leur indice automatiquement.
+
+Corrigé
+- Le saut ne montait presque pas (le balancement de la marche écrasait la hauteur) ;
+  il est maintenant identique sur tous les appareils.
+- Bouton ⤒ (sauter) sur écran tactile.
+
+Tests : 69 (npm test) + collisions du village (9) + quêtes (9) dans Chrome
+(outils/tests-navigateur/test-collisions-village.js, test-quetes.js).
+```
+
+---
+
+## Version 5.37
+
+```text
+AMI DES MOTS — VERSION 5.37
+Les vrais habitants et la vraie nature (packs Quaternius, CC0)
+
+Village 3D
+- Les 4 amis (Léa, Max, Zoé, Milo le chef) ont de nouveaux personnages animés.
+- 8 nouveaux habitants qui parlent anglais : Mrs Taylor (teacher), Doctor Lee (doctor),
+  Farmer Joe (farmer), Bob (builder), Granny Rose (grandmother), Captain Finn (pirate),
+  Wizard Pip (wizard) et Daisy (une amie déguisée en vache).
+  On s'approche, E : il se présente en anglais (voix anglaise), avec la traduction française,
+  puis propose un petit défi (« Comment dit-on trésor en anglais ? »). Erreur = vanne gentille
+  qui cite les deux mots ; réussite = l'habitant fait un geste de joie. Progression gardée (x/8).
+- Une vraie forêt autour du quartier (bouleaux, chênes, saules, sapins), des fleurs, herbes,
+  buissons et rochers sur les pelouses. Rien ne bloque les chemins ni les portails.
+
+Mots City
+- Une foule variée sur les trottoirs (chefs, médecins, ouvriers, mamies, cow-boys…).
+- 4 nouvelles tenues : Pirate, Cheffe, Sorcière, Vache rigolote (8 au total).
+- Vrais palmiers et arbres ; certains pâtés deviennent de petits parcs fleuris.
+
+Technique
+- Modèles compressés (meshopt) : 28 habitants = 3,2 Mo, nature = 0,9 Mo, en cache hors ligne.
+- Animations de combat retirées (jeu familial). Une seule copie des animations.
+- Scripts : outils/preparer-quaternius.mjs, outils/preparer-nature.mjs. Crédits : assets/3d/CREDITS.md.
+- Si un modèle manque, le jeu reprend les personnages KayKit ou le décor dessiné.
+
+Tests : 68 (npm test) + Mots City dans Chrome (40 vérifications) +
+habitants/nature (14 vérifications : outils/tests-navigateur/test-quaternius.js).
+```
+
+---
+
+## Version 5.36
+
+```text
+AMI DES MOTS — VERSION 5.36
+L'accueil devient le village 3D
+
+- En ouvrant le site, on arrive dans le village 3D (automatique sur les appareils capables).
+  Restent en version classique (2D) : mode Lecture facile, « réduire les animations »,
+  appareil sans 3D, ou quand on a choisi « 🏠 Version classique ».
+- 14 portails dans le village : les 8 lieux (forêt des animaux, marché gourmand, maison bavarde,
+  jardin, place du village, scène, boutique des costumes, laboratoire), Défi du jour,
+  Apprendre 5 mots, Atelier des phrases, À revoir, Mon carnet, Mots City.
+  On s'approche, on appuie sur E (ou le bouton) : « Entrer ». Les portails sont sur la carte.
+- Les jeux restent ceux de l'application (rien n'est perdu). Leur bouton Accueil / retour
+  ramène dans le village 3D.
+- Accueil classique : bouton « 🌍 Jouer dans le village 3D » pour y revenir (et retenir ce choix).
+- Les lieux réservés à Plus restent protégés par l'application (écran Plus).
+- Liens directs : index.html?aller=lieu:animaux, defi, lecon, phrases, revoir, carnet,
+  reglages, classique.
+
+Tests : 65 (npm test) + parcours accueil 3D dans Chrome (8 vérifications :
+outils/tests-navigateur/test-accueil3d.js).
+```
+
+---
+
+## Version 5.35
+
+```text
+AMI DES MOTS — VERSION 5.35
+« Tu peux faire mieux ? » — le village 3D refait, Mots City plus réaliste
+
+Monde 3D (le village)
+- Immeubles KayKit détaillés (façades, auvents, châteaux d'eau) ; les enseignes LE MARCHÉ,
+  ÉCOLE, MAISON, CAFÉ sont conservées.
+- Léa, Max, Zoé et Milo sont de vrais personnages animés (squelette : marche, repos).
+- Voitures KayKit aux roues qui tournent, lampadaires, bancs.
+- Ciel réaliste, reflets dosés, lueur des lampes la nuit, sols texturés.
+- Ami (le joueur), Paco, Mina, missions, plumes, carte : inchangés.
+- Corrigé : l'icône d'onglet manquante (erreur 404).
+
+Mots City
+- Tours de verre qui reflètent le ciel (ligne d'horizon), antennes lumineuses, fenêtres
+  allumées la nuit.
+- Ciel plus bleu, route plus claire, lueur réservée aux vraies lumières (plus de voile blanc).
+
+Commun (js/kit3d.js)
+- Seuil de lueur au-dessus de 1 : seuls néons, lampes et phares brillent.
+- Reflets du ciel dosés matériau par matériau.
+
+Tests : 65 (npm test) + 40 vérifications Chrome (Mots City) + village (jambes, habitants
+animés, défi de Paco) + démarrage hors connexion.
+```
+
+---
+
+## Version 5.34
+
+```text
+AMI DES MOTS — VERSION 5.34
+Graphismes : vrais modèles 3D animés, ciel réaliste, lueurs ; fenêtres décalées corrigées
+
+Corrigé : fenêtres « en décalé »
+- Une règle CSS (perspective sur <body>) faisait de toute la page le repère des fenêtres fixes :
+  après défilement, la fenêtre « Comment la bouche fait ce mot » (et les bulles) s'ouvraient
+  décalées, coupées en haut. Défaut présent depuis la v5.30. Test ajouté pour qu'il ne revienne pas.
+
+Mots City — graphismes
+- Personnages : vrais modèles 3D avec squelette et animations (repos, marche, course, saut,
+  assis en véhicule, joie, ramasser, esquive) — KayKit Adventurers, CC0. 4 personnages au choix.
+  Armes et animations de combat retirées des fichiers.
+- Ville : immeubles détaillés KayKit (façades, auvents, châteaux d'eau), lampadaires, bancs,
+  buissons, bouches d'incendie ; voitures KayKit (taxi, berline, break) avec roues qui tournent.
+  Tours art déco conservées pour la ligne d'horizon.
+- Ciel physique (soleil, dégradé réaliste), reflets du ciel sur les surfaces, étoiles la nuit,
+  lueur des néons et lampadaires (bloom), mer avec vaguelettes scintillantes, sols texturés.
+- Téléphone → « Graphismes » : Haute qualité (ordinateur) ou Rapide (téléphone modeste).
+- Performances : tout le décor fixe fusionné en 1 à 2 objets ; 9 passants sur téléphone.
+- Si les modèles ne se chargent pas, le jeu garde son décor dessiné par le code.
+
+Tests : npm test + 40 vérifications dans Chrome (outils/tests-navigateur/test-city.js).
+```
+
+---
+
+## Version 5.33
+
+```text
+AMI DES MOTS — VERSION 5.33
+Mots City devient un vrai monde ouvert (original, familial)
+
+Monde 3D (monde-3d.html)
+- Corrigé : Ami, le personnage du joueur, avait des pattes collées au corps et glissait.
+  Ses pattes sont maintenant articulées à la hanche, se balancent en opposition (±34°)
+  au rythme de la vitesse, et reviennent droites à l'arrêt.
+
+Mots City (mots-city.html)
+- Héros à pied, articulé (hanches, genoux, épaules, coudes) : marche, course (Maj ou 🏃),
+  saut (Espace ou ⤒), pose assise en véhicule. Animation procédurale (pas de squelette importé).
+- Monter / descendre (E ou 🚪) : 2 scooters et 3 cabriolets à emprunter. Pas de vol de voiture,
+  pas de violence : la circulation et les passants ne sont jamais attaqués.
+- Ville côtière au coucher du soleil : immeubles pastel art déco, néons, palmiers, plage,
+  promenade, ponton avec grande roue, voilier, océan animé.
+- Cycle jour/nuit (une journée = 6 min) : ciel, soleil, fenêtres et néons qui s'allument,
+  lampadaires, phares la nuit. Heure affichée sous le plan.
+- Radios dans les véhicules (R) : musique composée par le jeu en direct (synthwave, pop),
+  et une radio parlée d'expressions anglaises. Aucun fichier, aucune musique protégée.
+- 20 plumes dorées cachées : chacune apprend un mot anglais (image + voix + sens).
+- Écran titre, 4 tenues au choix (sauvegardées), caméra que l'on peut tourner en glissant.
+- Missions : livraison (à pied ou en véhicule), taxi (il faut un véhicule ; le passager monte
+  à bord), chasse aux lettres. Les vannes citent toujours l'erreur commise.
+- Performances : palmiers, lampadaires et halos instanciés ; pas d'ombres sur téléphone.
+
+Tests : 64 réussis (npm test) + 40 vérifications dans Chrome (outils/tests-navigateur/test-city.js)
++ jambes du monde 3D + démarrage hors connexion.
+```
+
+---
+
+## Version 5.32
+
+```text
+AMI DES MOTS — VERSION 5.32
+Toutes les idées de vannes + Mots City
+
+1. Genre des mots (js/genres.js, À FAIRE VALIDER) : « la tortue s'est déguisée », « l'abeille », « le hibou ».
+   Nouvelles vannes accordées en français (jamais « de le » / « à le »).
+2. « À toi ! » : une vanne après l'enregistrement. Elle ne juge pas la prononciation (rien n'est analysé).
+3. Ami réagit à sa vanne (🙈 👓 🪶 💥 selon le niveau). Rien si « réduire les animations » ou Lecture facile.
+4. Familles de confusions (js/confusions.js, 36 paires) : « 💡 Cat fait miaou, dog fait wouf. »
+   Seulement quand on apprend l'anglais.
+5. Carnet des fous rires : « 😂 Je la garde » après une erreur ; Carnet → Mes fous rires (réécouter, retirer).
+6. Lecture facile : Ami reste « Tout doux » avec des vannes courtes ; les Réglages l'indiquent.
+7. Autres langues : PAS de traduction automatique des vannes (à écrire et relire par des locuteurs).
+   L'interface espagnole, arabe… garde les blagues douces déjà traduites.
+8. Monde 3D : Paco et Mina ont un « Défi anglais » rejouable, avec des vannes qui citent l'erreur.
+   Le monde 3D charge three.js en local (vendor/) : il marche hors connexion.
+
+NOUVEAU JEU : MOTS CITY (mots-city.html) — l'anglais en rigolant, en ville ouverte
+- Jeu original, familial, sans violence : Ami le hibou en scooter dans une ville 3D.
+- Livraison express : le client commande en anglais, on passe sous le bon étal du marché.
+- Taxi des mots : le passager dit où aller en anglais ; on retrouve le lieu sur le plan.
+- Chasse aux lettres : attraper les lettres du mot anglais dans l'ordre.
+- Radio Plume FM (vraies expressions anglaises + sens), klaxon, passants qui parlent anglais,
+  tremplins, « niveau de rigolade » en étoiles, plan de la ville, flèche GPS.
+- Chaque erreur = une vanne qui cite ce qu'on a choisi ET ce qui était demandé, puis la correction.
+- Commandes : flèches / ZQSD / WASD, boutons tactiles ; gauche = gauche à l'écran (testé).
+- Caméra qui ne traverse pas les immeubles ; collisions ; passants aux jambes animées.
+- Voix anglaises : voix de synthèse de l'appareil (bouton Lentement).
+- Sauvegarde locale validée (plumes, missions, mots appris) ; fonctionne hors connexion.
+
+Corrigé au passage : sur téléphone (≤ 560 px), la bulle de vanne sortait à gauche de l'écran
+(défaut déjà présent en 5.30.1).
+
+Tests : 64 réussis (npm test) + 29 vérifications dans Chrome (outils/tests-navigateur) + hors ligne.
+```
+
+---
+
+## Version 5.31
+
+```text
+AMI DES MOTS — VERSION 5.31
+Les vannes d'Ami, réécrites
+
+Les vannes parlent de l'erreur réellement commise :
+- Nouveau fichier js/vannes.js : 592 vannes, en français et en anglais, sur 4 niveaux
+  (Tout doux, Taquin, Piquant, Corsé). Chacune cite le mot choisi et le mot attendu.
+- Ami se moque de lui-même, des mots ou de la situation, jamais du joueur
+  (comme le promet l'écran Réglages). Plus de marque (Pokémon, IKEA…), plus d'accord cassé (« Un « tortue » »).
+- Une vanne adaptée à chaque jeu :
+  · écoute : Ami accuse sa propre voix (« J'ai dit "tortue", le vent a traduit "loutre" ») ;
+  · vrai ou faux : la vanne parle de l'étiquette affichée (avant : « tu confonds « 0 » et « crabe » ») ;
+  · première lettre / lettre manquante : la vanne montre le mot fabriqué par la lettre choisie (« slamant ») ;
+  · lettres en vrac : la vanne montre l'ordre essayé ;
+  · l'intrus, le bon panier, relier : la vanne cite l'image et le panier choisis.
+- Vannes « malignes » quand la confusion s'y prête : même première lettre, mots qui riment,
+  mot raté une 2e fois dans la partie, belle série (3 ou plus) qui s'arrête.
+- Jamais deux fois la même vanne de suite.
+- Interface dans une autre langue (espagnol, arabe…) : les blagues douces de cette langue et
+  « C'était » traduit, au lieu de vannes en français.
+- Correction du panier dans la langue des blagues (avant : « The correct answer was: Animaux »).
+- La vanne est lue par la voix du téléphone : on ne demande plus au serveur des voix un MP3
+  qui n'existe pas (ce qui faisait attendre ~2 s avant de parler).
+
+Tests : 54 réussis, 0 échec (9 nouveaux tests sur les vannes).
+```
+
+---
+
+## Version 5.30
+
+```text
+AMI DES MOTS — VERSION 5.30
+Le quartier vivant : édition aventure
+
+Nouveautés conservées de la v5.25 :
+- Voitures animées, oiseaux en vol, papillons, lucioles, soleil/lune/étoiles.
+- Quatre ambiances : journée, crépuscule, nuit magique et averse avec pluie.
+- Habitants qui se promènent et animations 3D.
+
+Nouvelles activités :
+- Paco le chien et Mina la chatte : deux compagnons 3D animés, avec promenades, oreilles, pattes et queues mobiles.
+- Deux mini-missions de vocabulaire autour des animaux, avec réponses et retours humoristiques liés à l'erreur.
+- Atelier des mots : un tableau dans le quartier propose un défi de grammaire, puis un défi bonus.
+- Interactions accessibles avec la touche E et le bouton à l'écran.
+- Progression des missions bonus sauvegardée localement.
+
+Le jeu conserve son univers graphique original et ses exercices existants.
+
+Correctif 5.30.1 : le test des langues vérifie que français/anglais sont seuls affichés, tout en contrôlant que les traductions coréennes, arabes et kabyles restent présentes dans les données.
+
+Correctif 5.30.2 :
+- Tests remis à jour après le masquage des langues : un joueur francophone apprend l'anglais par défaut ; un ancien choix masqué (ex. espagnol) est conservé dans « cibleMasquee ».
+- Test du flux d'erreur aligné sur le comportement actuel : correction affichée, choix bloqués, puis « J'ai compris — continuer ».
+- Blagues : rétablit la règle « jamais deux fois la même vanne de suite » (la variable existait mais n'était plus utilisée).
+- Service worker régénéré (npm run sw). Résultat : 45 tests réussis, 0 échec.
+```
+
+---
+
+## Version 5.25
+
+```text
+AMI DES MOTS — VERSION 5.25
+Le quartier prend vie
+
+Nouveautés :
+- Circulation douce : trois petites voitures animées parcourent la rue.
+- Oiseaux en vol avec battements d'ailes.
+- Papillons qui butinent au-dessus des massifs, avec ailes animées.
+- Lucioles scintillantes dans l'ambiance nocturne.
+- Soleil, lune et ciel étoilé selon l'ambiance choisie.
+- Nouvelle ambiance Averse : pluie animée, ciel couvert et éclairage adapté.
+- Les quatre habitants continuent leurs promenades articulées et leurs interactions pédagogiques.
+- Les commandes et la progression de la version précédente sont conservées.
+
+Le jeu conserve son identité visuelle originale ; il ne reproduit pas les assets ou personnages d'une autre franchise.
+```
+
+---
+
+## Version 5.24
+
+```text
+AMI DES MOTS — VERSION 5.24
+Le quartier vivant : habitants animés
+
+Nouveautés :
+- Les quatre habitants se déplacent maintenant seuls sur des petites promenades autour de leur lieu de vie.
+- Personnages articulés : bras et jambes bougent pendant la marche, le corps accompagne le pas.
+- Les habitants s'arrêtent brièvement, repartent et se tournent dans le sens de leur déplacement.
+- Les personnages s'immobilisent pendant une conversation.
+- Les interactions restent possibles en s'approchant des habitants en mouvement.
+- Commandes fléchées corrigées et relatives à l'écran : haut avance, bas recule, droite va à droite, gauche va à gauche.
+- Caméra et rendu améliorés : ombres plus fines, exposition retravaillée, caméra plus cinématographique.
+```
+
+---
+
+## Version 5.23
+
+```text
+AMI DES MOTS — VERSION 5.23
+Commandes corrigées et quartier 3D enrichi
+
+Commandes :
+- Haut : avancer à l'écran.
+- Bas : reculer à l'écran.
+- Droite : aller à droite à l'écran.
+- Gauche : aller à gauche à l'écran.
+- La direction droite/gauche est calculée dans l'axe réel de la caméra, même après rotation.
+- Les touches fléchées et ZQSD/WASD utilisent le même repère.
+
+Améliorations visuelles :
+- Toits à deux pans, façades détaillées, fenêtres encadrées, volets, portes et auvents.
+- Place pavée, bordures, passage piéton et mobilier urbain.
+- Arbres plus détaillés et légèrement animés.
+- Ombres améliorées et caméra plus cinématographique.
+
+Le jeu reste un univers 3D original d'Ami des Mots, avec sa propre identité graphique.
+```
+
+---
+
+## Version 5.22
+
+```text
+AMI DES MOTS — VERSION 5.22
+Le quartier vivant — aventure 3D enrichie
+
+Nouveautés :
+- Quatrième personnage interactif : Milo, au café.
+- Quatre missions liées avec progression sauvegardée.
+- Dix plumes cachées et sauvegarde des objets collectés.
+- Mini-carte du quartier.
+- Ambiances jour, crépuscule et nuit avec éclairage des lampadaires.
+- Nuages animés, jardinières et détails supplémentaires.
+- Course, saut, zoom et rotation de caméra tactile.
+- Carnet avec bouton de remise à zéro pour faciliter les tests.
+
+Pour tester : décompresser, publier le contenu sur GitHub Pages comme précédemment,
+puis ouvrir le jeu et choisir « Explorer le monde 3D ».
+Le monde 3D utilise Three.js depuis jsDelivr et demande une connexion Internet.
+```
