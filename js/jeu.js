@@ -609,9 +609,20 @@
   // Les 4 portes de l'accueil simplifié.
   // v6.38 : à chaque visite, l'appli s'ouvre sur la table des matières (OUVRIR_MATIERES dans config-site.js) ;
   // « Qui joue ? » passe d'abord s'il y a plusieurs profils. Le premier passage y demande la classe.
+  // v6.40 : avant la table des matières, une vraie page d'accueil en plein écran (Plumo, langue, programme, bouton « Entrer »).
+  // C'est là que viendront le profil et le mot de passe ; pour l'instant, « Entrer » suffit.
   function accueilDepart(){
-    if(CONFIG.OUVRIR_MATIERES && window.MATIERES){ if(base.joueurs.length > 1 && !accueil.choisi) return quiJoue(); return matieresAccueil(); }
+    if(CONFIG.OUVRIR_MATIERES && window.MATIERES){
+      if(!bienvenue.entre) return bienvenue();
+      if(base.joueurs.length > 1 && !accueil.choisi) return quiJoue();
+      return matieresAccueil();
+    }
     return accueil();
+  }
+  function bienvenue(){
+    qz = null;
+    poser(cielAccueil('<p class="entrer-zone"><button class="gros entrer" data-a="entrer">' + TXT('Entrer') + ' <span aria-hidden="true">→</span></button></p>'), 'bienvenue');
+    brancherLangues(bienvenue);
   }
   function portesAccueil(){
     const en = base.ui === 'en', porte = (a, ic, titre, sous, cls) => '<button class="porte ' + cls + '" data-a="' + a + '"><span class="porte-ic" aria-hidden="true">' + ic + '</span><strong>' + titre + '</strong><small>' + sous + '</small></button>';
@@ -692,7 +703,7 @@
   }
   // v6.39 : le ciel de l'accueil (Plumo sur sa branche, bonjour, choix de la langue) est partagé avec l'écran d'ouverture,
   // pour que le personnage reste là quand l'appli s'ouvre directement sur la table des matières.
-  function cielAccueil(){
+  function cielAccueil(suite){
     const opts = (liste, choisi) => liste.map(l => '<option value="' + l + '"' + (l === choisi ? ' selected' : '') + '>' + esc(LANGUES_APPRENDRE[l]) + '</option>').join('');
     return '<section class="ciel">' + barre('') +
       paysage() +
@@ -704,7 +715,7 @@
         '<div class="choix-langues">' +
           '<label>' + esc(progTx('maLangue')) + '<select id="ui">' + opts(parleVisibles(), base.ui) + '</select></label>' +
           '<label>' + esc(progTx('monProg')) + '<select id="programme">' + ['fr', 'gb'].map(k => '<option value="' + k + '"' + ((base.programme === 'gb' ? 'gb' : 'fr') === k ? ' selected' : '') + '>' + esc(progTx(k + 'Court')) + '</option>').join('') + '</select></label>' +
-        '</div></div></section>';
+        '</div>' + (suite || '') + '</div></section>';
   }
   function brancherLangues(redessiner){
     const ui = $('#ui'), pr = $('#programme');
@@ -3508,7 +3519,7 @@
         TXT('<button class="moyen" data-a="maths-defi">🔗 Défier un pote</button></div>') +
       // v5.75 : les chapitres rangés par domaine, en blocs côte à côte (plus de longue colonne à moitié vide).
       '<div class="domaines">' + doms.map(d => '<section class="domaine"><h3>' + esc(M.tr.domaine(d.d)) + ' <small>' + d.l.length + '</small></h3><div class="liste-chap">' + d.l.map(c => M.disponible(c[0])
-        ? '<button class="chap" data-a="maths-chap" data-v="' + esc(c[0]) + '"><span>' + esc(M.tr.chap(c)) + '</span><em>' + (etoiles(c[0]) || '▶ 10') + '</em></button>'
+        ? '<button class="chap" data-a="maths-chap" data-v="' + esc(c[0]) + '"><span>' + esc(M.tr.chap(c)) + '</span><em>' + (etoiles(c[0]) || '▶ ' + SERIE_N) + '</em></button>'
         : '<div class="chap bientot" aria-disabled="true"><span>' + esc(M.tr.chap(c)) + '</span><em>🛠️</em></div>').join('') + '</div></section>').join('') + '</div>' +
       (() => { const l = (Array.isArray(annalesMaths[e.niveau]) ? annalesMaths[e.niveau] : []).filter(x => x && /^https:\/\/(www\.)?(education\.gouv\.fr|eduscol\.education\.(gouv\.)?fr)\//.test(x.lien)).slice(0, 20);
         return l.length ? TXT('<h3>📄 Sujets officiels (sur le site du ministère)</h3><ul class="pieges-cats">') + l.map(x => '<li><a href="' + esc(x.lien) + '" target="_blank" rel="noopener noreferrer">' + esc((x.session ? x.session + ' — ' : '') + x.titre) + '</a></li>').join('') + '</ul>' : ''; })() +
@@ -3560,6 +3571,10 @@
       (e.classe ? '<span class="petit">🎒 ' + TXT('Ma classe :') + '</span> ' : '') +
       chips + (e.classe ? ' <button class="petit-bouton lien-tout" data-a="matieres-tout" data-v="' + ecran + '">' + (e.tout ? TXT('Seulement ma classe') : TXT('Voir toutes les matières')) + '</button>' : '') + '</div>';
   }
+  // v6.40 : une série d'exercices compte 20 questions (au lieu de 10), sans jamais reposer deux fois la même :
+  // une leçon de 16 questions donne donc une série de 16. Le bouton du chapitre affiche le vrai nombre.
+  const SERIE_N = 20;
+  function nbSerie(c, niveau){ if(c.gen || !Array.isArray(c.banque)) return SERIE_N; const ix = MATIERES.indicesNiveau(c, niveau); return Math.min(SERIE_N, ix ? ix.length : c.banque.length); }
   function matieresAccueil(){
     qz = null; const M = window.MATIERES; if(!M) return accueil();
     const fc = filtreClasse(), voit = (a, v) => !fc || (a === 'matiere' ? M.chapitres(v, fc).length > 0 : a === 'maths' ? !!(window.MATHS && MATHS.NIVEAUX.includes(fc)) : true);
@@ -3571,7 +3586,7 @@
       TXT('Aide aux devoirs, toutes les matières : comprendre la consigne, retrouver la leçon, trouver la méthode — sans faire le devoir à ta place') + '</small></span></button>' : '';
     const outils = cartesModules('matiere') + ((J().carnet || []).length ? c('carnet-erreurs', '', '🎯', 'Mes erreurs (' + J().carnet.length + ')', TXT('Les questions ratées, à revoir avant un contrôle : une bonne réponse les retire')) : '') +
       (window.SCIENCES ? c('sciences', '', '🚀', TXT('Sciences rigolotes'), TXT('Planètes, fusées, médecine… avec des clashs')) : '');
-    poser((CONFIG.OUVRIR_MATIERES ? cielAccueil() : barre('accueil')) + TXT('<main class="coin-anglais matieres-ecran"><h2>📚 Matières</h2><p class="pieges-intro">Le programme de la 6e au bac, avec Plumo qui vanne les erreurs (jamais toi) et t’explique la bonne réponse.</p>') +
+    poser(barre(CONFIG.OUVRIR_MATIERES ? 'bienvenue' : 'accueil') + TXT('<main class="coin-anglais matieres-ecran"><h2>📚 Matières</h2><p class="pieges-intro">Le programme de la 6e au bac, avec Plumo qui vanne les erreurs (jamais toi) et t’explique la bonne réponse.</p>') +
       heros + (window.EPREUVES ? ongletsExamens('matieres') : '') + choixClasse('matieres') +
       '<div class="cartes-anglais">' +
         c('matiere', 'francais', '📝', TXT('Français'), TXT('Conjugaison, orthographe, grammaire, figures de style, littérature')) +
@@ -3594,8 +3609,7 @@
       '</div>' + (outils ? '<section class="domaine outils-revision"><h3>' + TXT('🧰 Outils pour réviser') + '</h3><div class="cartes-anglais">' + outils + '</div></section>' : '') + (M.trouver('medecine') && (!fc || fc === 'Tle' || fc === 'Sup') ? TXT('<section class="domaine"><h3>🎓 Après le bac</h3><div class="cartes-anglais">') +
         cs('matiere', 'medecine', '🩺', TXT('Médecine'), TXT('Anatomie, physiologie, études de santé')) + cs('matiere', 'droit', '⚖️', TXT('Droit'), TXT('Institutions, bases du droit, métiers')) +
         cs('matiere', 'astro', '🔭', 'Astrophysique', 'Étoiles, galaxies, calculs d’astrophysicien') + '</div></section>' : '') +
-      (CONFIG.OUVRIR_MATIERES ? '<p class="jeux-lien"><button class="gros" data-a="accueil">' + TXT('🎮 Jeux et entraînement') + '</button><br><small>' + TXT('Mots en images, défi du jour, battles, professeur IA') + '</small></p>' : '') + '</main>', CONFIG.OUVRIR_MATIERES ? 'ouverture' : undefined);
-    if(CONFIG.OUVRIR_MATIERES) brancherLangues(matieresAccueil);
+      (CONFIG.OUVRIR_MATIERES ? '<p class="jeux-lien"><button class="gros" data-a="accueil">' + TXT('🎮 Jeux et entraînement') + '</button><br><small>' + TXT('Mots en images, défi du jour, battles, professeur IA') + '</small></p>' : '') + '</main>');
   }
   function matiereAccueil(id){
     qz = null; const M = window.MATIERES, m = M && M.trouver(id); if(!m) return matieresAccueil();
@@ -3616,7 +3630,7 @@
       (chs.length ? '<div class="actions serrees"><button class="moyen plein" data-a="matiere-melange" data-v="' + id + TXT('">🔁 Entraînement mélangé</button>') +
         (ex ? '<button class="moyen" data-a="matiere-examen" data-v="' + id + '">📝 ' + esc(ex) + (e.notes[id + '-' + e.niveau] != null ? ' (' + String(e.notes[id + '-' + e.niveau]).replace('.', ',') + '/20)' : '') + '</button>' : '') + '</div>' +
         '<div class="domaines">' + doms.map(d => '<section class="domaine"><h3>' + esc(M.nomDom(m, d.d)) + ' <small>' + d.l.length + '</small></h3><div class="liste-chap">' +
-          d.l.map(c => '<button class="chap" data-a="matiere-chap" data-v="' + id + '|' + c.id + '"><span>' + esc(M.nomChap(m, c)) + (base.ui !== 'fr' && !M.traduit(m, c) ? ' <small class="pas-traduit" title="' + esc(progTx('pasTraduit')) + '">🇫🇷</small>' : '') + '</span><em>' + (etoiles(c.id) || '▶ 10') + '</em></button>').join('') + '</div></section>').join('') + '</div>'
+          d.l.map(c => '<button class="chap" data-a="matiere-chap" data-v="' + id + '|' + c.id + '"><span>' + esc(M.nomChap(m, c)) + (base.ui !== 'fr' && !M.traduit(m, c) ? ' <small class="pas-traduit" title="' + esc(progTx('pasTraduit')) + '">🇫🇷</small>' : '') + '</span><em>' + (etoiles(c.id) || '▶ ' + nbSerie(c, e.niveau)) + '</em></button>').join('') + '</div></section>').join('') + '</div>'
         : TXT('<p class="pieges-intro">🛠️ Cette matière arrive bientôt pour la ') + esc(e.niveau) + TXT('. Choisis un autre niveau.</p>')) +
       '</main>', 'matieres');
   }
@@ -3646,19 +3660,19 @@
   function examensAccueil(){
     qz = null; blanc = null; const E = window.EPREUVES, e = etatMatieres(); if(!E) return matieresAccueil();
     poser(barre('matieres') + TXT('<main class="coin-anglais matieres-ecran"><h2>📝 Brevet & bac blancs</h2><p class="pieges-intro">Construits comme les vrais sujets 2026 : mêmes parties, mêmes types d’exercices, même barème. Une note sur 20 par épreuve, puis la moyenne avec les coefficients officiels. Et Plumo qui vanne chaque erreur. 😏</p>') +
-      ongletsExamens('examens') + choixClasse('examens') + (['6e', '5e', '4e'].includes(filtreClasse()) ? '<p class="petit">' + TXT('Le brevet se passe en fin de 3e : ces sujets te montrent ce qui t’attend.') + '</p>' : '') + '<div class="cartes-anglais">' + Object.entries(E.BLANCS).filter(([k, x]) => !x.tle && !x.techno && !x.pro && !/^(oral-dnb|oral-eaf|grand-oral)$/.test(k) && examenPourClasse(x.niveau)).map(([k, x]) => '<button class="carte-anglais" data-a="examen-go" data-v="' + k + '"><span class="ic">' + x.ic + '</span><strong>' + esc(x.titre) + '</strong><small>' + esc(x.niveau) + ' · ' +
-        x.epreuves.map(p => esc(E.EPREUVES[p[0]].titre)).join(', ') + (e.notes['blanc-' + k] != null ? TXT(' · dernière note : ') + virg(e.notes['blanc-' + k]) + '/20' : '') + '</small></button>').join('') + '</div>' +
+      ongletsExamens('examens') + choixClasse('examens') + (['6e', '5e', '4e'].includes(filtreClasse()) ? '<p class="petit">' + TXT('Le brevet se passe en fin de 3e : ces sujets te montrent ce qui t’attend.') + '</p>' : '') + '<div class="cartes-anglais">' + Object.entries(E.BLANCS).filter(([k, x]) => !x.tle && !x.techno && !x.pro && !/^(oral-dnb|oral-eaf|grand-oral)$/.test(k) && examenPourClasse(x.niveau)).map(([k, x]) => '<button class="carte-anglais" data-a="examen-go" data-v="' + k + '"><span class="ic">' + x.ic + '</span><strong>' + esc(TXT(x.titre)) + '</strong><small>' + esc(x.niveau) + ' · ' +
+        x.epreuves.map(p => esc(TXT(E.EPREUVES[p[0]].titre))).join(', ') + (e.notes['blanc-' + k] != null ? TXT(' · dernière note : ') + virg(e.notes['blanc-' + k]) + '/20' : '') + '</small></button>').join('') + '</div>' +
       (E.SPES && examenPourClasse('Tle') ? TXT('<section class="domaine"><h3>🎒 Terminale : spécialités et philosophie</h3><div class="cartes-anglais"><button class="carte-anglais" data-a="bac-tle"><span class="ic">🎓</span><strong>Bac blanc de terminale</strong><small>2 spécialités au choix + philosophie, coefficients officiels') +
         (e.notes['blanc-bac-tle'] != null ? TXT(' · dernière note : ') + virg(e.notes['blanc-bac-tle']) + '/20' : '') + '</small></button>' +
-        Object.entries(E.BLANCS).filter(([, x]) => x.tle).map(([k, x]) => '<button class="carte-anglais" data-a="examen-go" data-v="' + k + '"><span class="ic">' + x.ic + '</span><strong>' + esc(x.titre) + '</strong><small>' + esc(E.EPREUVES[x.epreuves[0][0]].officiel) +
+        Object.entries(E.BLANCS).filter(([, x]) => x.tle).map(([k, x]) => '<button class="carte-anglais" data-a="examen-go" data-v="' + k + '"><span class="ic">' + x.ic + '</span><strong>' + esc(TXT(x.titre)) + '</strong><small>' + esc(E.EPREUVES[x.epreuves[0][0]].officiel) +
           (e.notes['blanc-' + k] != null ? ' · ' + virg(e.notes['blanc-' + k]) + '/20' : '') + '</small></button>').join('') + '</div></section>' : '') +
       (E.BLANCS['grand-oral'] ? '<section class="domaine"><h3>🎤 Les oraux</h3><div class="cartes-anglais">' + ['oral-dnb', 'oral-eaf', 'grand-oral'].filter(k => examenPourClasse(E.BLANCS[k].niveau)).map(k => { const x = E.BLANCS[k], ep = E.EPREUVES[x.epreuves[0][0]];
-        return '<button class="carte-anglais" data-a="examen-go" data-v="' + k + '"><span class="ic">🎤</span><strong>' + esc(x.titre) + '</strong><small>' + esc(x.niveau) + ' · ' + esc(ep.duree) + '</small></button>'; }).join('') + '</div></section>' : '') +
+        return '<button class="carte-anglais" data-a="examen-go" data-v="' + k + '"><span class="ic">🎤</span><strong>' + esc(TXT(x.titre)) + '</strong><small>' + esc(x.niveau) + ' · ' + esc(ep.duree) + '</small></button>'; }).join('') + '</div></section>' : '') +
       (E.BLANCS['bac-pro'] && (!filtreClasse() || ['2nde', '1re', 'Tle', 'Sup'].includes(filtreClasse())) ? '<section class="domaine"><h3>🔧 Voie professionnelle</h3><div class="cartes-anglais">' + ['bac-pro', 'cap'].map(k => { const x = E.BLANCS[k];
-        return '<button class="carte-anglais" data-a="examen-go" data-v="' + k + '"><span class="ic">' + x.ic + '</span><strong>' + esc(x.titre) + '</strong><small>' + x.epreuves.map(p => esc(E.EPREUVES[p[0]].titre.replace(/^(Bac pro|CAP) · /, ''))).join(', ') +
+        return '<button class="carte-anglais" data-a="examen-go" data-v="' + k + '"><span class="ic">' + x.ic + '</span><strong>' + esc(TXT(x.titre)) + '</strong><small>' + x.epreuves.map(p => esc(E.EPREUVES[p[0]].titre.replace(/^(Bac pro|CAP) · /, ''))).join(', ') +
           (e.notes['blanc-' + k] != null ? ' · ' + virg(e.notes['blanc-' + k]) + '/20' : '') + '</small></button>'; }).join('') + '</div></section>' : '') +
-      (E.SERIES_TECHNO && examenPourClasse('Tle') ? '<section class="domaine"><h3>🛠️ Bac technologique</h3><div class="cartes-anglais">' + Object.entries(E.BLANCS).filter(([, x]) => x.techno).map(([k, x]) => '<button class="carte-anglais" data-a="examen-go" data-v="' + k + '"><span class="ic">' + x.ic + '</span><strong>' + esc(x.titre) + '</strong><small>' +
-        x.epreuves.map(p => esc(E.EPREUVES[p[0]].titre)).join(' + ') + (e.notes['blanc-' + k] != null ? ' · ' + virg(e.notes['blanc-' + k]) + '/20' : '') + '</small></button>').join('') + '</div></section>' : '') + '</main>');
+      (E.SERIES_TECHNO && examenPourClasse('Tle') ? '<section class="domaine"><h3>🛠️ Bac technologique</h3><div class="cartes-anglais">' + Object.entries(E.BLANCS).filter(([, x]) => x.techno).map(([k, x]) => '<button class="carte-anglais" data-a="examen-go" data-v="' + k + '"><span class="ic">' + x.ic + '</span><strong>' + esc(TXT(x.titre)) + '</strong><small>' +
+        x.epreuves.map(p => esc(TXT(E.EPREUVES[p[0]].titre))).join(' + ') + (e.notes['blanc-' + k] != null ? ' · ' + virg(e.notes['blanc-' + k]) + '/20' : '') + '</small></button>').join('') + '</div></section>' : '') + '</main>');
   }
   // Bac blanc de terminale : l'élève choisit ses 2 spécialités, la philosophie est ajoutée.
   function bacTerminale(){
@@ -3671,13 +3685,13 @@
   // v5.83 : espace « Officiel » — liens vers tous les programmes et toutes les annales du ministère.
   function officielAccueil(){
     qz = null; const E = window.EPREUVES; if(!E || !E.OFFICIEL) return matieresAccueil();
-    const liste = l => '<div class="cartes-anglais">' + l.map(([t, u, d]) => '<a class="carte-anglais lien-carte" href="' + esc(u) + '" target="_blank" rel="noopener"><span class="ic">🔗</span><strong>' + esc(t) + '</strong><small>' + esc(d) + '</small></a>').join('') + '</div>';
+    const liste = l => '<div class="cartes-anglais">' + l.map(([t, u, d]) => '<a class="carte-anglais lien-carte" href="' + esc(u) + '" target="_blank" rel="noopener"><span class="ic">🔗</span><strong>' + esc(TXT(t)) + '</strong><small>' + esc(TXT(d)) + '</small></a>').join('') + '</div>';
     poser(barre('matieres') + TXT('<main class="coin-anglais matieres-ecran"><h2>🏛️ Programmes et annales officiels</h2><p class="pieges-intro">Les textes officiels et tous les vrais sujets, directement sur les sites du ministère (éduscol et education.gouv.fr). Les sujets jumeaux de Plumo sont dans les onglets Blancs et Annales.</p>') +
       ongletsExamens('officiel') + '<section class="domaine"><h3>📚 Programmes scolaires</h3>' + liste(E.OFFICIEL.programmes) + TXT('</section><section class="domaine"><h3>🗂️ Toutes les annales officielles</h3>') + liste(E.OFFICIEL.annales) + '</section></main>');
   }
   function annalesAccueil(){
     qz = null; blanc = null; const E = window.EPREUVES, e = etatMatieres(); if(!E) return matieresAccueil();
-    const groupe = (t, l) => '<section class="domaine"><h3>' + t + '</h3><div class="cartes-anglais">' + l.map(a => '<div class="carte-annale"><button class="carte-anglais" data-a="annale-go" data-v="' + a.id + '"><span class="ic">🗂️</span><strong>' + esc(a.titre) + TXT('</strong><small>Jumeau du sujet ') + esc(a.ref) +
+    const groupe = (t, l) => '<section class="domaine"><h3>' + t + '</h3><div class="cartes-anglais">' + l.map(a => '<div class="carte-annale"><button class="carte-anglais" data-a="annale-go" data-v="' + a.id + '"><span class="ic">🗂️</span><strong>' + esc(TXT(a.titre)) + TXT('</strong><small>Jumeau du sujet ') + esc(a.ref) +
       (e.notes['annale-' + a.id] != null ? TXT(' · ta note : ') + virg(e.notes['annale-' + a.id]) + '/20' : '') + '</small></button><a class="lien-officiel" href="' + esc(a.url) + '" target="_blank" rel="noopener">📄 Sujet officiel (PDF)</a></div>').join('') + '</div></section>';
     poser(barre('matieres') + TXT('<main class="coin-anglais matieres-ecran"><h2>🗂️ Annales 2026</h2><p class="pieges-intro">Pour chaque vrai sujet 2026 : un sujet jumeau construit pareil, avec d’autres nombres et d’autres textes. Le vrai sujet officiel est à côté, sur le site du ministère.</p>') +
       ongletsExamens('annales') + choixClasse('annales') + '<div class="domaines">' + (examenPourClasse('3e') ? groupe('🎓 Brevet 2026', E.ANNALES.filter(a => /^dnb/.test(a.id))) : '') + (examenPourClasse('1re') ? groupe(TXT('🎒 Bac 2026 · épreuves anticipées de 1re'), E.ANNALES.filter(a => !/^dnb/.test(a.id) && !a.tle)) : '') + (examenPourClasse('Tle') ? groupe(TXT('🎓 Bac 2026 · terminale : spécialités et philo'), E.ANNALES.filter(a => a.tle)) : '') + '</div></main>');
@@ -3685,7 +3699,7 @@
   // Une épreuve (ou une annale) se joue avec le moteur de questions ; chaque question rapporte ses points.
   function jouerEpreuve(ep, retour, fin){
     ep.gagnes = 0;
-    questionsGo(ep.liste, { titre:'📝 ' + ep.titre, retour, lang:'fr', prof:ep.matiere === 'maths', sujet:ep.matiere,
+    questionsGo(ep.liste, { titre:'📝 ' + TXT(ep.titre), retour, lang:'fr', prof:ep.matiere === 'maths', sujet:ep.matiere,
       onReponse:(juste, q) => { if(juste) ep.gagnes += q.pts; else noterErreur('epr:' + (ep.ref || ep.id)); },
       fin:() => fin(window.EPREUVES.note20(ep.gagnes, ep.total)) });
   }
@@ -3698,14 +3712,14 @@
     if(ex.i >= ex.x.epreuves.length){
       const coefs = ex.x.epreuves.map(p => p[1]), moy = E.moyenne(ex.notes, coefs); etatMatieres().notes['blanc-' + ex.k] = moy; J().plumes += Math.round(moy); garder(); bruit('fin');
       const nonNotes = ex.x.epreuves.map(p => E.EPREUVES[p[0]].nonNote).filter(Boolean);
-      return poser(barre('examens') + '<main class="centre examen-fin"><div class="ami-moyen">' + ami(moy >= 10 ? 'fete' : 'malin') + '</div><h2>' + ex.x.ic + ' ' + esc(ex.x.titre) + '</h2>' +
-        '<ul class="pieges-cats">' + ex.x.epreuves.map((p, i) => '<li><span>' + esc(E.EPREUVES[p[0]].titre) + (ex.x.epreuves.length > 1 ? ' <small>coef. ' + virg(p[1]) + '</small>' : '') + '</span><strong>' + virg(ex.notes[i]) + '/20</strong></li>').join('') + '</ul>' +
+      return poser(barre('examens') + '<main class="centre examen-fin"><div class="ami-moyen">' + ami(moy >= 10 ? 'fete' : 'malin') + '</div><h2>' + ex.x.ic + ' ' + esc(TXT(ex.x.titre)) + '</h2>' +
+        '<ul class="pieges-cats">' + ex.x.epreuves.map((p, i) => '<li><span>' + esc(TXT(E.EPREUVES[p[0]].titre)) + (ex.x.epreuves.length > 1 ? ' <small>coef. ' + virg(p[1]) + '</small>' : '') + '</span><strong>' + virg(ex.notes[i]) + '/20</strong></li>').join('') + '</ul>' +
         '<p class="note-examen">' + (ex.x.epreuves.length > 1 ? 'Moyenne : ' : '') + virg(moy) + ' / 20</p><p><strong>' + mentionDe(moy) + '</strong></p><p>🦉 ' + verdictAmi(moy) + '</p>' +
         (ex.x.bilan ? '<p class="petit">' + esc(ex.x.bilan) + '</p>' : '') + nonNotes.map(t => '<p class="petit">✍️ ' + esc(t).replace(/\n/g, '<br>') + '</p>').join('') +
         '<div class="actions serrees"><button class="moyen plein" data-a="examen-go" data-v="' + ex.k + '">🔁 Un autre sujet</button><button class="moyen" data-a="annales">🗂️ Les annales</button></div></main>');
     }
     const [id] = ex.x.epreuves[ex.i], ep = E.construire(id, ex.graine + ex.i * 7919); ex.ep = ep;
-    poser(barre('examens') + '<main class="centre"><div class="ami-moyen">' + ami('malin') + '</div><p class="piege-cat">' + esc(ex.x.titre) + TXT(' · épreuve ') + (ex.i + 1) + '/' + ex.x.epreuves.length + '</p><h2>' + esc(ep.titre) + '</h2>' +
+    poser(barre('examens') + '<main class="centre"><div class="ami-moyen">' + ami('malin') + '</div><p class="piege-cat">' + esc(TXT(ex.x.titre)) + TXT(' · épreuve ') + (ex.i + 1) + '/' + ex.x.epreuves.length + '</p><h2>' + esc(TXT(ep.titre)) + '</h2>' +
       '<p>⏱️ Au vrai examen : ' + esc(ep.duree) + TXT('<br>📋 Barème officiel : ') + esc(ep.officiel) + '</p><p>' + ep.liste.length + TXT(' questions dans l’appli. Prends ton temps : c’est le jour J pour de faux. 📝</p>') +
       (ep.nonNote ? '<p class="petit">✍️ ' + esc(ep.nonNote).replace(/\n/g, '<br>') + '</p>' : '') + TXT('<button class="gros" data-a="examen-suite">C’est parti ▶</button></main>'));
   }
@@ -3717,14 +3731,14 @@
   function annaleGo(id){
     const E = window.EPREUVES, a = E && E.annale(id, Math.floor(Math.random() * 1e9)); if(!a) return annalesAccueil();
     annaleEnCours = a;
-    poser(barre('annales') + '<main class="centre"><div class="ami-moyen">' + ami('malin') + TXT('</div><p class="piege-cat">🗂️ Annales · jumeau du sujet ') + esc(a.ref) + '</p><h2>' + esc(a.titre) + '</h2>' +
+    poser(barre('annales') + '<main class="centre"><div class="ami-moyen">' + ami('malin') + TXT('</div><p class="piege-cat">🗂️ Annales · jumeau du sujet ') + esc(a.ref) + '</p><h2>' + esc(TXT(a.titre)) + '</h2>' +
       TXT('<p>Même construction que le vrai sujet, avec d’autres nombres et d’autres textes. ') + a.liste.length + TXT(' questions, notées sur 20.</p><p><a class="lien-officiel" href="') + esc(a.url) + TXT('" target="_blank" rel="noopener">📄 Voir le sujet officiel (PDF)</a></p>') +
       TXT('<button class="gros" data-a="annale-suite">C’est parti ▶</button></main>'));
   }
   function annaleSuite(){
     const a = annaleEnCours; if(!a) return annalesAccueil();
     jouerEpreuve(a, 'annales', note => { etatMatieres().notes['annale-' + a.id] = note; J().plumes += Math.round(note); garder(); bruit('fin');
-      poser(barre('annales') + '<main class="centre examen-fin"><div class="ami-moyen">' + ami(note >= 10 ? 'fete' : 'malin') + '</div><h2>🗂️ ' + esc(a.titre) + '</h2><p class="note-examen">' + virg(note) + ' / 20</p><p><strong>' + mentionDe(note) + '</strong></p><p>🦉 ' + verdictAmi(note) + '</p>' +
+      poser(barre('annales') + '<main class="centre examen-fin"><div class="ami-moyen">' + ami(note >= 10 ? 'fete' : 'malin') + '</div><h2>🗂️ ' + esc(TXT(a.titre)) + '</h2><p class="note-examen">' + virg(note) + ' / 20</p><p><strong>' + mentionDe(note) + '</strong></p><p>🦉 ' + verdictAmi(note) + '</p>' +
         '<p><a class="lien-officiel" href="' + esc(a.url) + TXT('" target="_blank" rel="noopener">📄 Maintenant, attaque le vrai sujet officiel (PDF)</a></p>') +
         '<div class="actions serrees"><button class="moyen plein" data-a="annale-go" data-v="' + esc(a.id) + '">🔁 Un autre jumeau</button><button class="moyen" data-a="annales">🗂️ Les annales</button></div></main>'); });
   }
@@ -3944,8 +3958,8 @@
       case 'maths-niveau': if(window.MATHS && MATHS.NIVEAUX.includes(v)){ etatMaths().niveau = v; garder(); } return mathsAccueil();
       case 'programme-choix': base.programme = v === 'gb' ? 'gb' : 'fr'; garder(); return reglages();
       case 'maths-ton': if(TONS_PROF.some(x => x[0] === v)){ etatMaths().ton = v; garder(); } return mathsAccueil();
-      case 'maths-chap': { const c = window.MATHS && MATHS.disponible(v) && MATHS.carte.niveaux[etatMaths().niveau].chapitres.find(x => x[0] === v); return c ? mathsSerie(v, 10, '🔢 ' + MATHS.tr.chap(c)) : mathsAccueil(); }
-      case 'maths-melange': return mathsSerie(etatMaths().niveau, 10, TXT('🔁 Maths ') + etatMaths().niveau);
+      case 'maths-chap': { const c = window.MATHS && MATHS.disponible(v) && MATHS.carte.niveaux[etatMaths().niveau].chapitres.find(x => x[0] === v); return c ? mathsSerie(v, SERIE_N, '🔢 ' + MATHS.tr.chap(c)) : mathsAccueil(); }
+      case 'maths-melange': return mathsSerie(etatMaths().niveau, SERIE_N, TXT('🔁 Maths ') + etatMaths().niveau);
       case 'maths-examen': return mathsExamen();
       case 'maths-defi': return defiPoteGo(null, etatMaths().niveau);
       case 'sciences': return sciencesAccueil();
@@ -3987,8 +4001,8 @@
         return v === 'examens' ? examensAccueil() : v === 'annales' ? annalesAccueil() : matieresAccueil(); }
       case 'matiere-niveau': { const [id, n] = String(v).split('|'); if(window.MATIERES && MATIERES.NIVEAUX.includes(n)){ etatMatieres().niveau = n; garder(); } return matiereAccueil(id); }
       case 'maths-ton-matiere': { const [id, k] = String(v).split('|'); if(TONS_PROF.some(x => x[0] === k)){ etatMaths().ton = k; garder(); } return matiereAccueil(id); }
-      case 'matiere-chap': { const [id, c] = String(v).split('|'), m = window.MATIERES && MATIERES.trouver(id), ch = m && m.chapitres.find(x => x.id === c); return ch ? matiereSerie(id, c, 10, m.ic + ' ' + MATIERES.nomChap(m, ch)) : matieresAccueil(); }
-      case 'matiere-melange': { const m = window.MATIERES && MATIERES.trouver(v); return m ? matiereSerie(v, 'melange', 10, m.ic + ' ' + MATIERES.nom(m) + ' · ' + etatMatieres().niveau) : matieresAccueil(); }
+      case 'matiere-chap': { const [id, c] = String(v).split('|'), m = window.MATIERES && MATIERES.trouver(id), ch = m && m.chapitres.find(x => x.id === c); return ch ? matiereSerie(id, c, SERIE_N, m.ic + ' ' + MATIERES.nomChap(m, ch)) : matieresAccueil(); }
+      case 'matiere-melange': { const m = window.MATIERES && MATIERES.trouver(v); return m ? matiereSerie(v, 'melange', SERIE_N, m.ic + ' ' + MATIERES.nom(m) + ' · ' + etatMatieres().niveau) : matieresAccueil(); }
       case 'matiere-examen': { const m = window.MATIERES && MATIERES.trouver(v), e = etatMatieres(), t = m && m.examens && m.examens[e.niveau]; if(!t) return matiereAccueil(v);
         return matiereSerie(v, 'examen', 20, '📝 ' + t, z => { const note = noteSur20(z); etatMatieres().notes[v + '-' + e.niveau] = note; garder(); finMatiere(z, '📝 ' + t, v, note); }); }
       case 'examens': return examensAccueil();
@@ -4129,6 +4143,8 @@
       case 'vestiaire': return vestiaire();
       case 'reglages': case 'apropos': return reglages();
       case 'qui': accueil.choisi = false; return quiJoue();
+      case 'bienvenue': bienvenue.entre = false; return bienvenue();
+      case 'entrer': bienvenue.entre = true; return accueilDepart();
       case 'choisir-joueur': base.actif = Number(v); garder(); accueil.choisi = true; return accueilDepart();
       case 'nouveau-joueur': return base.joueurs.length >= CONFIG.JOUEURS_GRATUITS && !plus() && !(base.joueurs.length === 1 && !base.joueurs[0].nom) ? ecranPlus('reglages') : formJoueur(null);
       case 'plus': return ecranPlus(v || 'accueil');
@@ -4214,7 +4230,18 @@
   // Le webhook Stripe peut arriver quelques secondes après le retour.
   if(retourPaiement) [5000, 15000, 40000].forEach(ms => setTimeout(() => { if(!plus()) rafraichir(true); }, ms));
   if(boucheDispo()) try{ Articulation.init(); }catch(e){}
-  if('serviceWorker' in navigator && location.protocol === 'https:') navigator.serviceWorker.register('sw.js').catch(() => {});
+  // v6.41 : mise à jour sans double rechargement. L'appli garde ses fichiers pour le hors-connexion (sw.js) ; quand une
+  // nouvelle version prend la main, on recharge UNE fois, seulement sur la page d'accueil ou dans les premières secondes,
+  // pour ne jamais couper une série en cours. updateViaCache:'none' : le navigateur va toujours chercher le dernier sw.js.
+  if('serviceWorker' in navigator && location.protocol === 'https:'){
+    const avait = !!navigator.serviceWorker.controller, debut = Date.now(); let recharge = false;
+    navigator.serviceWorker.addEventListener('controllerchange', () => {
+      const ecran = ($('#app') || {}).dataset || {};
+      if(!avait || recharge || !(ecran.ecran === 'bienvenue' || Date.now() - debut < 15000)) return;
+      recharge = true; location.reload();
+    });
+    navigator.serviceWorker.register('sw.js', { updateViaCache:'none' }).then(r => r.update && r.update()).catch(() => {});
+  }
   // v6.0 : ce que les modules peuvent utiliser (rien d'autre).
   MODULES.api = { base:() => base, J, garder, poser, barre, esc, t, tt, TXT, jour, questionsGo, ami, annonce, bruit, plus, accueil, CONFIG,
     etatMatieres, matiereAccueil, matieresAccueil, noterErreur, codePlumes, plumesActives, retour:() => { qz = null; return accueil(); },
