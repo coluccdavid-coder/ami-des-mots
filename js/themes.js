@@ -61,12 +61,12 @@
   });
   // ───── SVT ─────
   ajouterThemes('svt', 'Par thème', [
-    { id:'th-cellule-adn', nom:'Cellule, ADN et génétique', refs:[['vivant', [0, 1, 2]], ['genetique', [2, 3]], ['r-s2', [0, 3, 4, 9]], ['r-s1', [0, 2, 6, 8]], ['r-st', [0, 8]]] },
-    { id:'th-plantes', nom:'Plantes, photosynthèse, classification et développement', refs:[['vivant', [3]], ['r-s6', [0, 2, 5, 6, 7, 8]]] },
-    { id:'th-ecosystemes', nom:'Écosystèmes, biodiversité et évolution', refs:[['vivant', [4]], ['r-s6', [4]], ['r-s2', [1, 7, 8]], ['r-st', [1, 5]]] },
-    { id:'th-immunite', nom:'Microbes et immunité', refs:[['corps', [1]], ['r-s6', [9]], ['r-s54', [6]], ['r-s1', [1, 4, 5, 9]]] },
-    { id:'th-corps', nom:'Corps humain : nutrition, effort, reproduction, hormones, nerfs', refs:[['corps', [0, 2]], ['r-s6', [3]], ['r-s54', [0, 1, 2, 3, 5]], ['r-s2', [2, 5, 6]], ['r-st', [3, 6, 7]]] },
-    { id:'th-terre', nom:'La Terre : géologie et climat', refs:[['terre', [0]], ['r-s54', [4, 7]], ['r-s1', [3, 7]], ['r-st', [2, 4, 9]]] }
+    { id:'th-cellule-adn', nom:'Cellule, ADN et génétique', refs:[['vivant', [0, 1, 2]], ['genetique', [2, 3]], ['r-s2', [0, 3, 4, 9]], ['r-s1', [0, 2, 6, 8]], ['r-st', [0, 8]], ['cours-s6', [0]], ['cours-s4', [10]], ['cours-s3', [1, 2, 3, 9]]] },
+    { id:'th-plantes', nom:'Plantes, photosynthèse, classification et développement', refs:[['vivant', [3]], ['r-s6', [0, 2, 5, 6, 7, 8]], ['cours-s6', [1, 3, 4, 5, 10, 11]]] },
+    { id:'th-ecosystemes', nom:'Écosystèmes, biodiversité et évolution', refs:[['vivant', [4]], ['r-s6', [4]], ['r-s2', [1, 7, 8]], ['r-st', [1, 5]], ['cours-s6', [6, 7]], ['cours-s3', [4, 5]]] },
+    { id:'th-immunite', nom:'Microbes et immunité', refs:[['corps', [1]], ['r-s6', [9]], ['r-s54', [6]], ['r-s1', [1, 4, 5, 9]], ['cours-s6', [8]], ['cours-s3', [6, 7]]] },
+    { id:'th-corps', nom:'Corps humain : nutrition, effort, reproduction, hormones, nerfs', refs:[['corps', [0, 2]], ['r-s6', [3]], ['r-s54', [0, 1, 2, 3, 5]], ['r-s2', [2, 5, 6]], ['r-st', [3, 6, 7]], ['cours-s6', [9]], ['cours-s5', [0, 1, 2, 3, 4, 5, 6, 11]], ['cours-s4', [0, 1, 2, 3, 4, 5]], ['cours-s3', [10, 11]]] },
+    { id:'th-terre', nom:'La Terre : géologie et climat', refs:[['terre', [0]], ['r-s54', [4, 7]], ['r-s1', [3, 7]], ['r-st', [2, 4, 9]], ['cours-s5', [7, 8, 9, 10]], ['cours-s4', [6, 7, 8, 9]], ['cours-s3', [8]]] }
   ], {
     en:{ dom:'By topic', ch:{ 'th-cellule-adn':'Cells, DNA and genetics', 'th-plantes':'Plants, photosynthesis, classification and development', 'th-ecosystemes':'Ecosystems, biodiversity and evolution',
       'th-immunite':'Microbes and immunity', 'th-corps':'The human body: nutrition, exercise, reproduction, hormones, nerves', 'th-terre':'The Earth: geology and climate' } },
@@ -76,13 +76,13 @@
 
   // ───── Physique-chimie ─────
   ajouterThemes('physique', 'Par thème', [
-    { id:'th-etats', nom:'États de la matière, mélanges et gaz', refs:[['matiere', [2, 3]], ['r-p6', [0, 2, 3, 6, 8]], ['r-pt', [6]]] },
-    { id:'th-chimie', nom:'Atomes, molécules et transformations chimiques', refs:[['matiere', [0, 4, 5]], ['r-p1', [0, 3, 5, 8]]] },
-    { id:'th-ph', nom:'Acides, bases, pH et équilibres', refs:[['matiere', [1]], ['r-pt', [1, 7]]] },
-    { id:'th-electricite', nom:'Électricité', refs:[['elec'], ['r-p6', [5]], ['r-pt', [5]]] },
-    { id:'th-mouvement', nom:'Mouvements, forces et gravitation', refs:[['r-p6', [7]], ['r-pt', [0, 3, 8]]] },
-    { id:'th-energie', nom:'L’énergie', refs:[['r-p6', [4, 9]], ['r-p1', [1, 4, 6]]] },
-    { id:'th-ondes', nom:'Ondes, lumière et radioactivité', refs:[['r-p1', [2, 7, 9]], ['r-pt', [2]]] }
+    { id:'th-etats', nom:'États de la matière, mélanges et gaz', refs:[['matiere', [2, 3]], ['r-p6', [0, 2, 3, 6, 8]], ['r-pt', [6]], ['cours-p5', [1, 2, 3, 4, 11]]] },
+    { id:'th-chimie', nom:'Atomes, molécules et transformations chimiques', refs:[['matiere', [0, 4, 5]], ['r-p1', [0, 3, 5, 8]], ['cours-p4', [0, 1, 2]], ['cours-p3', [0, 1]]] },
+    { id:'th-ph', nom:'Acides, bases, pH et équilibres', refs:[['matiere', [1]], ['r-pt', [1, 7]], ['cours-p3', [2]]] },
+    { id:'th-electricite', nom:'Électricité', refs:[['elec'], ['r-p6', [5]], ['r-pt', [5]], ['cours-p5', [5, 6, 7]], ['cours-p4', [3, 4, 5]], ['cours-p3', [3, 4]]] },
+    { id:'th-mouvement', nom:'Mouvements, forces et gravitation', refs:[['r-p6', [7]], ['r-pt', [0, 3, 8]], ['cours-p4', [6, 7]], ['cours-p3', [6, 7, 8, 11]]] },
+    { id:'th-energie', nom:'L’énergie', refs:[['r-p6', [4, 9]], ['r-p1', [1, 4, 6]], ['cours-p3', [5, 9, 10]]] },
+    { id:'th-ondes', nom:'Ondes, lumière et radioactivité', refs:[['r-p1', [2, 7, 9]], ['r-pt', [2]], ['cours-p5', [8, 9, 10]], ['cours-p4', [8, 9, 10, 11]]] }
   ], {
     en:{ dom:'By topic', ch:{ 'th-etats':'States of matter, mixtures and gases', 'th-chimie':'Atoms, molecules and chemical reactions', 'th-ph':'Acids, bases, pH and equilibria',
       'th-electricite':'Electricity', 'th-mouvement':'Motion, forces and gravity', 'th-energie':'Energy', 'th-ondes':'Waves, light and radioactivity' } },
