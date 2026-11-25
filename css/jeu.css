@@ -1887,3 +1887,6 @@ html[data-texte="tres-grand"]{ font-size:125%; } html[data-texte="tres-grand"] b
 .choix-langue-apprise select option{ color:#111; }
 .porte-prof{ background:linear-gradient(135deg, #7af0c8, #5aa9ff); text-decoration:none; }
 .ton-aide{ max-width:640px; margin:4px auto 10px; text-align:center; opacity:.85; }
+
+/* v6.23 : programmes (Python, blocs) affichés ligne par ligne, indentation gardée */
+.piege-fr.piege-code{white-space:pre-wrap;font-family:ui-monospace,Menlo,Consolas,monospace;text-align:left;font-size:.72em;line-height:1.4}
