@@ -38,8 +38,8 @@
 
   // ───── Histoire-géographie & EMC ─────
   ajouterThemes('histoire', 'Par thème', [
-    { id:'th-antiquite', nom:'L’Antiquité et les premiers humains', refs:[['antiquite'], ['r-h6', [0, 2, 3, 4]], ['cours-h6']] },
-    { id:'th-moyen-age', nom:'Le Moyen Âge', refs:[['moyen-age', [0, 2, 4]], ['r-h5', [1]], ['cours-h5', [0, 1, 2, 3, 4, 5, 6]]] },
+    { id:'th-antiquite', nom:'L’Antiquité et les premiers humains', refs:[['antiquite'], ['r-h6', [0, 2, 3, 4]], ['cours-h6'], ['cpl-h6-hebreux']] },
+    { id:'th-moyen-age', nom:'Le Moyen Âge', refs:[['moyen-age', [0, 2, 4]], ['r-h5', [1]], ['cours-h5', [0, 1, 2, 3, 4, 5, 6]], ['cpl-h5-capetiens']] },
     { id:'th-renaissance', nom:'Renaissance, Réformes, absolutisme et Lumières', refs:[['moyen-age', [1, 3]], ['r-h5', [3, 4]], ['r-h2', [0, 1, 2]], ['cours-h5', [7, 8, 9, 10, 11]], ['cours-h4', [0]]] },
     { id:'th-revolution', nom:'La Révolution française et l’Empire', refs:[['revolution', [0, 1, 2]], ['r-h4', [1]], ['lycee', [0]], ['cours-h4', [1, 2, 3, 4]]] },
     { id:'th-xixe', nom:'Le XIXe siècle et la IIIe République', refs:[['revolution', [3, 4, 5]], ['r-h4', [3, 4]], ['r-h1', [0]], ['cours-h4', [5, 6, 7, 8, 9, 10, 11]], ['cpl-h4-femmes']] },
