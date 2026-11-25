@@ -171,7 +171,7 @@
     z.innerHTML = (r.d.bien && r.d.bien.length ? '<h3>' + tx('👍 Ce qui est réussi') + '</h3>' + liste(r.d.bien) : '') + (r.d.a_revoir && r.d.a_revoir.length ? '<h3>' + tx('🔎 À revoir') + '</h3>' + liste(r.d.a_revoir) : '') +
       (r.d.pistes && r.d.pistes.length ? '<h3>' + tx('🛠️ Comment t’y prendre') + '</h3>' + liste(r.d.pistes) : '') + '<p class="petit">' + tx('🤖 L’IA peut se tromper : vérifie avec ta leçon, et demande à ton professeur en cas de doute.') + '</p>';
   }
-  M.cartes.matiere.unshift(() => M.carte('devoirs', '', '📚', tx('📚 Aide aux devoirs').replace(/^📚 /, ''), tx('Toutes les matières : l’IA t’aide à comprendre et à t’organiser, sans faire le devoir à ta place')));
+  // v6.38 : l'entrée est la grande carte en tête de l'écran Matières (js/jeu.js).
   Object.assign(M.actions, { 'devoirs':() => ecran(), 'devoirs-aide':() => aide(), 'devoirs-suite':() => suite(), 'devoirs-relire':() => relire() });
   M.devoirs = { METHODES, famille, COUT };
 })();
