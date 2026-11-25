@@ -1,0 +1,16 @@
+Ami des mots — version 6.15
+
+Matière « Français » (programme français) pour un anglophone :
+- Les 9 chapitres : homophones (37), accord du participe passé, nature et
+  fonction des mots, vocabulaire, figures de style, auteurs et mouvements,
+  œuvres et épreuve du bac (90 questions).
+- Les phrases, mots et titres étudiés restent en français ; consignes, vannes
+  et explications sont en anglais (« Conjugate… », « In “Le chat dort”, what is “dort”? »).
+- La conjugaison générée parle aussi anglais : formes françaises vérifiées,
+  temps nommés en anglais avec leur nom français (the imperfect (imparfait)…),
+  mêmes erreurs typiques expliquées en anglais.
+
+Côté anglais, seule la matière « Anglais » (l'anglais appris par un élève
+français) reste volontairement en français.
+Test v6.7 : pour la matière « Français », aucun mot français hors des citations.
+Vérification : npm run verifier → 174 tests réussis, 0 échec.
