@@ -13,6 +13,11 @@
 
   // Page d'accueil (v6.40).
   S('Entrer', 'Enter', 'Entrar', 'Eintreten', 'Entra', 'Entrar');
+  S('Mentions légales', 'Legal notice', 'Aviso legal', 'Impressum', 'Note legali', 'Aviso legal');
+  S('Confidentialité', 'Privacy', 'Privacidad', 'Datenschutz', 'Privacy', 'Privacidade');
+  S('Conditions d’utilisation', 'Terms of use', 'Condiciones de uso', 'Nutzungsbedingungen', 'Condizioni d’uso', 'Condições de utilização');
+  S('Cookies', 'Cookies', 'Cookies', 'Cookies', 'Cookie', 'Cookies');
+  S('Informations légales', 'Legal information', 'Información legal', 'Rechtliche Hinweise', 'Informazioni legali', 'Informações legais');
 
   // ── Blancs ──
   S('Brevet blanc 2026', 'Mock brevet 2026', 'Brevet de prueba 2026', 'Probe-Brevet 2026', 'Brevet di prova 2026', 'Brevet simulado 2026');
