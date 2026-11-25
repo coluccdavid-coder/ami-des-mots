@@ -2771,7 +2771,7 @@
     if(i >= P.n){ return finSalon(); }
     const q = P.liste[i]; P.opts = melangeLocal([q.bon].concat(q.faux.map(f => f.en))); P.debut = Date.now(); P.repondu = false;
     poser(barre('salon') + '<main class="piege-ecran salle-partie"><p class="piege-cat">🛸 ' + salon.code + ' · Question ' + (i + 1) + '/' + P.n + '</p><div class="chrono"><i id="chrono"></i></div>' +
-      '<div class="piege-haut"><div class="ami-moyen" id="ami-qz">' + ami('malin') + '</div><div><p class="piege-consigne">' + esc(q.consigne) + '</p><p class="piege-fr">' + esc(q.enonce || '') + (q.ecoute ? ' <button class="bouton-rond" data-a="salon-ecouter" aria-label="Écouter">🔊</button>' : '') + '</p></div></div>' +
+      '<div class="piege-haut"><div class="ami-moyen" id="ami-qz">' + ami('malin') + '</div><div><p class="piege-consigne">' + esc(q.consigne) + '</p><p class="piege-fr' + (/\n/.test(q.enonce || '') ? ' piege-code' : '') + '">' + esc(q.enonce || '') + (q.ecoute ? ' <button class="bouton-rond" data-a="salon-ecouter" aria-label="Écouter">🔊</button>' : '') + '</p></div></div>' +
       '<div class="piege-options">' + P.opts.map((o, k) => '<button class="moyen piege-opt" data-a="salon-rep" data-v="' + k + '" lang="en">' + esc(o) + '</button>').join('') + '</div>' +
       '<div class="piege-retour" id="qz-retour" role="status" aria-live="polite"></div><ol class="scores-salon" id="scores-salon"></ol>' +
       '<div class="reactions">' + window.SALON.REACTIONS.slice(0, 4).map(r => '<button class="reaction" data-a="salon-reaction" data-v="' + r.id + '" lang="en">' + r.e + '</button>').join('') + '</div><p class="aide" id="salle-msg" role="status"></p></main>');
@@ -2848,7 +2848,7 @@
     poser(barre(z.retour || 'anglais') + '<main class="piege-ecran">' + (z.finA ? '<p class="chrono-veille" id="chrono-veille" role="timer">⏱️ ' + chrono(z.finA) + '</p>' : '') + '<p class="piege-cat">' + esc(z.titre) + ' · ' + (z.i + 1) + '/' + z.liste.length + '</p>' +
       (q.contexte ? TXT('<details class="contexte-exo" open><summary>📄 Énoncé de l’exercice</summary><p>') + esc(q.contexte).replace(/\n/g, '<br>') + '</p></details>' : '') +
       '<div class="piege-haut"><div class="ami-moyen" id="ami-qz">' + (q.image ? image(q.image, 'pic-moyenne') : z.prof ? profPi('content') : ami('content')) + '</div>' +
-      '<div><p class="piege-consigne">' + esc(q.consigne) + '</p><p class="piege-fr">' + esc(q.enonce || '') + (q.ecoute ? ' <button class="bouton-rond" data-a="qz-ecouter" aria-label="Écouter">🔊</button>' + (q.lent ? ' <button class="bouton-rond" data-a="qz-lent" aria-label="Écouter lentement">🐢</button>' : '') : '') + '</p>' + (q.trad ? traduire(q.trad) : '') + '</div></div>' +
+      '<div><p class="piege-consigne">' + esc(q.consigne) + '</p><p class="piege-fr' + (/\n/.test(q.enonce || '') ? ' piege-code' : '') + '">' + esc(q.enonce || '') + (q.ecoute ? ' <button class="bouton-rond" data-a="qz-ecouter" aria-label="Écouter">🔊</button>' + (q.lent ? ' <button class="bouton-rond" data-a="qz-lent" aria-label="Écouter lentement">🐢</button>' : '') : '') + '</p>' + (q.trad ? traduire(q.trad) : '') + '</div></div>' +
       '<div class="piege-options">' + z.options.map((o, i) => '<button class="moyen piege-opt" data-a="qz-rep" data-v="' + i + '" lang="' + (z.lang || q.lang || 'en') + '">' + esc(o) + '</button>').join('') + '</div>' +
       '<div class="piege-retour" id="qz-retour" role="status" aria-live="polite"></div></main>');
     if(q.ecoute) direEcoute(q.ecoute, 'en');

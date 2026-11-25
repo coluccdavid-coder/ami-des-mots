@@ -484,5 +484,23 @@
     examen:k => (D() && D().examens[k]) || (EXAMENS[k] || {}).titre || k
   };
 
-  window.MATHS = { tr, NIVEAUX, PROGRAMME, EXAMENS, ERREURS, G, hasard, nb, fr, poly, question, serie, questionsSalon, vanne, disponible, chapitresDe, adopterCarte, get carte(){ return carte; } };
+  // v6.23 : extensions du programme 2026 (js/maths-2026-*.js). Chaque fichier apporte ses chapitres, générateurs,
+  // erreurs classiques et traductions (en, es, de, it, pt) ; rien n'est remplacé, tout s'ajoute.
+  const LANGS = ['fr', 'en', 'es', 'de', 'it', 'pt'];
+  function ajouter(x){
+    const L = window.MATHS_LANGUES || {};
+    for(const [niv, liste] of Object.entries(x.chapitres || {})){ const n = PROGRAMME.niveaux[niv]; if(!n) continue;
+      for(const c of liste){ if(n.chapitres.some(y => y[0] === c[0])) continue; n.chapitres.push([c[0], c[1], c[2]]);
+        LANGS.slice(1).forEach((l, i) => { if(L[l] && c[3 + i]) L[l].chapitres[c[0]] = c[3 + i]; }); } }
+    Object.assign(G, x.G || {});
+    for(const [cle, v] of Object.entries(x.erreurs || {})){ const f = v.fr; ERREURS[cle] = { e:f[0], t:[].concat(f[1]), s:[].concat(f[2]) };
+      for(const l of LANGS.slice(1)) if(L[l] && v[l]) L[l].erreurs[cle] = { e:v[l][0], t:[].concat(v[l][1]), s:[].concat(v[l][2]) }; }
+    for(const [d, v] of Object.entries(x.domaines || {})) LANGS.slice(1).forEach((l, i) => { if(L[l] && v[i]) L[l].domaines[d] = v[i]; });
+  }
+  // Texte multilingue : table { cle:[fr, en, es, de, it, pt] }, {a} remplacé par la valeur.
+  const tx = table => (cle, v) => { const t = table[cle]; if(!t) return cle; const i = LANGS.indexOf(LANGUE()); let s = (t[i] != null ? t[i] : t[0]);
+    return v ? s.replace(/\{(\w+)\}/g, (m, k) => v[k] != null ? v[k] : m) : s; };
+  const outils = { Q, E, C, S, pgcd, ppcm, fr, frb, nb, poly, LANGUE, MOINS };
+
+  window.MATHS = { ajouter, tx, outils, tr, NIVEAUX, PROGRAMME, EXAMENS, ERREURS, G, hasard, nb, fr, poly, question, serie, questionsSalon, vanne, disponible, chapitresDe, adopterCarte, get carte(){ return carte; } };
 })();
