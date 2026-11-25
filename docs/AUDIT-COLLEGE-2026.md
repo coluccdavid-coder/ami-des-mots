@@ -2,6 +2,14 @@
 
 Date : 25 novembre 2026. Année scolaire de référence : 2026-2027.
 
+## Suivi — v6.31 : étoffer chaque leçon (1/5, anglais)
+
+Objectif : environ 16 à 20 questions par leçon, pour couvrir toute la leçon et qu’une série de 10 ne tourne pas en rond.
+Plan : v6.31 anglais, v6.32 espagnol et allemand, v6.33 SVT et physique-chimie, v6.34 histoire-géographie, v6.35 français, arts, EPS, latin-grec.
+
+- **Anglais (6e-3e) :** les 19 leçons passent de 2-6 questions à 16-18 (js/mat-anglais-college-plus.js, js/mat-anglais-college-plus2.js), soit 244 questions ajoutées.
+- Un test bloque désormais toute leçon d’anglais du collège sous 16 questions, ainsi que les doublons et les répétitions dans une série.
+
 ## Suivi — v6.30
 
 | | v6.28 | v6.29 | v6.30 |
