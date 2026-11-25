@@ -1,0 +1,14 @@
+Ami des mots — v6.28.0
+
+Collège complet : chaque matière du collège a son cours de l'année dans chaque classe (12 questions, 3 pièges, règle expliquée).
+- NOUVELLE MATIÈRE : Technologie (5e, 4e, 3e) — objets techniques, cahier des charges, matériaux, énergie, chaîne d'information et d'énergie,
+  capteurs et actionneurs, programmation (Scratch, conditions, variables, événements), réseaux, objets connectés, écoconception, RGPD,
+  épreuve de sciences du brevet. Examens de 5e, 4e et brevet blanc. fr / en / es / de. Carte dans l'écran Matières.
+- Physique-chimie 6e : cours « Sciences et technologie » (états de la matière, mélanges, masse, énergie, mouvement, circuit, son et lumière). fr / en / es / de.
+- Anglais LV1 : cours de 6e, 5e, 4e et 3e (be/have got, présent simple et be + -ing, prétérit, present perfect, modaux, relatifs, conditionnel, passif, discours rapporté, culture).
+- Espagnol LV2 : cours de 5e, 4e et 3e (A1 → A2). fr / en.
+- Allemand LV2 : cours de 5e, 4e et 3e (A1 → A2). fr / en / es.
+Récapitulatif collège : français, histoire, géographie, EMC, SVT, physique-chimie, technologie, maths, anglais, espagnol, allemand.
+Nouveaux fichiers : js/mat-cours-college-fin.js, js/mat-techno.js (chargés avant themes.js, ajoutés au service worker).
+Nouveau test « v6.28 » : un cours de l'année par matière et par classe du collège, pièges, juge, traductions, carte Technologie.
+Vérification : npm run verifier → 178 réussi(s), 0 échoué(s).

@@ -15,8 +15,10 @@
       for(const [cid, idx] of t.refs){ const ch = m.chapitres.find(c => c.id === cid && c.banque); if(!ch) continue;
         (idx || ch.banque.map((_, i) => i)).forEach(i => { if(ch.banque[i]) parts.push([ch, i]); }); }
       if(!parts.length) continue;
-      const niv = NIV.filter(n => parts.some(([ch]) => ch.niv.includes(n)));
-      nouveaux.push({ id:t.id, nom:t.nom, dom:domFr, niv, theme:true, banque:parts.map(([ch, i]) => ch.banque[i]), _parts:parts });
+      const nivQ = parts.map(([ch, i]) => ((ch.nivQ && ch.nivQ[i]) || ch.niv).slice());
+      const niv = NIV.filter(n => nivQ.some(v => v.includes(n)));
+      // v6.29 : chaque question garde les classes de son chapitre d'origine (nivQ) : une série de 6e ne pioche plus dans les questions de 3e ou du lycée.
+      nouveaux.push({ id:t.id, nom:t.nom, dom:domFr, niv, theme:true, banque:parts.map(([ch, i]) => ch.banque[i]), nivQ, _parts:parts });
     }
     m.chapitres = nouveaux.concat(m.chapitres.filter(c => !nouveaux.some(n => n.id === c.id)));
     // Traductions : calculées à la demande, pour suivre les fichiers de traduction quel que soit leur ordre de chargement.
@@ -40,7 +42,7 @@
     { id:'th-moyen-age', nom:'Le Moyen Âge', refs:[['moyen-age', [0, 2, 4]], ['r-h5', [1]], ['cours-h5', [0, 1, 2, 3, 4, 5, 6]]] },
     { id:'th-renaissance', nom:'Renaissance, Réformes, absolutisme et Lumières', refs:[['moyen-age', [1, 3]], ['r-h5', [3, 4]], ['r-h2', [0, 1, 2]], ['cours-h5', [7, 8, 9, 10, 11]], ['cours-h4', [0]]] },
     { id:'th-revolution', nom:'La Révolution française et l’Empire', refs:[['revolution', [0, 1, 2]], ['r-h4', [1]], ['lycee', [0]], ['cours-h4', [1, 2, 3, 4]]] },
-    { id:'th-xixe', nom:'Le XIXe siècle et la IIIe République', refs:[['revolution', [3, 4, 5]], ['r-h4', [3, 4]], ['r-h1', [0]], ['cours-h4', [5, 6, 7, 8, 9, 10, 11]]] },
+    { id:'th-xixe', nom:'Le XIXe siècle et la IIIe République', refs:[['revolution', [3, 4, 5]], ['r-h4', [3, 4]], ['r-h1', [0]], ['cours-h4', [5, 6, 7, 8, 9, 10, 11]], ['cpl-h4-femmes']] },
     { id:'th-1gm', nom:'La Première Guerre mondiale (1914-1918)', refs:[['xxe', [0]], ['r-h3', [0, 1]], ['pgm-cours']] },
     { id:'th-entre-deux', nom:'L’entre-deux-guerres : crise, totalitarismes, Front populaire', refs:[['r-ht', [0]], ['r-h3', [2]], ['lycee', [1]], ['cours-h3', [0, 1, 2]]] },
     { id:'th-2gm', nom:'La Seconde Guerre mondiale (1939-1945) : toutes les questions', refs:[['xxe', [1, 7]], ['seconde-guerre'], ['sgm-cours']] },
@@ -48,7 +50,7 @@
     { id:'th-france-1945', nom:'La France depuis 1945 et la Ve République', refs:[['xxe', [2, 3]], ['r-h3', [6]], ['lycee', [2]], ['cours-h3', [3, 8, 9, 10]]] },
     { id:'th-europe-monde', nom:'Construction européenne, ONU et mondialisation', refs:[['xxe', [6]], ['r-ht', [2]], ['lycee', [4]], ['cours-h3', [7]]] },
     { id:'th-geo', nom:'La géographie : toutes les questions', refs:[['geo'], ['r-h6', [5]], ['r-h5', [5]], ['r-h4', [5]], ['r-h2', [3]], ['r-h1', [2]], ['r-ht', [3]], ['cours-g6'], ['cours-g5'], ['cours-g4'], ['cours-g3']] },
-    { id:'th-emc', nom:'L’EMC : toutes les questions', refs:[['emc'], ['cours-emc-c3'], ['cours-emc-c4']] }
+    { id:'th-emc', nom:'L’EMC : toutes les questions', refs:[['emc'], ['cours-emc-c3'], ['cours-emc-c4'], ['cours-emc6'], ['cours-emc5'], ['cours-emc4'], ['cours-emc3']] }
   ], {
     en:{ dom:'By topic', ch:{ 'th-antiquite':'Antiquity and the first humans', 'th-moyen-age':'The Middle Ages', 'th-renaissance':'Renaissance, Reformations, absolutism and the Enlightenment',
       'th-revolution':'The French Revolution and the Empire', 'th-xixe':'The 19th century and the Third Republic', 'th-1gm':'The First World War (1914–1918)',
@@ -66,7 +68,7 @@
     { id:'th-ecosystemes', nom:'Écosystèmes, biodiversité et évolution', refs:[['vivant', [4]], ['r-s6', [4]], ['r-s2', [1, 7, 8]], ['r-st', [1, 5]], ['cours-s6', [6, 7]], ['cours-s3', [4, 5]]] },
     { id:'th-immunite', nom:'Microbes et immunité', refs:[['corps', [1]], ['r-s6', [9]], ['r-s54', [6]], ['r-s1', [1, 4, 5, 9]], ['cours-s6', [8]], ['cours-s3', [6, 7]]] },
     { id:'th-corps', nom:'Corps humain : nutrition, effort, reproduction, hormones, nerfs', refs:[['corps', [0, 2]], ['r-s6', [3]], ['r-s54', [0, 1, 2, 3, 5]], ['r-s2', [2, 5, 6]], ['r-st', [3, 6, 7]], ['cours-s6', [9]], ['cours-s5', [0, 1, 2, 3, 4, 5, 6, 11]], ['cours-s4', [0, 1, 2, 3, 4, 5]], ['cours-s3', [10, 11]]] },
-    { id:'th-terre', nom:'La Terre : géologie et climat', refs:[['terre', [0]], ['r-s54', [4, 7]], ['r-s1', [3, 7]], ['r-st', [2, 4, 9]], ['cours-s5', [7, 8, 9, 10]], ['cours-s4', [6, 7, 8, 9]], ['cours-s3', [8]]] }
+    { id:'th-terre', nom:'La Terre : géologie et climat', refs:[['terre', [0]], ['r-s54', [4, 7]], ['r-s1', [3, 7]], ['r-st', [2, 4, 9]], ['cours-s5', [7, 8, 9, 10]], ['cours-s4', [6, 7, 8, 9]], ['cours-s3', [8]], ['cpl-s6']] }
   ], {
     en:{ dom:'By topic', ch:{ 'th-cellule-adn':'Cells, DNA and genetics', 'th-plantes':'Plants, photosynthesis, classification and development', 'th-ecosystemes':'Ecosystems, biodiversity and evolution',
       'th-immunite':'Microbes and immunity', 'th-corps':'The human body: nutrition, exercise, reproduction, hormones, nerves', 'th-terre':'The Earth: geology and climate' } },
@@ -79,7 +81,7 @@
     { id:'th-etats', nom:'États de la matière, mélanges et gaz', refs:[['matiere', [2, 3]], ['r-p6', [0, 2, 3, 6, 8]], ['r-pt', [6]], ['cours-p5', [1, 2, 3, 4, 11]]] },
     { id:'th-chimie', nom:'Atomes, molécules et transformations chimiques', refs:[['matiere', [0, 4, 5]], ['r-p1', [0, 3, 5, 8]], ['cours-p4', [0, 1, 2]], ['cours-p3', [0, 1]]] },
     { id:'th-ph', nom:'Acides, bases, pH et équilibres', refs:[['matiere', [1]], ['r-pt', [1, 7]], ['cours-p3', [2]]] },
-    { id:'th-electricite', nom:'Électricité', refs:[['elec'], ['r-p6', [5]], ['r-pt', [5]], ['cours-p5', [5, 6, 7]], ['cours-p4', [3, 4, 5]], ['cours-p3', [3, 4]]] },
+    { id:'th-electricite', nom:'Électricité', refs:[['elec'], ['r-p6', [5]], ['r-pt', [5]], ['cours-p5', [5, 6, 7]], ['cours-p4', [3, 4, 5]], ['cours-p3', [3, 4]], ['cpl-pc-elec']] },
     { id:'th-mouvement', nom:'Mouvements, forces et gravitation', refs:[['r-p6', [7]], ['r-pt', [0, 3, 8]], ['cours-p4', [6, 7]], ['cours-p3', [6, 7, 8, 11]]] },
     { id:'th-energie', nom:'L’énergie', refs:[['r-p6', [4, 9]], ['r-p1', [1, 4, 6]], ['cours-p3', [5, 9, 10]]] },
     { id:'th-ondes', nom:'Ondes, lumière et radioactivité', refs:[['r-p1', [2, 7, 9]], ['r-pt', [2]], ['cours-p5', [8, 9, 10]], ['cours-p4', [8, 9, 10, 11]]] }

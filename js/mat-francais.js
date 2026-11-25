@@ -43,7 +43,7 @@
     }
     return '';
   }
-  const TEMPS_NIV = { '6e':['présent', 'imparfait', 'futur', 'passé composé'], '5e':['présent', 'imparfait', 'futur', 'passé composé', 'passé simple'], '4e':['imparfait', 'futur', 'passé simple', 'conditionnel', 'passé composé'] };
+  const TEMPS_NIV = { '6e':['présent', 'imparfait', 'futur', 'passé composé'], '5e':['présent', 'imparfait', 'futur', 'passé composé', 'passé simple', 'conditionnel'], '4e':['imparfait', 'futur', 'passé simple', 'conditionnel', 'passé composé'] };
   const tempsDe = n => TEMPS_NIV[n] || ['présent', 'imparfait', 'futur', 'conditionnel', 'passé simple', 'passé composé'];
   const VAN_CONJ = {
     personne:['« {f} » ? Bon temps, mauvaise personne : le verbe a parlé à quelqu’un d’autre. 📞', '« {f} » ? La terminaison s’est trompée de pronom. Elle cherche encore sa place. 🪑', '« {f} » ? Tout est juste sauf la fin. C’est comme mettre les chaussures de ton voisin. 👟'],
