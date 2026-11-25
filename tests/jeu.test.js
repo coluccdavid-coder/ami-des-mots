@@ -21,7 +21,7 @@ function page(langue, config, avant){
   w.TextEncoder = TextEncoder; w.TextDecoder = TextDecoder;
   w.__fetch = []; w.fetch = async (u) => { w.__fetch.push(String(u)); return { ok:true, json:async () => (w.__reponse || { actif:false }) }; };
   if(avant) avant(w);
-  for(const f of ['js/donnees.js', 'js/voix.js', 'js/phrases-enregistrees.js', 'js/textes.js', 'js/textes-plus.js', 'js/textes-ecrans.js', 'js/articulation.js', 'js/genres.js', 'js/confusions.js', 'js/vannes.js', 'js/pieges.js', 'js/anglais.js', 'js/clash.js', 'js/histoires.js', 'js/blagues-en.js', 'js/parcours.js', 'js/rigolade.js', 'js/clash-plus.js', 'js/salon.js', 'js/juge.js', 'js/vannes-libres.js', 'js/maths-en.js', 'js/maths-es.js', 'js/maths-de.js', 'js/maths-it.js', 'js/maths-pt.js', 'js/maths.js', 'js/sciences-en.js', 'js/sciences-es.js', 'js/sciences-de.js', 'js/sciences-it.js', 'js/sciences-pt.js', 'js/sciences.js', 'js/trash-talk.js', 'js/vannes-arrogantes.js', 'js/bande-images.js', 'js/bande-plumo.js', 'js/achats.js', 'js/rappels.js', 'js/epreuves.js', 'js/epreuves-spe.js', 'js/epreuves-plus.js', 'js/epreuves-oraux.js', 'js/epreuves-pro.js', 'js/matieres.js', 'js/mat-trad-es.js', 'js/mat-trad-en.js', 'js/mat-trad-en-sciences.js', 'js/mat-trad-en-sup.js', 'js/mat-trad-en-langues.js', 'js/mat-trad-communs.js', 'js/mat-francais.js', 'js/mat-histoire.js', 'js/mat-histoire-sgm.js', 'js/mat-svt-pc.js', 'js/mat-sup.js', 'js/mat-anglais.js', 'js/mat-renfort.js', 'js/mat-langues.js', 'js/mat-specialites.js', 'js/mat-anglais-sup.js', 'js/mat-sup-droit.js', 'js/mat-sup-medecine.js', 'js/mat-sup-astro.js', 'js/mat-philo-notions.js', 'js/vannes-cash.js', 'js/vannes-ironie.js', 'js/vannes-mots.js', 'js/offre.js', 'js/jeu.js', 'js/mod-base.js', 'js/mod-ligue.js', 'js/mod-saisons.js', 'js/mod-veille.js', 'js/mod-oral.js', 'js/mod-classe.js', 'js/mod-parrainage.js', 'js/mod-ia.js', 'js/gb-moteur.js', 'js/gb-maths.js', 'js/gb-english.js', 'js/gb-sciences.js', 'js/gb-humanites.js', 'js/gb-options.js', 'js/gb-plus.js', 'js/gb-programme.js', 'js/gb-programme-plus.js', 'js/gb-examens.js', 'js/gb-sats-reels.js', 'js/gb-options2.js', 'js/nasa.js', 'js/mat-trad-en-nasa.js', 'js/mod-angleterre.js']) w.eval(lire(f));
+  for(const f of ['js/donnees.js', 'js/voix.js', 'js/phrases-enregistrees.js', 'js/textes.js', 'js/textes-plus.js', 'js/textes-ecrans.js', 'js/articulation.js', 'js/genres.js', 'js/confusions.js', 'js/vannes.js', 'js/pieges.js', 'js/anglais.js', 'js/clash.js', 'js/histoires.js', 'js/blagues-en.js', 'js/parcours.js', 'js/rigolade.js', 'js/clash-plus.js', 'js/salon.js', 'js/juge.js', 'js/vannes-libres.js', 'js/maths-en.js', 'js/maths-es.js', 'js/maths-de.js', 'js/maths-it.js', 'js/maths-pt.js', 'js/maths.js', 'js/sciences-en.js', 'js/sciences-es.js', 'js/sciences-de.js', 'js/sciences-it.js', 'js/sciences-pt.js', 'js/sciences.js', 'js/trash-talk.js', 'js/vannes-arrogantes.js', 'js/bande-images.js', 'js/bande-plumo.js', 'js/achats.js', 'js/rappels.js', 'js/epreuves.js', 'js/epreuves-spe.js', 'js/epreuves-plus.js', 'js/epreuves-oraux.js', 'js/epreuves-pro.js', 'js/matieres.js', 'js/mat-trad-es.js', 'js/mat-trad-en.js', 'js/mat-trad-en-sciences.js', 'js/mat-trad-en-sup.js', 'js/mat-trad-en-langues.js', 'js/mat-trad-en-francais.js', 'js/mat-trad-communs.js', 'js/mat-francais.js', 'js/mat-histoire.js', 'js/mat-histoire-sgm.js', 'js/mat-svt-pc.js', 'js/mat-sup.js', 'js/mat-anglais.js', 'js/mat-renfort.js', 'js/mat-langues.js', 'js/mat-specialites.js', 'js/mat-anglais-sup.js', 'js/mat-sup-droit.js', 'js/mat-sup-medecine.js', 'js/mat-sup-astro.js', 'js/mat-philo-notions.js', 'js/vannes-cash.js', 'js/vannes-ironie.js', 'js/vannes-mots.js', 'js/offre.js', 'js/jeu.js', 'js/mod-base.js', 'js/mod-ligue.js', 'js/mod-saisons.js', 'js/mod-veille.js', 'js/mod-oral.js', 'js/mod-classe.js', 'js/mod-parrainage.js', 'js/mod-ia.js', 'js/gb-moteur.js', 'js/gb-maths.js', 'js/gb-english.js', 'js/gb-sciences.js', 'js/gb-humanites.js', 'js/gb-options.js', 'js/gb-plus.js', 'js/gb-programme.js', 'js/gb-programme-plus.js', 'js/gb-examens.js', 'js/gb-sats-reels.js', 'js/gb-options2.js', 'js/nasa.js', 'js/mat-trad-en-nasa.js', 'js/mod-angleterre.js']) w.eval(lire(f));
   return w;
 }
 // Certificats d'abonnement comme les signe le serveur (même format que serveur/functions/ami-abonnement).
@@ -2664,7 +2664,12 @@ await test('v6.7 : matières du programme français traduites — même nombre d
       assert.ok(ch, L + ' chapitre inconnu ' + cle); assert.strictEqual(liste.length, ch.banque.length, L + ' ' + cle + ' : nombre de questions');
       liste.forEach((x, i) => { const f = ch.banque[i]; assert.strictEqual(x[2].length, f[2].length, L + ' ' + cle + ' #' + i + ' : nombre de pièges');
         assert.ok(x[0] && x[1] && x[3], L + ' ' + cle + ' #' + i + ' incomplet');
-        const tout = [x[0], x[1], x[3]].concat(x[2].flat()).join(' | '), mm = tout.match(mid === 'lespagnol' ? FR_ES : FR); assert.ok(!mm, L + ' ' + cle + ' #' + i + ' : « ' + (mm && mm[0]) + ' » dans ' + tout.slice(0, 160));
+        if(mid === 'francais'){
+          // Matière « Français » : les phrases et mots étudiés restent en français (énoncé, réponses, citations entre guillemets ou entre parenthèses) ;
+          // en dehors de ces citations, l'explication et les vannes ne doivent contenir aucun mot français.
+          const horsCitations = t => t.replace(/“[^”]*”/g, ' ').replace(/«[^»]*»/g, ' ').replace(/\([^)]*\)/g, ' ');
+          [x[3]].concat(x[2].map(p => p[1])).forEach(t => { const mm = horsCitations(t).match(FR); assert.ok(!mm, L + ' ' + cle + ' #' + i + ' : « ' + (mm && mm[0]) + ' » dans ' + t); });
+        } else { const tout = [x[0], x[1], x[3]].concat(x[2].flat()).join(' | '), mm = tout.match(mid === 'lespagnol' ? FR_ES : FR); assert.ok(!mm, L + ' ' + cle + ' #' + i + ' : « ' + (mm && mm[0]) + ' » dans ' + tout.slice(0, 160)); }
         x[2].forEach(p => { const r = w.JUGE.juger(L === 'de' ? p[1].replace(/\bdie\b/gi, 'the') : p[1]); assert.ok(r.ok, L + ' ' + cle + ' vanne refusée : ' + p[1] + ' ' + r.raisons); }); n++; });
       // La série d'un chapitre traduit sort dans la langue, sans question française générée.
       for(const ton of ['taquin', 'doux', 'sanspitie']) M.serie(mid, cid, ch.niv[0], 8, 5, ton).forEach(q => assert.strictEqual(q.lang, L, cle));
@@ -2675,7 +2680,7 @@ await test('v6.7 : matières du programme français traduites — même nombre d
 });
 await test('v6.12-v6.13 : SVT, physique-chimie, philosophie, droit, médecine et astrophysique en anglais ; calculs de physique générés dans les 5 langues, sans mot français', () => {
   const we = page('en-GB'), Me = we.MATIERES;
-  for(const mid of ['svt', 'physique', 'philo', 'droit', 'medecine', 'astro', 'nasa', 'lespagnol', 'lallemand']) for(const c of Me.trouver(mid).chapitres) assert.ok(Me.traduit(Me.trouver(mid), c), 'en ' + mid + '/' + c.id + ' non traduit');
+  for(const mid of ['svt', 'physique', 'philo', 'droit', 'medecine', 'astro', 'nasa', 'lespagnol', 'lallemand', 'francais']) for(const c of Me.trouver(mid).chapitres) assert.ok(Me.traduit(Me.trouver(mid), c), 'en ' + mid + '/' + c.id + ' non traduit');
   const FR = /(?<![\p{L}’])(une|est|avec|pour|quelle|combien|réponse|parcourt|fonctionne|tension|vitesse)(?![\p{L}’])/iu;
   for(const L of ['en', 'es', 'de', 'it', 'pt']){
     const w = page(L === 'en' ? 'en-GB' : L), M = w.MATIERES, m = M.trouver('physique');
@@ -2689,6 +2694,9 @@ await test('v6.12-v6.13 : SVT, physique-chimie, philosophie, droit, médecine et
       });
     }
   }
+  // Conjugaison française expliquée en anglais : formes françaises, consigne et vannes en anglais.
+  for(const niv of ['6e', '4e', '2nde']) Me.serie('francais', 'conjugaison', niv, 12, 7, 'taquin').forEach(q => { assert.strictEqual(q.lang, 'en');
+    assert.ok(/^Conjugate “/.test(q.enonce), q.enonce); q.faux.forEach(f => { assert.ok(!/(?<![\p{L}’])(mauvaise|verbe|temps|bonne)(?![\p{L}’])/iu.test(f.vanne), f.vanne); assert.ok(we.JUGE.juger(f.vanne.replace('{f}', f.en)).ok, f.vanne); }); });
   // Calculs d'astrophysique et débit cardiaque : en anglais quand l'interface est en anglais, en français sinon.
   for(const [mid, cid] of [['astro', 'calculs'], ['medecine', 'physio']]){
     Me.serie(mid, cid, 'Sup', 12, 3, 'taquin').forEach(q => { assert.strictEqual(q.lang, 'en', mid + '/' + cid);

@@ -1,6 +1,6 @@
 {
   "name": "ami-des-mots",
-  "version": "6.14.0",
+  "version": "6.15.0",
   "private": true,
   "description": "Ami des mots — un jeu pour apprendre des mots en images.",
   "scripts": {
