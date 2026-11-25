@@ -1,0 +1,18 @@
+Ami des mots — v6.37.0
+
+Consolidation après l'audit de la v6.35.
+
+1. Serveur PHP réellement testé sur une base MariaDB : 43 vérifications réussies sur 43
+   (abonnements Stripe, certificats Plus, vannes IA, salon, veille, coin admin, aide aux devoirs).
+   - Nouveau : bash outils/tests-serveur/lancer-local.sh (ou npm run test:serveur) crée une base JETABLE,
+     des clés et une config de test, lance le test, puis efface tout. Sans prérequis, le test explique quoi installer
+     au lieu d'échouer 14 fois.
+   - 6 nouvelles vérifications sur devoirs.php (règles envoyées par le serveur, signes < gardés, photo, fichier refusé,
+     balises neutralisées, plumes rendues si l'IA échoue).
+2. Défauts corrigés grâce à ce test :
+   - devoirs.php, correction.php, explique.php : avertissement PHP et langue vide quand l'appli n'envoyait pas de langue.
+   - devoirs.php : 8 demandes par minute au lieu de 4 (aide + question + relecture d'affilée étaient bloquées).
+3. npm test sans « npm install » : message clair au lieu de « Cannot find module 'jsdom' ».
+4. Traductions : nom de chaque matière en anglais, espagnol, allemand, italien et portugais (js/mat-noms.js) ;
+   commentaire de textes-plus.js corrigé (6 langues d'interface, et non 11).
+5. npm run verifier : 188 réussis, 0 échoué.

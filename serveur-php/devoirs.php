@@ -18,7 +18,7 @@ ami_cors('POST');
 if (($_SERVER['REQUEST_METHOD'] ?? '') !== 'POST') ami_json(['erreur' => 'methode'], 405);
 $cfg = ami_config();
 if (($cfg['anthropic_cle'] ?? '') === '') ami_json(['erreur' => 'non_configure'], 503);
-ami_limiter('devoirs', 4);
+ami_limiter('devoirs', 8);
 
 const SYSTEME_DEVOIRS = "Tu es le tuteur de l'application « Ami des mots », pour des élèves du collège et du lycée (11 à 18 ans).\n"
   . "Ta mission : aider l'élève à faire SON devoir lui-même. Tu ne fais JAMAIS le devoir à sa place.\n"
@@ -44,7 +44,7 @@ $mode = in_array($d['mode'] ?? '', ['aide', 'suite', 'relire'], true) ? $d['mode
 $matiere = preg_match('/^[a-z0-9-]{1,24}$/', (string) ($d['matiere'] ?? '')) ? (string) $d['matiere'] : 'autre';
 $nomMatiere = $txt($d['nom_matiere'] ?? '', 60);
 $niveau = in_array($d['niveau'] ?? '', ['6e', '5e', '4e', '3e', '2nde', '1re', 'Tle', 'Sup'], true) ? $d['niveau'] : '';
-$langue = in_array($d['langue'] ?? 'fr', ['fr', 'en', 'es', 'de', 'it', 'pt'], true) ? $d['langue'] : 'fr';
+$langue = in_array($d['langue'] ?? 'fr', ['fr', 'en', 'es', 'de', 'it', 'pt'], true) ? ($d['langue'] ?? 'fr') : 'fr';
 $enonce = $txt($d['enonce'] ?? '', 4000);
 $avant = $txt($d['consignes_precedentes'] ?? '', 3000);
 $question = $txt($d['question'] ?? '', 600);

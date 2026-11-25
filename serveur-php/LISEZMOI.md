@@ -43,7 +43,7 @@ par l'IA, veille des programmes de maths. Il tourne sur un hébergement mutualis
 | `parrainage.php` | Parrainage (v6.0) : lien entre deux codes ; un mois offert au parrain quand le filleul prend Plus |
 | `explique.php` | Plumo réexplique après 3 erreurs (v6.0) : 2 plumes, 40 par jour et par IP au plus |
 | `correction.php` | Correction par Plumo (v6.0) : note, points forts, conseils, version corrigée ; 5 plumes ; texte non conservé |
-| `devoirs.php` | Aide aux devoirs (v6.35), toutes matières : reformule la consigne, rappelle la leçon, donne une méthode, pose des questions, relit le travail — **ne fait jamais le devoir**, sans vanne. Énoncé collé, photo (JPEG/PNG/WebP) ou PDF. Plumes : aide 3, +2 avec photo ou PDF, question de suivi 1, relecture 3 (clé `devoirs_plumes`). Modèle : `anthropic_modele_devoirs`. Rien n'est conservé. 4 demandes par minute et par adresse IP. Le serveur doit accepter des envois de 6 Mo (`post_max_size`). |
+| `devoirs.php` | Aide aux devoirs (v6.35), toutes matières : reformule la consigne, rappelle la leçon, donne une méthode, pose des questions, relit le travail — **ne fait jamais le devoir**, sans vanne. Énoncé collé, photo (JPEG/PNG/WebP) ou PDF. Plumes : aide 3, +2 avec photo ou PDF, question de suivi 1, relecture 3 (clé `devoirs_plumes`). Modèle : `anthropic_modele_devoirs`. Rien n'est conservé. 8 demandes par minute et par adresse IP. Le serveur doit accepter des envois de 6 Mo (`post_max_size`). |
 
 ## Sécurité
 - Aucun secret dans le dépôt ni dans le navigateur : clés Stripe, Claude et clé privée restent dans `config-ami.php` et le `.pem`, hors du site.

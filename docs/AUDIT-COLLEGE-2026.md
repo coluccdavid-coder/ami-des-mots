@@ -2,6 +2,15 @@
 
 Date : 25 novembre 2026. Année scolaire de référence : 2026-2027.
 
+## Suivi — v6.34 à v6.36 : étoffer chaque leçon (3/5 et 4/5)
+
+- **v6.34 — SVT et physique-chimie** (4 langues) : le vivant 16, le corps 15, la Terre 15, la génétique 15, la matière 16, l’électricité 15 questions.
+  Un chapitre « Par thème » n’apparaît dans une classe que s’il y a au moins 4 questions de cette classe.
+- **v6.36 — histoire-géographie** (4 langues) : Antiquité 4 → 12, Moyen Âge 5 → 13, Révolution et Empire 6 → 14, géographie 4 → 7 par classe (10 en 3e).
+  3e : entre-deux-guerres, guerre froide et décolonisation, France depuis 1945 (8 questions chacun), rangés dans leurs thèmes
+  (entre-deux-guerres 4 → 12, guerre froide 6 → 14, France depuis 1945 7 → 15).
+- **Reste mince** : EMC générale (5, mais chaque classe a son cours de 12), révisions courtes r-h6 à r-h3 (6-7), compléments de 6e-5e (6).
+
 ## Suivi — v6.32 : étoffer chaque leçon (2/5, espagnol et allemand)
 
 - **Espagnol (5e-3e) :** 6 leçons passent à 16 questions (bases, présent, vocabulaire, passé, culture, grammaire), en français et en anglais.

@@ -1,0 +1,16 @@
+Ami des mots — v6.36.0
+
+Étoffer chaque leçon du collège (4/5) : l'histoire-géographie, en français, anglais, espagnol et allemand.
+
+1. Antiquité (6e) 4 → 12 questions : écriture, Égypte, Athènes, Homère, Rome, Constantin.
+2. Moyen Âge (5e) 5 → 13 : seigneurie, hommage, chevaliers, islam, Byzance, art roman, Saint Louis.
+3. Révolution et Empire (4e) 6 → 14 : Ancien Régime, 4 août, Déclaration des droits, République, Code civil,
+   sacre de 1804, suffrage universel masculin, abolition de l'esclavage (1848).
+4. Géographie : +3 questions par classe, chacune à sa classe (6e métropoles, littoraux, déserts ; 5e population,
+   développement durable, eau ; 4e urbanisation, migrations, tourisme ; 3e espaces productifs, Union européenne, régions).
+5. 3e : trois compléments rangés dans leurs chapitres « Par thème » :
+   crise de 1929, régimes totalitaires et Front populaire ; guerre froide et décolonisation ; France depuis 1945.
+   Entre-deux-guerres 4 → 12, guerre froide 6 → 14, France depuis 1945 7 → 15 questions en 3e.
+6. Test v6.36. npm run verifier : 188 réussis, 0 échoué.
+
+Suite prévue : v6.37 français, arts, EPS, latin-grec.
