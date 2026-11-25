@@ -18,7 +18,8 @@ const RP = path.resolve(process.argv[2] || path.join(ICI, '..', 'w'));
 if(!fs.existsSync(path.join(RP, 'scripts/extract-voice-content.js'))){
   console.error('Dossier ReParole introuvable : ' + RP); process.exit(1);
 }
-const LANGUES = ['fr','en','es','it','pt','de','ar','tr','pl','ja','uk','ko','dz','ma','tn','kab'];
+// v6.34 : l'arabe, le turc, le polonais, le japonais et l'ukrainien sont retirés de l'appli : on ne les réimporte pas.
+const LANGUES = ['fr','en','es','it','pt','de','ko','dz','ma','tn','kab'];
 
 // Thème de chaque image. Une image absente d'ici n'entre pas dans le jeu.
 const THEMES = {

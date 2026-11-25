@@ -1896,3 +1896,14 @@ html[data-texte="tres-grand"]{ font-size:125%; } html[data-texte="tres-grand"] b
 
 /* v6.23 : programmes (Python, blocs) affichés ligne par ligne, indentation gardée */
 .piege-fr.piege-code{white-space:pre-wrap;font-family:ui-monospace,Menlo,Consolas,monospace;text-align:left;font-size:.72em;line-height:1.4}
+/* v6.35 : aide aux devoirs — écran sobre, lisible, sans vanne */
+.devoirs textarea, .devoirs select, .devoirs input[type="file"]{ width:100%; box-sizing:border-box; font:inherit; }
+.devoirs textarea{ border-radius:12px; padding:10px; }
+.devoirs-reponse, .devoirs-suite{ text-align:left; max-width:760px; margin:16px auto; padding:16px 18px; border-radius:16px; background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.14); }
+.devoirs-reponse h3, .devoirs-suite h3, #dev-relu h3{ margin:14px 0 6px; font-size:1.05em; }
+.devoirs-liste{ margin:0 0 4px; padding-left:1.4em; line-height:1.5; }
+.devoirs-liste li{ margin:4px 0; }
+.devoirs select{ color:#1d1640; background:#fff; padding:8px 10px; border-radius:10px; border:1px solid rgba(0,0,0,.2); max-width:420px; }
+.devoirs label{ display:block; }
+#dev-methode{ text-align:left; max-width:760px; margin:12px auto; padding:14px 18px; border-radius:16px; background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.14); }
+.devoirs textarea{ color:#1d1640; background:#fff; }

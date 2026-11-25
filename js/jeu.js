@@ -115,9 +115,9 @@
   const INTERVALLES = [0, 1, 3, 7, 16];
   const BIEN_CONNU = 3;
   const TROPHEES = ['premiere', 'serie3', 'serie7', 'mots25', 'mots100', 'theme', 'defi5'];
-  const LOCALES = { fr:'fr-FR', en:'en-GB', es:'es-ES', it:'it-IT', pt:'pt-PT', de:'de-DE', ar:'ar-SA', tr:'tr-TR', pl:'pl-PL', ja:'ja-JP', uk:'uk-UA', ko:'ko-KR' };
-  const SANS_LETTRES = ['ja', 'ko'];
-  const RTL = ['ar', 'dz', 'ma', 'tn'];
+  const LOCALES = { fr:'fr-FR', en:'en-GB', es:'es-ES', it:'it-IT', pt:'pt-PT', de:'de-DE', ko:'ko-KR' };
+  const SANS_LETTRES = ['ko'];
+  const RTL = ['dz', 'ma', 'tn'];
 
   // ── Stockage : plusieurs joueurs, un seul enregistrement ──────────
   const CLE = 'amidesmots:v2', ANCIENNE = 'amidesmots:v1';
@@ -248,7 +248,7 @@
 
   function affiche(lang, mot){
     if(!mot || !/[A-ZÀ-ÞĀ-ſА-ЯІЇЄҐ]/.test(mot) || mot !== mot.toUpperCase()) return mot;
-    const bas = mot.toLocaleLowerCase(lang === 'tr' ? 'tr' : lang === 'kab' ? 'fr' : lang);
+    const bas = mot.toLocaleLowerCase(lang === 'kab' ? 'fr' : lang);
     return lang === 'de' ? bas.charAt(0).toLocaleUpperCase('de') + bas.slice(1) : bas;
   }
   const ouvert = th => plus() || CONFIG.THEMES_GRATUITS.includes(th);
@@ -663,7 +663,7 @@
         (CONFIG.ACCUEIL_SIMPLE ? portesAccueil() : '' +
         '<button class="gros phrases-accueil" data-a="phrases">💬 ' + (base.ui === 'en' ? 'Build your first sentences' : TXT('Atelier des phrases')) + ' <span>✨</span></button>' +
         (piegesDispo() ? '<button class="gros pieges-accueil" data-a="' + (A_EN() ? 'anglais' : 'pieges') + '">🇬🇧 Le coin anglais <span>🪤🎤✍️</span></button>' : '') +
-        (CONFIG.VILLAGE_CACHE ? '' : '<button class="gros village-accueil" data-a="village">🗺️ ' + {"fr": TXT("Explorer le village"), "en": "Explore the word village", "es": "Explorar el pueblo", "it": "Esplora il villaggio", "pt": "Explorar a aldeia", "de": "Das Wörterdorf erkunden", "ar": "استكشف قرية الكلمات", "tr": "Kelime köyünü keşfet", "pl": "Odkryj wioskę słów", "ja": "ことばの村を探検", "uk": "Дослідити селище слів", "ko": "단어 마을 탐험하기", "dz": "اكتشف قرية الكلمات", "ma": "اكتشف قرية الكلمات", "tn": "اكتشف قرية الكلمات", "kab": "Snirem tamdint n wawalen"}[base.ui] + '</button>' +
+        (CONFIG.VILLAGE_CACHE ? '' : '<button class="gros village-accueil" data-a="village">🗺️ ' + {"fr": TXT("Explorer le village"), "en": "Explore the word village", "es": "Explorar el pueblo", "it": "Esplora il villaggio", "pt": "Explorar a aldeia", "de": "Das Wörterdorf erkunden", "ko": "단어 마을 탐험하기", "dz": "اكتشف قرية الكلمات", "ma": "اكتشف قرية الكلمات", "tn": "اكتشف قرية الكلمات", "kab": "Snirem tamdint n wawalen"}[base.ui] + '</button>' +
         '<button class="gros monde-3d-accueil" data-a="accueil-3d">🌍 ' + (base.ui === 'en' ? 'Play in the 3D village' : base.ui === 'fr' ? TXT('Jouer dans le village 3D') : '3D') + ' <span>🚀</span></button>') +
         (CONFIG.MOTS_CITY_CACHE ? '' : TXT('<a class="gros monde-3d-accueil mots-city-accueil" href="mots-city.html">🛵 Mots City — l’anglais en rigolant <span>😂</span></a>')) +
         (installation ? TXT('<button class="moyen plein installer-appli" data-a="installer">📲 Installer l’appli sur cet appareil</button>') : '') +
@@ -1648,11 +1648,6 @@
     it:{title:"Il villaggio delle parole",intro:"Plumo ha bisogno di te! Scegli un luogo e scopri nuove parole.",mission:"La tua missione",hint:"Ogni luogo nasconde parole. Completa una partita per arricchire il quaderno.",back:"Torna al nido"},
     pt:{title:"A aldeia das palavras",intro:"O Plumo precisa de ti! Escolhe um lugar e descobre palavras.",mission:"A tua missão",hint:"Cada lugar esconde palavras. Termina uma partida para encher o caderno.",back:"Voltar ao ninho"},
     de:{title:"Das Wörterdorf",intro:"Plumo braucht dich! Wähle einen Ort und entdecke neue Wörter.",mission:"Deine Mission",hint:"An jedem Ort warten Wörter. Beende ein Spiel und fülle dein Wörterbuch.",back:"Zurück zum Nest"},
-    ar:{title:"قرية الكلمات",intro:"آمي يحتاج إليك! اختر مكاناً واكتشف كلمات جديدة.",mission:"مهمتك",hint:"في كل مكان كلمات جديدة. أكمل لعبة لتضيفها إلى دفتر كلماتك.",back:"العودة إلى العش"},
-    tr:{title:"Kelime Köyü",intro:"Plumo'nun yardımına ihtiyacı var! Bir yer seç ve yeni kelimeler keşfet.",mission:"Görevin",hint:"Her yerde keşfedilecek kelimeler var. Defterini geliştirmek için bir oyunu bitir.",back:"Yuvaya dön"},
-    pl:{title:"Wioska słów",intro:"Plumo potrzebuje pomocy! Wybierz miejsce i odkrywaj słowa.",mission:"Twoja misja",hint:"W każdym miejscu czekają słowa. Ukończ grę, aby uzupełnić notes.",back:"Wróć do gniazda"},
-    ja:{title:"ことばの村",intro:"アミが助けを待っているよ！場所を選んで新しい言葉を見つけよう。",mission:"ミッション",hint:"それぞれの場所に言葉が隠れているよ。ゲームを終えてノートを育てよう。",back:"巣に戻る"},
-    uk:{title:"Селище слів",intro:"Амі потрібна твоя допомога! Обери місце й відкривай слова.",mission:"Твоє завдання",hint:"У кожному місці є нові слова. Заверши гру, щоб поповнити записник.",back:"До гнізда"},
     ko:{title:"단어 마을",intro:"아미에게 도움이 필요해요! 장소를 골라 새 단어를 찾아봐요.",mission:"미션",hint:"각 장소에는 단어가 숨어 있어요. 게임을 마치고 단어장을 채워요.",back:"둥지로 돌아가기"},
     dz:{title:"قرية الكلمات",intro:"آمي يحتاج مساعدتك! اختار مكان واكتشف كلمات جديدة.",mission:"مهمتك",hint:"كل بلاصة فيها كلمات. كمّل لعبة باش تعمّر كراسك.",back:"ارجع للعش"},
     ma:{title:"قرية الكلمات",intro:"آمي محتاج مساعدتك! اختار بلاصة واكتشف كلمات جديدة.",mission:"المهمة ديالك",hint:"كل بلاصة فيها كلمات. كمل لعبة باش تعمر الدفتر ديالك.",back:"رجع للعش"},

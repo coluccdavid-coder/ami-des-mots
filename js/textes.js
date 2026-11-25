@@ -2,8 +2,7 @@
 // d'ici n'est pas proposée : jamais de texte français à sa place.
 // Les fonctions reçoivent un nombre ou un mot.
 window.LANGUES_APPRENDRE = {
-  fr:'Français', en:'English', es:'Español', it:'Italiano', pt:'Português', de:'Deutsch',
-  ar:'العربية', tr:'Türkçe', pl:'Polski', ja:'日本語', uk:'Українська', ko:'한국어',
+  fr:'Français', en:'English', es:'Español', it:'Italiano', pt:'Português', de:'Deutsch', ko:'한국어',
   dz:'الدارجة الجزائرية', ma:'الدارجة المغربية', tn:'الدارجة التونسية', kab:'Taqbaylit'
 };
 window.TEXTES = {
@@ -108,91 +107,6 @@ de:{
   peu_de_mots:"Für diese Sprache gibt es in diesem Thema noch nicht genug Wörter.", sans_voix:"Für dieses Wort gibt es noch keine Stimme.",
   apropos:"Über", apropos_texte:"Ami des mots ist ein Spiel, um Wörter mit Bildern zu lernen und zu wiederholen. Es ist ein Spiel: Es heilt nichts und ersetzt keine Fachkraft. Nichts wird gesendet: Dein Fortschritt bleibt auf diesem Gerät, ohne Konto und ohne Werbung.",
   effacer_progres:"Meinen Fortschritt löschen", confirmer:"Zum Bestätigen noch einmal tippen"
-},
-ar:{
-  accroche:"كلمات بالصور، وبومة نلعب معها.",
-  je_parle:"أتكلم", j_apprends:"أتعلّم", jouer:"العب", plumes:"ريشة",
-  serie:n => n > 1 ? `${n} أيام متتالية` : `يوم واحد`, objectif:"هدف اليوم: لعبة واحدة", objectif_fait:"تحقّق هدف اليوم ✓",
-  th_animaux:"الحيوانات", th_manger:"على المائدة", th_maison:"البيت", th_habits:"الملابس", th_nature:"الطبيعة", th_ville:"في المدينة", th_musique:"الموسيقى والاحتفال", th_atelier:"الورشة والعلوم",
-  j_decouvrir:"اكتشف", j_ecoute:"استمع وجِد", j_quel_mot:"ما الكلمة؟", j_memoire:"الذاكرة", j_lettres:"حروف مبعثرة",
-  a_decouvrir:"انظر، استمع، اقلب البطاقة.", a_ecoute:"استمع، ثم اضغط على الصورة الصحيحة.", a_quel_mot:"ما اسم هذه الصورة؟", a_memoire:"جِد كل صورة وكلمتها.", a_lettres:"رتّب الحروف.",
-  bravo:["أحسنت!", "رائع!", "نعم، هذا صحيح!"], rate:"ليس تمامًا. حاول مرة أخرى!", c_etait:m => `كانت: ${m}`,
-  fin_titre:"انتهت اللعبة!", fin_plumes:n => `+${n} ريشة`, rejouer:"العب مجددًا", autre_jeu:"لعبة أخرى", themes:"المواضيع",
-  suivant:"التالي", ecouter:"استمع", retour:"رجوع", effacer:"مسح", retourner:"اضغط على البطاقة لقلبها.",
-  vestiaire:"خزانة Plumo", acc_echarpe:"وشاح", acc_lunettes:"نظارة", acc_noeud:"ربطة عنق فراشة", acc_chapeau:"قبعة", acc_couronne:"تاج",
-  a_partir:n => `عند ${n} ريشة`, porte:"Plumo يرتديه", mettre:"ألبسه إياه", enlever:"انزعه عنه", nouveau:"جديد في الخزانة!",
-  verrou:"النسخة الكاملة", verrou_aide:"هذا الموضوع جزء من النسخة الكاملة.",
-  peu_de_mots:"لا توجد بعد كلمات كافية في هذا الموضوع لهذه اللغة.", sans_voix:"لا يوجد صوت لهذه الكلمة بعد.",
-  apropos:"حول اللعبة", apropos_texte:"«Ami des mots» لعبة لتعلّم الكلمات ومراجعتها بالصور. إنها لعبة: لا تعالج شيئًا ولا تحلّ محلّ أي مختص. لا يُرسل أي شيء: يبقى تقدّمك على هذا الجهاز، بلا حساب ولا إعلانات.",
-  effacer_progres:"محو تقدّمي", confirmer:"اضغط مرة أخرى للتأكيد"
-},
-tr:{
-  accroche:"Resimlerle kelimeler ve oynamak için bir baykuş.",
-  je_parle:"Konuştuğum dil", j_apprends:"Öğrendiğim dil", jouer:"Oyna", plumes:"tüy",
-  serie:n => n > 1 ? `Üst üste ${n} gün` : `1 gün`, objectif:"Bugünün hedefi: bir oyun", objectif_fait:"Bugünün hedefine ulaşıldı ✓",
-  th_animaux:"Hayvanlar", th_manger:"Sofrada", th_maison:"Ev", th_habits:"Giysiler", th_nature:"Doğa", th_ville:"Şehirde", th_musique:"Müzik ve eğlence", th_atelier:"Atölye ve bilim",
-  j_decouvrir:"Keşfet", j_ecoute:"Dinle ve bul", j_quel_mot:"Hangi kelime?", j_memoire:"Hafıza", j_lettres:"Karışık harfler",
-  a_decouvrir:"Bak, dinle, kartı çevir.", a_ecoute:"Dinle, sonra doğru resme dokun.", a_quel_mot:"Bu resmin adı ne?", a_memoire:"Her resmi ve kelimesini bul.", a_lettres:"Harfleri sıraya koy.",
-  bravo:["Aferin!", "Harika!", "Evet, doğru!"], rate:"Tam değil. Bir daha dene!", c_etait:m => `Doğrusu: ${m}`,
-  fin_titre:"Oyun bitti!", fin_plumes:n => `+${n} tüy`, rejouer:"Tekrar oyna", autre_jeu:"Başka oyun", themes:"Konular",
-  suivant:"Sonraki", ecouter:"Dinle", retour:"Geri", effacer:"Sil", retourner:"Çevirmek için karta dokun.",
-  vestiaire:"Plumo'nun dolabı", acc_echarpe:"Atkı", acc_lunettes:"Gözlük", acc_noeud:"Papyon", acc_chapeau:"Şapka", acc_couronne:"Taç",
-  a_partir:n => `${n} tüyde`, porte:"Plumo takıyor", mettre:"Tak", enlever:"Çıkar", nouveau:"Dolapta yeni bir şey var!",
-  verrou:"Tam sürüm", verrou_aide:"Bu konu tam sürümün bir parçası.",
-  peu_de_mots:"Bu konuda bu dil için henüz yeterli kelime yok.", sans_voix:"Bu kelimenin henüz sesi yok.",
-  apropos:"Hakkında", apropos_texte:"Ami des mots, resimlerle kelime öğrenmek ve tekrar etmek için bir oyundur. Bu bir oyundur: hiçbir şeyi tedavi etmez ve hiçbir uzmanın yerini tutmaz. Hiçbir şey gönderilmez: ilerlemen bu cihazda kalır, hesap ve reklam yoktur.",
-  effacer_progres:"İlerlememi sil", confirmer:"Onaylamak için tekrar dokun"
-},
-pl:{
-  accroche:"Słowa w obrazkach i sowa do zabawy.",
-  je_parle:"Mój język", j_apprends:"Uczę się", jouer:"Graj", plumes:"piórek",
-  serie:n => n > 1 ? `Dni z rzędu: ${n}` : `1 dzień`, objectif:"Cel na dziś: jedna gra", objectif_fait:"Cel na dziś osiągnięty ✓",
-  th_animaux:"Zwierzęta", th_manger:"Przy stole", th_maison:"Dom", th_habits:"Ubrania", th_nature:"Przyroda", th_ville:"W mieście", th_musique:"Muzyka i zabawa", th_atelier:"Warsztat i nauka",
-  j_decouvrir:"Odkrywaj", j_ecoute:"Słuchaj i znajdź", j_quel_mot:"Jakie słowo?", j_memoire:"Memory", j_lettres:"Pomieszane litery",
-  a_decouvrir:"Patrz, słuchaj, odwróć kartę.", a_ecoute:"Posłuchaj i dotknij właściwego obrazka.", a_quel_mot:"Jak nazywa się ten obrazek?", a_memoire:"Połącz każdy obrazek z jego słowem.", a_lettres:"Ułóż litery we właściwej kolejności.",
-  bravo:["Brawo!", "Super!", "Tak, właśnie tak!"], rate:"Nie całkiem. Spróbuj jeszcze raz!", c_etait:m => `To było: ${m}`,
-  fin_titre:"Koniec gry!", fin_plumes:n => `Piórka: +${n}`, rejouer:"Zagraj jeszcze raz", autre_jeu:"Inna gra", themes:"Tematy",
-  suivant:"Dalej", ecouter:"Posłuchaj", retour:"Wróć", effacer:"Wyczyść", retourner:"Dotknij karty, aby ją odwrócić.",
-  vestiaire:"Szafa Plumo", acc_echarpe:"Szalik", acc_lunettes:"Okulary", acc_noeud:"Muszka", acc_chapeau:"Kapelusz", acc_couronne:"Korona",
-  a_partir:n => `Od ${n} piórek`, porte:"Plumo to nosi", mettre:"Załóż mu", enlever:"Zdejmij mu", nouveau:"Nowość w szafie!",
-  verrou:"Pełna wersja", verrou_aide:"Ten temat należy do pełnej wersji.",
-  peu_de_mots:"W tym temacie nie ma jeszcze dość słów w tym języku.", sans_voix:"To słowo nie ma jeszcze nagrania.",
-  apropos:"O grze", apropos_texte:"Ami des mots to gra do nauki i powtarzania słów z obrazkami. To gra: niczego nie leczy i nie zastępuje żadnego specjalisty. Nic nie jest wysyłane: twoje postępy zostają na tym urządzeniu, bez konta i bez reklam.",
-  effacer_progres:"Usuń moje postępy", confirmer:"Dotknij jeszcze raz, aby potwierdzić"
-},
-uk:{
-  accroche:"Слова в картинках і сова, з якою можна гратися.",
-  je_parle:"Я розмовляю", j_apprends:"Я вивчаю", jouer:"Грати", plumes:"пір'їн",
-  serie:n => n > 1 ? `Днів поспіль: ${n}` : `1 день`, objectif:"Мета на сьогодні: одна гра", objectif_fait:"Мету на сьогодні досягнуто ✓",
-  th_animaux:"Тварини", th_manger:"За столом", th_maison:"Дім", th_habits:"Одяг", th_nature:"Природа", th_ville:"У місті", th_musique:"Музика і свято", th_atelier:"Майстерня і наука",
-  j_decouvrir:"Відкривай", j_ecoute:"Слухай і знайди", j_quel_mot:"Яке слово?", j_memoire:"Пам'ять", j_lettres:"Переплутані літери",
-  a_decouvrir:"Дивись, слухай, переверни картку.", a_ecoute:"Послухай і торкнися правильної картинки.", a_quel_mot:"Як називається ця картинка?", a_memoire:"Знайди для кожної картинки її слово.", a_lettres:"Постав літери по порядку.",
-  bravo:["Браво!", "Чудово!", "Так, правильно!"], rate:"Не зовсім. Спробуй ще раз!", c_etait:m => `Це було: ${m}`,
-  fin_titre:"Гру завершено!", fin_plumes:n => `Пір'їн: +${n}`, rejouer:"Грати ще", autre_jeu:"Інша гра", themes:"Теми",
-  suivant:"Далі", ecouter:"Слухати", retour:"Назад", effacer:"Стерти", retourner:"Торкнися картки, щоб перевернути її.",
-  vestiaire:"Шафа Plumo", acc_echarpe:"Шарф", acc_lunettes:"Окуляри", acc_noeud:"Метелик", acc_chapeau:"Капелюх", acc_couronne:"Корона",
-  a_partir:n => `Від ${n} пір'їн`, porte:"Plumo це носить", mettre:"Вдягти", enlever:"Зняти", nouveau:"Новинка в шафі!",
-  verrou:"Повна версія", verrou_aide:"Ця тема входить до повної версії.",
-  peu_de_mots:"У цій темі ще замало слів цією мовою.", sans_voix:"Для цього слова ще немає голосу.",
-  apropos:"Про гру", apropos_texte:"Ami des mots — гра, щоб вивчати й повторювати слова з картинками. Це гра: вона нічого не лікує і не замінює жодного фахівця. Нічого не надсилається: твій поступ залишається на цьому пристрої, без облікового запису й без реклами.",
-  effacer_progres:"Стерти мій поступ", confirmer:"Торкнися ще раз, щоб підтвердити"
-},
-ja:{
-  accroche:"絵で覚えることばと、いっしょに遊ぶフクロウ。",
-  je_parle:"わたしの言語", j_apprends:"学ぶ言語", jouer:"あそぶ", plumes:"はね",
-  serie:n => n > 1 ? `${n}日れんぞく` : `1日`, objectif:"きょうの目標：1回あそぶ", objectif_fait:"きょうの目標たっせい ✓",
-  th_animaux:"どうぶつ", th_manger:"食たく", th_maison:"いえ", th_habits:"ふく", th_nature:"しぜん", th_ville:"まち", th_musique:"音楽とおまつり", th_atelier:"工作と科学",
-  j_decouvrir:"見てみる", j_ecoute:"聞いてさがす", j_quel_mot:"どのことば？", j_memoire:"しんけいすいじゃく", j_lettres:"もじならべ",
-  a_decouvrir:"見て、聞いて、カードをめくろう。", a_ecoute:"聞いて、正しい絵を押そう。", a_quel_mot:"この絵の名前は？", a_memoire:"絵とことばの組をさがそう。", a_lettres:"もじを正しくならべよう。",
-  bravo:["すごい！", "よくできました！", "そう、正解！"], rate:"おしい！もう一度！", c_etait:m => `正解は：${m}`,
-  fin_titre:"おしまい！", fin_plumes:n => `はね +${n}`, rejouer:"もう一度", autre_jeu:"ほかのゲーム", themes:"テーマ",
-  suivant:"つぎへ", ecouter:"聞く", retour:"もどる", effacer:"けす", retourner:"カードを押すとめくれます。",
-  vestiaire:"プルモのクローゼット", acc_echarpe:"マフラー", acc_lunettes:"めがね", acc_noeud:"ちょうネクタイ", acc_chapeau:"ぼうし", acc_couronne:"かんむり",
-  a_partir:n => `はね${n}まいで`, porte:"プルモがつけています", mettre:"つける", enlever:"はずす", nouveau:"クローゼットに新しいものが！",
-  verrou:"完全版", verrou_aide:"このテーマは完全版に入っています。",
-  peu_de_mots:"この言語では、このテーマのことばがまだ足りません。", sans_voix:"このことばの音声はまだありません。",
-  apropos:"このゲームについて", apropos_texte:"Ami des mots は、絵を見ながらことばを覚えたり復習したりするゲームです。ゲームなので、治療はせず、専門家の代わりにもなりません。何も送信されません。記録はこの端末だけに残り、アカウントも広告もありません。",
-  effacer_progres:"記録をけす", confirmer:"もう一度押すと確定します"
 }
 };
 
@@ -300,91 +214,6 @@ de:{
   deja_abonne:"Ich habe schon ein Abo", code_abo:"Abo-Code", code_aide:"Notiere diesen Code: Damit findest du das Abo auf einem anderen Gerät wieder.", verifier:"Prüfen",
   abo_actif:d => `Abo aktiv${d ? ` (bis ${d})` : ''}. Danke!`, abo_inconnu:"Code nicht gefunden oder Abo beendet.", hors_ligne:"Prüfen gerade nicht möglich. Versuch es später noch einmal.", gerer_abo:"Abo verwalten oder kündigen", decouvrir_plus:"Ami des mots Plus entdecken",
   apropos_texte:"Ami des mots ist ein Spiel, um Wörter mit Bildern zu lernen und zu wiederholen. Es ist ein Spiel: Es behandelt nichts und ersetzt keine Fachkraft. Ohne Konto und ohne Werbung: Dein Fortschritt bleibt auf diesem Gerät. Für das Abo wird nur ein anonymer Code geprüft; die Zahlung läuft über Stripe."
-},
-ar:{
-  bonjour:n => `مرحبًا ${n}!`, changer_joueur:"تغيير اللاعب", qui_joue:"من يلعب؟", ajouter_joueur:"إضافة لاعب", modifier_joueur:"تعديل اللاعب",
-  prenom:"الاسم", couleur:"لون Plumo", valider:"تأكيد", supprimer_joueur:"حذف هذا اللاعب", joueurs:"اللاعبون",
-  defi:"تحدّي اليوم", defi_fait:"نجحت في تحدّي اليوم!", revoir:"للمراجعة", revoir_rien:"لا شيء للمراجعة اليوم. العب لتكتشف كلمات جديدة!",
-  carnet:"دفتري", carnet_aide:"المس كلمة لتسمعها.", carnet_vide:"دفترك فارغ. العب لتملأه!",
-  maitrise:n => `${n} كلمة معروفة جيدًا`, connus:(a, b) => `${a} من ${b} كلمة معروفة جيدًا`,
-  j_vrai_faux:"صح أم خطأ؟", a_vrai_faux:"هل تناسب هذه الكلمة الصورة؟", vrai:"صح", faux:"خطأ",
-  trophees:"الكؤوس", tr_premiere:"أول لعبة", tr_serie3:"3 أيام متتالية", tr_serie7:"7 أيام متتالية", tr_mots25:"25 كلمة معروفة جيدًا", tr_mots100:"100 كلمة معروفة جيدًا", tr_theme:"موضوع كامل", tr_defi5:"5 تحدّيات يومية", nouveau_trophee:"كأس جديدة",
-  reglages:"الإعدادات", son:"المؤثرات الصوتية", oui:"نعم", non:"لا",
-  plus:"Ami des mots Plus", plus_court:"كل المواضيع وكل الألعاب", plus_badge:"Plus", plus_titre:"كل Ami des mots، للعائلة كلها.",
-  plus_avantages:["المواضيع الثمانية، كل الكلمات", "الألعاب الستّ، ومنها الذاكرة والحروف المبعثرة", "حتى 6 لاعبين على الجهاز", "الكلمات والألعاب الجديدة القادمة"],
-  plus_prix:p => `${p} شهريًا`, sans_engagement:"بلا التزام، يمكن الإلغاء في أي وقت.", s_abonner:"اشترك", bientot:"قريبًا",
-  gratuit_reste:"تبقى النسخة المجانية مجانية: 3 مواضيع و3 ألعاب وتحدّي اليوم والمراجعة.",
-  deja_abonne:"لديّ اشتراك بالفعل", code_abo:"رمز الاشتراك", code_aide:"احتفظ بهذا الرمز: يسمح باستعادة الاشتراك على جهاز آخر.", verifier:"تحقّق",
-  abo_actif:d => `الاشتراك فعّال${d ? ` (حتى ${d})` : ''}. شكرًا!`, abo_inconnu:"الرمز غير موجود أو انتهى الاشتراك.", hors_ligne:"لا يمكن التحقق الآن. حاول لاحقًا.", gerer_abo:"إدارة الاشتراك أو إلغاؤه", decouvrir_plus:"اكتشف Ami des mots Plus",
-  apropos_texte:"Ami des mots لعبة لتعلّم الكلمات ومراجعتها بالصور. إنها لعبة: لا تعالج شيئًا ولا تحلّ محل أي مختص. بلا حساب وبلا إعلانات: يبقى تقدّمك على هذا الجهاز. للاشتراك يُتحقَّق فقط من رمز مجهول الهوية، والدفع تديره Stripe."
-},
-tr:{
-  bonjour:n => `Merhaba ${n}!`, changer_joueur:"Oyuncu değiştir", qui_joue:"Kim oynuyor?", ajouter_joueur:"Oyuncu ekle", modifier_joueur:"Oyuncuyu düzenle",
-  prenom:"Ad", couleur:"Plumo'nun rengi", valider:"Onayla", supprimer_joueur:"Bu oyuncuyu sil", joueurs:"Oyuncular",
-  defi:"Günün görevi", defi_fait:"Günün görevi tamam!", revoir:"Tekrar", revoir_rien:"Bugün tekrar edilecek bir şey yok. Yeni kelimeler keşfetmek için oyna!",
-  carnet:"Defterim", carnet_aide:"Dinlemek için bir kelimeye dokun.", carnet_vide:"Defterin boş. Doldurmak için oyna!",
-  maitrise:n => `${n} kelime iyi biliniyor`, connus:(a, b) => `${b} kelimeden ${a} tanesi iyi biliniyor`,
-  j_vrai_faux:"Doğru mu yanlış mı?", a_vrai_faux:"Bu kelime resme uyuyor mu?", vrai:"Doğru", faux:"Yanlış",
-  trophees:"Kupalar", tr_premiere:"İlk oyun", tr_serie3:"Üst üste 3 gün", tr_serie7:"Üst üste 7 gün", tr_mots25:"25 kelime iyi biliniyor", tr_mots100:"100 kelime iyi biliniyor", tr_theme:"Kusursuz bir tema", tr_defi5:"5 günlük görev", nouveau_trophee:"Yeni kupa",
-  reglages:"Ayarlar", son:"Ses efektleri", oui:"Açık", non:"Kapalı",
-  plus:"Ami des mots Plus", plus_court:"tüm temalar ve tüm oyunlar", plus_badge:"Plus", plus_titre:"Ami des mots'un tamamı, bütün aile için.",
-  plus_avantages:["8 temanın hepsi, tüm kelimeler", "6 oyunun hepsi, Hafıza ve Karışık harfler dahil", "Cihazda en fazla 6 oyuncu", "Gelecek yeni kelimeler ve oyunlar"],
-  plus_prix:p => `Aylık ${p}`, sans_engagement:"Taahhüt yok, istediğin zaman iptal et.", s_abonner:"Abone ol", bientot:"Çok yakında",
-  gratuit_reste:"Ücretsiz sürüm ücretsiz kalır: 3 tema, 3 oyun, günün görevi ve tekrar.",
-  deja_abonne:"Zaten aboneliğim var", code_abo:"Abonelik kodu", code_aide:"Bu kodu not al: aboneliği başka bir cihazda geri getirmeye yarar.", verifier:"Kontrol et",
-  abo_actif:d => `Abonelik etkin${d ? ` (${d} tarihine kadar)` : ''}. Teşekkürler!`, abo_inconnu:"Kod bulunamadı ya da abonelik sona erdi.", hors_ligne:"Şu anda kontrol edilemiyor. Daha sonra tekrar dene.", gerer_abo:"Aboneliği yönet veya iptal et", decouvrir_plus:"Ami des mots Plus'ı keşfet",
-  apropos_texte:"Ami des mots, resimlerle kelime öğrenmek ve tekrar etmek için bir oyundur. Bu bir oyundur: hiçbir şeyi tedavi etmez ve hiçbir uzmanın yerini tutmaz. Hesap yok, reklam yok: ilerlemen bu cihazda kalır. Abonelik için yalnızca anonim bir kod kontrol edilir; ödemeyi Stripe yönetir."
-},
-pl:{
-  bonjour:n => `Cześć, ${n}!`, changer_joueur:"Zmień gracza", qui_joue:"Kto gra?", ajouter_joueur:"Dodaj gracza", modifier_joueur:"Edytuj gracza",
-  prenom:"Imię", couleur:"Kolor Plumo", valider:"Zatwierdź", supprimer_joueur:"Usuń tego gracza", joueurs:"Gracze",
-  defi:"Wyzwanie dnia", defi_fait:"Wyzwanie dnia zaliczone!", revoir:"Do powtórki", revoir_rien:"Dziś nie ma nic do powtórki. Graj, aby poznać nowe słowa!",
-  carnet:"Mój zeszyt", carnet_aide:"Dotknij słowa, aby je usłyszeć.", carnet_vide:"Twój zeszyt jest pusty. Graj, aby go wypełnić!",
-  maitrise:n => `Dobrze znane słowa: ${n}`, connus:(a, b) => `Dobrze znane: ${a} z ${b} słów`,
-  j_vrai_faux:"Prawda czy fałsz?", a_vrai_faux:"Czy to słowo pasuje do obrazka?", vrai:"Prawda", faux:"Fałsz",
-  trophees:"Trofea", tr_premiere:"Pierwsza gra", tr_serie3:"3 dni z rzędu", tr_serie7:"7 dni z rzędu", tr_mots25:"25 dobrze znanych słów", tr_mots100:"100 dobrze znanych słów", tr_theme:"Idealny temat", tr_defi5:"5 wyzwań dnia", nouveau_trophee:"Nowe trofeum",
-  reglages:"Ustawienia", son:"Efekty dźwiękowe", oui:"Wł.", non:"Wył.",
-  plus:"Ami des mots Plus", plus_court:"wszystkie tematy i wszystkie gry", plus_badge:"Plus", plus_titre:"Całe Ami des mots dla całej rodziny.",
-  plus_avantages:["Wszystkie 8 tematów, wszystkie słowa", "Wszystkie 6 gier, w tym Memory i Pomieszane litery", "Do 6 graczy na urządzeniu", "Nowe słowa i gry, gdy się pojawią"],
-  plus_prix:p => `${p} miesięcznie`, sans_engagement:"Bez zobowiązań, rezygnacja w każdej chwili.", s_abonner:"Subskrybuj", bientot:"Wkrótce",
-  gratuit_reste:"Wersja darmowa pozostaje darmowa: 3 tematy, 3 gry, wyzwanie dnia i powtórki.",
-  deja_abonne:"Mam już subskrypcję", code_abo:"Kod subskrypcji", code_aide:"Zapisz ten kod: pozwala odzyskać subskrypcję na innym urządzeniu.", verifier:"Sprawdź",
-  abo_actif:d => `Subskrypcja aktywna${d ? ` (do ${d})` : ''}. Dziękujemy!`, abo_inconnu:"Nie znaleziono kodu lub subskrypcja wygasła.", hors_ligne:"Nie można teraz sprawdzić. Spróbuj później.", gerer_abo:"Zarządzaj subskrypcją lub ją anuluj", decouvrir_plus:"Poznaj Ami des mots Plus",
-  apropos_texte:"Ami des mots to gra do nauki i powtarzania słów z obrazkami. To gra: niczego nie leczy i nie zastępuje żadnego specjalisty. Bez konta i bez reklam: twoje postępy zostają na tym urządzeniu. W przypadku subskrypcji sprawdzany jest tylko anonimowy kod; płatności obsługuje Stripe."
-},
-uk:{
-  bonjour:n => `Привіт, ${n}!`, changer_joueur:"Змінити гравця", qui_joue:"Хто грає?", ajouter_joueur:"Додати гравця", modifier_joueur:"Змінити гравця",
-  prenom:"Ім'я", couleur:"Колір Plumo", valider:"Підтвердити", supprimer_joueur:"Видалити цього гравця", joueurs:"Гравці",
-  defi:"Завдання дня", defi_fait:"Завдання дня виконано!", revoir:"Повторити", revoir_rien:"Сьогодні нічого повторювати. Грай, щоб відкрити нові слова!",
-  carnet:"Мій зошит", carnet_aide:"Торкнися слова, щоб його почути.", carnet_vide:"Твій зошит порожній. Грай, щоб його заповнити!",
-  maitrise:n => `Добре знаних слів: ${n}`, connus:(a, b) => `Добре знаних: ${a} з ${b}`,
-  j_vrai_faux:"Правда чи ні?", a_vrai_faux:"Це слово пасує до малюнка?", vrai:"Правда", faux:"Ні",
-  trophees:"Кубки", tr_premiere:"Перша гра", tr_serie3:"3 дні поспіль", tr_serie7:"7 днів поспіль", tr_mots25:"25 добре знаних слів", tr_mots100:"100 добре знаних слів", tr_theme:"Ідеальна тема", tr_defi5:"5 завдань дня", nouveau_trophee:"Новий кубок",
-  reglages:"Налаштування", son:"Звукові ефекти", oui:"Увімк.", non:"Вимк.",
-  plus:"Ami des mots Plus", plus_court:"усі теми й усі ігри", plus_badge:"Plus", plus_titre:"Увесь Ami des mots для всієї родини.",
-  plus_avantages:["Усі 8 тем, усі слова", "Усі 6 ігор, зокрема «Пам'ять» і «Розкидані літери»", "До 6 гравців на пристрої", "Нові слова й ігри, щойно з'являться"],
-  plus_prix:p => `${p} на місяць`, sans_engagement:"Без зобов'язань, скасування будь-коли.", s_abonner:"Підписатися", bientot:"Незабаром",
-  gratuit_reste:"Безкоштовна версія залишається безкоштовною: 3 теми, 3 ігри, завдання дня й повторення.",
-  deja_abonne:"У мене вже є підписка", code_abo:"Код підписки", code_aide:"Запиши цей код: він дає змогу відновити підписку на іншому пристрої.", verifier:"Перевірити",
-  abo_actif:d => `Підписка активна${d ? ` (до ${d})` : ''}. Дякуємо!`, abo_inconnu:"Код не знайдено або підписка завершилася.", hors_ligne:"Зараз неможливо перевірити. Спробуй пізніше.", gerer_abo:"Керувати підпискою або скасувати її", decouvrir_plus:"Відкрити Ami des mots Plus",
-  apropos_texte:"Ami des mots — це гра, щоб вивчати й повторювати слова з малюнками. Це гра: вона нічого не лікує й не замінює жодного фахівця. Без облікового запису й без реклами: твій поступ залишається на цьому пристрої. Для підписки перевіряється лише анонімний код; оплатою займається Stripe."
-},
-ja:{
-  bonjour:n => `こんにちは、${n}さん！`, changer_joueur:"プレイヤーを変える", qui_joue:"だれが遊ぶ？", ajouter_joueur:"プレイヤーを追加", modifier_joueur:"プレイヤーを編集",
-  prenom:"名前", couleur:"プルモの色", valider:"決定", supprimer_joueur:"このプレイヤーを削除", joueurs:"プレイヤー",
-  defi:"今日のチャレンジ", defi_fait:"今日のチャレンジ達成！", revoir:"復習", revoir_rien:"今日は復習するものはありません。遊んで新しいことばを見つけよう！",
-  carnet:"わたしのノート", carnet_aide:"ことばにタッチすると聞けます。", carnet_vide:"ノートはまだ空です。遊んでいっぱいにしよう！",
-  maitrise:n => `よく覚えたことば：${n}`, connus:(a, b) => `${b}語中${a}語をよく覚えた`,
-  j_vrai_faux:"○か×か？", a_vrai_faux:"このことばは絵と合っている？", vrai:"○ 合っている", faux:"× ちがう",
-  trophees:"トロフィー", tr_premiere:"はじめてのゲーム", tr_serie3:"3日連続", tr_serie7:"7日連続", tr_mots25:"25語をよく覚えた", tr_mots100:"100語をよく覚えた", tr_theme:"パーフェクトなテーマ", tr_defi5:"今日のチャレンジ5回", nouveau_trophee:"新しいトロフィー",
-  reglages:"設定", son:"効果音", oui:"オン", non:"オフ",
-  plus:"Ami des mots Plus", plus_court:"すべてのテーマとすべてのゲーム", plus_badge:"Plus", plus_titre:"Ami des mots のすべてを、家族みんなで。",
-  plus_avantages:["8つのテーマ、すべてのことば", "6つのゲームすべて（神経衰弱・バラバラ文字も）", "この端末で最大6人まで", "これから増えることばとゲーム"],
-  plus_prix:p => `月額 ${p}`, sans_engagement:"契約期間のしばりなし、いつでも解約できます。", s_abonner:"登録する", bientot:"近日公開",
-  gratuit_reste:"無料版はずっと無料：3つのテーマ、3つのゲーム、今日のチャレンジと復習。",
-  deja_abonne:"すでに登録しています", code_abo:"登録コード", code_aide:"このコードを控えておいてください。別の端末で登録を復元できます。", verifier:"確認",
-  abo_actif:d => `登録中${d ? `（${d}まで）` : ''}。ありがとうございます！`, abo_inconnu:"コードが見つからないか、登録が終了しています。", hors_ligne:"今は確認できません。あとでもう一度お試しください。", gerer_abo:"登録の管理・解約", decouvrir_plus:"Ami des mots Plus を見る",
-  apropos_texte:"Ami des mots は、絵を見ながらことばを覚えて復習するゲームです。これはゲームで、何かを治療するものでも、専門家の代わりになるものでもありません。アカウントも広告もなく、進み具合はこの端末に残ります。登録については匿名のコードだけを確認し、支払いは Stripe が扱います。"
 }
 };
 for(const l in V2) if(window.TEXTES[l]) Object.assign(window.TEXTES[l], V2[l]);
@@ -476,76 +305,6 @@ de:{
   plus_court:"alle 50 Spiele und alle Themen",
   plus_avantages:["Alle 50 Spiele (19 Arten, 3 Stufen)", "Alle 8 Themen, alle Wörter", "Bis zu 6 Spieler auf dem Gerät", "Neue Wörter und Spiele, sobald sie kommen"],
   gratuit_reste:"Die kostenlose Version bleibt kostenlos: 10 Spiele (mit Übersetzen), 3 Themen, die Tagesaufgabe und das Wiederholen."
-},
-ar:{
-  fam_images:"الصور", fam_ecoute:"الاستماع", fam_traduction:"الترجمة", fam_lettres:"الحروف", fam_memoire:"الذاكرة والأزواج", fam_defis:"التحدّيات",
-  niv_f:"سهل", niv_n:"عادي", niv_e:"خبير", jeux_total:n => `${n} لعبة في هذا الموضوع`,
-  j_traduction:"الترجمة", j_traduction_inverse:"ماذا تعني هذه الكلمة؟", j_ecoute_mot:"استمع واقرأ", j_intrus:"الدخيل", j_ombre:"الظلال", j_devinette:"صورة ضبابية",
-  j_premiere_lettre:"الحرف الأول", j_lettre_manquante:"الحرف الناقص", j_memoire_trad:"ذاكرة الترجمات", j_relier:"صِل", j_panier:"السلة الصحيحة", j_chrono:"سباق مع الوقت", j_grand_quiz:"المسابقة الكبرى",
-  a_traduction:l => `كيف تُقال هذه الكلمة بـ${l}؟`, a_traduction_inverse:"اختر الكلمة التي لها المعنى نفسه.", a_ecoute_mot:"استمع ثم المس الكلمة المكتوبة الصحيحة.",
-  a_intrus:"صورة ليست من المجموعة نفسها: أيّها؟", a_ombre:"من يختبئ في الظل؟", a_devinette:"الصورة تتضح: اعرفها بسرعة!",
-  a_premiere_lettre:"بأي حرف تبدأ هذه الكلمة؟", a_lettre_manquante:"أي حرف ناقص؟", a_memoire_trad:"اعثر على كل كلمة وترجمتها.",
-  a_relier:"المس صورة ثم كلمتها.", a_panier:"في أي سلة يوضع؟", a_chrono:"أكبر عدد من الإجابات الصحيحة في 60 ثانية.", a_grand_quiz:"15 سؤالًا من كل الأنواع.",
-  score:n => `${n} إجابة صحيحة`, temps_fini:"انتهى الوقت!",
-  plus_court:"الألعاب الخمسون وكل المواضيع",
-  plus_avantages:["الألعاب الخمسون (19 نوعًا، 3 مستويات)", "المواضيع الثمانية، كل الكلمات", "حتى 6 لاعبين على الجهاز", "الكلمات والألعاب الجديدة القادمة"],
-  gratuit_reste:"تبقى النسخة المجانية مجانية: 10 ألعاب (منها الترجمة) و3 مواضيع وتحدّي اليوم والمراجعة."
-},
-tr:{
-  fam_images:"Resimler", fam_ecoute:"Dinleme", fam_traduction:"Çeviri", fam_lettres:"Harfler", fam_memoire:"Hafıza ve eşler", fam_defis:"Meydan okumalar",
-  niv_f:"Kolay", niv_n:"Orta", niv_e:"Uzman", jeux_total:n => `Bu temada ${n} oyun`,
-  j_traduction:"Çeviri", j_traduction_inverse:"Bu ne demek?", j_ecoute_mot:"Dinle ve oku", j_intrus:"Farklı olan", j_ombre:"Gölgeler", j_devinette:"Bulanık resim",
-  j_premiere_lettre:"İlk harf", j_lettre_manquante:"Eksik harf", j_memoire_trad:"Çeviri hafızası", j_relier:"Eşleştir", j_panier:"Doğru sepet", j_chrono:"Zamana karşı", j_grand_quiz:"Büyük yarışma",
-  a_traduction:l => `Bu kelime ${l} dilinde nasıl söylenir?`, a_traduction_inverse:"Aynı anlama gelen kelimeyi seç.", a_ecoute_mot:"Dinle, sonra doğru yazılmış kelimeye dokun.",
-  a_intrus:"Bir resim aynı gruptan değil: hangisi?", a_ombre:"Gölgede kim saklanıyor?", a_devinette:"Resim netleşiyor: çabuk bul!",
-  a_premiere_lettre:"Bu kelime hangi harfle başlıyor?", a_lettre_manquante:"Hangi harf eksik?", a_memoire_trad:"Her kelimeyi ve çevirisini bul.",
-  a_relier:"Bir resme, sonra kelimesine dokun.", a_panier:"Hangi sepete gider?", a_chrono:"60 saniyede olabildiğince çok doğru cevap.", a_grand_quiz:"Her türden 15 soru.",
-  score:n => `${n} doğru cevap`, temps_fini:"Süre doldu!",
-  plus_court:"50 oyunun hepsi ve tüm temalar",
-  plus_avantages:["50 oyunun hepsi (19 tür, 3 seviye)", "8 temanın hepsi, tüm kelimeler", "Cihazda en fazla 6 oyuncu", "Gelecek yeni kelimeler ve oyunlar"],
-  gratuit_reste:"Ücretsiz sürüm ücretsiz kalır: 10 oyun (çeviri dahil), 3 tema, günün görevi ve tekrar."
-},
-pl:{
-  fam_images:"Obrazki", fam_ecoute:"Słuchanie", fam_traduction:"Tłumaczenie", fam_lettres:"Litery", fam_memoire:"Memory i pary", fam_defis:"Wyzwania",
-  niv_f:"Łatwy", niv_n:"Średni", niv_e:"Ekspert", jeux_total:n => `Gry w tym temacie: ${n}`,
-  j_traduction:"Tłumaczenie", j_traduction_inverse:"Co to znaczy?", j_ecoute_mot:"Słuchaj i czytaj", j_intrus:"Co nie pasuje?", j_ombre:"Cienie", j_devinette:"Rozmazany obrazek",
-  j_premiere_lettre:"Pierwsza litera", j_lettre_manquante:"Brakująca litera", j_memoire_trad:"Memory tłumaczeń", j_relier:"Połącz", j_panier:"Właściwy koszyk", j_chrono:"Na czas", j_grand_quiz:"Wielki quiz",
-  a_traduction:l => `Jak powiedzieć to słowo w języku: ${l}?`, a_traduction_inverse:"Wybierz słowo o tym samym znaczeniu.", a_ecoute_mot:"Posłuchaj i dotknij właściwego zapisanego słowa.",
-  a_intrus:"Jeden obrazek nie pasuje do grupy: który?", a_ombre:"Kto chowa się w cieniu?", a_devinette:"Obrazek się wyostrza: zgadnij szybko!",
-  a_premiere_lettre:"Na jaką literę zaczyna się to słowo?", a_lettre_manquante:"Której litery brakuje?", a_memoire_trad:"Znajdź każde słowo i jego tłumaczenie.",
-  a_relier:"Dotknij obrazka, potem jego słowa.", a_panier:"Do którego koszyka?", a_chrono:"Jak najwięcej dobrych odpowiedzi w 60 sekund.", a_grand_quiz:"15 pytań różnego rodzaju.",
-  score:n => `Dobre odpowiedzi: ${n}`, temps_fini:"Czas minął!",
-  plus_court:"wszystkie 50 gier i wszystkie tematy",
-  plus_avantages:["Wszystkie 50 gier (19 rodzajów, 3 poziomy)", "Wszystkie 8 tematów, wszystkie słowa", "Do 6 graczy na urządzeniu", "Nowe słowa i gry, gdy się pojawią"],
-  gratuit_reste:"Wersja darmowa pozostaje darmowa: 10 gier (z tłumaczeniem), 3 tematy, wyzwanie dnia i powtórki."
-},
-uk:{
-  fam_images:"Малюнки", fam_ecoute:"Слухання", fam_traduction:"Переклад", fam_lettres:"Літери", fam_memoire:"Пам'ять і пари", fam_defis:"Виклики",
-  niv_f:"Легко", niv_n:"Середньо", niv_e:"Експерт", jeux_total:n => `Ігор у цій темі: ${n}`,
-  j_traduction:"Переклад", j_traduction_inverse:"Що це означає?", j_ecoute_mot:"Слухай і читай", j_intrus:"Зайве", j_ombre:"Тіні", j_devinette:"Розмитий малюнок",
-  j_premiere_lettre:"Перша літера", j_lettre_manquante:"Пропущена літера", j_memoire_trad:"Пам'ять перекладів", j_relier:"З'єднай", j_panier:"Правильний кошик", j_chrono:"На час", j_grand_quiz:"Велика вікторина",
-  a_traduction:l => `Як сказати це слово мовою: ${l}?`, a_traduction_inverse:"Вибери слово з тим самим значенням.", a_ecoute_mot:"Послухай і торкнися правильного написаного слова.",
-  a_intrus:"Один малюнок не з цієї групи: який?", a_ombre:"Хто ховається в тіні?", a_devinette:"Малюнок стає чіткішим: вгадай швидко!",
-  a_premiere_lettre:"З якої літери починається це слово?", a_lettre_manquante:"Якої літери бракує?", a_memoire_trad:"Знайди кожне слово і його переклад.",
-  a_relier:"Торкнися малюнка, потім його слова.", a_panier:"У який кошик?", a_chrono:"Якомога більше правильних відповідей за 60 секунд.", a_grand_quiz:"15 різних запитань.",
-  score:n => `Правильних відповідей: ${n}`, temps_fini:"Час вийшов!",
-  plus_court:"усі 50 ігор і всі теми",
-  plus_avantages:["Усі 50 ігор (19 видів, 3 рівні)", "Усі 8 тем, усі слова", "До 6 гравців на пристрої", "Нові слова й ігри, щойно з'являться"],
-  gratuit_reste:"Безкоштовна версія залишається безкоштовною: 10 ігор (з перекладом), 3 теми, завдання дня й повторення."
-},
-ja:{
-  fam_images:"絵", fam_ecoute:"聞く", fam_traduction:"翻訳", fam_lettres:"文字", fam_memoire:"神経衰弱とペア", fam_defis:"チャレンジ",
-  niv_f:"かんたん", niv_n:"ふつう", niv_e:"むずかしい", jeux_total:n => `このテーマのゲーム：${n}`,
-  j_traduction:"翻訳", j_traduction_inverse:"どういう意味？", j_ecoute_mot:"聞いて読む", j_intrus:"なかまはずれ", j_ombre:"シルエット", j_devinette:"ぼやけた絵",
-  j_premiere_lettre:"さいしょの文字", j_lettre_manquante:"ぬけた文字", j_memoire_trad:"翻訳の神経衰弱", j_relier:"線でつなぐ", j_panier:"正しいかご", j_chrono:"タイムアタック", j_grand_quiz:"大クイズ",
-  a_traduction:l => `このことばは${l}で何と言う？`, a_traduction_inverse:"同じ意味のことばを選んでください。", a_ecoute_mot:"聞いて、正しく書かれたことばにタッチ。",
-  a_intrus:"1枚だけなかまがちがう絵はどれ？", a_ombre:"かげにかくれているのはだれ？", a_devinette:"絵がはっきりしてくる：早く当てよう！",
-  a_premiere_lettre:"このことばはどの文字で始まる？", a_lettre_manquante:"どの文字がぬけている？", a_memoire_trad:"ことばと翻訳のペアを見つけよう。",
-  a_relier:"絵にタッチしてから、そのことばにタッチ。", a_panier:"どのかごに入る？", a_chrono:"60秒でできるだけたくさん正解しよう。", a_grand_quiz:"いろいろな問題が15問。",
-  score:n => `正解：${n}`, temps_fini:"時間切れ！",
-  plus_court:"50のゲームとすべてのテーマ",
-  plus_avantages:["50のゲームすべて（19種類・3レベル）", "8つのテーマ、すべてのことば", "この端末で最大6人まで", "これから増えることばとゲーム"],
-  gratuit_reste:"無料版はずっと無料：10のゲーム（翻訳も）、3つのテーマ、今日のチャレンジと復習。"
 }
 };
 for(const l in V3) if(window.TEXTES[l]) Object.assign(window.TEXTES[l], V3[l]);
@@ -559,12 +318,7 @@ en:{ facile:"Easy reading", facile_aide:"More space between letters, instruction
 es:{ facile:"Lectura fácil", facile_aide:"Más espacio entre las letras, instrucciones leídas en voz alta, 3 opciones como máximo, nunca con tiempo límite.", lire_consigne:"Escuchar la instrucción" },
 it:{ facile:"Lettura facile", facile_aide:"Più spazio tra le lettere, istruzioni lette ad alta voce, al massimo 3 scelte, mai un limite di tempo.", lire_consigne:"Ascolta l'istruzione" },
 pt:{ facile:"Leitura fácil", facile_aide:"Mais espaço entre as letras, instruções lidas em voz alta, 3 escolhas no máximo, nunca com limite de tempo.", lire_consigne:"Ouvir a instrução" },
-de:{ facile:"Leichtes Lesen", facile_aide:"Mehr Abstand zwischen den Buchstaben, Anweisungen werden vorgelesen, höchstens 3 Antworten, nie ein Zeitlimit.", lire_consigne:"Anweisung anhören" },
-ar:{ facile:"قراءة سهلة", facile_aide:"مسافة أكبر بين الحروف، والتعليمات تُقرأ بصوت عالٍ، و3 اختيارات على الأكثر، ودون أي وقت محدد.", lire_consigne:"استمع إلى التعليمات" },
-tr:{ facile:"Kolay okuma", facile_aide:"Harfler arasında daha fazla boşluk, sesli okunan yönergeler, en fazla 3 seçenek, hiçbir zaman süre sınırı yok.", lire_consigne:"Yönergeyi dinle" },
-pl:{ facile:"Łatwe czytanie", facile_aide:"Więcej odstępu między literami, polecenia czytane na głos, najwyżej 3 odpowiedzi, nigdy limitu czasu.", lire_consigne:"Posłuchaj polecenia" },
-uk:{ facile:"Легке читання", facile_aide:"Більше простору між літерами, завдання читаються вголос, щонайбільше 3 варіанти, жодних обмежень у часі.", lire_consigne:"Послухати завдання" },
-ja:{ facile:"読みやすいモード", facile_aide:"文字の間を広く、説明を読み上げ、選択肢は3つまで、時間制限なし。", lire_consigne:"説明を聞く" }
+de:{ facile:"Leichtes Lesen", facile_aide:"Mehr Abstand zwischen den Buchstaben, Anweisungen werden vorgelesen, höchstens 3 Antworten, nie ein Zeitlimit.", lire_consigne:"Anweisung anhören" }
 };
 for(const l in V) if(window.TEXTES[l]) Object.assign(window.TEXTES[l], V[l]);
 })();
@@ -577,12 +331,7 @@ en:{ nb_mots:n => `${n} words`, sauvegarde:"My progress", sauvegarde_aide:"Keep 
 es:{ nb_mots:n => `${n} palabras`, sauvegarde:"Mi progreso", sauvegarde_aide:"Guarda un archivo de copia: recupera a todos los jugadores y su progreso en este teléfono o en otro.", sauvegarder:"Guardar copia", restaurer:"Restaurar", restaure_ok:"Progreso restaurado", restaure_ko:"Este archivo no es una copia de Ami des mots." },
 it:{ nb_mots:n => `${n} parole`, sauvegarde:"I miei progressi", sauvegarde_aide:"Conserva un file di backup: ritrova tutti i giocatori e i loro progressi su questo telefono o su un altro.", sauvegarder:"Salva", restaurer:"Ripristina", restaure_ok:"Progressi ripristinati", restaure_ko:"Questo file non è un backup di Ami des mots." },
 pt:{ nb_mots:n => `${n} palavras`, sauvegarde:"O meu progresso", sauvegarde_aide:"Guarde um ficheiro de cópia: recupera todos os jogadores e o seu progresso neste telemóvel ou noutro.", sauvegarder:"Guardar cópia", restaurer:"Restaurar", restaure_ok:"Progresso restaurado", restaure_ko:"Este ficheiro não é uma cópia do Ami des mots." },
-de:{ nb_mots:n => `${n} Wörter`, sauvegarde:"Mein Fortschritt", sauvegarde_aide:"Bewahre eine Sicherungsdatei auf: Damit holst du alle Spieler und ihren Fortschritt auf dieses oder ein anderes Handy zurück.", sauvegarder:"Sichern", restaurer:"Wiederherstellen", restaure_ok:"Fortschritt wiederhergestellt", restaure_ko:"Diese Datei ist keine Sicherung von Ami des mots." },
-ar:{ nb_mots:n => `${n} كلمة`, sauvegarde:"تقدّمي", sauvegarde_aide:"احتفظ بملف نسخة احتياطية: يعيد كل اللاعبين وتقدّمهم على هذا الهاتف أو على هاتف آخر.", sauvegarder:"حفظ نسخة", restaurer:"استعادة", restaure_ok:"تمت استعادة التقدّم", restaure_ko:"هذا الملف ليس نسخة احتياطية من Ami des mots." },
-tr:{ nb_mots:n => `${n} kelime`, sauvegarde:"İlerlemem", sauvegarde_aide:"Bir yedek dosyası sakla: tüm oyuncuları ve ilerlemelerini bu telefonda ya da başka birinde geri getirir.", sauvegarder:"Yedekle", restaurer:"Geri yükle", restaure_ok:"İlerleme geri yüklendi", restaure_ko:"Bu dosya bir Ami des mots yedeği değil." },
-pl:{ nb_mots:n => `Słowa: ${n}`, sauvegarde:"Moje postępy", sauvegarde_aide:"Zachowaj plik kopii: przywraca wszystkich graczy i ich postępy na tym lub innym telefonie.", sauvegarder:"Zapisz kopię", restaurer:"Przywróć", restaure_ok:"Postępy przywrócone", restaure_ko:"Ten plik nie jest kopią Ami des mots." },
-uk:{ nb_mots:n => `Слів: ${n}`, sauvegarde:"Мій поступ", sauvegarde_aide:"Збережи файл резервної копії: він повертає всіх гравців і їхній поступ на цьому чи іншому телефоні.", sauvegarder:"Зберегти копію", restaurer:"Відновити", restaure_ok:"Поступ відновлено", restaure_ko:"Цей файл не є копією Ami des mots." },
-ja:{ nb_mots:n => `${n}語`, sauvegarde:"わたしの記録", sauvegarde_aide:"バックアップファイルを保存しておくと、この端末でも別の端末でも、全プレイヤーの記録を復元できます。", sauvegarder:"バックアップ", restaurer:"復元", restaure_ok:"記録を復元しました", restaure_ko:"このファイルは Ami des mots のバックアップではありません。" }
+de:{ nb_mots:n => `${n} Wörter`, sauvegarde:"Mein Fortschritt", sauvegarde_aide:"Bewahre eine Sicherungsdatei auf: Damit holst du alle Spieler und ihren Fortschritt auf dieses oder ein anderes Handy zurück.", sauvegarder:"Sichern", restaurer:"Wiederherstellen", restaure_ok:"Fortschritt wiederhergestellt", restaure_ko:"Diese Datei ist keine Sicherung von Ami des mots." }
 };
 for(const l in V) if(window.TEXTES[l]) Object.assign(window.TEXTES[l], V[l]);
 })();
@@ -595,12 +344,7 @@ en:{ apropos_voix:"Recorded word voices are played from the Ami des mots website
 es:{ apropos_voix:"Las voces grabadas de las palabras se reproducen desde la propia web de Ami des mots; si falta un sonido, la voz del teléfono toma el relevo. No se envía ningún nombre ni progreso." },
 it:{ apropos_voix:"Le voci registrate delle parole vengono riprodotte dal sito di Ami des mots stesso; se manca un suono, subentra la voce del telefono. Nessun nome né progresso viene inviato." },
 pt:{ apropos_voix:"As vozes gravadas das palavras são reproduzidas a partir do próprio site do Ami des mots; se faltar um som, a voz do telemóvel assume. Nenhum nome nem progresso é enviado." },
-de:{ apropos_voix:"Aufgenommene Wortstimmen werden von der Ami-des-mots-Website selbst abgespielt; fehlt ein Ton, übernimmt die Stimme des Handys. Es werden weder Namen noch Fortschritte gesendet." },
-ar:{ apropos_voix:"تُشغَّل الأصوات المسجّلة للكلمات من موقع Ami des mots نفسه؛ وإذا غاب صوت ما، يتولّى صوت الهاتف القراءة. لا يُرسل أي اسم ولا أي تقدّم." },
-tr:{ apropos_voix:"Kelimelerin kayıtlı sesleri doğrudan Ami des mots sitesinden çalınır; bir ses eksikse telefonun sesi devreye girer. Hiçbir isim ya da ilerleme gönderilmez." },
-pl:{ apropos_voix:"Nagrane głosy słów są odtwarzane z samej strony Ami des mots; jeśli brakuje dźwięku, przejmuje głos telefonu. Nie jest wysyłane żadne imię ani postępy." },
-uk:{ apropos_voix:"Записані голоси слів відтворюються із самого сайту Ami des mots; якщо звуку бракує, читає голос телефона. Жодне ім’я чи прогрес не надсилаються." },
-ja:{ apropos_voix:"ことばの録音音声は Ami des mots のサイトから再生されます。音がない場合は端末の音声が読み上げます。名前や進み具合は送信されません。" }
+de:{ apropos_voix:"Aufgenommene Wortstimmen werden von der Ami-des-mots-Website selbst abgespielt; fehlt ein Ton, übernimmt die Stimme des Handys. Es werden weder Namen noch Fortschritte gesendet." }
 };
 for(const l in V) if(window.TEXTES[l]) Object.assign(window.TEXTES[l], V[l]);
 })();
@@ -613,12 +357,7 @@ en:{ apprendre:"Learn 5 words", nouveau_mot:"New word!", a_nouveau_mot:"Look, li
 es:{ apprendre:"Aprender 5 palabras", nouveau_mot:"¡Palabra nueva!", a_nouveau_mot:"Mira, escucha y luego jugamos con esta palabra.", compris:"Entendido", deja_connu:"Ya la conozco", lecon_fin:n => `¡${n} palabras nuevas!`, lecon_rien:"Has descubierto todas las palabras. Repásalas en «Repasar»." },
 it:{ apprendre:"Impara 5 parole", nouveau_mot:"Parola nuova!", a_nouveau_mot:"Guarda, ascolta, poi giochiamo con questa parola.", compris:"Ho capito", deja_connu:"La conosco già", lecon_fin:n => `${n} parole nuove!`, lecon_rien:"Hai scoperto tutte le parole. Ripassale in «Da ripassare»." },
 pt:{ apprendre:"Aprender 5 palavras", nouveau_mot:"Palavra nova!", a_nouveau_mot:"Olhe, ouça e depois jogamos com esta palavra.", compris:"Percebi", deja_connu:"Já a conheço", lecon_fin:n => `${n} palavras novas!`, lecon_rien:"Já descobriu todas as palavras. Reveja-as em «Rever»." },
-de:{ apprendre:"5 Wörter lernen", nouveau_mot:"Neues Wort!", a_nouveau_mot:"Schau, hör zu, dann spielen wir mit diesem Wort.", compris:"Verstanden", deja_connu:"Kenne ich schon", lecon_fin:n => `${n} neue Wörter!`, lecon_rien:"Du hast alle Wörter entdeckt. Wiederhole sie unter „Wiederholen“." },
-ar:{ apprendre:"تعلّم 5 كلمات", nouveau_mot:"كلمة جديدة!", a_nouveau_mot:"انظر واستمع، ثم نلعب بهذه الكلمة.", compris:"فهمت", deja_connu:"أعرفها من قبل", lecon_fin:n => `${n} كلمات جديدة!`, lecon_rien:"اكتشفت كل الكلمات. راجعها في «للمراجعة»." },
-tr:{ apprendre:"5 kelime öğren", nouveau_mot:"Yeni kelime!", a_nouveau_mot:"Bak, dinle, sonra bu kelimeyle oynayalım.", compris:"Anladım", deja_connu:"Zaten biliyorum", lecon_fin:n => `${n} yeni kelime!`, lecon_rien:"Tüm kelimeleri keşfettin. Onları «Tekrar» bölümünde tekrar et." },
-pl:{ apprendre:"Naucz się 5 słów", nouveau_mot:"Nowe słowo!", a_nouveau_mot:"Popatrz, posłuchaj, potem zagramy tym słowem.", compris:"Rozumiem", deja_connu:"Już je znam", lecon_fin:n => `Nowe słowa: ${n}!`, lecon_rien:"Poznałeś wszystkie słowa. Powtórz je w „Do powtórki”." },
-uk:{ apprendre:"Вивчити 5 слів", nouveau_mot:"Нове слово!", a_nouveau_mot:"Подивись, послухай, а потім пограємо з цим словом.", compris:"Зрозуміло", deja_connu:"Я вже знаю", lecon_fin:n => `Нових слів: ${n}!`, lecon_rien:"Ти відкрив усі слова. Повторюй їх у розділі «Повторити»." },
-ja:{ apprendre:"5つのことばを学ぶ", nouveau_mot:"新しいことば！", a_nouveau_mot:"見て、聞いて、それからこのことばで遊ぼう。", compris:"わかった", deja_connu:"もう知っている", lecon_fin:n => `新しいことば ${n}個！`, lecon_rien:"すべてのことばを見つけました。「復習」でおさらいしましょう。" }
+de:{ apprendre:"5 Wörter lernen", nouveau_mot:"Neues Wort!", a_nouveau_mot:"Schau, hör zu, dann spielen wir mit diesem Wort.", compris:"Verstanden", deja_connu:"Kenne ich schon", lecon_fin:n => `${n} neue Wörter!`, lecon_rien:"Du hast alle Wörter entdeckt. Wiederhole sie unter „Wiederholen“." }
 };
 for(const l in V) if(window.TEXTES[l]) Object.assign(window.TEXTES[l], V[l]);
 })();
@@ -680,51 +419,6 @@ de:{
   mot_du_jour:"Das Wort des Tages", astuce_ami:"Plumos Tipp", toutes_astuces:"Alle Tipps", astuces:"Tipps", astuces_titre:"Wie man eine andere Sprache spricht", astuces_intro:"Niemand kommt sprechend auf die Welt: Jeder lernt eine Sprache, nach und nach. Hier sind meine Geheimnisse.",
   conseils:[["Jeden Tag ein bisschen.", "Fünf Minuten am Tag sind besser als eine Stunde am Sonntag: Das Gehirn liebt regelmäßige Termine."], ["Sprich laut.", "Sag jedes Wort, auch wenn du allein bist. Auch dein Mund lernt, nicht nur deine Augen."], ["Wiederhole wie ein Echo.", "Hör zu und sprich sofort mit derselben Melodie nach. Der 🐢-Knopf hilft bei schweren Wörtern."], ["Trau dich, Fehler zu machen.", "Niemand spricht am Anfang perfekt. Jeder Fehler bringt dich dem richtigen Wort näher."], ["Klebe überall Wörter hin.", "Bring kleine Zettel an Dingen im Haus an: Tür, Tisch, Fenster …"], ["Lerne mit der Familie.", "Bitte Eltern oder Großeltern, dir Wörter ihrer Sprache zu sagen, und bring ihnen deine bei."], ["Sing und hör zu.", "Lieder, Zeichentrickfilme, Geschichten: Dein Ohr gewöhnt sich mühelos an die Laute."], ["Wiederhole zur richtigen Zeit.", "„Wiederholen“ gibt dir die Wörter zurück, kurz bevor du sie vergisst. Das ist das Geheimnis der Wörter, die bleiben."]],
   ou_bouche_titre:"Wie der Mund dieses Wort macht", ou_nez:"Luft geht durch die Nase", ou_voix:"der Hals vibriert", ou_normal:"Normal", ou_lent:"Langsam", ou_fermer:"Schließen", ou_schema_note:"Eine einfache Zeichnung als Hilfe; die Stimme bleibt das beste Vorbild.", ou_bouche_btn:"Den Mund sehen"
-},
-ar:{
-  blagues:["أوه! بالأمس قلت مرحبًا لعمود إنارة. كلنا نخطئ!", "لا بأس! حتى البوم تخطئ… خصوصًا قبل وجبة منتصف الليل.", "هذه الكلمة تلعب معنا الغمّيضة. هل نجدها؟", "لقد حاولت، وهكذا يصبح الدماغ أقوى!", "هوو هوو! ريشي تشابك أيضًا. مرة أخرى؟", "هذه الكلمة مازحة: لقد تنكّرت! لننظر جيدًا.", "الخطأ كلمة تقول: «عُد لزيارتي!»", "جدّ جدّي البوم كان يخلط بين القطة والقبعة. حقًا!", "أوه! ظهر خطأ برّي… هل نمسكه معًا؟", "كل خطأ تنبت لي منه ريشة حكمة. شكرًا!", "لقد اخترعت كلمة جديدة! هل نبحث عن الأخرى؟", "أنا أجمع الأخطاء. كلها جميلة جدًا."],
-  lentement:"استمع ببطء", bouche:"شاهد الفم", a_toi:"دورك!", a_toi_aide:"استمع إلى Plumo، ثم اضغط على الميكروفون وقل الكلمة.", parler:"تكلّم", j_ecoute:"أنا أستمع…", dis_le_mot:"قل الكلمة الآن!",
-  me_reecouter:"أستمع إلى نفسي", ecouter_ami:"استمع إلى Plumo", a_toi_prive:"صوتك يبقى على هذا الجهاز: لا شيء يُرسَل أو يُحفَظ.", a_toi_bravo:"أحسنت، تجرّأت على الكلام! قارن صوتك بصوت Plumo.",
-  sans_micro:"لا يوجد ميكروفون؟ قل الكلمة بصوت عالٍ: هذا رائع بالفعل!", je_l_ai_dit:"قلتها!", reessayer:"حاول مجددًا",
-  mot_du_jour:"كلمة اليوم", astuce_ami:"نصيحة Plumo", toutes_astuces:"كل النصائح", astuces:"نصائح", astuces_titre:"كيف تتكلّم لغة أخرى", astuces_intro:"لا أحد يولد وهو يتكلّم لغة: الجميع يتعلّمها شيئًا فشيئًا. هذه أسراري.",
-  conseils:[["قليلًا كل يوم.", "خمس دقائق يوميًا أفضل من ساعة يوم الأحد: الدماغ يحب المواعيد المنتظمة."], ["تكلّم بصوت عالٍ.", "قل كل كلمة، حتى وأنت وحدك. فمك يتعلّم أيضًا، لا عيناك فقط."], ["كرّر مثل الصدى.", "استمع ثم كرّر فورًا بالنغمة نفسها. زر 🐢 يساعد مع الكلمات الصعبة."], ["لا تخف من الخطأ.", "لا أحد يتكلّم بإتقان في البداية. كل خطأ يقرّبك من الكلمة الصحيحة."], ["ألصق الكلمات في كل مكان.", "ضع ملصقات صغيرة على أشياء البيت: باب، طاولة، نافذة…"], ["تعلّم مع العائلة.", "اطلب من أحد والديك أو أجدادك أن يقول لك كلمات لغته، وعلّمه كلماتك."], ["غنِّ واستمع.", "أغانٍ ورسوم متحركة وحكايات: تعتاد أذنك على الأصوات دون جهد."], ["راجع في الوقت المناسب.", "«للمراجعة» يعيد لك الكلمات قبل أن تنساها مباشرة. هذا سرّ الكلمات التي تبقى."]],
-  ou_bouche_titre:"كيف يصنع الفم هذه الكلمة", ou_nez:"الهواء يمرّ من الأنف", ou_voix:"الحلق يهتزّ", ou_normal:"عادي", ou_lent:"ببطء", ou_fermer:"إغلاق", ou_schema_note:"رسم بسيط للمساعدة؛ يبقى الصوت أفضل نموذج.", ou_bouche_btn:"شاهد الفم"
-},
-tr:{
-  blagues:["Hoppala! Dün bir sokak lambasına merhaba dedim. Herkes yanılır!", "Sorun değil! Baykuşlar bile yanılır… hele gece yarısı atıştırmasından önce.", "Bu kelime bizimle saklambaç oynuyor. Bulalım mı?", "Denedin, beyin de işte böyle güçlenir!", "Hu hu! Benim tüylerim de birbirine karıştı. Bir kez daha?", "Bu kelime şakacı: kılık değiştirmiş! Daha dikkatli bakalım.", "Hata, «Beni yine ziyaret et!» diyen bir kelimedir.", "Büyük dedem baykuş kediyi şapkayla karıştırırdı. Gerçekten!", "Ah! Vahşi bir hata belirdi… Birlikte yakalayalım mı?", "Her hata bana bir bilgelik tüyü kazandırıyor. Teşekkürler!", "Az önce yeni bir kelime icat ettin! Ötekini arayalım mı?", "Hata koleksiyonu yapıyorum. Hepsi çok güzel."],
-  lentement:"Yavaş dinle", bouche:"Ağzı gör", a_toi:"Sıra sende!", a_toi_aide:"Plumo'yu dinle, sonra mikrofona bas ve kelimeyi söyle.", parler:"Konuş", j_ecoute:"Dinliyorum…", dis_le_mot:"Şimdi kelimeyi söyle!",
-  me_reecouter:"Kendimi dinle", ecouter_ami:"Plumo'yu dinle", a_toi_prive:"Sesin bu cihazda kalır: hiçbir şey gönderilmez ya da saklanmaz.", a_toi_bravo:"Bravo, konuşmaya cesaret ettin! Sesini Plumo'nunkiyle karşılaştır.",
-  sans_micro:"Mikrofon yok mu? Kelimeyi yüksek sesle söyle: bu bile harika!", je_l_ai_dit:"Söyledim!", reessayer:"Tekrar dene",
-  mot_du_jour:"Günün kelimesi", astuce_ami:"Plumo'nun ipucu", toutes_astuces:"Tüm ipuçları", astuces:"İpuçları", astuces_titre:"Başka bir dil nasıl konuşulur", astuces_intro:"Kimse bir dili konuşarak doğmaz: herkes onu yavaş yavaş öğrenir. İşte sırlarım.",
-  conseils:[["Her gün biraz.", "Günde beş dakika, pazar günü bir saatten iyidir: beyin düzenli buluşmaları sever."], ["Yüksek sesle konuş.", "Her kelimeyi söyle, yalnız olsan bile. Sadece gözlerin değil, ağzın da öğrenir."], ["Yankı gibi tekrar et.", "Dinle, sonra aynı ezgiyle hemen tekrar et. 🐢 düğmesi zor kelimelerde yardım eder."], ["Yanılmaktan korkma.", "Kimse başta kusursuz konuşmaz. Her hata seni doğru kelimeye yaklaştırır."], ["Her yere kelime yapıştır.", "Evdeki eşyalara küçük etiketler koy: kapı, masa, pencere…"], ["Aileyle öğren.", "Bir ebeveynden ya da büyükanne-büyükbabadan kendi dilindeki kelimeleri söylemesini iste, sen de ona kendi kelimelerini öğret."], ["Şarkı söyle ve dinle.", "Şarkılar, çizgi filmler, masallar: kulağın seslere zahmetsizce alışır."], ["Doğru zamanda tekrar et.", "«Tekrar» kelimeleri sen unutmadan hemen önce sana geri verir. Akılda kalan kelimelerin sırrı budur."]],
-  ou_bouche_titre:"Ağız bu kelimeyi nasıl çıkarır", ou_nez:"hava burundan geçer", ou_voix:"boğaz titrer", ou_normal:"Normal", ou_lent:"Yavaş", ou_fermer:"Kapat", ou_schema_note:"Yardım için basit bir çizim; en iyi örnek yine sestir.", ou_bouche_btn:"Ağzı gör"
-},
-pl:{
-  blagues:["Ups! Wczoraj powiedziałem „dzień dobry” latarni. Każdy się myli!", "Nic nie szkodzi! Nawet sowy się mylą… zwłaszcza przed północną przekąską.", "To słowo bawi się z nami w chowanego. Znajdziemy je?", "Spróbowałeś – i właśnie tak mózg nabiera siły!", "Hu hu! Moje pióra też się poplątały. Jeszcze raz?", "To słowo jest żartownisiem: przebrało się! Popatrzmy uważniej.", "Błąd to słowo, które mówi: „Odwiedź mnie znowu!”", "Mój pradziadek puchacz mylił kota z kapeluszem. Naprawdę!", "Och! Pojawia się dziki błąd… Złapiemy go razem?", "Po każdym błędzie rośnie mi pióro mądrości. Dziękuję!", "Właśnie wymyśliłeś nowe słowo! Poszukamy tego drugiego?", "Kolekcjonuję błędy. Wszystkie są bardzo ładne."],
-  lentement:"Słuchaj powoli", bouche:"Zobacz usta", a_toi:"Twoja kolej!", a_toi_aide:"Posłuchaj Plumo, potem naciśnij mikrofon i powiedz słowo.", parler:"Mów", j_ecoute:"Słucham…", dis_le_mot:"Powiedz teraz słowo!",
-  me_reecouter:"Posłuchaj siebie", ecouter_ami:"Posłuchaj Plumo", a_toi_prive:"Twój głos zostaje na tym urządzeniu: nic nie jest wysyłane ani zapisywane.", a_toi_bravo:"Brawo, odważyłeś się mówić! Porównaj swój głos z głosem Plumo.",
-  sans_micro:"Brak mikrofonu? Powiedz słowo na głos: to już świetnie!", je_l_ai_dit:"Powiedziałem!", reessayer:"Jeszcze raz",
-  mot_du_jour:"Słowo dnia", astuce_ami:"Rada Plumo", toutes_astuces:"Wszystkie rady", astuces:"Rady", astuces_titre:"Jak mówić w innym języku", astuces_intro:"Nikt nie rodzi się, mówiąc w jakimś języku: każdy uczy się go krok po kroku. Oto moje sekrety.",
-  conseils:[["Trochę każdego dnia.", "Pięć minut dziennie jest lepsze niż godzina w niedzielę: mózg lubi regularne spotkania."], ["Mów na głos.", "Wypowiadaj każde słowo, nawet w samotności. Twoje usta też się uczą, nie tylko oczy."], ["Powtarzaj jak echo.", "Posłuchaj i od razu powtórz z tą samą melodią. Przycisk 🐢 pomaga przy trudnych słowach."], ["Nie bój się błędów.", "Nikt na początku nie mówi idealnie. Każdy błąd przybliża cię do właściwego słowa."], ["Przyklejaj słowa wszędzie.", "Przyklej małe karteczki na rzeczy w domu: drzwi, stół, okno…"], ["Ucz się z rodziną.", "Poproś rodzica lub dziadka, żeby powiedział ci słowa w swoim języku, i naucz go swoich."], ["Śpiewaj i słuchaj.", "Piosenki, bajki, opowieści: twoje ucho bez wysiłku przyzwyczaja się do dźwięków."], ["Powtarzaj we właściwym momencie.", "„Do powtórki” oddaje ci słowa tuż przed tym, jak je zapomnisz. To sekret słów, które zostają."]],
-  ou_bouche_titre:"Jak usta wymawiają to słowo", ou_nez:"powietrze idzie przez nos", ou_voix:"gardło drga", ou_normal:"Normalnie", ou_lent:"Powoli", ou_fermer:"Zamknij", ou_schema_note:"Prosty rysunek jako pomoc; najlepszym wzorem pozostaje głos.", ou_bouche_btn:"Zobacz usta"
-},
-uk:{
-  blagues:["Ой! Учора я привітався з ліхтарем. Усі помиляються!", "Нічого страшного! Навіть сови помиляються… особливо перед опівнічним перекусом.", "Це слово грає з нами в хованки. Знайдемо його?", "Ти спробував — і саме так мозок стає сильнішим!", "Ух-ух! Моє пір'я теж заплуталося. Ще раз?", "Це слово — жартівник: воно перевдяглося! Придивімося краще.", "Помилка — це слово, яке каже: «Приходь до мене знову!»", "Мій прадід-пугач плутав кота з капелюхом. Чесно!", "О! З'явилася дика помилка… Зловимо її разом?", "Від кожної помилки в мене виростає перо мудрості. Дякую!", "Ти щойно вигадав нове слово! Пошукаємо інше?", "Я колекціоную помилки. Вони всі дуже гарні."],
-  lentement:"Слухати повільно", bouche:"Побачити рот", a_toi:"Твоя черга!", a_toi_aide:"Послухай Plumo, потім натисни мікрофон і скажи слово.", parler:"Говорити", j_ecoute:"Я слухаю…", dis_le_mot:"Скажи слово зараз!",
-  me_reecouter:"Послухати себе", ecouter_ami:"Послухати Plumo", a_toi_prive:"Твій голос залишається на цьому пристрої: нічого не надсилається й не зберігається.", a_toi_bravo:"Молодець, ти наважився говорити! Порівняй свій голос із голосом Plumo.",
-  sans_micro:"Немає мікрофона? Скажи слово вголос: це вже чудово!", je_l_ai_dit:"Я сказав!", reessayer:"Ще раз",
-  mot_du_jour:"Слово дня", astuce_ami:"Порада Plumo", toutes_astuces:"Усі поради", astuces:"Поради", astuces_titre:"Як заговорити іншою мовою", astuces_intro:"Ніхто не народжується, вже розмовляючи мовою: кожен вчить її крок за кроком. Ось мої секрети.",
-  conseils:[["Потроху щодня.", "П'ять хвилин щодня кращі за годину в неділю: мозок любить регулярні зустрічі."], ["Говори вголос.", "Промовляй кожне слово, навіть наодинці. Твій рот теж вчиться, а не лише очі."], ["Повторюй, як луна.", "Послухай і одразу повтори з тією самою мелодією. Кнопка 🐢 допомагає з важкими словами."], ["Не бійся помилок.", "Ніхто не говорить ідеально на початку. Кожна помилка наближає тебе до правильного слова."], ["Клей слова скрізь.", "Наклей маленькі наліпки на речі вдома: двері, стіл, вікно…"], ["Вчися з родиною.", "Попроси батьків або бабусю чи дідуся сказати тобі слова їхньою мовою, а ти навчи їх своїх."], ["Співай і слухай.", "Пісні, мультфільми, казки: твоє вухо без зусиль звикає до звуків."], ["Повторюй вчасно.", "«Повторити» повертає тобі слова якраз перед тим, як ти їх забудеш. Це секрет слів, які залишаються."]],
-  ou_bouche_titre:"Як рот вимовляє це слово", ou_nez:"повітря йде через ніс", ou_voix:"горло вібрує", ou_normal:"Звичайно", ou_lent:"Повільно", ou_fermer:"Закрити", ou_schema_note:"Простий малюнок на допомогу; найкращий зразок — голос.", ou_bouche_btn:"Побачити рот"
-},
-ja:{
-  blagues:["おっと！きのう街灯にこんにちはって言っちゃった。だれでもまちがえるよ！", "だいじょうぶ！フクロウだってまちがえる…とくに真夜中のおやつの前はね。", "このことば、かくれんぼしてるみたい。見つけようか？", "やってみたね。そうやって脳は強くなるんだ！", "ホーホー！ぼくの羽もからまっちゃった。もう一回？", "このことばはいたずらっ子。変装してるよ！よく見てみよう。", "まちがいは「また会いにきてね！」って言うことばなんだ。", "ぼくのひいおじいちゃんフクロウは、ネコとぼうしをまちがえてたよ。本当だよ！", "あっ！野生のまちがいがあらわれた…いっしょにつかまえよう？", "まちがえるたびに、ちえの羽が一本生えるんだ。ありがとう！", "新しいことばを発明したね！もうひとつのほうをさがそうか？", "ぼくはまちがいを集めてるんだ。どれもすごくきれいだよ。"],
-  lentement:"ゆっくり聞く", bouche:"口を見る", a_toi:"きみの番！", a_toi_aide:"プルモの声を聞いて、マイクをおしてことばを言ってね。", parler:"話す", j_ecoute:"聞いてるよ…", dis_le_mot:"いま、ことばを言って！",
-  me_reecouter:"自分の声を聞く", ecouter_ami:"プルモの声を聞く", a_toi_prive:"きみの声はこの端末にだけ残り、送信も保存もされません。", a_toi_bravo:"すごい、話してみたね！自分の声とプルモの声をくらべてみよう。",
-  sans_micro:"マイクがない？声に出して言ってみよう。それだけでもすばらしい！", je_l_ai_dit:"言えた！", reessayer:"もう一度",
-  mot_du_jour:"今日のことば", astuce_ami:"プルモのヒント", toutes_astuces:"ヒントをすべて見る", astuces:"ヒント", astuces_titre:"ほかの言語を話すには", astuces_intro:"生まれたときから話せる人はいません。だれもが少しずつ覚えていきます。ぼくの秘密を教えるね。",
-  conseils:[["毎日すこしずつ。", "日曜日に1時間より、毎日5分のほうがいい。脳は決まった時間の約束が大好き。"], ["声に出して話そう。", "ひとりでも、ことばを一つずつ声に出そう。目だけでなく口も覚えるよ。"], ["こだまのようにくり返そう。", "聞いたらすぐ、同じメロディでまねしよう。むずかしいことばは🐢ボタンが助けてくれる。"], ["まちがいをこわがらないで。", "最初から完ぺきに話せる人はいない。まちがえるたびに正しいことばに近づくよ。"], ["ことばをあちこちにはろう。", "家の物に小さなラベルをはろう。ドア、テーブル、まど…"], ["家族といっしょに学ぼう。", "お父さんやお母さん、おじいちゃんおばあちゃんに、その人のことばを教えてもらおう。きみのことばも教えてあげて。"], ["歌って、聞こう。", "歌、アニメ、お話。耳が自然に音になれていくよ。"], ["ちょうどいいときに復習しよう。", "「復習」は、わすれる直前にことばをもう一度見せてくれる。それが覚えたことばが残るひみつ。"]],
-  ou_bouche_titre:"口はこのことばをどう言う？", ou_nez:"空気が鼻を通る", ou_voix:"のどがふるえる", ou_normal:"ふつう", ou_lent:"ゆっくり", ou_fermer:"閉じる", ou_schema_note:"助けになるかんたんな絵です。いちばんのお手本は声です。", ou_bouche_btn:"口を見る"
 }
 };
 for(const l in V) if(window.TEXTES[l]) Object.assign(window.TEXTES[l], V[l]);
