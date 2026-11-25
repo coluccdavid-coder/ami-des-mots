@@ -42,6 +42,10 @@ return [
   'anthropic_cle' => '',
   'anthropic_modele' => 'claude-haiku-5-5',          // vannes : rapide, peu cher
   'anthropic_modele_veille' => 'claude-sonnet-5-5',  // lecture des programmes et annales
+  // v6.35 : aide aux devoirs (devoirs.php). Lit aussi les photos et les PDF de devoirs. Un modèle plus solide guide mieux.
+  'anthropic_modele_devoirs' => 'claude-sonnet-5-5',
+  // Coût en plumes de l'aide aux devoirs (seulement si les plumes sont allumées dans l'admin).
+  'devoirs_plumes' => ['aide' => 3, 'fichier' => 2, 'suite' => 1, 'relire' => 3],
   // Vannes écrites en direct par l'IA à chaque question (vannes-direct.php) : true/false, et plafond par appareil et par jour.
   'vannes_direct' => true,
   'vannes_direct_par_jour' => 300,

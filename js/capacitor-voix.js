@@ -6,7 +6,7 @@
   let TTS = null;
   try{ TTS = C && ((C.Plugins && C.Plugins.TextToSpeech) || (C.isPluginAvailable && C.isPluginAvailable('TextToSpeech') && C.registerPlugin && C.registerPlugin('TextToSpeech'))); }catch(e){}
   if(!TTS || ('speechSynthesis' in window && window.speechSynthesis && window.speechSynthesis.getVoices)) return;
-  const LANGUES = ['fr-FR', 'en-GB', 'en-US', 'es-ES', 'it-IT', 'pt-PT', 'de-DE', 'ar-SA', 'tr-TR', 'zh-CN', 'ja-JP', 'ko-KR', 'ru-RU', 'pl-PL', 'nl-NL', 'ro-RO', 'uk-UA'];
+  const LANGUES = ['fr-FR', 'en-GB', 'en-US', 'es-ES', 'it-IT', 'pt-PT', 'de-DE', 'zh-CN', 'ko-KR', 'ru-RU', 'nl-NL', 'ro-RO'];
   const voix = LANGUES.map(l => ({ lang:l, name:'Android ' + l, localService:true, default:l === 'fr-FR', voiceURI:'android-' + l }));
   let enCours = false;
   window.SpeechSynthesisUtterance = window.SpeechSynthesisUtterance || function(texte){ this.text = texte || ''; this.lang = ''; this.rate = 1; this.pitch = 1; this.volume = 1; this.voice = null; this.onend = null; this.onerror = null; this.onstart = null; };

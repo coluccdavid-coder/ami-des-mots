@@ -21,7 +21,7 @@ function page(langue, config, avant){
   w.TextEncoder = TextEncoder; w.TextDecoder = TextDecoder;
   w.__fetch = []; w.fetch = async (u) => { w.__fetch.push(String(u)); return { ok:true, json:async () => (w.__reponse || { actif:false }) }; };
   if(avant) avant(w);
-  for(const f of ['js/donnees.js', 'js/voix.js', 'js/phrases-enregistrees.js', 'js/textes.js', 'js/textes-plus.js', 'js/textes-ecrans.js', 'js/articulation.js', 'js/genres.js', 'js/confusions.js', 'js/vannes.js', 'js/pieges.js', 'js/anglais.js', 'js/clash.js', 'js/histoires.js', 'js/blagues-en.js', 'js/parcours.js', 'js/rigolade.js', 'js/clash-plus.js', 'js/salon.js', 'js/juge.js', 'js/vannes-libres.js', 'js/maths-en.js', 'js/maths-es.js', 'js/maths-de.js', 'js/maths-it.js', 'js/maths-pt.js', 'js/maths.js', 'js/maths-2026-5e.js', 'js/maths-2026-2nde.js', 'js/maths-2026-1re.js', 'js/maths-2026-autres.js', 'js/maths-2026-college.js', 'js/sciences-en.js', 'js/sciences-es.js', 'js/sciences-de.js', 'js/sciences-it.js', 'js/sciences-pt.js', 'js/sciences.js', 'js/trash-talk.js', 'js/vannes-arrogantes.js', 'js/bande-images.js', 'js/bande-plumo.js', 'js/achats.js', 'js/rappels.js', 'js/epreuves.js', 'js/epreuves-spe.js', 'js/epreuves-plus.js', 'js/epreuves-oraux.js', 'js/epreuves-pro.js', 'js/matieres.js', 'js/mat-trad-es.js', 'js/mat-trad-en.js', 'js/mat-trad-en-sciences.js', 'js/mat-trad-en-sup.js', 'js/mat-trad-en-langues.js', 'js/mat-trad-en-francais.js', 'js/mat-trad-communs.js', 'js/mat-trad-es-sciences.js', 'js/mat-trad-es-sup.js', 'js/mat-trad-es-specialites.js', 'js/mat-trad-es-allemand.js', 'js/mat-trad-es-francais.js', 'js/mat-trad-de-histoire.js', 'js/mat-trad-de-sciences.js', 'js/mat-francais.js', 'js/mat-histoire.js', 'js/mat-histoire-sgm.js', 'js/mat-svt-pc.js', 'js/mat-sup.js', 'js/mat-anglais.js', 'js/mat-renfort.js', 'js/mat-langues.js', 'js/mat-specialites.js', 'js/mat-anglais-sup.js', 'js/mat-sup-droit.js', 'js/mat-sup-medecine.js', 'js/mat-sup-astro.js', 'js/mat-philo-notions.js', 'js/vannes-cash.js', 'js/vannes-ironie.js', 'js/vannes-mots.js', 'js/offre.js', 'js/jeu.js', 'js/mod-base.js', 'js/mod-ligue.js', 'js/mod-saisons.js', 'js/mod-veille.js', 'js/mod-oral.js', 'js/mod-classe.js', 'js/mod-parrainage.js', 'js/mod-ia.js', 'js/gb-moteur.js', 'js/gb-maths.js', 'js/gb-english.js', 'js/gb-sciences.js', 'js/gb-humanites.js', 'js/gb-options.js', 'js/gb-plus.js', 'js/gb-programme.js', 'js/gb-programme-plus.js', 'js/gb-examens.js', 'js/gb-sats-reels.js', 'js/gb-options2.js', 'js/nasa.js', 'js/mat-trad-en-nasa.js', 'js/mat-trad-es-nasa.js', 'js/mat-histoire-pgm.js', 'js/mat-cours.js', 'js/mat-cours-francais.js', 'js/mat-cours-histoire.js', 'js/mat-cours-geo-emc.js', 'js/mat-cours-sciences.js', 'js/mat-cours-physique.js', 'js/mat-cours-lycee-lettres.js', 'js/mat-cours-lycee-sciences.js', 'js/mat-cours-specialites.js', 'js/mat-cours-college-fin.js', 'js/mat-techno.js', 'js/mat-cours-emc.js', 'js/mat-cpl-sciences.js', 'js/mat-cpl-lettres.js', 'js/mat-cpl-partiels.js', 'js/mat-langues-cpl.js', 'js/epreuves-dnb-techno.js', 'js/mat-arts-eps-lca.js', 'js/mat-anglais-college-plus.js', 'js/mat-anglais-college-plus2.js', 'js/mat-langues-college-plus.js', 'js/mat-niveaux.js', 'js/themes.js', 'js/mod-angleterre.js']) w.eval(lire(f));
+  for(const f of ['js/donnees.js', 'js/voix.js', 'js/phrases-enregistrees.js', 'js/textes.js', 'js/textes-plus.js', 'js/textes-ecrans.js', 'js/articulation.js', 'js/genres.js', 'js/confusions.js', 'js/vannes.js', 'js/pieges.js', 'js/anglais.js', 'js/clash.js', 'js/histoires.js', 'js/blagues-en.js', 'js/parcours.js', 'js/rigolade.js', 'js/clash-plus.js', 'js/salon.js', 'js/juge.js', 'js/vannes-libres.js', 'js/maths-en.js', 'js/maths-es.js', 'js/maths-de.js', 'js/maths-it.js', 'js/maths-pt.js', 'js/maths.js', 'js/maths-2026-5e.js', 'js/maths-2026-2nde.js', 'js/maths-2026-1re.js', 'js/maths-2026-autres.js', 'js/maths-2026-college.js', 'js/sciences-en.js', 'js/sciences-es.js', 'js/sciences-de.js', 'js/sciences-it.js', 'js/sciences-pt.js', 'js/sciences.js', 'js/trash-talk.js', 'js/vannes-arrogantes.js', 'js/bande-images.js', 'js/bande-plumo.js', 'js/achats.js', 'js/rappels.js', 'js/epreuves.js', 'js/epreuves-spe.js', 'js/epreuves-plus.js', 'js/epreuves-oraux.js', 'js/epreuves-pro.js', 'js/matieres.js', 'js/mat-trad-es.js', 'js/mat-trad-en.js', 'js/mat-trad-en-sciences.js', 'js/mat-trad-en-sup.js', 'js/mat-trad-en-langues.js', 'js/mat-trad-en-francais.js', 'js/mat-trad-communs.js', 'js/mat-trad-es-sciences.js', 'js/mat-trad-es-sup.js', 'js/mat-trad-es-specialites.js', 'js/mat-trad-es-allemand.js', 'js/mat-trad-es-francais.js', 'js/mat-trad-de-histoire.js', 'js/mat-trad-de-sciences.js', 'js/mat-francais.js', 'js/mat-histoire.js', 'js/mat-histoire-sgm.js', 'js/mat-svt-pc.js', 'js/mat-sup.js', 'js/mat-anglais.js', 'js/mat-renfort.js', 'js/mat-langues.js', 'js/mat-specialites.js', 'js/mat-anglais-sup.js', 'js/mat-sup-droit.js', 'js/mat-sup-medecine.js', 'js/mat-sup-astro.js', 'js/mat-philo-notions.js', 'js/vannes-cash.js', 'js/vannes-ironie.js', 'js/vannes-mots.js', 'js/offre.js', 'js/jeu.js', 'js/mod-base.js', 'js/mod-ligue.js', 'js/mod-saisons.js', 'js/mod-veille.js', 'js/mod-oral.js', 'js/mod-classe.js', 'js/mod-parrainage.js', 'js/mod-ia.js', 'js/mod-devoirs.js', 'js/gb-moteur.js', 'js/gb-maths.js', 'js/gb-english.js', 'js/gb-sciences.js', 'js/gb-humanites.js', 'js/gb-options.js', 'js/gb-plus.js', 'js/gb-programme.js', 'js/gb-programme-plus.js', 'js/gb-examens.js', 'js/gb-sats-reels.js', 'js/gb-options2.js', 'js/nasa.js', 'js/mat-trad-en-nasa.js', 'js/mat-trad-es-nasa.js', 'js/mat-histoire-pgm.js', 'js/mat-cours.js', 'js/mat-cours-francais.js', 'js/mat-cours-histoire.js', 'js/mat-cours-geo-emc.js', 'js/mat-cours-sciences.js', 'js/mat-cours-physique.js', 'js/mat-cours-lycee-lettres.js', 'js/mat-cours-lycee-sciences.js', 'js/mat-cours-specialites.js', 'js/mat-cours-college-fin.js', 'js/mat-techno.js', 'js/mat-cours-emc.js', 'js/mat-cpl-sciences.js', 'js/mat-cpl-lettres.js', 'js/mat-cpl-partiels.js', 'js/mat-langues-cpl.js', 'js/epreuves-dnb-techno.js', 'js/mat-arts-eps-lca.js', 'js/mat-anglais-college-plus.js', 'js/mat-anglais-college-plus2.js', 'js/mat-langues-college-plus.js', 'js/mat-sciences-college-plus.js', 'js/mat-niveaux.js', 'js/themes.js', 'js/mod-angleterre.js']) w.eval(lire(f));
   return w;
 }
 // Certificats d'abonnement comme les signe le serveur (même format que serveur/functions/ami-abonnement).
@@ -166,7 +166,7 @@ await test('vrai ou faux : la bonne réponse est notée juste', () => {
   assert.ok(d.querySelector('.vf-oui.juste, .vf-non.juste'));
   assert.strictEqual(A.J().mots[A.base.cible + ':' + bonne].b, 1);
 });
-await test('lettres en vrac : remettre les lettres dans l\'ordre réussit ; pas proposé en japonais et coréen', () => {
+await test('lettres en vrac : remettre les lettres dans l\'ordre réussit ; pas proposé en coréen (écriture sans lettres)', () => {
   const w = page(); const d = w.document, A = w.AmiDesMots;
   A.base.cible = 'fr'; A.choisirJeu('animaux');
   assert.ok(d.querySelector('[data-a="jeu"][data-v^="lettres:"]'));
@@ -174,7 +174,7 @@ await test('lettres en vrac : remettre les lettres dans l\'ordre réussit ; pas 
   const tuiles = [...d.querySelectorAll('.tuile')].sort((a, b) => a.dataset.v - b.dataset.v);
   tuiles.forEach(b => b.click());
   assert.ok(d.getElementById('reponse').classList.contains('juste'));
-  A.base.cible = 'ja'; A.choisirJeu('animaux');
+  A.base.cible = 'ko'; A.choisirJeu('animaux');
   assert.strictEqual(d.querySelector('[data-a="jeu"][data-v^="lettres:"]'), null);
 });
 await test('mémoire : deux cartes du même mot restent ouvertes', () => {
@@ -221,7 +221,7 @@ await test('catalogue : 50 jeux, 19 sortes, 6 familles ; chaque nom et consigne 
   for(const l in w.TEXTES) for(const [m] of A.MECAS){ assert.ok(w.TEXTES[l]['j_' + m], l + ' j_' + m); assert.ok(w.TEXTES[l]['a_' + m], l + ' a_' + m); }
 });
 await test('chacun des 50 jeux se lance et affiche de quoi répondre (français → anglais, et kabyle)', () => {
-  for(const [ui, cible] of [['fr', 'en'], ['fr', 'kab'], ['ar', 'fr'], ['fr', 'es'], ['fr', 'de'], ['fr', 'it'], ['fr', 'pt'], ['fr', 'ar'], ['es', 'en']]){
+  for(const [ui, cible] of [['fr', 'en'], ['fr', 'kab'], ['de', 'fr'], ['fr', 'es'], ['fr', 'de'], ['fr', 'it'], ['fr', 'pt'], ['fr', 'dz'], ['es', 'en']]){
     const w = page(ui === 'fr' ? 'fr-FR' : ui); const A = w.AmiDesMots, d = w.document;
     A.base.cible = cible;
     let lances = 0;
@@ -1134,7 +1134,7 @@ await test('sauvegarde piégée : valeurs absurdes bornées, clés inconnues ign
   A.reglages(); A.restaurer(new w.File(['x'.repeat(2e6 + 10)], 'gros.json')); await attendre(30);
   assert.match(w.document.getElementById('etat-sauvegarde').textContent, /pas une sauvegarde/);
 });
-await test('langues : seules les langues activées sont visibles, les autres restent dans les données', () => {
+await test('langues : seules les langues activées sont visibles ; arabe, turc, polonais, ukrainien et japonais retirés', () => {
   const w = page(); const d = w.document;
   // v6.22 : la langue apprise se choisit dans la porte « Langues » ; l'accueil propose « Ma langue » et « Mon programme ».
   assert.ok(d.querySelector('#programme'), 'le choix du programme doit être sur l’accueil');
@@ -1145,10 +1145,9 @@ await test('langues : seules les langues activées sont visibles, les autres res
   // v5.99.2 : « J'apprends » = langues enseignées à l'école (sauf celle qu'on parle) ; « Je parle » = français + ces langues.
   assert.deepStrictEqual(Array.from(choix.options).map(o => o.value), ['en', 'es', 'de', 'it', 'pt']);
   assert.deepStrictEqual(optsUi, ['fr', 'en', 'es', 'de', 'it', 'pt'], 'v5.99.3 : arabe retiré des listes pour l’instant');
-  assert.ok(w.TEXTES.ar && w.MOTS['🐱'].ar, 'l’arabe reste dans les données');
-  assert.ok(w.TEXTES.uk && w.TEXTES.ja && w.TEXTES.tr && w.TEXTES.pl, 'les langues retirées des listes restent dans les données');
+  // v6.34 : l'arabe, le turc, le polonais, l'ukrainien et le japonais sont retirés de l'appli (demande explicite).
+  for(const l of ['ar', 'tr', 'pl', 'uk', 'ja']){ assert.ok(!w.TEXTES[l] && !w.LANGUES_APPRENDRE[l], l + ' retiré de l’interface'); assert.ok(!Object.values(w.MOTS).some(m => m[l]), l + ' retiré des mots'); }
   assert.strictEqual(w.MOTS['🐱'].ko, '고양이', 'le coréen reste conservé dans les données');
-  assert.strictEqual(w.MOTS['🐱'].ar, 'قطة', 'larabe reste conservé dans les données');
   assert.strictEqual(w.MOTS['🐱'].kab, 'AMCIC', 'le kabyle reste conservé dans les données');
 });
 await test('voix : le texte prononcé est celui que ReParole a enregistré (minuscules), pas la majuscule de la banque', () => {
@@ -1158,16 +1157,14 @@ await test('voix : le texte prononcé est celui que ReParole a enregistré (minu
   assert.strictEqual(A.aDire(e), 'poisson');
   assert.match(A.urlVoix('fr', A.aDire(e)), new RegExp('/fr/' + A.fnv1a('poisson') + '\.mp3$'));
   let total = 0, sans = 0;
-  for(const l of ['fr', 'en', 'es', 'it', 'pt', 'de', 'tr', 'pl', 'uk']){ A.base.cible = l; for(const k of Object.keys(w.MOTS)) if(w.MOTS[k][l]){ total++; if(A.aDire(k) === w.MOTS[k][l] && /^[^a-zа-яàâçéèêëîïôûùüÿñæœäöüßığşéąęćłńóśźżєіїґ]+$/.test(w.MOTS[k][l])) sans++; } }
+  for(const l of ['fr', 'en', 'es', 'it', 'pt', 'de']){ A.base.cible = l; for(const k of Object.keys(w.MOTS)) if(w.MOTS[k][l]){ total++; if(A.aDire(k) === w.MOTS[k][l] && /^[^a-zа-яàâçéèêëîïôûùüÿñæœäöüßığşéąęćłńóśźżєіїґ]+$/.test(w.MOTS[k][l])) sans++; } }
   assert.strictEqual(sans, 0, 'aucun mot tout en majuscules envoyé à la voix');
 });
-await test('interface en arabe : de droite à gauche, aucun texte français (accueil et page Plus)', () => {
-  const w = page('ar', null); const d = w.document;
-  assert.strictEqual(d.documentElement.dir, 'rtl');
-  const fr = /Jouer|J'apprends|Objectif|vestiaire|Défi|Réglages|S'abonner|par mois|Bientôt/;
-  assert.ok(!fr.test(d.body.textContent));
-  w.AmiDesMots.ecranPlus();
-  assert.ok(!fr.test(d.body.textContent));
+await test('v6.34 : un appareil réglé en arabe, turc, polonais, ukrainien ou japonais ouvre l’appli en français, de gauche à droite', () => {
+  for(const l of ['ar', 'tr', 'pl', 'uk', 'ja']){
+    const w = page(l, null), d = w.document; assert.strictEqual(w.AmiDesMots.base.ui, 'fr', l); assert.notStrictEqual(d.documentElement.dir, 'rtl', l);
+    assert.ok(!Array.from(d.querySelector('#ui').options).some(o => o.value === l), l + ' absent de la liste');
+  }
 });
 await test('vestiaire : un accessoire se débloque avec les plumes, et se met', () => {
   const w = page(); const A = w.AmiDesMots, d = w.document;
@@ -2154,14 +2151,14 @@ await test('v5.95 : chaque texte des écrans récents existe dans les 11 langues
   assert.equal(TT('restaurer', 'xx'), 'Restore purchases');
 });
 
-await test('v5.95 : écran Plus, liens légaux et Clash libre sans français quand l’interface est en japonais', async () => {
-  const w = page('ja', { MODE_PAYANT:true, SERVEUR:'https://ami.example/serveur', FORMULES:[{ id:'a_vie', prix:'99 €', lien:'https://buy.stripe.com/v' }] }); await w.AmiDesMotsPret;
+await test('v5.95 : écran Plus, liens légaux et Clash libre sans français quand l’interface est en allemand', async () => {
+  const w = page('de', { MODE_PAYANT:true, SERVEUR:'https://ami.example/serveur', FORMULES:[{ id:'a_vie', prix:'99 €', lien:'https://buy.stripe.com/v' }] }); await w.AmiDesMotsPret;
   const d = w.document, A = w.AmiDesMots;
   A.ecranPlus(); const h = d.querySelector('main').textContent;
   assert.ok(!/Restaurer|code cadeau|Conditions de vente|Un seul paiement/.test(h), 'français dans l’écran Plus');
-  assert.match(h, /一度の支払い/); assert.match(h, /ギフトコード/);
+  assert.match(h, /Einmal zahlen/); assert.match(h, /Geschenkcode/);
   const x = d.createElement('button'); x.dataset.a = 'clash-libre'; d.body.appendChild(x); x.click(); x.remove();
-  const c = d.querySelector('main').textContent; assert.match(c, /Free roast battle/); assert.ok(!/On se vanne|Joueur 1/.test(c), 'français dans le Clash libre');
+  const c = d.querySelector('main').textContent; assert.match(c, /Freies Battle|Free roast battle/); assert.ok(!/On se vanne|Joueur 1/.test(c), 'français dans le Clash libre');
 });
 
 await test('v5.95 : fréquentation anonyme — une ouverture par jour, rien d’identifiant, « Ne pas me suivre » respecté', async () => {
@@ -2331,8 +2328,8 @@ await test('v5.99 : plumes magiques — offre filtrée, solde lu au serveur, ach
 });
 
 await test('v5.99.2 : une langue d’interface retirée de la liste reste choisie et affichée ; on n’apprend jamais la langue qu’on parle', () => {
-  const w = page('uk'); const d = w.document;
-  assert.ok(Array.from(d.querySelector('#ui').options).some(o => o.value === 'uk' && o.selected));
+  const w = page('ko'); const d = w.document;   // v6.34 : l'ukrainien est retiré ; une langue sans interface retombe sur le français
+  assert.ok(Array.from(d.querySelector('#ui').options).some(o => o.value === 'fr' && o.selected));
   const w2 = page('en'); { const x = w2.document.createElement('button'); x.dataset.a = 'porte-mots'; w2.document.body.appendChild(x); x.click(); x.remove(); }
   assert.ok(!Array.from(w2.document.querySelector('#cible').options).some(o => o.value === 'en'));
   assert.ok(Array.from(w2.document.querySelector('#cible').options).some(o => o.value === 'fr'));
@@ -2891,6 +2888,54 @@ await test('v6.33 : « Ma classe » — l’écran Matières ne montre que les m
   clic('annales'); assert.ok(d.querySelector('[data-a="annale-go"][data-v^="dnb26"]') && !d.querySelector('[data-a="annale-go"][data-v="bac26-philo"]'), 'annales de la classe');
   clic('ma-classe', 'Tle|examens'); assert.ok(d.querySelector('[data-a="examen-go"][data-v="tle-philo"]') && !d.querySelector('[data-a="examen-go"][data-v="brevet"]'), 'Tle : bac, pas de brevet');
   clic('ma-classe', 'Tle|matieres'); assert.ok(carte('philo') && carte('medecine') && !carte('lca'), 'Tle : philo et après le bac');
+});
+await test('v6.34 : SVT et physique-chimie du collège étoffées (4 langues) ; pas de chapitre « Par thème » quasi vide dans une classe', () => {
+  const w = page(), M = w.MATIERES, T = w.MATIERES_LANGUES;
+  for(const [mid, id, n] of [['svt', 'vivant', 16], ['svt', 'corps', 15], ['svt', 'terre', 15], ['svt', 'genetique', 15], ['physique', 'matiere', 16], ['physique', 'elec', 15]]){
+    const c = M.trouver(mid).chapitres.find(x => x.id === id); assert.ok(c.banque.length >= n, id + ' : ' + c.banque.length);
+    for(const L of ['en', 'es', 'de']) assert.strictEqual(T[L].q[mid + '/' + id].length, c.banque.length, L + ' ' + id);
+    for(const x of c.banque){ assert.strictEqual(new Set([x[1], ...x[2].map(f => f[0])]).size, 4, x[0]); for(const f of x[2]) assert.ok(w.JUGE.juger(f[1]).ok, f[1]); }
+  }
+  const elec = M.trouver('physique').chapitres.find(x => x.id === 'elec');
+  assert.ok(!M.serie('physique', 'elec', '5e', 40, 3, 'taquin').some(q => /loi d’Ohm|U = R|kilowattheure|P = U/.test(q.enonce + q.bon)), 'pas de loi d’Ohm ni de puissance en 5e');
+  for(const mid of ['svt', 'physique', 'histoire', 'francais']) for(const n of ['6e', '5e', '4e', '3e']) for(const c of M.chapitres(mid, n).filter(c => c.theme && c.nivQ)) assert.ok(M.indicesNiveau(c, n).length >= 4, mid + '/' + c.id + ' en ' + n);
+  assert.ok(!M.chapitres('svt', '6e').some(c => c.id === 'th-cellule-adn'), 'pas de « Cellule, ADN et génétique » en 6e'); assert.ok(M.chapitres('svt', '3e').some(c => c.id === 'th-cellule-adn'), 'mais bien en 3e');
+});
+await test('v6.34 : package-lock.json porte la même version que package.json', () => {
+  const pk = JSON.parse(lire('package.json')), lk = JSON.parse(lire('package-lock.json'));
+  assert.strictEqual(lk.version, pk.version, 'package-lock.json : version'); assert.strictEqual(lk.packages[''].version, pk.version, 'package-lock.json : packages[""]');
+  assert.deepStrictEqual(lk.packages[''].devDependencies, pk.devDependencies, 'mêmes dépendances');
+});
+await test('v6.35 : aide aux devoirs — méthode, questions et relecture par l’IA sans faire le devoir ; plumes, photo, repli sans serveur', async () => {
+  // Les règles « jamais la réponse, aucune blague » sont fixées côté serveur, pas dans l'appli.
+  const php = lire('serveur-php/devoirs.php');
+  assert.match(php, /Tu ne fais JAMAIS le devoir/); assert.match(php, /Aucune blague, aucune vanne/); assert.match(php, /ami_credits_garde/); assert.match(php, /ami_credits_rembourser_garde/);
+  assert.match(php, /<devoir>/); assert.ok(!/anthropic_cle/.test(lire('js/mod-devoirs.js')), 'aucune clé côté appli');
+  // Sans serveur : la carte est là, et l'écran donne une méthode par matière, sans IA.
+  let w = page(), d = w.document;
+  { const x = d.createElement('button'); x.dataset.a = 'matieres'; d.body.appendChild(x); x.click(); x.remove(); }
+  assert.ok(d.querySelector('[data-a="devoirs"]'), 'carte Aide aux devoirs');
+  bouton(w, 'devoirs'); assert.ok(!d.getElementById('dev-enonce')); const sel = d.getElementById('dev-matiere'); sel.value = 'maths'; sel.dispatchEvent(new w.Event('change'));
+  assert.match(d.getElementById('dev-methode').textContent, /ordre de grandeur/);
+  // Avec serveur.
+  const envois = []; let statut = 200;
+  w = page('fr', { MODE_PAYANT:false, SERVEUR:'https://srv.example/' }, serveurFaux({ 'devoirs.php':c => { envois.push(c); if(statut !== 200) return { statut, d:{ erreur:'plumes' } };
+    return { statut:200, d:c.mode === 'aide' ? { consigne:'On te demande de résoudre une équation du premier degré.', lecon:['Résoudre une équation : isoler x'], etapes:['Repère les termes en x', 'Regroupe-les du même côté'], questions:['Que fais-tu du +3 ?'], verifier:['Remplace x par ta solution'] }
+      : c.mode === 'suite' ? { reponse:'Pense à ce qui annule +3.' } : { bien:['Bonne première étape'], a_revoir:['La ligne 2 : regarde le signe'], pistes:['Reprends la règle du changement de membre'] } }; } }));
+  d = w.document; bouton(w, 'devoirs');
+  assert.match(d.querySelector('main').textContent, /ne fait pas ton devoir/); assert.ok(d.getElementById('dev-enonce') && d.getElementById('dev-fichier'), 'coller ou envoyer une photo / un PDF');
+  d.getElementById('dev-matiere').value = 'maths'; d.getElementById('dev-enonce').value = 'Résoudre 2x + 3 = 11.'; clic(w, '[data-a="devoirs-aide"]'); await attendre(20);
+  const t = d.getElementById('dev-resultat').textContent;
+  assert.ok(/Ce qu’on te demande/.test(t) && /Regroupe-les/.test(t) && /Que fais-tu du \+3/.test(t) && /Remplace x/.test(t), t);
+  assert.strictEqual(envois[0].mode, 'aide'); assert.strictEqual(envois[0].matiere, 'maths'); assert.strictEqual(envois[0].enonce, 'Résoudre 2x + 3 = 11.');
+  d.getElementById('dev-question').value = 'Je bloque sur le 3'; clic(w, '[data-a="devoirs-suite"]'); await attendre(20);
+  assert.match(d.getElementById('dev-suite').textContent, /annule \+3/); assert.strictEqual(envois[1].mode, 'suite'); assert.match(envois[1].consignes_precedentes, /Regroupe-les/);
+  d.getElementById('dev-travail').value = '2x = 11 + 3 donc x = 7'; clic(w, '[data-a="devoirs-relire"]'); await attendre(20);
+  assert.match(d.getElementById('dev-relu').textContent, /La ligne 2/); assert.strictEqual(envois[2].mode, 'relire');
+  // Écran sérieux : aucune vanne de Plumo affichée.
+  assert.ok(!d.querySelector('main .vanne, main .bulle-vanne'), 'pas de vanne');
+  statut = 402; clic(w, '[data-a="devoirs-aide"]'); await attendre(20); assert.match(d.getElementById('dev-resultat').textContent, /Plus de plumes/);
+  d.getElementById('dev-enonce').value = ''; clic(w, '[data-a="devoirs-aide"]'); assert.match(d.getElementById('dev-resultat').textContent, /Colle l’énoncé/);
 });
 console.log(`\n${ok} réussi(s), ${ko} échoué(s)`);
 process.exit(ko ? 1 : 0);

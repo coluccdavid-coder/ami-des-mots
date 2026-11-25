@@ -43,7 +43,10 @@
   }
   function trouver(id){ return LISTE.find(m => m.id === id) || null; }
   // Chapitres d'un niveau (on garde ceux des niveaux d'avant quand le chapitre continue).
-  function chapitres(id, niveau){ const m = trouver(id); return m ? m.chapitres.filter(c => c.niv.includes(niveau)) : []; }
+  // v6.34 : un chapitre « Par thème » n'apparaît dans une classe que s'il y a au moins 4 questions de cette classe
+  // (sinon « Cellule, ADN et génétique » s'affichait en 6e pour 2 questions). Les questions restent dans leurs chapitres d'origine.
+  const MIN_THEME = 4;
+  function chapitres(id, niveau){ const m = trouver(id); return m ? m.chapitres.filter(c => c.niv.includes(niveau) && !(c.theme && c.nivQ && indicesNiveau(c, niveau).length < MIN_THEME)) : []; }
   function niveauxDe(id){ const m = trouver(id); return m ? NIVEAUX.filter(n => m.chapitres.some(c => c.niv.includes(n))) : []; }
   // Une série : un chapitre précis, ou un mélange de tout le niveau (« melange »), ou l'examen blanc (« examen »).
   // v6.29 : dans un chapitre dont les questions ont une classe précise (nivQ), seulement celles de la classe choisie.
