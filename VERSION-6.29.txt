@@ -1,0 +1,21 @@
+Ami des mots — v6.29.0
+
+Suite de l'audit du collège (docs/AUDIT-COLLEGE-2026.md) : 0 notion absente au lieu de 13.
+
+1. Questions hors niveau corrigées
+   - Les chapitres « Par thème » ne proposent plus que les questions de la classe choisie (niveau gardé par question : nivQ).
+   - Classe précise pour quelques questions de chapitres larges (js/mat-niveaux.js).
+   - Plus d'ADN, d'allèles, de pH ni de radioactivité en 6e et en 5e ; la 3e garde la génétique.
+2. EMC : un cours par classe, programme 2024 (6e démocratie au collège, 5e égalité-fraternité-solidarité,
+   4e droits et libertés, 3e faire vivre la démocratie : élections, sondages, infox, IA, engagement). fr/en/es/de.
+3. Notions ajoutées :
+   - histoire 4e : les femmes au XIXe siècle ;
+   - SVT 6e : jour et nuit, saisons, volcans, séismes ;
+   - sciences 6e : premiers algorithmes ;
+   - physique-chimie 4e-3e : sécurité électrique, signaux et information ;
+   - technologie : numérique et IA, énergie et fabrication, projet et validation ;
+   - français : types et formes de phrases, subjonctif/impératif/conditionnel/temps composés,
+     orthographe rectifiée de 1990, « Dire l'amour » (4e) ;
+   - conditionnel ajouté au générateur de conjugaison de 5e.
+Nouveaux fichiers : js/mat-cours-emc.js, js/mat-cpl-sciences.js, js/mat-cpl-lettres.js, js/mat-niveaux.js.
+Tests : 2 nouveaux tests v6.29. npm run verifier → 180 réussi(s), 0 échoué(s).

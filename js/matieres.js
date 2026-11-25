@@ -46,6 +46,12 @@
   function chapitres(id, niveau){ const m = trouver(id); return m ? m.chapitres.filter(c => c.niv.includes(niveau)) : []; }
   function niveauxDe(id){ const m = trouver(id); return m ? NIVEAUX.filter(n => m.chapitres.some(c => c.niv.includes(n))) : []; }
   // Une série : un chapitre précis, ou un mélange de tout le niveau (« melange »), ou l'examen blanc (« examen »).
+  // v6.29 : dans un chapitre dont les questions ont une classe précise (nivQ), seulement celles de la classe choisie.
+  function indicesNiveau(ch, niveau){
+    if(!ch.nivQ || !niveau) return null;
+    const ok = []; ch.nivQ.forEach((nv, i) => { if(nv.includes(niveau)) ok.push(i); });
+    return ok;
+  }
   function serie(id, cible, niveau, n, graine, ton){
     const m = trouver(id); if(!m) return [];
     const r = hasard(graine || Math.floor(Math.random() * 1e9));
@@ -62,7 +68,7 @@
       // Dans une autre langue : seulement ce qui est traduit (générateur et/ou banque), sinon tout en français.
       const tr = traduit(m, ch), genOk = ch.gen && (!tr || genTraduit(ch)), bqOk = ch.banque && ch.banque.length && (!tr || banqueTraduite(m, ch));
       if(genOk && (!bqOk || r() < .6)) x = ch.gen(r, niveau, tr ? LANGUE() : 'fr');
-      else if(bqOk){ idx = Math.floor(r() * ch.banque.length); x = ch.banque[idx]; }
+      else if(bqOk){ const pool = indicesNiveau(ch, niveau); if(pool && !pool.length) continue; idx = pool ? pool[Math.floor(r() * pool.length)] : Math.floor(r() * ch.banque.length); x = ch.banque[idx]; }
       if(!x) continue;
       const q = enQuestion(m, ch, x, ton, r, idx); if(vus.has(q.enonce + '|' + q.bon) || !q.faux.length) continue;
       vus.add(q.enonce + '|' + q.bon); out.push(q);
@@ -70,5 +76,5 @@
     return out;
   }
   function ajouter(m){ if(!trouver(m.id)) LISTE.push(m); }
-  window.MATIERES = { NIVEAUX, LISTE, ajouter, trouver, chapitres, niveauxDe, serie, hasard, melanger, langue:LANGUE, langueDe, traduit, nom, nomChap, nomDom };
+  window.MATIERES = { NIVEAUX, LISTE, ajouter, trouver, chapitres, indicesNiveau, niveauxDe, serie, hasard, melanger, langue:LANGUE, langueDe, traduit, nom, nomChap, nomDom };
 })();
