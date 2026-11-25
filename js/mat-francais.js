@@ -66,9 +66,24 @@
     'passé simple':'Past historic: -ai, -as, -a, -âmes, -âtes, -èrent for -er verbs; -is / -us / -ins for the others.',
     'passé composé':'Perfect (passé composé): être or avoir in the present + past participle (agreeing with the subject after “être”).',
     'présent':'Present: watch the endings for each person (je -e/-s, tu -s, il -e/-t, nous -ons, vous -ez, ils -ent).' };
+  // v6.20 : et en espagnol.
+  const VAN_CONJ_ES = {
+    personne:['¿«{f}»? Tiempo correcto, persona equivocada: el verbo hablaba con otra persona. 📞', '¿«{f}»? La terminación se equivocó de pronombre. Todavía busca su sitio. 🪑', '¿«{f}»? Todo bien salvo el final. Como ponerse los zapatos del vecino. 👟'],
+    futcond:['¿«{f}»? Futuro o condicional… «-rai» es seguro; «-rais» es quizá. Dudaste en el peor momento. 🤷', '¿«{f}»? Una «s» de más o de menos, y el futuro se convierte en un sueño. O al revés. 💭'],
+    temps:['¿«{f}»? Persona correcta, tiempo equivocado: tu verbo cogió el tren que no era. 🚆', '¿«{f}»? El verbo viajó en el tiempo sin avisar. Marty McFly tiene envidia. ⏳', '¿«{f}»? Ese tiempo existe, pero no es el que te pedían. 🕰️'],
+    invente:['¿«{f}»? Ese verbo se acaba de inventar. La Académie française no se ha enterado. 📚', '¿«{f}»? Buen intento. Pero este verbo es irregular: hace lo que quiere, y no eso. 😤']
+  };
+  const TEMPS_ES = { 'présent':'presente (présent)', 'imparfait':'imperfecto (imparfait)', 'futur':'futuro (futur)', 'conditionnel':'condicional (conditionnel)', 'passé simple':'pretérito perfecto simple (passé simple)', 'passé composé':'pretérito perfecto compuesto (passé composé)' };
+  const REGLE_ES = {
+    'futur':'Futuro: infinitivo + -ai, -as, -a, -ons, -ez, -ont (irregulares: je serai, j’irai, je ferai, je viendrai…).',
+    'conditionnel':'Condicional: raíz del futuro + terminaciones del imperfecto (-ais, -ais, -ait, -ions, -iez, -aient).',
+    'imparfait':'Imperfecto: raíz de «nous» en presente + -ais, -ais, -ait, -ions, -iez, -aient.',
+    'passé simple':'Pretérito perfecto simple: -ai, -as, -a, -âmes, -âtes, -èrent para los verbos en -er; -is / -us / -ins para los demás.',
+    'passé composé':'Pretérito perfecto compuesto: être o avoir en presente + participio (concordado con el sujeto después de «être»).',
+    'présent':'Presente: cuidado con las terminaciones según la persona (je -e/-s, tu -s, il -e/-t, nous -ons, vous -ez, ils -ent).' };
   const tire = (l, r) => l[Math.floor(r() * l.length)];
   function genConjugaison(r, niveau, langue){
-    const en = langue === 'en', VAN = en ? VAN_CONJ_EN : VAN_CONJ;
+    const en = langue === 'en', es = langue === 'es', VAN = en ? VAN_CONJ_EN : es ? VAN_CONJ_ES : VAN_CONJ;
     const verbes = Object.keys(IRR).concat(ER, IR), v = verbes[Math.floor(r() * verbes.length)];
     const temps = tire(tempsDe(niveau), r);
     let i = Math.floor(r() * 6);
@@ -83,6 +98,7 @@
     if(IRR[v] && temps === 'passé simple' && !['être', 'avoir', 'aller', 'voir', 'savoir'].includes(v)){ const reg = v.replace(/(re|ir|oir)$/, '') + ['ai', 'as', 'a', 'âmes', 'âtes', 'èrent'][i]; ajoute(pron(i, reg) + reg, 'invente'); }
     for(const t2 of melanger(['présent', 'imparfait', 'futur', 'passé simple', 'passé composé'].filter(x => x !== temps), r)){ if(faux.length >= 3) break;
       if(t2 === 'passé composé' && tableau(v).aux === 'être' && i !== 2 && i !== 5) continue; const f = forme(v, t2, i); ajoute(pron(i, f) + f, 'temps'); }
+    if(es) return { consigne:'Conjugación', lang:'es', enonce:'Conjuga «' + v + '» en ' + TEMPS_ES[temps] + ' con «' + (i === 0 ? 'je' : P[i]) + '».', bon, faux:faux.slice(0, 3), regle:REGLE_ES[temps] || REGLE_ES['présent'] };
     if(en) return { consigne:'Conjugation', lang:'en', enonce:'Conjugate “' + v + '” in ' + TEMPS_EN[temps] + ' with “' + (i === 0 ? 'je' : P[i]) + '”.', bon, faux:faux.slice(0, 3), regle:REGLE_EN[temps] || REGLE_EN['présent'] };
     return { consigne:'Conjugaison', enonce:'Conjugue « ' + v + ' » ' + (/^[aeiou]/.test(temps) ? 'à l’' : 'au ') + temps + ' avec « ' + (i === 0 ? 'je' : P[i]) + ' ».', bon, faux:faux.slice(0, 3),
       regle:temps === 'futur' ? 'Futur : infinitif + -ai, -as, -a, -ons, -ez, -ont (irréguliers : je serai, j’irai, je ferai, je viendrai…).' :
@@ -191,7 +207,7 @@
   ];
   window.MATIERES.ajouter({ id:'francais', nom:'Français', ic:'📝', examens:{ '3e':'Brevet blanc de français', '1re':'Bac de français blanc' },
     chapitres:[
-      { id:'conjugaison', nom:'Conjugaison', dom:'Le verbe', niv:['6e', '5e', '4e', '3e', '2nde'], gen:genConjugaison, genLangues:['en'] },
+      { id:'conjugaison', nom:'Conjugaison', dom:'Le verbe', niv:['6e', '5e', '4e', '3e', '2nde'], gen:genConjugaison, genLangues:['en', 'es'] },
       { id:'homophones', nom:'Homophones (a/à, et/est…)', dom:'Orthographe', niv:['6e', '5e', '4e', '3e'], banque:H },
       { id:'accords', nom:'Accord du participe passé', dom:'Orthographe', niv:['5e', '4e', '3e', '2nde'], banque:ACC },
       { id:'nature', nom:'Nature des mots', dom:'Grammaire', niv:['6e', '5e', '4e', '3e'], banque:NAT },

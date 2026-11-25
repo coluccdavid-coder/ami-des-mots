@@ -41,7 +41,7 @@
     { id:'th-renaissance', nom:'Renaissance, Réformes, absolutisme et Lumières', refs:[['moyen-age', [1, 3]], ['r-h5', [3, 4]], ['r-h2', [0, 1, 2]]] },
     { id:'th-revolution', nom:'La Révolution française et l’Empire', refs:[['revolution', [0, 1, 2]], ['r-h4', [1]], ['lycee', [0]]] },
     { id:'th-xixe', nom:'Le XIXe siècle et la IIIe République', refs:[['revolution', [3, 4, 5]], ['r-h4', [3, 4]], ['r-h1', [0]]] },
-    { id:'th-1gm', nom:'La Première Guerre mondiale (1914-1918)', refs:[['xxe', [0]], ['r-h3', [0, 1]]] },
+    { id:'th-1gm', nom:'La Première Guerre mondiale (1914-1918)', refs:[['xxe', [0]], ['r-h3', [0, 1]], ['pgm-cours']] },
     { id:'th-entre-deux', nom:'L’entre-deux-guerres : crise, totalitarismes, Front populaire', refs:[['r-ht', [0]], ['r-h3', [2]], ['lycee', [1]]] },
     { id:'th-2gm', nom:'La Seconde Guerre mondiale (1939-1945) : toutes les questions', refs:[['xxe', [1, 7]], ['seconde-guerre'], ['sgm-cours']] },
     { id:'th-guerre-froide', nom:'Guerre froide et décolonisation', refs:[['xxe', [4, 5]], ['lycee', [3]], ['r-ht', [1]]] },

@@ -1,0 +1,23 @@
+Ami des mots — version 6.22
+
+Accueil repensé (l'appli n'est plus seulement un jeu de vocabulaire) :
+- « Je parle / J'apprends » remplacés par « 🌐 Ma langue » et « 📚 Mon programme »
+  (France 6e → bac ou Angleterre Year 6 → A level), directement sur l'accueil.
+- La langue étrangère apprise se choisit maintenant dans la porte « 🗣️ Langues »
+  (anciennement « Mots & anglais »), qui affiche la langue choisie.
+- Nouvelle phrase d'accroche : « Toutes les matières, de la 6e au bac, avec un
+  hibou qui te vanne » (6 langues).
+
+Retours d'un testeur :
+- « Le ton de Prof Pi, c'est quoi ? » : une phrase explique maintenant les tons
+  sous les boutons (maths et matières), en 6 langues.
+- Le professeur IA (anglais ET maths) a sa propre porte sur l'accueil ; on ne le
+  trouvait qu'en ouvrant « Mots & anglais ».
+
+Plus de questions dans les cours :
+- Nouveau chapitre « Cours de 3e : la Première Guerre mondiale, une guerre
+  totale » (15 questions, FR/EN/ES/DE), rangé aussi dans le thème 14-18, qui
+  passe de 3 à 18 questions.
+
+Vérification : npm run verifier → 175 tests réussis, 0 échec ; captures dans Chrome
+sans erreur (accueil, histoire 3e avec « Par thème », porte Langues).
