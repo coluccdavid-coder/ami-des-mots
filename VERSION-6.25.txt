@@ -1,0 +1,11 @@
+Ami des mots — v6.25 : cours de l'année en français, histoire, géographie et EMC (collège)
+
+Nouveaux chapitres « Cours de l'année », au niveau de la classe, traduits (anglais, espagnol ; allemand pour l'histoire-géo-EMC) :
+- Français : 6e, 5e (programme 2026), 4e, 3e — 15 questions chacun (grammaire, orthographe, conjugaison, lexique, œuvres).
+- Histoire : 6e, 5e, 4e, 3e — 12 questions chacun (de la Préhistoire à la Ve République).
+- Géographie : 6e, 5e, 4e, 3e — 12 questions chacun.
+- EMC : cycle 3 (6e-5e) et cycle 4 (4e-3e) — 12 questions chacun.
+Les questions d'histoire sont aussi rangées dans les chapitres « Par thème » (une période ou une guerre = un chapitre),
+la géographie et l'EMC dans leurs thèmes.
+
+Tests : npm run verifier → 176 réussis, 0 échoué.
