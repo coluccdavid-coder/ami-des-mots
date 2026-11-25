@@ -1,0 +1,20 @@
+Ami des mots — version 6.19
+
+Chaque sujet à sa place :
+- Histoire-géo & EMC : nouvelle rubrique « Par thème », en tête de la matière.
+  Une guerre = un chapitre : Première Guerre mondiale, Seconde Guerre mondiale
+  (toutes les questions réunies : xxe, cours de 3e, chapitre 1939-1945),
+  guerre froide et décolonisation. Et aussi : Antiquité, Moyen Âge,
+  Renaissance-Lumières, Révolution et Empire, XIXe siècle, entre-deux-guerres,
+  France depuis 1945, Europe-ONU-mondialisation, géographie, EMC.
+- SVT (6 thèmes) et physique-chimie (7 thèmes) : les questions des chapitres
+  de révision sont aussi rangées par sujet (cellule et ADN, immunité, corps
+  humain, Terre ; matière, chimie, pH, électricité, mouvement, énergie, ondes).
+- Rien n'est supprimé : les questions restent aussi dans leur chapitre d'origine,
+  et l'entraînement mélangé ne les compte pas deux fois. Les doublons sont écartés.
+- Les thèmes sont traduits automatiquement en anglais et en espagnol.
+
+Espagnol : la matière Allemand (37 questions) est expliquée en espagnol.
+
+Nouveaux fichiers : js/themes.js, js/mat-trad-es-allemand.js. Nouveau test v6.19.
+Vérification : npm run verifier → 175 tests réussis, 0 échec.

@@ -21,7 +21,7 @@ function page(langue, config, avant){
   w.TextEncoder = TextEncoder; w.TextDecoder = TextDecoder;
   w.__fetch = []; w.fetch = async (u) => { w.__fetch.push(String(u)); return { ok:true, json:async () => (w.__reponse || { actif:false }) }; };
   if(avant) avant(w);
-  for(const f of ['js/donnees.js', 'js/voix.js', 'js/phrases-enregistrees.js', 'js/textes.js', 'js/textes-plus.js', 'js/textes-ecrans.js', 'js/articulation.js', 'js/genres.js', 'js/confusions.js', 'js/vannes.js', 'js/pieges.js', 'js/anglais.js', 'js/clash.js', 'js/histoires.js', 'js/blagues-en.js', 'js/parcours.js', 'js/rigolade.js', 'js/clash-plus.js', 'js/salon.js', 'js/juge.js', 'js/vannes-libres.js', 'js/maths-en.js', 'js/maths-es.js', 'js/maths-de.js', 'js/maths-it.js', 'js/maths-pt.js', 'js/maths.js', 'js/sciences-en.js', 'js/sciences-es.js', 'js/sciences-de.js', 'js/sciences-it.js', 'js/sciences-pt.js', 'js/sciences.js', 'js/trash-talk.js', 'js/vannes-arrogantes.js', 'js/bande-images.js', 'js/bande-plumo.js', 'js/achats.js', 'js/rappels.js', 'js/epreuves.js', 'js/epreuves-spe.js', 'js/epreuves-plus.js', 'js/epreuves-oraux.js', 'js/epreuves-pro.js', 'js/matieres.js', 'js/mat-trad-es.js', 'js/mat-trad-en.js', 'js/mat-trad-en-sciences.js', 'js/mat-trad-en-sup.js', 'js/mat-trad-en-langues.js', 'js/mat-trad-en-francais.js', 'js/mat-trad-communs.js', 'js/mat-francais.js', 'js/mat-histoire.js', 'js/mat-histoire-sgm.js', 'js/mat-svt-pc.js', 'js/mat-sup.js', 'js/mat-anglais.js', 'js/mat-renfort.js', 'js/mat-langues.js', 'js/mat-specialites.js', 'js/mat-anglais-sup.js', 'js/mat-sup-droit.js', 'js/mat-sup-medecine.js', 'js/mat-sup-astro.js', 'js/mat-philo-notions.js', 'js/vannes-cash.js', 'js/vannes-ironie.js', 'js/vannes-mots.js', 'js/offre.js', 'js/jeu.js', 'js/mod-base.js', 'js/mod-ligue.js', 'js/mod-saisons.js', 'js/mod-veille.js', 'js/mod-oral.js', 'js/mod-classe.js', 'js/mod-parrainage.js', 'js/mod-ia.js', 'js/gb-moteur.js', 'js/gb-maths.js', 'js/gb-english.js', 'js/gb-sciences.js', 'js/gb-humanites.js', 'js/gb-options.js', 'js/gb-plus.js', 'js/gb-programme.js', 'js/gb-programme-plus.js', 'js/gb-examens.js', 'js/gb-sats-reels.js', 'js/gb-options2.js', 'js/nasa.js', 'js/mat-trad-en-nasa.js', 'js/mod-angleterre.js']) w.eval(lire(f));
+  for(const f of ['js/donnees.js', 'js/voix.js', 'js/phrases-enregistrees.js', 'js/textes.js', 'js/textes-plus.js', 'js/textes-ecrans.js', 'js/articulation.js', 'js/genres.js', 'js/confusions.js', 'js/vannes.js', 'js/pieges.js', 'js/anglais.js', 'js/clash.js', 'js/histoires.js', 'js/blagues-en.js', 'js/parcours.js', 'js/rigolade.js', 'js/clash-plus.js', 'js/salon.js', 'js/juge.js', 'js/vannes-libres.js', 'js/maths-en.js', 'js/maths-es.js', 'js/maths-de.js', 'js/maths-it.js', 'js/maths-pt.js', 'js/maths.js', 'js/sciences-en.js', 'js/sciences-es.js', 'js/sciences-de.js', 'js/sciences-it.js', 'js/sciences-pt.js', 'js/sciences.js', 'js/trash-talk.js', 'js/vannes-arrogantes.js', 'js/bande-images.js', 'js/bande-plumo.js', 'js/achats.js', 'js/rappels.js', 'js/epreuves.js', 'js/epreuves-spe.js', 'js/epreuves-plus.js', 'js/epreuves-oraux.js', 'js/epreuves-pro.js', 'js/matieres.js', 'js/mat-trad-es.js', 'js/mat-trad-en.js', 'js/mat-trad-en-sciences.js', 'js/mat-trad-en-sup.js', 'js/mat-trad-en-langues.js', 'js/mat-trad-en-francais.js', 'js/mat-trad-communs.js', 'js/mat-trad-es-sciences.js', 'js/mat-trad-es-sup.js', 'js/mat-trad-es-specialites.js', 'js/mat-trad-es-allemand.js', 'js/mat-francais.js', 'js/mat-histoire.js', 'js/mat-histoire-sgm.js', 'js/mat-svt-pc.js', 'js/mat-sup.js', 'js/mat-anglais.js', 'js/mat-renfort.js', 'js/mat-langues.js', 'js/mat-specialites.js', 'js/mat-anglais-sup.js', 'js/mat-sup-droit.js', 'js/mat-sup-medecine.js', 'js/mat-sup-astro.js', 'js/mat-philo-notions.js', 'js/vannes-cash.js', 'js/vannes-ironie.js', 'js/vannes-mots.js', 'js/offre.js', 'js/jeu.js', 'js/mod-base.js', 'js/mod-ligue.js', 'js/mod-saisons.js', 'js/mod-veille.js', 'js/mod-oral.js', 'js/mod-classe.js', 'js/mod-parrainage.js', 'js/mod-ia.js', 'js/gb-moteur.js', 'js/gb-maths.js', 'js/gb-english.js', 'js/gb-sciences.js', 'js/gb-humanites.js', 'js/gb-options.js', 'js/gb-plus.js', 'js/gb-programme.js', 'js/gb-programme-plus.js', 'js/gb-examens.js', 'js/gb-sats-reels.js', 'js/gb-options2.js', 'js/nasa.js', 'js/mat-trad-en-nasa.js', 'js/mat-trad-es-nasa.js', 'js/themes.js', 'js/mod-angleterre.js']) w.eval(lire(f));
   return w;
 }
 // Certificats d'abonnement comme les signe le serveur (même format que serveur/functions/ami-abonnement).
@@ -2658,6 +2658,8 @@ await test('v6.7 : matières du programme français traduites — même nombre d
     const FR = new RegExp('(?<![\\p{L}’])(' + BASE.filter(m => !OK[L].includes(m)).join('|') + ')(?![\\p{L}’])', 'iu');
     // Dans la matière « espagnol », les réponses sont en espagnol : « que », « le » y sont des mots espagnols.
     const FR_ES = new RegExp('(?<![\\p{L}’])(' + BASE.filter(m => !OK[L].includes(m) && !['que', 'le'].includes(m)).join('|') + ')(?![\\p{L}’])', 'iu');
+    // Dans la matière « allemand », « du » est le pronom allemand (du heißt).
+    const FR_DE = new RegExp('(?<![\\p{L}’])(' + BASE.filter(m => !OK[L].includes(m) && m !== 'du').join('|') + ')(?![\\p{L}’])', 'iu');
     let n = 0;
     for(const [cle, liste] of Object.entries(T.q)){
       const [mid, cid] = cle.split('/'), m = M.trouver(mid), ch = m && m.chapitres.find(c => c.id === cid);
@@ -2669,7 +2671,7 @@ await test('v6.7 : matières du programme français traduites — même nombre d
           // en dehors de ces citations, l'explication et les vannes ne doivent contenir aucun mot français.
           const horsCitations = t => t.replace(/“[^”]*”/g, ' ').replace(/«[^»]*»/g, ' ').replace(/\([^)]*\)/g, ' ');
           [x[3]].concat(x[2].map(p => p[1])).forEach(t => { const mm = horsCitations(t).match(FR); assert.ok(!mm, L + ' ' + cle + ' #' + i + ' : « ' + (mm && mm[0]) + ' » dans ' + t); });
-        } else { const tout = [x[0], x[1], x[3]].concat(x[2].flat()).join(' | '), mm = tout.match(mid === 'lespagnol' ? FR_ES : FR); assert.ok(!mm, L + ' ' + cle + ' #' + i + ' : « ' + (mm && mm[0]) + ' » dans ' + tout.slice(0, 160)); }
+        } else { const tout = [x[0], x[1], x[3]].concat(x[2].flat()).join(' | '), mm = tout.match(mid === 'lespagnol' ? FR_ES : mid === 'lallemand' ? FR_DE : FR); assert.ok(!mm, L + ' ' + cle + ' #' + i + ' : « ' + (mm && mm[0]) + ' » dans ' + tout.slice(0, 160)); }
         x[2].forEach(p => { const r = w.JUGE.juger(L === 'de' ? p[1].replace(/\bdie\b/gi, 'the') : p[1]); assert.ok(r.ok, L + ' ' + cle + ' vanne refusée : ' + p[1] + ' ' + r.raisons); }); n++; });
       // La série d'un chapitre traduit sort dans la langue, sans question française générée.
       for(const ton of ['taquin', 'doux', 'sanspitie']) M.serie(mid, cid, ch.niv[0], 8, 5, ton).forEach(q => assert.strictEqual(q.lang, L, cle));
@@ -2694,6 +2696,12 @@ await test('v6.12-v6.13 : SVT, physique-chimie, philosophie, droit, médecine et
       });
     }
   }
+  // v6.16 : SVT, physique-chimie et philosophie entièrement en espagnol.
+  { const ws = page('es'), Ms = ws.MATIERES; for(const mid of ['svt', 'physique', 'philo', 'droit', 'medecine', 'astro', 'nasa', 'ses', 'hggsp', 'hlp', 'nsi', 'lallemand']) for(const c of Ms.trouver(mid).chapitres) assert.ok(Ms.traduit(Ms.trouver(mid), c), 'es ' + mid + '/' + c.id + ' non traduit');
+    // v6.18 : calculs d'Objectif NASA fabriqués en espagnol (virgule décimale, aucun mot français, vannes validées).
+    for(const cid of ['fusees', 'orbites', 'communications', 'unites', 'survie']) Ms.serie('nasa', cid, 'Tle', 12, 9, 'taquin').forEach(q => { assert.strictEqual(q.lang, 'es', 'nasa/' + cid);
+      const t = q.enonce + ' ' + q.regle + ' ' + q.faux.map(f => f.vanne).join(' '); assert.ok(!/(?<![\p{L}’])(une|est|combien|vitesse|lumière|pour|avec|quel|quelle|sur|dans)(?![\p{L}’])/iu.test(t), t);
+      q.faux.forEach(f => assert.ok(ws.JUGE.juger(f.vanne).ok, f.vanne)); }); }
   // Conjugaison française expliquée en anglais : formes françaises, consigne et vannes en anglais.
   for(const niv of ['6e', '4e', '2nde']) Me.serie('francais', 'conjugaison', niv, 12, 7, 'taquin').forEach(q => { assert.strictEqual(q.lang, 'en');
     assert.ok(/^Conjugate “/.test(q.enonce), q.enonce); q.faux.forEach(f => { assert.ok(!/(?<![\p{L}’])(mauvaise|verbe|temps|bonne)(?![\p{L}’])/iu.test(f.vanne), f.vanne); assert.ok(we.JUGE.juger(f.vanne.replace('{f}', f.en)).ok, f.vanne); }); });
@@ -2703,7 +2711,31 @@ await test('v6.12-v6.13 : SVT, physique-chimie, philosophie, droit, médecine et
       assert.ok(!/(?<![\p{L}’])(une|est|combien|vitesse|lumière|fréquence|débit)(?![\p{L}’])/iu.test(q.enonce + ' ' + q.regle + ' ' + q.faux.map(f => f.vanne).join(' ')), q.enonce);
       q.faux.forEach(f => assert.ok(we.JUGE.juger(f.vanne).ok, f.vanne)); });
     const wf = page(), Mf = wf.MATIERES; Mf.serie(mid, cid, 'Sup', 6, 3, 'taquin').forEach(q => assert.strictEqual(q.lang, 'fr', mid + '/' + cid + ' fr'));
+    { const ws = page('es'); ws.MATIERES.serie(mid, cid, 'Sup', 12, 3, 'taquin').forEach(q => { assert.strictEqual(q.lang, 'es', mid + '/' + cid + ' es');
+      assert.ok(!/(?<![\p{L}’])(une|est|combien|vitesse|lumière|fréquence|débit|pour)(?![\p{L}’])/iu.test(q.enonce + ' ' + q.regle + ' ' + q.faux.map(f => f.vanne).join(' ')), q.enonce); q.faux.forEach(f => assert.ok(ws.JUGE.juger(f.vanne).ok, f.vanne)); }); }
   }
+});
+await test('v6.19 : chaque sujet à sa place — chapitres « Par thème » en histoire (une guerre = un chapitre), traduits en anglais et en espagnol, sans doublon', () => {
+  const w = page(), M = w.MATIERES, h = M.trouver('histoire'), th = h.chapitres.filter(c => c.theme);
+  assert.ok(th.length >= 12, 'thèmes : ' + th.length); assert.ok(h.chapitres[0].theme, 'les thèmes viennent en premier');
+  for(const c of th){ assert.ok(c.banque.length > 0, c.id); const vus = new Set(c.banque.map(x => x[0])); assert.strictEqual(vus.size, c.banque.length, c.id + ' : doublon'); }
+  // Toute question qui parle d'une guerre est rangée dans le chapitre de SA guerre.
+  const guerres = ['th-1gm', 'th-2gm', 'th-guerre-froide'].map(id => th.find(c => c.id === id)), dans = new Set(guerres.flatMap(c => c.banque.map(x => x[0])));
+  const PG = /guerre|Verdun|armistice|Résistance|Shoah|nazi|Pétain|Vichy|Stalingrad|débarquement|Nuremberg/i;
+  for(const c of h.chapitres.filter(c => !c.theme && c.banque)) c.banque.forEach(x => { if(PG.test(x[0]) && !/^Qui lance l’appel du 18 juin 1940 \?$/.test(x[0])) assert.ok(dans.has(x[0]), c.id + ' : « ' + x[0] + ' » n’est dans aucun chapitre de guerre'); });
+  assert.ok(!th.find(c => c.id === 'th-1gm').banque.some(x => /1939|Seconde/.test(x[0])), 'pas de 1939-1945 dans 14-18');
+  // Le mélange ne compte pas les thèmes deux fois.
+  const q = M.serie('histoire', 'melange', '3e', 40, 3, 'taquin'); assert.ok(q.every(x => !/^th-/.test(x.chap)), 'thème dans le mélange');
+  // Traductions automatiques.
+  for(const L of ['en', 'es']){ const wl = page(L === 'en' ? 'en-GB' : L), Ml = wl.MATIERES, hl = Ml.trouver('histoire');
+    for(const c of hl.chapitres.filter(c => c.theme)){ assert.ok(Ml.traduit(hl, c), L + ' ' + c.id + ' non traduit'); assert.ok(Ml.nomChap(hl, c) !== c.nom, L + ' ' + c.id + ' : nom');
+      Ml.serie('histoire', c.id, c.niv[0], 6, 4, 'taquin').forEach(x => assert.strictEqual(x.lang, L, L + ' ' + c.id)); }
+    assert.notStrictEqual(Ml.nomDom(hl, 'Par thème'), 'Par thème'); }
+  // SVT et physique-chimie : chaque question de révision est rangée dans un thème (sauf les doublons exacts de sens).
+  for(const [mid, min] of [['svt', 6], ['physique', 7]]){ const m = M.trouver(mid), t = m.chapitres.filter(c => c.theme); assert.ok(t.length >= min, mid);
+    const dans = new Set(t.flatMap(c => c.banque)); for(const c of m.chapitres.filter(c => /^r-/.test(c.id))) { const hors = c.banque.filter(x => !dans.has(x)); assert.ok(hors.length <= 1, mid + '/' + c.id + ' : ' + hors.map(x => x[0]).join(' / ')); }
+    for(const c of t){ assert.strictEqual(new Set(c.banque.map(x => x[0])).size, c.banque.length, mid + '/' + c.id + ' doublon');
+      for(const L of ['en', 'es']){ const Ml = page(L === 'en' ? 'en-GB' : L).MATIERES; assert.ok(Ml.traduit(Ml.trouver(mid), Ml.trouver(mid).chapitres.find(x => x.id === c.id)), L + ' ' + mid + '/' + c.id); } } }
 });
 console.log(`\n${ok} réussi(s), ${ko} échoué(s)`);
 process.exit(ko ? 1 : 0);
