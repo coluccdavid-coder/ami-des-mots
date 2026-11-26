@@ -93,7 +93,7 @@
   // v6.0 : les nouveautés vivent dans des modules séparés (js/mod-*.js) pour ne plus grossir ce fichier.
   // Un module ajoute des actions (data-a), des cartes dans les écrans, et écoute les réponses ; il passe par AMI_MODULES.api.
   const MODULES = window.AMI_MODULES = Object.assign({ actions:{}, hooks:{ reponse:[], question:[] }, cartes:{ battle:[], matiere:[], parents:[], anglais:[], accueil:[], plus:[] } }, window.AMI_MODULES || {});
-  if(!MODULES.cartes.plus) MODULES.cartes.plus = [];
+  if(!MODULES.cartes.plus) MODULES.cartes.plus = []; if(!MODULES.cartes.maths) MODULES.cartes.maths = [];   // v6.65 : cartes dans le coin maths (contrôles du trimestre)
   if(!MODULES.hooks.question) MODULES.hooks.question = [];
   const cartesModules = zone => (MODULES.cartes[zone] || []).map(f => { try{ return f(base.ui) || ''; }catch(e){ return ''; } }).join('');
   // v5.99.3 : textes des écrans dans la langue de l'interface (js/textes-ecrans.js) ; le français reste le français.
@@ -261,7 +261,7 @@
     tournoi:['tournoi', 'tournoi-go', 'tournoi-go-memes', 'potes', 'potes-go', 'potes-joue', 'potes-revanche', 'potes-trash'], 'defi-pote':['defi-pote', 'defi-pote-go'],
     salon:['salon', 'salon-creer', 'salon-rejoindre', 'salon-public', 'salon-entrer-public'],
     trompe:['trompe'], oreilles:['oreilles'], vraifaux:['vraifaux'], avent:['avent'], betisier:['betisier'], maison:['maison'],
-    maths:['maths', 'maths-chap', 'maths-melange', 'maths-examen', 'maths-defi'], sciences:['sciences', 'sciences-theme', 'matieres', 'matiere', 'matiere-niveau', 'matiere-chap', 'matiere-melange', 'matiere-examen', 'examens', 'examen-go', 'examen-suite', 'annales', 'annale-go', 'annale-suite', 'bac-tle', 'bac-tle-spe', 'bac-tle-go', 'officiel', 'ma-classe', 'matieres-tout'],
+    maths:['maths', 'maths-chap', 'maths-melange', 'maths-examen', 'maths-defi', 'maths-tri', 'maths-tri-entr', 'maths-tri-ctrl'], sciences:['sciences', 'sciences-theme', 'matieres', 'matiere', 'matiere-niveau', 'matiere-chap', 'matiere-melange', 'matiere-examen', 'examens', 'examen-go', 'examen-suite', 'annales', 'annale-go', 'annale-suite', 'bac-tle', 'bac-tle-spe', 'bac-tle-go', 'officiel', 'ma-classe', 'matieres-tout'],
     village3d:['accueil-3d'], motscity:[]
   };
   const COIN_DE = {}; for(const c in COINS) for(const a of COINS[c]) COIN_DE[a] = c;
@@ -3524,7 +3524,7 @@
       TXT('<p class="ton-prof">Ton de Prof Pi : ') + TONS_PROF.map(([k, l]) => '<button class="petit-bouton' + (k === e.ton ? ' actif' : '') + '" data-a="maths-ton" data-v="' + k + '" aria-pressed="' + (k === e.ton) + '">' + TXT(l) + '</button>').join(' ') + '</p>' + tonAide() +
       TXT('<div class="actions serrees"><button class="moyen plein" data-a="maths-melange">🔁 Entraînement mélangé</button>') +
         (niv.examen && M.EXAMENS[niv.examen] ? '<button class="moyen" data-a="maths-examen">📝 ' + esc(M.tr.examen(niv.examen)) + (e.examens[e.niveau] != null ? ' (' + window.MATHS.nb(e.examens[e.niveau], 1) + '/20)' : '') + '</button>' : '') +
-        TXT('<button class="moyen" data-a="maths-defi">🔗 Défier un pote</button></div>') +
+        TXT('<button class="moyen" data-a="maths-defi">🔗 Défier un pote</button></div>') + cartesModules('maths') +
       // v5.75 : les chapitres rangés par domaine, en blocs côte à côte (plus de longue colonne à moitié vide).
       '<div class="domaines">' + doms.map(d => '<section class="domaine"><h3>' + esc(M.tr.domaine(d.d)) + ' <small>' + d.l.length + '</small></h3><div class="liste-chap">' + d.l.map(c => M.disponible(c[0])
         ? '<button class="chap" data-a="maths-chap" data-v="' + esc(c[0]) + '"><span>' + esc(M.tr.chap(c)) + '</span><em>' + (etoiles(c[0]) || '▶ ' + SERIE_N) + '</em></button>'
