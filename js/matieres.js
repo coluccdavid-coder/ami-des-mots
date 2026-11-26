@@ -87,7 +87,7 @@
     const T = [[], [], []], tiers = (l, k) => l.slice(Math.round(k * l.length / 3), Math.round((k + 1) * l.length / 3));
     const couper = c => { const pool = indicesNiveau(c, niveau) || c.banque.map((_, i) => i); [0, 1, 2].forEach(k => { const idx = tiers(pool, k); if(idx.length) T[k].push({ ch:c.id, idx }); }); };
     if(autres.length >= 3) [0, 1, 2].forEach(k => tiers(autres, k).forEach(c => T[k].push({ ch:c.id, idx:null })));
-    else autres.forEach(c => c.banque && c.banque.length && !c.gen ? couper(c) : T[autres.indexOf(c) % 3].push({ ch:c.id, idx:null }));
+    else autres.forEach(c => c.banque && c.banque.length ? couper(c) : T[autres.indexOf(c) % 3].push({ ch:c.id, idx:null }));   // v6.69 : un chapitre à banque est coupé même s'il a aussi un générateur
     annee.forEach(couper);
     return T.every(t => t.length) ? T : null;
   }

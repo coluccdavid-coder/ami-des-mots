@@ -11,7 +11,7 @@
     const m = M.trouver(mid); if(!m) return;
     const nouveaux = [];
     for(const t of themes){
-      // v6.64 / v6.67 : les questions ajoutées aux révisions SVT et physique du lycée (indices 10 à 19) sont rangées dans leurs thèmes.
+      // v6.64 / v6.67 / v6.68 : les questions ajoutées au lycée (SVT, physique, histoire-géo) (indices 10 à 19) sont rangées dans leurs thèmes.
       // v6.58 : une même question (même énoncé) n'entre qu'une fois dans un thème, même si un cours de l'année la reprend.
       const parts = [], vus = new Set();
       for(const [cid, idx] of t.refs){ const ch = m.chapitres.find(c => c.id === cid && c.banque); if(!ch) continue;
@@ -40,18 +40,18 @@
 
   // ───── Histoire-géographie & EMC ─────
   ajouterThemes('histoire', 'Par thème', [
-    { id:'th-antiquite', nom:'L’Antiquité et les premiers humains', refs:[['antiquite'], ['r-h6', [0, 2, 3, 4]], ['cours-h6'], ['cpl-h6-hebreux']] },
+    { id:'th-antiquite', nom:'L’Antiquité et les premiers humains', refs:[['antiquite'], ['r-h6', [0, 2, 3, 4]], ['cours-h6'], ['cpl-h6-hebreux'], ['cours-hg2', [12, 13]]] },
     { id:'th-moyen-age', nom:'Le Moyen Âge', refs:[['moyen-age', [0, 2, 4, 5, 6, 7, 8, 9, 10, 11, 12]], ['r-h5', [1]], ['cours-h5', [0, 1, 2, 3, 4, 5, 6]], ['cpl-h5-capetiens']] },
-    { id:'th-renaissance', nom:'Renaissance, Réformes, absolutisme et Lumières', refs:[['moyen-age', [1, 3]], ['r-h5', [3, 4]], ['r-h2', [0, 1, 2]], ['cours-h5', [7, 8, 9, 10, 11]], ['cours-h4', [0]]] },
-    { id:'th-revolution', nom:'La Révolution française et l’Empire', refs:[['revolution', [0, 1, 2, 6, 7, 8, 9, 10, 11]], ['r-h4', [1]], ['lycee', [0]], ['cours-h4', [1, 2, 3, 4]]] },
-    { id:'th-xixe', nom:'Le XIXe siècle et la IIIe République', refs:[['revolution', [3, 4, 5, 12, 13]], ['r-h4', [3, 4]], ['r-h1', [0]], ['cours-h4', [5, 6, 7, 8, 9, 10, 11]], ['cpl-h4-femmes']] },
+    { id:'th-renaissance', nom:'Renaissance, Réformes, absolutisme et Lumières', refs:[['moyen-age', [1, 3]], ['r-h5', [3, 4]], ['r-h2', [0, 1, 2]], ['cours-h5', [7, 8, 9, 10, 11]], ['cours-h4', [0]], ['r-h2', [4, 5, 6, 7, 8, 9, 10, 11, 12]], ['lycee', [19]], ['cours-hg2', [14, 15]]] },
+    { id:'th-revolution', nom:'La Révolution française et l’Empire', refs:[['revolution', [0, 1, 2, 6, 7, 8, 9, 10, 11]], ['r-h4', [1]], ['lycee', [0]], ['cours-h4', [1, 2, 3, 4]], ['lycee', [5, 6, 7]], ['r-h2', [13]], ['r-h1', [10]]] },
+    { id:'th-xixe', nom:'Le XIXe siècle et la IIIe République', refs:[['revolution', [3, 4, 5, 12, 13]], ['r-h4', [3, 4]], ['r-h1', [0]], ['cours-h4', [5, 6, 7, 8, 9, 10, 11]], ['cpl-h4-femmes'], ['lycee', [8, 9]], ['r-h1', [3, 4, 5, 6, 7, 8, 9, 11, 12, 13, 14]], ['cours-hg1', [12, 13, 14, 15]]] },
     { id:'th-1gm', nom:'La Première Guerre mondiale (1914-1918)', refs:[['xxe', [0]], ['r-h3', [0, 1]], ['pgm-cours']] },
-    { id:'th-entre-deux', nom:'L’entre-deux-guerres : crise, totalitarismes, Front populaire', refs:[['r-ht', [0]], ['r-h3', [2]], ['lycee', [1]], ['cours-h3', [0, 1, 2]], ['cpl-h3-entre']] },
+    { id:'th-entre-deux', nom:'L’entre-deux-guerres : crise, totalitarismes, Front populaire', refs:[['r-h3', [2]], ['lycee', [1]], ['cours-h3', [0, 1, 2]], ['cpl-h3-entre'], ['lycee', [11]], ['r-ht', [4]], ['r-ht', [0]]] },
     { id:'th-2gm', nom:'La Seconde Guerre mondiale (1939-1945) : toutes les questions', refs:[['xxe', [1, 7]], ['seconde-guerre'], ['sgm-cours']] },
-    { id:'th-guerre-froide', nom:'Guerre froide et décolonisation', refs:[['xxe', [4, 5]], ['lycee', [3]], ['r-ht', [1]], ['cours-h3', [4, 5, 6, 11]], ['cpl-h3-gf']] },
-    { id:'th-france-1945', nom:'La France depuis 1945 et la Ve République', refs:[['xxe', [2, 3]], ['r-h3', [6]], ['lycee', [2]], ['cours-h3', [3, 8, 9, 10]], ['cpl-h3-france']] },
-    { id:'th-europe-monde', nom:'Construction européenne, ONU et mondialisation', refs:[['xxe', [6]], ['r-ht', [2]], ['lycee', [4]], ['cours-h3', [7]]] },
-    { id:'th-geo', nom:'La géographie : toutes les questions', refs:[['geo'], ['r-h6', [5]], ['r-h5', [5]], ['r-h4', [5]], ['r-h2', [3]], ['r-h1', [2]], ['r-ht', [3]], ['cours-g6'], ['cours-g5'], ['cours-g4'], ['cours-g3']] },
+    { id:'th-guerre-froide', nom:'Guerre froide et décolonisation', refs:[['xxe', [4, 5]], ['lycee', [3]], ['r-ht', [1]], ['cours-h3', [4, 5, 6, 11]], ['cpl-h3-gf'], ['lycee', [14, 16, 17]], ['r-ht', [5, 6, 7, 8]]] },
+    { id:'th-france-1945', nom:'La France depuis 1945 et la Ve République', refs:[['xxe', [2, 3]], ['r-h3', [6]], ['lycee', [2]], ['cours-h3', [3, 8, 9, 10]], ['cpl-h3-france'], ['lycee', [10, 12, 13, 15]], ['r-ht', [16]]] },
+    { id:'th-europe-monde', nom:'Construction européenne, ONU et mondialisation', refs:[['xxe', [6]], ['r-ht', [2]], ['lycee', [4]], ['cours-h3', [7]], ['lycee', [18]], ['r-ht', [9, 10, 11, 12, 13, 14, 15, 17, 18, 19]], ['cours-hgt', [12, 13, 14]]] },
+    { id:'th-geo', nom:'La géographie : toutes les questions', refs:[['geo'], ['r-h6', [5]], ['r-h5', [5]], ['r-h4', [5]], ['r-h2', [3]], ['r-h1', [2]], ['r-ht', [3]], ['cours-g6'], ['cours-g5'], ['cours-g4'], ['cours-g3'], ['r-h2', [14, 15, 16, 17, 18, 19]], ['r-h1', [15, 16, 17, 18, 19]], ['cours-hg2', [16, 17, 18, 19]], ['cours-hg1', [16, 17, 18, 19]], ['cours-hgt', [15, 16, 17, 18, 19]]] },
     { id:'th-emc', nom:'L’EMC : toutes les questions', refs:[['emc'], ['cours-emc-c3'], ['cours-emc-c4'], ['cours-emc6'], ['cours-emc5'], ['cours-emc4'], ['cours-emc3']] }
   ], {
     en:{ dom:'By topic', ch:{ 'th-antiquite':'Antiquity and the first humans', 'th-moyen-age':'The Middle Ages', 'th-renaissance':'Renaissance, Reformations, absolutism and the Enlightenment',
