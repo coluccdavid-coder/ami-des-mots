@@ -3469,7 +3469,7 @@
   function retenirVanne(t){
     const j = J(); if(!Array.isArray(j.vannesDites)) j.vannesDites = [];
     // On retient la vanne sans ce qui change d'une fois à l'autre (nombres, réponse) ni l'explication 💡.
-    j.vannesDites.push(empreinteVanne(t)); if(j.vannesDites.length > 400) j.vannesDites.splice(0, j.vannesDites.length - 400); garder();
+    j.vannesDites.push(empreinteVanne(t)); if(j.vannesDites.length > 2000) j.vannesDites.splice(0, j.vannesDites.length - 2000); garder();
   }
 
   // ── Coin maths (6e → Terminale) : Prof Pi, le raton laveur prof de maths, vanne à chaque erreur ──
@@ -3883,7 +3883,7 @@
           vannesIA:j.vannesIA !== false,
           journal:(() => { const o = {}; if(j.journal && typeof j.journal === 'object') for(const [d, x] of Object.entries(j.journal).slice(-21)) if(/^\d{4}-\d\d-\d\d$/.test(d) && x && typeof x === 'object'){ o[d] = {}; for(const [k, n] of Object.entries(x)) if(/^(mots|anglais|maths|sciences|francais|histoire|svt|physique|medecine|droit|astro)[+-]$|^min$/.test(k)) o[d][k] = Math.max(0, Math.min(1e5, Math.floor(Number(n) || 0))); } return o; })(),
           avisVannes:Array.isArray(j.avisVannes) ? j.avisVannes.filter(x => x && typeof x.t === 'string').slice(-150).map(x => ({ t:x.t.slice(0, 220), v:x.v === 1 ? 1 : -1, d:String(x.d || '').slice(0, 10) })) : [],
-          vannesDites:Array.isArray(j.vannesDites) ? j.vannesDites.filter(x => typeof x === 'string' && /^[0-9a-z]{1,8}$/.test(x)).slice(-400) : [],
+          vannesDites:Array.isArray(j.vannesDites) ? j.vannesDites.filter(x => typeof x === 'string' && /^[0-9a-z]{1,8}$/.test(x)).slice(-2000) : [],
           trophees:Array.isArray(j.trophees) ? j.trophees.filter(k => TROPHEES.includes(k)) : [], facile:!!j.facile });
         base.joueurs = d.joueurs.map(propre); base.actif = 0;
         if(UI.includes(d.ui)) base.ui = d.ui;

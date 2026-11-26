@@ -161,7 +161,7 @@
   function choisir(liste, vars, memoire, hasard){
     const r = hasard || Math.random;
     let l = liste;
-    if(memoire && memoire.age){ const neuves = liste.filter(x => memoire.age(x) < 0); l = neuves.length ? neuves : liste.slice().sort((a, b) => memoire.age(b) - memoire.age(a)).slice(0, Math.max(1, Math.ceil(liste.length / 3))); }
+    if(memoire && memoire.age){ const neuves = liste.filter(x => memoire.age(x) < 0); l = neuves.length ? neuves : liste.slice().sort((a, b) => memoire.age(b) - memoire.age(a)).slice(0, Math.max(1, Math.ceil(liste.length / 10))); }   // v6.51 : toutes dites → seulement les plus anciennes
     const x = l[Math.floor(r() * l.length)]; if(memoire && memoire.noter) memoire.noter(x);
     return remplir(x, vars);
   }
