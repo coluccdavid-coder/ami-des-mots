@@ -5,6 +5,46 @@ Avant la v6.44, chaque version avait son propre fichier VERSION-x.y.txt à la ra
 
 ---
 
+## Version 6.67 — Physique-chimie du lycée : chaque chapitre à 20 questions
+
+- Physique-chimie (2nde, 1re, Tle) : +45 questions dans `js/mat-physique-lycee-fin.js`, en français, anglais, espagnol et allemand.
+- Révision r-p1 : de 10 à 20 questions (masse molaire, polarité, concentration, travail, puissance, gravitation, champ électrique, retard d’une onde, synthèse additive, combustion).
+- Révision r-pt : de 9 à 20 questions (pKa, base de Brønsted, t½, projectile, satellite, circuit RC, diffraction, photon, transferts thermiques, désintégration α, électrolyse).
+- Cours de l’année cours-pc2, cours-pc1 et cours-pct : de 12 à 20 questions chacun.
+- Les nouvelles questions de révision sont rangées dans les thèmes de physique (`js/themes.js`).
+- Contrôles par trimestre de physique : 20 questions en 2nde ; de 7-8 à 12-14 questions en 1re et en Tle (deux chapitres à banque par classe, coupés en trois).
+- Nouveau test v6.67.
+
+## Version 6.66 — Contrôles par trimestre dans toutes les matières, contrôles sans vanne, corrections de l’audit v6.49
+
+**Contrôles par trimestre partout**
+- Maths : toutes les classes, de la 6e à la Tle, ont « 📅 Mes trimestres ». La 1re et la Tle gardent leur progression de spé ; les autres classes sont coupées en trois dans l’ordre du programme.
+- Matières : chaque matière, dans chaque classe, a une carte « 📅 Mes trimestres » sur son écran (77 couples matière-classe).
+  - `MATIERES.trimestres(id, niveau)` coupe les chapitres du niveau en trois tiers, dans l’ordre.
+  - Les cours de l’année (cours-…) et les révisions (r-…) sont coupés en trois tranches de questions, sans chevauchement.
+  - `MATIERES.serieParts` tire une série dans ces morceaux, avec les mêmes règles de langue que les séries habituelles.
+- Pour chaque trimestre : un entraînement (avec vannes) et un contrôle chronométré noté sur 20, plus un contrôle bilan de l’année. Les notes sont gardées et bornées.
+- Quand une classe a encore moins de 20 questions sur un trimestre, le contrôle en a moins (« au plus 20 » à l’écran). Le remplissage du lycée en cours augmentera ces séries.
+
+**Contrôles sans vanne**
+- Nouvelle option `sansVanne` de `questionsGo` (js/jeu.js). Pendant un contrôle : aucune vanne, aucune vanne IA demandée, aucune correction. La réponse est gardée et on passe à la question suivante.
+- À la fin : une appréciation sobre (Très bien, Bien, Assez bien, Passable, Insuffisant), le bilan par chapitre et la correction détaillée de chaque erreur (ta réponse, la bonne réponse, la règle).
+- Les entraînements gardent l’humour de Prof Pi et de Plumo.
+
+**Corrections de l’audit v6.49**
+- Confidentialité (`legal.html`) :
+  - nouvelle ligne « Aide aux devoirs » dans le tableau des traitements : texte, photo (JPEG, PNG, WebP) ou PDF, questions, travail de l’élève ;
+  - la fiche Anthropic dit maintenant que les devoirs envoyés par l’élève (texte, photo, PDF) lui sont transmis ;
+  - paragraphe sur les enfants, avec un point à faire valider par un juriste.
+- README : les langues annoncées correspondent au code (6 langues d’interface, 6 à apprendre ; les autres langues restent masquées dans les données).
+- Accessibilité : `user-scalable=no` et `maximum-scale=1` retirés de `mots-city.html` et `monde-3d.html`, pour que le zoom reste possible.
+- Tests serveur (`npm run test:serveur`, PHP + MariaDB) passés en entier : 43 réussis.
+- Restent à compléter par l’éditeur dans `legal.html` : statut, adresse, SIRET, e-mail de contact, hébergeur final, TVA, médiateur, clauses de transfert et durée de conservation chez Anthropic, validation juridique.
+
+**Tests**
+- Nouveau test v6.66.
+- Test v6.65 mis à jour : contrôle sans vanne ni bouton « suivant », correction à la fin, trimestres en 6e.
+
 ## Version 6.65 — Spé maths : entraînements et contrôles par trimestre (1re et Tle)
 
 - Nouveau module `js/mod-trimestres.js` : une carte « 📅 Mes trimestres de spé maths » dans le coin maths, en 1re et en Tle.

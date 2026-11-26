@@ -30,10 +30,15 @@ n'est pas modifié.
   **défi du jour** (8 mots mélangés, le même toute la journée, plumes
   doublées) ; **carnet** des mots rencontrés (🔊, traduction, maîtrise) ;
   **7 trophées** ; bruitages (coupables dans Réglages).
-- **Deux langues** : celle du joueur (interface : 11 langues) et celle
-  qu'il apprend (16, dont darija algérienne, marocaine, tunisienne et
-  kabyle). Exemple visé : une famille en France qui veut transmettre le
-  kabyle ou la darija à ses enfants.
+- **Deux langues** : celle du joueur et celle qu'il apprend. Depuis la
+  v5.99.2, seules les langues enseignées à l'école sont proposées :
+  **6 langues d'interface** (français, anglais, espagnol, allemand,
+  italien, portugais) et **6 langues à apprendre** (anglais, espagnol,
+  allemand, italien, portugais, et le français pour les élèves qui parlent
+  une autre langue). Les données d'autres langues (darija, kabyle,
+  coréen…) restent dans les fichiers, masquées, pour une réouverture
+  après relecture. Les mentions « 11 » ou « 16 langues » plus bas sont
+  l'historique des anciennes versions.
 - **Récompenses** : étoiles par jeu, plumes, série de jours, objectif du
   jour ; les plumes habillent Plumo (écharpe, lunettes, nœud papillon,
   chapeau, couronne).
