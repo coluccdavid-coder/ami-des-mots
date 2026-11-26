@@ -78,6 +78,35 @@
     }
     return out;
   }
+  // v6.66 : contrôles par trimestre. Un « morceau » = un chapitre, entier ou une tranche de ses questions (idx).
+  // Répartition indicative dans l'ordre du programme : les chapitres du niveau sont coupés en trois tiers ;
+  // les cours de l'année (cours-…) et les révisions (r-…), qui couvrent toute l'année, sont coupés en trois tranches de questions.
+  function trimestres(id, niveau){
+    const chs = chapitres(id, niveau).filter(c => !c.theme && ((c.banque && c.banque.length) || c.gen));
+    const annee = chs.filter(c => /^(cours-|r-)/.test(c.id) && c.banque && c.banque.length), autres = chs.filter(c => !annee.includes(c));
+    const T = [[], [], []], tiers = (l, k) => l.slice(Math.round(k * l.length / 3), Math.round((k + 1) * l.length / 3));
+    const couper = c => { const pool = indicesNiveau(c, niveau) || c.banque.map((_, i) => i); [0, 1, 2].forEach(k => { const idx = tiers(pool, k); if(idx.length) T[k].push({ ch:c.id, idx }); }); };
+    if(autres.length >= 3) [0, 1, 2].forEach(k => tiers(autres, k).forEach(c => T[k].push({ ch:c.id, idx:null })));
+    else autres.forEach(c => c.banque && c.banque.length && !c.gen ? couper(c) : T[autres.indexOf(c) % 3].push({ ch:c.id, idx:null }));
+    annee.forEach(couper);
+    return T.every(t => t.length) ? T : null;
+  }
+  // Série tirée d'une liste de morceaux (chapitre + indices éventuels), mêmes règles de langue que serie().
+  function serieParts(id, parts, niveau, n, graine, ton){
+    const m = trouver(id); if(!m || !Array.isArray(parts)) return [];
+    const r = hasard(graine || Math.floor(Math.random() * 1e9)), out = [], vus = new Set();
+    const ps = melanger(parts.map(p => ({ ch:m.chapitres.find(c => c.id === p.ch), idx:p.idx })).filter(p => p.ch), r); if(!ps.length) return [];
+    for(let essais = 0; out.length < n && essais < n * 15; essais++){
+      const p = ps[(out.length + essais) % ps.length], ch = p.ch; let x = null, idx = null;
+      const tr = traduit(m, ch), genOk = !p.idx && ch.gen && (!tr || genTraduit(ch)), bqOk = ch.banque && ch.banque.length && (!tr || banqueTraduite(m, ch));
+      if(genOk && (!bqOk || r() < .6)) x = ch.gen(r, niveau, tr ? LANGUE() : 'fr');
+      else if(bqOk){ const nv = indicesNiveau(ch, niveau), pool = (p.idx || ch.banque.map((_, i) => i)).filter(i => !nv || nv.includes(i)); if(!pool.length) continue; idx = pool[Math.floor(r() * pool.length)]; x = ch.banque[idx]; }
+      if(!x) continue;
+      const q = enQuestion(m, ch, x, ton, r, idx); if(vus.has(q.enonce + '|' + q.bon) || !q.faux.length) continue;
+      vus.add(q.enonce + '|' + q.bon); out.push(q);
+    }
+    return out;
+  }
   function ajouter(m){ if(!trouver(m.id)) LISTE.push(m); }
-  window.MATIERES = { NIVEAUX, LISTE, ajouter, trouver, chapitres, indicesNiveau, niveauxDe, serie, hasard, melanger, langue:LANGUE, langueDe, traduit, nom, nomChap, nomDom };
+  window.MATIERES = { NIVEAUX, LISTE, ajouter, trouver, chapitres, indicesNiveau, niveauxDe, serie, trimestres, serieParts, hasard, melanger, langue:LANGUE, langueDe, traduit, nom, nomChap, nomDom };
 })();

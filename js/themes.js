@@ -11,7 +11,7 @@
     const m = M.trouver(mid); if(!m) return;
     const nouveaux = [];
     for(const t of themes){
-      // v6.64 : les questions ajoutées aux révisions SVT du lycée (indices 10 à 19) sont rangées dans leurs thèmes.
+      // v6.64 / v6.67 : les questions ajoutées aux révisions SVT et physique du lycée (indices 10 à 19) sont rangées dans leurs thèmes.
       // v6.58 : une même question (même énoncé) n'entre qu'une fois dans un thème, même si un cours de l'année la reprend.
       const parts = [], vus = new Set();
       for(const [cid, idx] of t.refs){ const ch = m.chapitres.find(c => c.id === cid && c.banque); if(!ch) continue;
@@ -81,12 +81,12 @@
   // ───── Physique-chimie ─────
   ajouterThemes('physique', 'Par thème', [
     { id:'th-etats', nom:'États de la matière, mélanges et gaz', refs:[['matiere', [2, 3]], ['r-p6', [0, 2, 3, 6, 8, 10, 11, 18]], ['r-pt', [6]], ['cours-p5', [1, 2, 3, 4, 11, 12, 13, 14, 15]]] },
-    { id:'th-chimie', nom:'Atomes, molécules et transformations chimiques', refs:[['matiere', [0, 4, 5]], ['r-p1', [0, 3, 5, 8]], ['cours-p4', [0, 1, 2, 12, 13, 14]], ['cours-p3', [0, 1, 12]]] },
-    { id:'th-ph', nom:'Acides, bases, pH et équilibres', refs:[['matiere', [1]], ['r-pt', [1, 7]], ['cours-p3', [2, 13, 14]]] },
-    { id:'th-electricite', nom:'Électricité', refs:[['elec'], ['r-p6', [5, 16]], ['r-pt', [5]], ['cours-p5', [5, 6, 7, 18]], ['cours-p4', [3, 4, 5, 15, 16]], ['cours-p3', [3, 4]], ['cpl-pc-elec']] },
-    { id:'th-mouvement', nom:'Mouvements, forces et gravitation', refs:[['r-p6', [7, 14, 19]], ['r-pt', [0, 3, 8]], ['cours-p4', [6, 7, 17, 18]], ['cours-p3', [6, 7, 8, 11, 15]]] },
-    { id:'th-energie', nom:'L’énergie', refs:[['r-p6', [4, 9, 12, 13, 17]], ['r-p1', [1, 4, 6]], ['cours-p3', [5, 9, 10, 16, 17, 18, 19]]] },
-    { id:'th-ondes', nom:'Ondes, lumière et radioactivité', refs:[['r-p6', [15]], ['r-p1', [2, 7, 9]], ['r-pt', [2]], ['cours-p5', [8, 9, 10, 16, 17, 19]], ['cours-p4', [8, 9, 10, 11, 19]]] }
+    { id:'th-chimie', nom:'Atomes, molécules et transformations chimiques', refs:[['r-p1', [10, 11, 12, 19]], ['r-pt', [11, 19]], ['matiere', [0, 4, 5]], ['r-p1', [0, 3, 5, 8]], ['cours-p4', [0, 1, 2, 12, 13, 14]], ['cours-p3', [0, 1, 12]]] },
+    { id:'th-ph', nom:'Acides, bases, pH et équilibres', refs:[['r-pt', [9, 10]], ['matiere', [1]], ['r-pt', [1, 7]], ['cours-p3', [2, 13, 14]]] },
+    { id:'th-electricite', nom:'Électricité', refs:[['r-p1', [16]], ['r-pt', [14]], ['elec'], ['r-p6', [5, 16]], ['r-pt', [5]], ['cours-p5', [5, 6, 7, 18]], ['cours-p4', [3, 4, 5, 15, 16]], ['cours-p3', [3, 4]], ['cpl-pc-elec']] },
+    { id:'th-mouvement', nom:'Mouvements, forces et gravitation', refs:[['r-p1', [15]], ['r-pt', [12, 13]], ['r-p6', [7, 14, 19]], ['r-pt', [0, 3, 8]], ['cours-p4', [6, 7, 17, 18]], ['cours-p3', [6, 7, 8, 11, 15]]] },
+    { id:'th-energie', nom:'L’énergie', refs:[['r-p1', [13, 14]], ['r-pt', [17]], ['r-p6', [4, 9, 12, 13, 17]], ['r-p1', [1, 4, 6]], ['cours-p3', [5, 9, 10, 16, 17, 18, 19]]] },
+    { id:'th-ondes', nom:'Ondes, lumière et radioactivité', refs:[['r-p1', [17, 18]], ['r-pt', [15, 16, 18]], ['r-p6', [15]], ['r-p1', [2, 7, 9]], ['r-pt', [2]], ['cours-p5', [8, 9, 10, 16, 17, 19]], ['cours-p4', [8, 9, 10, 11, 19]]] }
   ], {
     en:{ dom:'By topic', ch:{ 'th-etats':'States of matter, mixtures and gases', 'th-chimie':'Atoms, molecules and chemical reactions', 'th-ph':'Acids, bases, pH and equilibria',
       'th-electricite':'Electricity', 'th-mouvement':'Motion, forces and gravity', 'th-energie':'Energy', 'th-ondes':'Waves, light and radioactivity' } },

@@ -93,7 +93,7 @@
   // v6.0 : les nouveautés vivent dans des modules séparés (js/mod-*.js) pour ne plus grossir ce fichier.
   // Un module ajoute des actions (data-a), des cartes dans les écrans, et écoute les réponses ; il passe par AMI_MODULES.api.
   const MODULES = window.AMI_MODULES = Object.assign({ actions:{}, hooks:{ reponse:[], question:[] }, cartes:{ battle:[], matiere:[], parents:[], anglais:[], accueil:[], plus:[] } }, window.AMI_MODULES || {});
-  if(!MODULES.cartes.plus) MODULES.cartes.plus = []; if(!MODULES.cartes.maths) MODULES.cartes.maths = [];   // v6.65 : cartes dans le coin maths (contrôles du trimestre)
+  if(!MODULES.cartes.plus) MODULES.cartes.plus = []; if(!MODULES.cartes.maths) MODULES.cartes.maths = []; if(!MODULES.cartes['matiere-ecran']) MODULES.cartes['matiere-ecran'] = [];   // v6.65 : cartes dans le coin maths (contrôles du trimestre)
   if(!MODULES.hooks.question) MODULES.hooks.question = [];
   const cartesModules = zone => (MODULES.cartes[zone] || []).map(f => { try{ return f(base.ui) || ''; }catch(e){ return ''; } }).join('');
   // v5.99.3 : textes des écrans dans la langue de l'interface (js/textes-ecrans.js) ; le français reste le français.
@@ -2882,7 +2882,7 @@
       '<div class="piege-options">' + z.options.map((o, i) => '<button class="moyen piege-opt" data-a="qz-rep" data-v="' + i + '" lang="' + (z.lang || q.lang || 'en') + '">' + esc(o) + '</button>').join('') + '</div>' +
       '<div class="piege-retour" id="qz-retour" role="status" aria-live="polite"></div></main>');
     if(q.ecoute) direEcoute(q.ecoute, 'en');
-    if(!q.vanneDe && q.faux && q.faux.length){
+    if(!q.vanneDe && q.faux && q.faux.length && !z.sansVanne){
       const sujet = z.prof ? 'maths' : z.sujet || (q.lang === 'fr' ? 'sciences' : 'anglais');
       const tm = J().maths && J().maths.ton, ton = (z.prof || q.matiere) ? ({ doux:0, taquin:2, sanspitie:3, trash:3 }[tm] ?? 2) : z.trash ? 3 : niveauHumour();
       iaPrecharger(sujet, [q.consigne, q.enonce].filter(Boolean).join(' — '), q.bon, q.faux.map(x => x.en), ton, 'fr');
@@ -2913,6 +2913,9 @@
     carnetErreurs(q, juste);
     for(const f of (MODULES.hooks.question || [])) try{ f(juste, q, z); }catch(e){}   // v6.0 : modules (réexplication…)
     if(q.apres) q.apres(juste, choix); garder();
+    // v6.65 : mode contrôle (sansVanne) — comme un vrai contrôle : ni vanne ni correction pendant l'épreuve,
+    // la réponse est gardée et on passe à la question suivante ; la correction arrive à la fin.
+    if(z.sansVanne){ (z.reponses = z.reponses || []).push({ q, choix, juste }); if(z.onReponse) z.onReponse(juste, q); z.i++; return afficherQuestion(); }
     document.querySelectorAll('.piege-opt').forEach((b, k) => { b.disabled = true; if(z.options[k] === q.bon) b.classList.add('ok'); else if(k === i) b.classList.add('ko'); });
     let f = !juste && (q.vanneDe ? { vanne:q.vanneDe(choix) } : q.faux.find(x => x.en === choix));
     const ia = f && !q.vanneDe && iaPrendre(q.bon, choix);
@@ -3636,7 +3639,7 @@
         return '<button role="tab" aria-selected="' + (n === e.niveau) + '" class="onglet' + (n === e.niveau ? ' actif' : '') + (vide ? ' vide' : '') + '" data-a="matiere-niveau" data-v="' + id + '|' + n + '">' + n + '</button>'; }).join('') + '</div>' +
       TXT('<p class="ton-prof">Ton de Plumo : ') + TONS_PROF.map(([k, l]) => '<button class="petit-bouton' + (k === ton ? ' actif' : '') + '" data-a="maths-ton-matiere" data-v="' + id + '|' + k + '" aria-pressed="' + (k === ton) + '">' + TXT(l) + '</button>').join(' ') + '</p>' + tonAide() +
       (chs.length ? '<div class="actions serrees"><button class="moyen plein" data-a="matiere-melange" data-v="' + id + TXT('">🔁 Entraînement mélangé</button>') +
-        (ex ? '<button class="moyen" data-a="matiere-examen" data-v="' + id + '">📝 ' + esc(ex) + (e.notes[id + '-' + e.niveau] != null ? ' (' + String(e.notes[id + '-' + e.niveau]).replace('.', ',') + '/20)' : '') + '</button>' : '') + '</div>' +
+        (ex ? '<button class="moyen" data-a="matiere-examen" data-v="' + id + '">📝 ' + esc(ex) + (e.notes[id + '-' + e.niveau] != null ? ' (' + String(e.notes[id + '-' + e.niveau]).replace('.', ',') + '/20)' : '') + '</button>' : '') + '</div>' + cartesModules('matiere-ecran') +
         '<div class="domaines">' + doms.map(d => '<section class="domaine"><h3>' + esc(M.nomDom(m, d.d)) + ' <small>' + d.l.length + '</small></h3><div class="liste-chap">' +
           d.l.map(c => { const btn = '<button class="chap" data-a="matiere-chap" data-v="' + id + '|' + c.id + '"><span>' + esc(M.nomChap(m, c)) + (base.ui !== 'fr' && !M.traduit(m, c) ? ' <small class="pas-traduit" title="' + esc(progTx('pasTraduit')) + '">🇫🇷</small>' : '') + '</span><em>' + (etoiles(c.id) || '▶ ' + nbSerie(c, e.niveau)) + '</em></button>';
             // v6.54 : 📖 « Je n'ai pas compris la leçon » à côté de chaque chapitre qui a des questions écrites.
