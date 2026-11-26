@@ -4,6 +4,7 @@
 // v5.85 : on y règle aussi l'offre (payant ou non, prix, lien de paiement, ce qui est réservé à Plus) ; le jeu l'applique, signée.
 declare(strict_types=1);
 require dirname(__DIR__) . '/lib.php';
+require dirname(__DIR__) . '/veille-publier.php';   // v6.75 : publier() et les sortes de la veille
 header('Content-Type: text/html; charset=utf-8');
 header("Content-Security-Policy: default-src 'none'; style-src 'unsafe-inline'; form-action 'self'; base-uri 'none'; frame-ancestors 'none'");
 header('X-Frame-Options: DENY'); header('Cache-Control: no-store'); header('X-Robots-Tag: noindex');
@@ -213,29 +214,29 @@ function formulaire_offre(PDO $db, string $jeton, callable $e): string {
   $h .= '<h3>🆓 Jeux de mots gratuits (cochés = gratuits)</h3><p>'; foreach ($cat['jeux'] as $j) $h .= $case('JEUX_GRATUITS', $j[0], $je === null || in_array($j[0], $je, true), $j[1] . ' ' . $j[2]); $h .= '</p>';
   return $h . '<p><button>💾 Enregistrer et publier</button> <span class="petit">Le jeu applique ces réglages à la prochaine ouverture (réglages signés par le serveur).</span></p></form></section>';
 }
-function publier(PDO $db, array $p): void {
-  $cle = $p['sorte'] === 'programme' ? 'maths-carte' : 'maths-annales';
-  $cur = ami_val($db, 'SELECT contenu FROM ami_publications WHERE cle = ?', [$cle]); $cur = $cur ? json_decode($cur, true) : [];
-  if ($p['sorte'] === 'programme') {
-    $cur['annee'] = $p['annee'] ?: ($cur['annee'] ?? '');
-    $ch = []; $n = 0;
-    foreach ($p['chapitres'] as $c) { $n++; $ch[] = [$c['exercice'] ?: ('x-' . strtolower($p['classe']) . '-' . $n), $c['domaine'], $c['intitule']]; }
-    $cur['niveaux'][$p['classe']] = ['note' => $p['note'], 'chapitres' => $ch];
-  } else $cur[$p['classe']] = $p['sujets'];
-  $mysql = $db->getAttribute(PDO::ATTR_DRIVER_NAME) === 'mysql';
-  $db->prepare('INSERT INTO ami_publications (cle, contenu, maj) VALUES (?, ?, ?) ' . ($mysql ? 'ON DUPLICATE KEY UPDATE contenu = VALUES(contenu), maj = VALUES(maj)' : 'ON CONFLICT(cle) DO UPDATE SET contenu = excluded.contenu, maj = excluded.maj'))
-    ->execute([$cle, json_encode($cur, JSON_UNESCAPED_UNICODE), ami_maintenant()]);
-}
+// publier() : voir veille-publier.php (partagé avec la publication automatique de la veille).
 $j = $e($_SESSION['jeton']);
 $l = $db->query("SELECT * FROM ami_veille WHERE statut = 'a_valider' ORDER BY id")->fetchAll();
 $out = (($_GET['ok'] ?? '') === 'offre' ? '<section>✅ Offre enregistrée et publiée.</section>' : '') . section_frequentation($db, $e) . section_entonnoir($db, $e) . section_offerts($db, $j, $e, $msgOffert ?? '') . section_plumes($db, $j, $e, $msgPlumes ?? '') . formulaire_offre($db, $j, $e) . section_cadeaux($db, $j, $e, $nouveauxCadeaux ?? []) . '<h1>🛠️ Veille des programmes et annales</h1><p class="petit">L’IA a lu les documents officiels. Vérifie, puis publie : le jeu l’affiche à la prochaine ouverture du coin maths.</p>';
 if (!$l) $out .= '<section><p>Rien à valider. Lance la veille : <code>php veille.php</code> (ou la tâche planifiée).</p></section>';
 foreach ($l as $v) {
-  $p = json_decode($v['proposition'], true);
-  $out .= '<section><h2>' . $e($v['classe']) . ' — ' . ($p['sorte'] === 'programme' ? 'programme' : 'sujets officiels') . '</h2><p class="petit">Source : <a href="' . $e($v['source']) . '" rel="noopener noreferrer" target="_blank">' . $e($v['source']) . '</a> · ' . $e($v['cree']) . ' UTC</p>';
-  if ($p['sorte'] === 'programme') { $out .= '<p>' . $e($p['note']) . '</p><table><tr><th>Domaine</th><th>Chapitre</th><th>Exercices du jeu</th></tr>';
+  $p = json_decode($v['proposition'], true); $so = $p['sorte'] ?? '';
+  $titres = ['programme' => 'programme', 'annales' => 'sujets officiels', 'epreuve' => 'épreuves d’examen', 'diplome' => 'diplôme', 'questions' => 'nouvelles questions'];
+  $ou = ($p['systeme'] ?? 'fr') . ' · ' . ($p['matiere'] ?? 'maths');
+  $out .= '<section><h2>' . $e($v['classe']) . ' — ' . $e($titres[$so] ?? $so) . ' <small>(' . $e($ou) . ')</small></h2><p class="petit">Source : <a href="' . $e($v['source']) . '" rel="noopener noreferrer" target="_blank">' . $e($v['source']) . '</a></p>';
+  if ($so === 'programme' && isset($p['chapitres'][0]['exercice'])) { $out .= '<p>' . $e($p['note']) . '</p><table><tr><th>Domaine</th><th>Chapitre</th><th>Exercices du jeu</th></tr>';
     foreach ($p['chapitres'] as $c) $out .= '<tr><td>' . $e($c['domaine']) . '</td><td>' . $e($c['intitule']) . '</td><td>' . ($c['exercice'] ? $e($c['exercice']) : '🛠️ bientôt') . '</td></tr>';
     $out .= '</table>'; }
+  elseif ($so === 'programme') { $out .= '<p>' . $e($p['note']) . '</p>' . ($p['changements'] ? '<p><strong>Ce qui change :</strong></p><ul>' . implode('', array_map(fn($x) => '<li>' . $e($x) . '</li>', $p['changements'])) . '</ul>' : '')
+      . '<table><tr><th>Matière</th><th>Domaine</th><th>Chapitre</th><th>Notions</th><th>Chapitre du jeu</th></tr>';
+    foreach ($p['chapitres'] as $c) $out .= '<tr><td>' . $e($c['matiere']) . '</td><td>' . $e($c['domaine']) . '</td><td>' . $e($c['intitule']) . '</td><td>' . $e(implode(', ', $c['notions'])) . '</td><td>' . ($c['chap'] ? $e($c['chap']) : '🆕 nouveau') . '</td></tr>';
+    $out .= '</table>'; }
+  elseif ($so === 'epreuve' || $so === 'diplome') { $out .= '<p><strong>' . $e($p['examen']) . '</strong> ' . $e($p['session']) . ' — ' . $e($p['resume']) . '</p><p>' . $e($p['conditions']) . '</p><ul>';
+    foreach ($p['epreuves'] as $x) $out .= '<li>' . $e($x['nom']) . ' · ' . $e($x['duree']) . ' · ' . $e($x['notation']) . ' — ' . $e($x['format']) . '</li>';
+    $out .= '</ul>' . ($p['changements'] ? '<p><strong>Ce qui change :</strong> ' . $e(implode(' ; ', $p['changements'])) . '</p>' : ''); }
+  elseif ($so === 'questions') { $out .= '<p><strong>' . $e($p['nom']) . '</strong> — ' . count($p['questions']) . ' questions. Vérifie chaque bonne réponse avant de publier.</p><ol>';
+    foreach ($p['questions'] as $q) $out .= '<li>' . $e($q[0]) . '<br>✅ ' . $e($q[1]) . ' · ❌ ' . $e(implode(' / ', array_map(fn($f) => $f[0], $q[2]))) . '<br><small>💡 ' . $e($q[3]) . ' · vannes : ' . $e(implode(' | ', array_map(fn($f) => $f[1], $q[2]))) . '</small></li>';
+    $out .= '</ol>'; }
   else { $out .= '<ul>'; foreach ($p['sujets'] as $s) $out .= '<li>' . $e($s['session']) . ' — <a href="' . $e($s['lien']) . '" rel="noopener noreferrer" target="_blank">' . $e($s['titre']) . '</a> · ' . $e(implode(', ', $s['themes'])) . '</li>'; $out .= '</ul>'; }
   $out .= '<form method="post" style="display:inline"><input type="hidden" name="jeton" value="' . $j . '"><input type="hidden" name="id" value="' . (int) $v['id'] . '"><button name="action" value="publier">✅ Publier</button> <button class="non" name="action" value="rejeter">❌ Rejeter</button></form></section>';
 }

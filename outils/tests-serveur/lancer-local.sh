@@ -47,7 +47,13 @@ return [
   'cadeau_sel' => 'sel-de-test', 'admin_mdp_hash' => '$HASH', 'veille_jeton' => 'bon-jeton',
   'veille_domaines_test' => ['127.0.0.1:8791'],
   'veille_sources' => ['domaines' => ['www.education.gouv.fr', 'education.gouv.fr', 'eduscol.education.fr', 'eduscol.education.gouv.fr'],
-    'sources' => [['programme', '6e', 'http://127.0.0.1:8791/doc-6e.html'], ['annales', '3e', 'http://127.0.0.1:8791/doc-3e.html'], ['programme', '5e', 'https://pirate.example/x']]],
+    'systemes' => ['fr' => ['nom' => 'France', 'domaines' => []], 'it' => ['nom' => 'Italie', 'domaines' => ['www.mim.gov.it']]],
+    'sources' => [['programme', '6e', 'http://127.0.0.1:8791/doc-6e.html'], ['annales', '3e', 'http://127.0.0.1:8791/doc-3e.html'], ['programme', '5e', 'https://pirate.example/x'],
+      ['systeme' => 'fr', 'sorte' => 'programme', 'matiere' => 'francais', 'classe' => '5e', 'url' => 'http://127.0.0.1:8791/doc-fr5.html'],
+      ['systeme' => 'fr', 'sorte' => 'epreuve', 'matiere' => 'toutes', 'classe' => '3e', 'url' => 'http://127.0.0.1:8791/doc-dnb.html', 'id' => 'diplome-national-du-brevet'],
+      ['systeme' => 'it', 'sorte' => 'epreuve', 'matiere' => 'toutes', 'classe' => 'Tle', 'url' => 'https://eduscol.education.fr/pas-italien'],
+      ['systeme' => 'fr', 'sorte' => 'questions', 'matiere' => 'francais', 'classe' => '5e', 'url' => 'http://127.0.0.1:8791/doc-fr5.html']]],
+  'veille_publication_auto' => ['epreuve', 'questions'], 'veille_chapitres_max' => 1,
 ];
 EOF
 cd "$ICI"

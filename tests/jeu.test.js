@@ -7,7 +7,7 @@ try{ ({ JSDOM } = require('jsdom')); }catch(e){ console.error('✘ Dépendances 
 const ICI = path.join(__dirname, '..');
 const lire = f => fs.readFileSync(path.join(ICI, f), 'utf8');
 let ok = 0, ko = 0;
-const test = async (n, f) => { try{ await f(); console.log('  ✔', n); ok++; }catch(e){ console.log('  ✘', n, '—', e.message, process.env.PILE ? e.stack : ''); ko++; } };
+const test = async (n, f) => { if(process.env.SEUL && !n.startsWith(process.env.SEUL)) return; try{ await f(); console.log('  ✔', n); ok++; }catch(e){ console.log('  ✘', n, '—', e.message, process.env.PILE ? e.stack : ''); ko++; } };
 
 function page(langue, config, avant){
   const dom = new JSDOM(lire('index.html').replace(/<script[\s\S]*?<\/script>/g, ''), { url:'https://jeu.example/', runScripts:'outside-only', pretendToBeVisual:true });
@@ -22,7 +22,7 @@ function page(langue, config, avant){
   w.TextEncoder = TextEncoder; w.TextDecoder = TextDecoder;
   w.__fetch = []; w.fetch = async (u) => { w.__fetch.push(String(u)); return { ok:true, json:async () => (w.__reponse || { actif:false }) }; };
   if(avant) avant(w);
-  for(const f of ['js/donnees.js', 'js/voix.js', 'js/phrases-enregistrees.js', 'js/textes.js', 'js/textes-plus.js', 'js/textes-ecrans.js', 'js/textes-examens.js', 'js/articulation.js', 'js/genres.js', 'js/confusions.js', 'js/vannes.js', 'js/pieges.js', 'js/anglais.js', 'js/clash.js', 'js/histoires.js', 'js/blagues-en.js', 'js/parcours.js', 'js/rigolade.js', 'js/clash-plus.js', 'js/salon.js', 'js/juge.js', 'js/vannes-libres.js', 'js/maths-en.js', 'js/maths-es.js', 'js/maths-de.js', 'js/maths-it.js', 'js/maths-pt.js', 'js/maths.js', 'js/maths-2026-5e.js', 'js/maths-2026-2nde.js', 'js/maths-2026-1re.js', 'js/maths-2026-autres.js', 'js/maths-2026-college.js', 'js/sciences-en.js', 'js/sciences-es.js', 'js/sciences-de.js', 'js/sciences-it.js', 'js/sciences-pt.js', 'js/sciences.js', 'js/sciences-plus.js', 'js/trash-talk.js', 'js/vannes-arrogantes.js', 'js/vannes-fraiches.js', 'js/bande-images.js', 'js/bande-plumo.js', 'js/achats.js', 'js/rappels.js', 'js/epreuves.js', 'js/epreuves-spe.js', 'js/epreuves-plus.js', 'js/epreuves-oraux.js', 'js/epreuves-pro.js', 'js/matieres.js', 'js/mat-trad-es.js', 'js/mat-trad-en.js', 'js/mat-trad-en-sciences.js', 'js/mat-trad-en-sup.js', 'js/mat-trad-en-langues.js', 'js/mat-trad-en-francais.js', 'js/mat-trad-communs.js', 'js/mat-trad-es-sciences.js', 'js/mat-trad-es-sup.js', 'js/mat-trad-es-specialites.js', 'js/mat-trad-es-allemand.js', 'js/mat-trad-es-francais.js', 'js/mat-trad-de-histoire.js', 'js/mat-trad-de-sciences.js', 'js/mat-francais.js', 'js/mat-histoire.js', 'js/mat-histoire-sgm.js', 'js/mat-svt-pc.js', 'js/mat-sup.js', 'js/mat-anglais.js', 'js/mat-renfort.js', 'js/mat-langues.js', 'js/mat-specialites.js', 'js/mat-anglais-sup.js', 'js/mat-sup-droit.js', 'js/mat-sup-medecine.js', 'js/mat-sup-astro.js', 'js/mat-philo-notions.js', 'js/vannes-cash.js', 'js/vannes-ironie.js', 'js/vannes-mots.js', 'js/offre.js', 'js/jeu.js', 'js/mod-base.js', 'js/mod-ligue.js', 'js/mod-saisons.js', 'js/mod-veille.js', 'js/mod-oral.js', 'js/mod-classe.js', 'js/mod-parrainage.js', 'js/mod-ia.js', 'js/mod-lecon.js', 'js/mod-devoirs.js', 'js/mod-retro.js', 'js/mod-trimestres.js', 'js/gb-moteur.js', 'js/gb-maths.js', 'js/gb-english.js', 'js/gb-sciences.js', 'js/gb-humanites.js', 'js/gb-options.js', 'js/gb-plus.js', 'js/gb-programme.js', 'js/gb-programme-plus.js', 'js/gb-examens.js', 'js/gb-sats-reels.js', 'js/gb-options2.js', 'js/nasa.js', 'js/mat-trad-en-nasa.js', 'js/mat-trad-es-nasa.js', 'js/mat-histoire-pgm.js', 'js/mat-cours.js', 'js/mat-cours-francais.js', 'js/mat-cours-histoire.js', 'js/mat-cours-geo-emc.js', 'js/mat-cours-sciences.js', 'js/mat-cours-physique.js', 'js/mat-cours-lycee-lettres.js', 'js/mat-cours-lycee-sciences.js', 'js/mat-cours-specialites.js', 'js/mat-cours-college-fin.js', 'js/mat-techno.js', 'js/mat-cours-emc.js', 'js/mat-cpl-sciences.js', 'js/mat-cpl-lettres.js', 'js/mat-cpl-partiels.js', 'js/mat-langues-cpl.js', 'js/epreuves-dnb-techno.js', 'js/mat-arts-eps-lca.js', 'js/mat-anglais-college-plus.js', 'js/mat-anglais-college-plus2.js', 'js/mat-anglais-college-fin.js', 'js/mat-langues-college-plus.js', 'js/mat-sciences-college-plus.js', 'js/mat-niveaux.js', 'js/mat-histoire-college-plus.js', 'js/mat-college-plus-final.js', 'js/mat-geo-emc-plus.js', 'js/mat-histoire-6-4-plus.js', 'js/mat-histoire-6-4-suite.js', 'js/mat-histoire-3e-plus.js', 'js/mat-svt-college-plus.js', 'js/mat-astro-plus.js', 'js/mat-physique-college-plus.js', 'js/mat-techno-college-plus.js', 'js/mat-francais-college-fin.js', 'js/mat-langues-lv2-fin.js', 'js/mat-geo-emc-fin.js', 'js/mat-sup-medecine-plus.js', 'js/mat-sup-medecine-plus2.js', 'js/mat-sup-droit-plus.js', 'js/mat-sup-droit-plus2.js', 'js/mat-sup-droit-plus3.js', 'js/mat-sup-anglais-nasa-fin.js', 'js/mat-philo-plus.js', 'js/mat-philo-plus2.js', 'js/mat-philo-plus3.js', 'js/mat-anglais-lycee-fin.js', 'js/mat-svt-lycee-fin.js', 'js/mat-physique-lycee-fin.js', 'js/mat-histoire-lycee-fin.js', 'js/mat-specialites-fin.js', 'js/mat-specialites-fin2.js', 'js/mat-langues-lycee-fin.js', 'js/mat-noms.js', 'js/mat-noms-it-pt.js', 'js/themes.js', 'js/mod-angleterre.js']) w.eval(lire(f));
+  for(const f of ['js/donnees.js', 'js/voix.js', 'js/phrases-enregistrees.js', 'js/textes.js', 'js/textes-plus.js', 'js/textes-ecrans.js', 'js/textes-examens.js', 'js/articulation.js', 'js/genres.js', 'js/confusions.js', 'js/vannes.js', 'js/pieges.js', 'js/anglais.js', 'js/clash.js', 'js/histoires.js', 'js/blagues-en.js', 'js/parcours.js', 'js/rigolade.js', 'js/clash-plus.js', 'js/salon.js', 'js/juge.js', 'js/vannes-libres.js', 'js/maths-en.js', 'js/maths-es.js', 'js/maths-de.js', 'js/maths-it.js', 'js/maths-pt.js', 'js/maths.js', 'js/maths-2026-5e.js', 'js/maths-2026-2nde.js', 'js/maths-2026-1re.js', 'js/maths-2026-autres.js', 'js/maths-2026-college.js', 'js/sciences-en.js', 'js/sciences-es.js', 'js/sciences-de.js', 'js/sciences-it.js', 'js/sciences-pt.js', 'js/sciences.js', 'js/sciences-plus.js', 'js/trash-talk.js', 'js/vannes-arrogantes.js', 'js/vannes-fraiches.js', 'js/bande-images.js', 'js/bande-plumo.js', 'js/achats.js', 'js/rappels.js', 'js/epreuves.js', 'js/epreuves-spe.js', 'js/epreuves-plus.js', 'js/epreuves-oraux.js', 'js/epreuves-pro.js', 'js/matieres.js', 'js/mat-trad-es.js', 'js/mat-trad-en.js', 'js/mat-trad-en-sciences.js', 'js/mat-trad-en-sup.js', 'js/mat-trad-en-langues.js', 'js/mat-trad-en-francais.js', 'js/mat-trad-communs.js', 'js/mat-trad-es-sciences.js', 'js/mat-trad-es-sup.js', 'js/mat-trad-es-specialites.js', 'js/mat-trad-es-allemand.js', 'js/mat-trad-es-francais.js', 'js/mat-trad-de-histoire.js', 'js/mat-trad-de-sciences.js', 'js/mat-francais.js', 'js/mat-histoire.js', 'js/mat-histoire-sgm.js', 'js/mat-svt-pc.js', 'js/mat-sup.js', 'js/mat-anglais.js', 'js/mat-renfort.js', 'js/mat-langues.js', 'js/mat-specialites.js', 'js/mat-anglais-sup.js', 'js/mat-sup-droit.js', 'js/mat-sup-medecine.js', 'js/mat-sup-astro.js', 'js/mat-philo-notions.js', 'js/vannes-cash.js', 'js/vannes-ironie.js', 'js/vannes-mots.js', 'js/offre.js', 'js/jeu.js', 'js/mod-base.js', 'js/mod-ligue.js', 'js/mod-saisons.js', 'js/mod-veille.js', 'js/mod-oral.js', 'js/mod-classe.js', 'js/mod-parrainage.js', 'js/mod-ia.js', 'js/mod-lecon.js', 'js/mod-devoirs.js', 'js/mod-retro.js', 'js/mod-trimestres.js', 'js/mod-revision.js', 'js/mod-documents.js', 'js/examens-monde.js', 'js/mod-veille-programmes.js', 'js/systemes-scolaires.js', 'js/mod-parcours-pays.js', 'js/mod-section-internationale.js', 'js/gb-moteur.js', 'js/gb-maths.js', 'js/gb-english.js', 'js/gb-sciences.js', 'js/gb-humanites.js', 'js/gb-options.js', 'js/gb-plus.js', 'js/gb-programme.js', 'js/gb-programme-plus.js', 'js/gb-examens.js', 'js/gb-sats-reels.js', 'js/gb-options2.js', 'js/nasa.js', 'js/mat-trad-en-nasa.js', 'js/mat-trad-es-nasa.js', 'js/mat-histoire-pgm.js', 'js/mat-cours.js', 'js/mat-cours-francais.js', 'js/mat-cours-histoire.js', 'js/mat-cours-geo-emc.js', 'js/mat-cours-sciences.js', 'js/mat-cours-physique.js', 'js/mat-cours-lycee-lettres.js', 'js/mat-cours-lycee-sciences.js', 'js/mat-cours-specialites.js', 'js/mat-cours-college-fin.js', 'js/mat-techno.js', 'js/mat-cours-emc.js', 'js/mat-cpl-sciences.js', 'js/mat-cpl-lettres.js', 'js/mat-cpl-partiels.js', 'js/mat-langues-cpl.js', 'js/epreuves-dnb-techno.js', 'js/mat-arts-eps-lca.js', 'js/mat-anglais-college-plus.js', 'js/mat-anglais-college-plus2.js', 'js/mat-anglais-college-fin.js', 'js/mat-langues-college-plus.js', 'js/mat-sciences-college-plus.js', 'js/mat-niveaux.js', 'js/mat-histoire-college-plus.js', 'js/mat-college-plus-final.js', 'js/mat-geo-emc-plus.js', 'js/mat-histoire-6-4-plus.js', 'js/mat-histoire-6-4-suite.js', 'js/mat-histoire-3e-plus.js', 'js/mat-svt-college-plus.js', 'js/mat-astro-plus.js', 'js/mat-physique-college-plus.js', 'js/mat-techno-college-plus.js', 'js/mat-francais-college-fin.js', 'js/mat-langues-lv2-fin.js', 'js/mat-geo-emc-fin.js', 'js/mat-sup-medecine-plus.js', 'js/mat-sup-medecine-plus2.js', 'js/mat-sup-droit-plus.js', 'js/mat-sup-droit-plus2.js', 'js/mat-sup-droit-plus3.js', 'js/mat-sup-anglais-nasa-fin.js', 'js/mat-philo-plus.js', 'js/mat-philo-plus2.js', 'js/mat-philo-plus3.js', 'js/mat-anglais-lycee-fin.js', 'js/mat-svt-lycee-fin.js', 'js/mat-physique-lycee-fin.js', 'js/mat-histoire-lycee-fin.js', 'js/mat-specialites-fin.js', 'js/mat-specialites-fin2.js', 'js/mat-langues-lycee-fin.js', 'js/mat-anglais-international.js', 'js/mat-anglais-international2.js', 'js/mat-noms.js', 'js/mat-noms-it-pt.js', 'js/themes.js', 'js/mod-angleterre.js']) w.eval(lire(f));
   return w;
 }
 // Certificats d'abonnement comme les signe le serveur (même format que serveur/functions/ami-abonnement).
@@ -2286,7 +2286,9 @@ await test('v5.98 : vannes de l’IA signalées 🤖, carnet d’erreurs, taille
   const j = A.base.joueurs[0]; assert.strictEqual(j.carnet.length, 1); assert.strictEqual(j.carnet[0].bon, q.bon);
   va('matieres'); assert.match(d.querySelector('[data-a="carnet-erreurs"]').textContent, /Mes erreurs \(1\)/);
   va('carnet-erreurs'); const bonne = [...d.querySelectorAll('.piege-opt')].findIndex(b => b.textContent === q.bon);
-  d.querySelectorAll('.piege-opt')[bonne].click(); assert.strictEqual(j.carnet.length, 0);
+  // v6.71 : révision espacée — une bonne réponse le jour même ne compte pas ; le jour prévu, la question monte d'une boîte.
+  d.querySelectorAll('.piege-opt')[bonne].click(); assert.strictEqual(j.carnet.length, 1); assert.strictEqual(j.carnet[0].boite, 0);
+  j.carnet = [];
   // Taille du texte.
   va('reglages'); va('taille-texte', 'grand'); assert.strictEqual(d.documentElement.dataset.texte, 'grand');
   va('taille-texte', 'normal'); assert.ok(!d.documentElement.dataset.texte);
@@ -2925,9 +2927,13 @@ await test('v6.35 : aide aux devoirs — méthode, questions et relecture par l�
     return { statut:200, d:c.mode === 'aide' ? { consigne:'On te demande de résoudre une équation du premier degré.', lecon:['Résoudre une équation : isoler x'], etapes:['Repère les termes en x', 'Regroupe-les du même côté'], questions:['Que fais-tu du +3 ?'], verifier:['Remplace x par ta solution'] }
       : c.mode === 'suite' ? { reponse:'Pense à ce qui annule +3.' } : { bien:['Bonne première étape'], a_revoir:['La ligne 2 : regarde le signe'], pistes:['Reprends la règle du changement de membre'] } }; } }));
   d = w.document; bouton(w, 'devoirs');
+  // v6.79 : sans l'accord d'un parent, rien ne part, même avec un serveur ; l'accord se donne dans l'Espace parents.
+  assert.ok(!d.getElementById('dev-enonce')); assert.match(d.querySelector('main').textContent, /autorisée par un parent/);
+  assert.match(w.AMI_MODULES.cartes.parents.map(f => f()).join(''), /Aide aux devoirs par l’IA[\s\S]*Anthropic[\s\S]*Non autorisé/);
+  bouton(w, 'devoirs-accord'); assert.strictEqual(w.AmiDesMots.base.devoirsAccord, true); bouton(w, 'devoirs');
   assert.match(d.querySelector('main').textContent, /ne fait pas ton devoir/); assert.ok(d.getElementById('dev-enonce') && d.getElementById('dev-fichier'), 'coller ou envoyer une photo / un PDF');
   d.getElementById('dev-matiere').value = 'maths'; d.getElementById('dev-enonce').value = 'Résoudre 2x + 3 = 11.'; clic(w, '[data-a="devoirs-aide"]'); await attendre(20);
-  const t = d.getElementById('dev-resultat').textContent;
+  const t = d.getElementById('dev-resultat').textContent; assert.strictEqual(envois[0].accord_parent, true, 'l’accord du parent part avec la demande');
   assert.ok(/Ce qu’on te demande/.test(t) && /Regroupe-les/.test(t) && /Que fais-tu du \+3/.test(t) && /Remplace x/.test(t), t);
   assert.strictEqual(envois[0].mode, 'aide'); assert.strictEqual(envois[0].matiere, 'maths'); assert.strictEqual(envois[0].enonce, 'Résoudre 2x + 3 = 11.');
   d.getElementById('dev-question').value = 'Je bloque sur le 3'; clic(w, '[data-a="devoirs-suite"]'); await attendre(20);
@@ -3420,6 +3426,284 @@ await test('v6.70 : français, espagnol et allemand du lycée — chaque chapitr
   }
   assert.deepEqual(trop, []);
 });
+await test('v6.71 : révision espacée (maths et matières), réponse écrite avant les choix, signalement d’une erreur', async () => {
+  const w = page(), d = w.document, A = w.AmiDesMots, API = w.AMI_MODULES.api, j = () => A.J(); A.accueil();
+  const jour = n => { const x = new w.Date(); x.setDate(x.getDate() + n); return x.getFullYear() + '-' + String(x.getMonth() + 1).padStart(2, '0') + '-' + String(x.getDate()).padStart(2, '0'); };
+  // 1. Une erreur de maths entre dans le carnet, à revoir demain.
+  clic(w, '[data-a="maths"]'); clic(w, '[data-a="maths-melange"]');
+  { const bon = A.qzBonne(); [...d.querySelectorAll('.piege-opt')].find(x => x.textContent !== bon).click(); }
+  assert.strictEqual(j().carnet.length, 1); assert.strictEqual(j().carnet[0].matiere, 'maths'); assert.strictEqual(j().carnet[0].boite, 0); assert.strictEqual(j().carnet[0].prochaine, jour(1));
+  API.matieresAccueil(); assert.ok(!d.querySelector('[data-a="revision-jour"]'), 'rien à revoir le jour même');
+  // 2. Le lendemain : la carte apparaît (matières et maths), une bonne réponse fait monter la question d'une boîte (J+3).
+  j().carnet[0].prochaine = jour(-1); API.matieresAccueil();
+  assert.match(d.querySelector('[data-a="revision-jour"]').textContent, /Révision du jour \(1\)/);
+  clic(w, '[data-a="maths"]'); assert.ok(d.querySelector('[data-a="revision-jour"][data-v="maths"]'), 'aussi dans le coin maths');
+  clic(w, '[data-a="revision-jour"]'); { const bon = A.qzBonne(); [...d.querySelectorAll('.piege-opt')].find(x => x.textContent === bon).click(); }
+  assert.strictEqual(j().carnet[0].boite, 1); assert.strictEqual(j().carnet[0].prochaine, jour(3));
+  clic(w, '[data-a="qz-suivant"]'); assert.match(d.querySelector('main').textContent, /Révision terminée : 1 \/ 1/);
+  // 3. Dernière boîte réussie : la question est maîtrisée et quitte le carnet. Une erreur la remet à J+1.
+  j().carnet[0].boite = 3; j().carnet[0].prochaine = jour(0); API.matieresAccueil(); clic(w, '[data-a="revision-jour"]');
+  { const bon = A.qzBonne(); [...d.querySelectorAll('.piege-opt')].find(x => x.textContent === bon).click(); }
+  assert.strictEqual(j().carnet.length, 0); assert.strictEqual(j().carnetMaitrises, 1);
+  // 4. Réponse écrite : activée depuis l'écran des matières ; les choix sont cachés jusqu'à la réponse.
+  API.matieresAccueil(); clic(w, '[data-a="reponse-libre"]'); assert.strictEqual(j().reponseLibre, true);
+  assert.match(d.querySelector('[data-a="reponse-libre"]').textContent, /Réponse écrite : activée/);
+  const base = w.MATIERES.serie('ses', 'examen', 'Tle', 4, 5, 'taquin'), mk = (q, bon) => { const x = Object.assign({}, q, { bon }); delete x.bonTexte; x.faux = q.faux.filter(f => f.en !== bon).map(f => Object.assign({}, f)); return x; };
+  const liste = [mk(base[0], 'Paris'), mk(base[1], 'l’énergie solaire'), mk(base[2], '3,5'), mk(base[3], 'Lyon')];
+  A.questionsGo(liste, { titre:'t', retour:'matieres', fin:() => A.accueil() }); await new Promise(r => setTimeout(r, 30));
+  assert.ok(d.getElementById('qz-libre'), 'champ de réponse'); assert.ok(d.querySelector('.piege-options').hidden, 'choix cachés');
+  const ecrire = v => { d.getElementById('qz-libre').value = v; d.getElementById('qz-libre').dispatchEvent(new w.KeyboardEvent('keydown', { key:'Enter', bubbles:true })); };
+  let plumes = j().plumes; ecrire(' paris '); assert.match(d.getElementById('qz-retour').textContent, /Réponse écrite juste : \+1 plume bonus/); assert.ok(j().plumes >= plumes + 1);
+  // Signaler la question : elle rejoint la liste de l'Espace parents (une seule fois).
+  clic(w, '[data-a="qz-signaler"]'); assert.match(d.querySelector('.signaler').textContent, /Merci/); assert.strictEqual(A.base.signalements.length, 1); assert.strictEqual(A.base.signalements[0].bon, 'Paris');
+  assert.match(w.AMI_MODULES.cartes.parents.map(f => f()).join(''), /Questions signalées \(1\)[\s\S]*Paris/);
+  clic(w, '[data-a="qz-suivant"]'); ecrire('energie solaire'); assert.match(d.getElementById('qz-retour').textContent, /Réponse écrite juste/, 'accents et article tolérés');
+  clic(w, '[data-a="qz-suivant"]'); ecrire('3.5'); assert.match(d.getElementById('qz-retour').textContent, /Réponse écrite juste/, 'virgule ou point');
+  // Mauvaise réponse écrite : les choix apparaissent ; même si l'élève choisit bien ensuite, la question part en révision.
+  clic(w, '[data-a="qz-suivant"]'); const n0 = j().carnet.length; ecrire('Marseille');
+  assert.ok(!d.querySelector('.piege-options').hidden); assert.match(d.getElementById('qz-retour').textContent, /Pas tout à fait/); assert.ok(!d.getElementById('qz-libre'));
+  [...d.querySelectorAll('.piege-opt')].find(x => x.textContent === 'Lyon').click(); assert.strictEqual(j().carnet.length, n0 + 1); assert.strictEqual(j().carnet[j().carnet.length - 1].bon, 'Lyon');
+  // Les réponses longues gardent les choix directs.
+  const long = mk(base[0], 'une réponse beaucoup trop longue pour être écrite'); A.questionsGo([long], { titre:'t', retour:'matieres', fin:() => A.accueil() });
+  assert.ok(!d.getElementById('qz-libre') && !d.querySelector('.piege-options').hidden);
+  // Désactivation, et l'interface traduite.
+  API.matieresAccueil(); clic(w, '[data-a="reponse-libre"]'); assert.strictEqual(j().reponseLibre, false);
+  A.base.ui = 'en'; assert.strictEqual(w.AMI_MODULES.tx('🗓️ Révision du jour ({0})', 2), '🗓️ Today’s review (2)'); A.base.ui = 'fr';
+  void API;
+});
+
+await test('v6.72 : pièges sérieux en contrôle — les leurres farfelus remplacés par de vraies notions du même chapitre, sans jamais créer deux bonnes réponses', () => {
+  const w = page(), d = w.document, A = w.AmiDesMots, MT = w.MATIERES; A.accueil();
+  const norm = x => String(x).toLowerCase();
+  // Exemple : « Qu’est-ce qu’un gène ? » n'est plus seulement face à « une protéine du muscle », mais à une autre notion de génétique.
+  { const m = MT.trouver('svt'), ch = m.chapitres.find(c => c.id === 'genetique'), pool = MT.serieParts('svt', [{ ch:'genetique' }], null, ch.banque.length, 1, 'taquin');
+    const q = MT.piegesSerieux(pool, pool).find(x => /^Qu’est-ce qu’un gène/.test(x.enonce));
+    assert.ok(q && q.piegesSerieux, 'gène : pièges sérieux'); assert.ok(q.faux.some(f => f.emprunt && /allèle|chromosome|ADN|mutation|caractère/.test(f.en)), q.faux.map(f => f.en).join(' / ')); }
+  // Partout : une réponse empruntée est la bonne réponse d'une autre question du même chapitre, jamais la bonne réponse elle-même ;
+  // pas de doublon ; jamais dans une question à trou, négative ou « un exemple » ; même type de question ; le reste intact.
+  let modifs = 0, emprunts = 0;
+  for(const m of MT.LISTE) for(const ch of m.chapitres){ if(!ch.banque || !ch.banque.length) continue;
+    const pool = MT.serieParts(m.id, [{ ch:ch.id }], null, ch.banque.length, 1, 'taquin'), out = MT.piegesSerieux(pool, pool), bons = new Map(pool.map(x => [x.bon, x]));
+    out.forEach((q, i) => { const o = pool[i]; assert.strictEqual(q.enonce, o.enonce); assert.strictEqual(q.bon, o.bon); assert.strictEqual(q.faux.length, o.faux.length);
+      if(!q.piegesSerieux){ assert.strictEqual(q, o); return; } modifs++;
+      assert.ok(o.bon.length >= 25 && !/_{2,}|…|complète|exemple|n’est pas|n'est pas|\bnot\b/i.test(o.enonce), m.id + ' : ' + o.enonce);
+      const opts = [q.bon].concat(q.faux.map(f => f.en)); assert.strictEqual(new Set(opts.map(norm)).size, opts.length, 'doublon : ' + o.enonce);
+      q.faux.forEach((f, k) => { if(!f.emprunt){ assert.strictEqual(f.en, o.faux[k].en); return; } emprunts++;
+        const src = bons.get(f.en); assert.ok(src && src.chap === q.chap && src.enonce !== q.enonce, 'source : ' + f.en); assert.notStrictEqual(norm(f.en), norm(q.bon));
+        assert.ok(o.faux[k].en.length < .45 * o.bon.length, 'seul un leurre trop court est remplacé'); assert.ok(f.vanne.length > 20); }); }); }
+  assert.ok(modifs > 300 && emprunts > modifs, modifs + ' questions, ' + emprunts + ' leurres');
+  // Les petites réponses (noms, dates) et les questions de langue gardent leurs leurres d'origine.
+  { const q = { enonce:'Complète : « She ___ to school. »', bon:'goes to school every single day', faux:[{ en:'go', vanne:'x' }], chap:'c', lang:'fr' };
+    assert.strictEqual(MT.piegesSerieux([q], [q, { enonce:'Complète : « He ___ »', bon:'walks to the station every day', chap:'c', lang:'fr', faux:[] }])[0], q); }
+  // Contrôle de trimestre : la règle est annoncée, l'entraînement garde les leurres d'origine (et leurs vannes).
+  bouton(w, 'matieres'); bouton(w, 'matiere', 'histoire'); bouton(w, 'matiere-niveau', 'histoire|3e'); clic(w, '[data-a="mat-tri"]');
+  assert.match(d.querySelector('main').textContent, /les pièges sont de vraies notions du chapitre/);
+  const S = w.AMI_TRIMESTRES.sourceMatiere('histoire'), l = S.serie('T1'), p = S.pieges('T1', l);
+  assert.strictEqual(p.length, l.length); assert.ok(p.every((q, i) => q.enonce === l[i].enonce && q.bon === l[i].bon));
+  clic(w, '[data-a="mat-tri-ctrl"][data-v="histoire|T1"]'); assert.ok(d.querySelector('#chrono-veille')); assert.strictEqual(d.querySelectorAll('.piege-opt').length >= 3, true);
+});
+
+await test('v6.73 : études de documents — sources exactes, 4 ou 5 questions par document, vannes acceptées, parcours complet', () => {
+  const w = page(), d = w.document, A = w.AmiDesMots, MT = w.MATIERES, D = w.AMI_DOCUMENTS; A.accueil();
+  assert.ok(D.DOCS.length >= 24);
+  // v6.74 : chaque classe du collège au lycée a au moins un document dans ces matières.
+  for(const [id, nivs] of [['histoire', ['6e', '5e', '4e', '3e', '2nde', '1re', 'Tle']], ['francais', ['6e', '5e', '4e', '3e', '2nde', '1re']], ['svt', ['5e', '3e', '2nde', '1re', 'Tle']], ['physique', ['6e', '5e', '4e', '3e', '2nde', '1re', 'Tle']]]) for(const n of nivs) assert.ok(D.pour(id, n).length, id + ' ' + n); assert.strictEqual(new Set(D.DOCS.map(x => x.id)).size, D.DOCS.length);
+  for(const x of D.DOCS){ const m = MT.trouver(x.matiere); assert.ok(m, x.id); assert.ok(x.niv.length && x.niv.every(n => MT.niveauxDe(x.matiere).includes(n)), x.id + ' : classes');
+    assert.ok(x.source && x.texte.length > 40 && x.q.length >= 4 && x.q.length <= 5, x.id);
+    // Les données construites pour l'exercice le disent.
+    if(['svt', 'physique', 'ses'].includes(x.matiere)) assert.match(x.source, /Document d’exercice/, x.id);
+    for(const [e, bon, faux, regle] of x.q){ assert.ok(e && bon && regle, x.id + ' ' + e); assert.strictEqual(faux.length, 3);
+      assert.strictEqual(new Set([bon].concat(faux.map(f => f[0]))).size, 4, x.id + ' doublon : ' + e);
+      for(const [, v] of faux){ assert.ok(v.length > 10, v); assert.ok(w.JUGE.juger(v).ok, x.id + ' : ' + v); } } }
+  // Textes cités exactement (quelques repères).
+  const txt = id => D.DOCS.find(x => x.id === id).texte;
+  assert.match(txt('ddhc'), /Les hommes naissent et demeurent libres et égaux en droits\./);
+  assert.match(txt('loi-1905'), /La République ne reconnaît, ne salarie ni ne subventionne aucun culte\./);
+  assert.strictEqual(txt('demain').split('\n').filter(Boolean).length, 12); assert.strictEqual(txt('corbeau').split('\n').length, 18);
+  // Les calculs des corrections sont justes.
+  assert.strictEqual(3000 / 30000, .1); assert.strictEqual(2400 / 30000, .08); assert.strictEqual(+(5 * 3.6).toFixed(6), 18); assert.strictEqual(1.5 / 0.015, 100);
+  // Parcours : histoire 4e → carte → liste → un document → mauvaise réponse (vanne + carnet avec le document) → fin.
+  bouton(w, 'matieres'); bouton(w, 'matiere', 'histoire'); bouton(w, 'matiere-niveau', 'histoire|4e');
+  assert.match(d.querySelector('[data-a="docs"]').textContent, /Études de documents \(3\)/);
+  clic(w, '[data-a="docs"]'); assert.strictEqual(d.querySelectorAll('[data-a="doc-go"]').length, 3); assert.ok(d.querySelector('[data-a="doc-tout"]'));
+  clic(w, '[data-a="doc-go"][data-v="ddhc"]'); assert.match(d.querySelector('.contexte-exo').textContent, /Article 16/); assert.match(d.querySelector('.piege-cat, .piege-consigne, main').textContent, /1\/5|Déclaration/);
+  { const bon = A.qzBonne(); [...d.querySelectorAll('.piege-opt')].find(x => x.textContent !== bon).click(); assert.ok(d.querySelector('#qz-retour').textContent.length > 10); }
+  const c = A.J().carnet.at(-1); assert.strictEqual(c.matiere, 'histoire'); assert.match(c.contexte, /Article 1\./);
+  for(let i = 1; i < 5; i++){ clic(w, '[data-a="qz-suivant"]'); const bon = A.qzBonne(); [...d.querySelectorAll('.piege-opt')].find(x => x.textContent === bon).click(); }
+  clic(w, '[data-a="qz-suivant"]'); assert.match(d.querySelector('main').textContent, /Document terminé : 4 \/ 5[\s\S]*révision du jour/);
+  // Pas de carte quand la classe n'a pas de document ; « tous à la suite » enchaîne les documents.
+  bouton(w, 'matiere-niveau', 'langlais|6e'); assert.ok(!d.querySelector('[data-a="docs"]'));
+  bouton(w, 'matiere-niveau', 'svt|5e'); clic(w, '[data-a="docs"]'); clic(w, '[data-a="doc-tout"]'); assert.match(d.querySelector('.contexte-exo').textContent, /Document d’exercice/);
+  A.base.ui = 'en'; bouton(w, 'matiere', 'svt'); assert.match(d.querySelector('[data-a="docs"]').textContent, /Document studies \(2\)/); A.base.ui = 'fr';
+});
+
+await test('v6.74 : « sûr(e) / pas sûr(e) » avant de répondre — erreur sûre en priorité, réponse juste mais hésitante revue demain, lucidité pour les parents', () => {
+  const w = page(), d = w.document, A = w.AmiDesMots; A.accueil(); const j = () => A.J();
+  const s = w.MATIERES.serie('ses', 'examen', 'Tle', 6, 9, 'taquin'); A.questionsGo(s, { titre:'t', retour:'matieres', fin:() => A.accueil() });
+  assert.ok(d.querySelector('[data-a="qz-conf"][data-v="sur"]') && d.querySelector('[data-a="qz-conf"][data-v="doute"]'), 'boutons de confiance');
+  // 1. « Sûr(e) » et faux : message, erreur marquée et servie en premier à la révision.
+  clic(w, '[data-a="qz-conf"][data-v="sur"]'); assert.strictEqual(d.querySelector('[data-a="qz-conf"][data-v="sur"]').getAttribute('aria-pressed'), 'true');
+  { const bon = A.qzBonne(); [...d.querySelectorAll('.piege-opt')].find(x => x.textContent !== bon).click(); }
+  assert.match(d.getElementById('qz-retour').textContent, /Tu étais sûr\(e\) de toi/); const e1 = j().carnet.at(-1); assert.ok(e1.certitude);
+  // 2. « Pas sûr(e) » et juste : la question entre au carnet, à revoir demain.
+  clic(w, '[data-a="qz-suivant"]'); clic(w, '[data-a="qz-conf"][data-v="doute"]'); { const bon = A.qzBonne(); [...d.querySelectorAll('.piege-opt')].find(x => x.textContent === bon).click(); }
+  assert.match(d.getElementById('qz-retour').textContent, /tu hésitais/); const e2 = j().carnet.at(-1); assert.ok(e2.fragile && e2.boite === 0 && e2.bon === s[1].bon);
+  // 3. Sans choix : comportement habituel. Un second clic sur le même bouton l'annule.
+  clic(w, '[data-a="qz-suivant"]'); clic(w, '[data-a="qz-conf"][data-v="sur"]'); clic(w, '[data-a="qz-conf"][data-v="sur"]'); assert.strictEqual(d.querySelector('[data-a="qz-conf"][data-v="sur"]').getAttribute('aria-pressed'), 'false');
+  { const n = j().carnet.length, bon = A.qzBonne(); [...d.querySelectorAll('.piege-opt')].find(x => x.textContent === bon).click(); assert.strictEqual(j().carnet.length, n); assert.ok(!/hésitais|sûr\(e\) de toi/.test(d.getElementById('qz-retour').textContent)); }
+  // 4. Révision : l'erreur « sûre » passe avant les autres.
+  j().carnet.forEach(x => { x.prochaine = '2000-01-01'; }); const r = w.AMI_MODULES.api.carnetAujourdhui(); assert.ok(r[0].certitude);
+  // 5. Lucidité dans l'Espace parents, à partir de 5 réponses notées.
+  j().confiance = { surJuste:6, surFaux:2, douteJuste:3, douteFaux:1 };
+  assert.match(w.AMI_MODULES.cartes.parents.map(f => f()).join(''), /Lucidité[\s\S]*75 % \(8 réponses\)[\s\S]*malgré un doute : 3/);
+  // 6. Pas de boutons en contrôle (sans vanne).
+  A.questionsGo(s.slice(0, 2), { titre:'c', retour:'matieres', sansVanne:true, fin:() => A.accueil() }); assert.ok(!d.querySelector('[data-a="qz-conf"]'));
+});
+
+await test('v6.75 : veille des programmes — nouveaux chapitres et examens publiés par le serveur, revérifiés dans le jeu', async () => {
+  const Q = (i, v) => ['Question ' + i + ' sur la poésie de la ville ?', 'réponse ' + i, [['leurre A', v || 'Tu confonds avec la rime, relis la règle.'], ['leurre B', 'Presque : pense au sens du mot.'], ['leurre C', 'C’est l’inverse, regarde bien.']], 'Règle ' + i + '.'];
+  const contenus = { francais:{ 'v-la-poesie-de-la-ville-5e':{ nom:'La poésie de la ville', classe:'5e', banque:[...Array(12)].map((_, i) => Q(i)), source:'https://eduscol.education.gouv.fr/x', maj:'2026-11-26' },
+    'v-trop-court-5e':{ nom:'Trop court', classe:'5e', banque:[Q(1)] }, 'pirate':{ nom:'Mauvais identifiant', classe:'5e', banque:[...Array(12)].map((_, i) => Q(i)) },
+    'v-vannes-5e':{ nom:'Vannes refusées', classe:'5e', banque:[...Array(12)].map((_, i) => Q(i, 'Je vais te tuer')) } }, inconnue:{ 'v-x-5e':{ nom:'x', classe:'5e', banque:[] } } };
+  const examens = { fr:{ 'diplome-national-du-brevet':{ sorte:'epreuve', examen:'Diplôme national du brevet', classe:'3e', session:'2026', resume:'Le DNB atteste les acquis de fin de 3e.', conditions:'Moyenne finale d’au moins 10/20.', epreuves:[], changements:['Fin du total sur 800 points <b>gras</b>'], source:'https://www.education.gouv.fr/le-diplome-national-du-brevet-10613', maj:'2026-11-26' } },
+    it:{ maturita:{ sorte:'epreuve', examen:'Esame di maturità', session:'2026', resume:'Réforme 2025.', changements:[], source:'javascript:alert(1)', maj:'2026-11-26' } } };
+  const w = page('fr-FR', { MODE_PAYANT:false, SERVEUR:'https://serveur.example/' }, w => { w.fetch = async u => ({ ok:true, json:async () => /contenus/.test(u) ? { contenus } : /examens/.test(u) ? { examens } : {} }); });
+  const d = w.document, A = w.AmiDesMots, MT = w.MATIERES; A.accueil();
+  w.AMI_VEILLE.charger(); await new Promise(r => setTimeout(r, 30));
+  // Seul le chapitre complet, bien nommé, aux vannes acceptées par le juge, est ajouté.
+  const m = MT.trouver('francais'), ch = m.chapitres.filter(c => /^v-/.test(c.id));
+  assert.deepStrictEqual(ch.map(c => c.id).join(), 'v-la-poesie-de-la-ville-5e'); assert.strictEqual(ch[0].banque.length, 12); assert.match(ch[0].nom, /^🆕 La poésie de la ville/); assert.strictEqual(ch[0].niv.join(), '5e');
+  assert.ok(MT.chapitres('francais', '5e').some(c => c.id === ch[0].id) && !MT.chapitres('francais', '4e').some(c => c.id === ch[0].id), 'seulement en 5e');
+  const s = MT.serie('francais', ch[0].id, '5e', 10, 3, 'taquin'); assert.strictEqual(s.length, 10); assert.ok(s.every(q => q.faux.length === 3));
+  // Recharger ne duplique rien.
+  assert.strictEqual(w.AMI_VEILLE.ajouterContenus(contenus), 0);
+  // Onglet Officiel : ce qui change, texte échappé, lien non https ignoré.
+  bouton(w, 'officiel'); const v = d.querySelector('.veille'); assert.ok(v, 'section veille');
+  assert.match(v.textContent, /Diplôme national du brevet · 2026[\s\S]*Ce qui change[\s\S]*800 points/); assert.ok(!v.querySelector('b'), 'HTML échappé');
+  assert.match(v.textContent, /Dans d’autres pays[\s\S]*Esame di maturità/); assert.ok(!v.innerHTML.includes('javascript:'));
+  assert.ok(v.querySelector('a[href="https://www.education.gouv.fr/le-diplome-national-du-brevet-10613"]'));
+  // La fiche publiée par le serveur remplace la fiche intégrée du même examen (v6.76).
+  assert.ok(!/contrôle continu \(moyennes de 3e\) 40 %/.test(v.textContent), 'fiche du serveur prioritaire');
+});
+
+await test('v6.76 : les examens de chaque pays sont dans le jeu, même sans serveur — sources officielles, fiches complètes, traduites', () => {
+  const w = page(), d = w.document, E = w.EXAMENS_MONDE; w.AmiDesMots.accueil();
+  assert.deepStrictEqual(Object.keys(E).join(), 'fr,it,es,de,us,uk');
+  for(const sys of Object.keys(E)) for(const [id, x] of Object.entries(E[sys])){
+    assert.ok(/^[a-z0-9-]+$/.test(id) && x.examen && x.resume && x.conditions && x.epreuves.length && /^https:\/\//.test(x.source), sys + ' ' + id);
+    for(const e of x.epreuves) assert.ok(e.nom && (e.notation || e.format), sys + ' ' + id); }
+  // Quelques repères vérifiés sur les sources officielles (novembre 2026).
+  assert.match(E.fr['diplome-national-du-brevet'].conditions, /10\/20[\s\S]*40 %[\s\S]*60 %/);
+  assert.match(E.it['esame-di-maturita'].conditions, /40 points[\s\S]*60\/100[\s\S]*3 points/);
+  assert.match(E.es.pau.conditions, /60 %[\s\S]*40 %[\s\S]*5\/10/); assert.match(E.de.abitur.conditions, /900[\s\S]*300/); assert.match(E.us.sat.conditions, /400 à 1600/);
+  bouton(w, 'officiel'); const v = d.querySelector('.veille'); assert.ok(v, 'onglet Officiel, sans serveur');
+  assert.match(v.textContent, /Les examens, pays par pays[\s\S]*Diplôme national du brevet[\s\S]*Épreuves :[\s\S]*Français · 3 h[\s\S]*Dans d’autres pays[\s\S]*Esame di maturità[\s\S]*PAU[\s\S]*Abitur[\s\S]*SAT[\s\S]*GCSE/);
+  assert.strictEqual(v.querySelectorAll('article.veille-examen').length, 8); assert.ok([...v.querySelectorAll('a')].every(a => a.href.startsWith('https://')));
+  w.AmiDesMots.base.ui = 'en'; bouton(w, 'officiel'); assert.match(d.querySelector('.veille h3').textContent, /Exams, country by country/);
+});
+
+await test('v6.77 : « Mon pays » — classes et équivalences, examens du pays, entraînement de maths dans la langue du pays, noté comme là-bas', async () => {
+  const w = page(), d = w.document, A = w.AmiDesMots, S = w.SYSTEMES_SCOLAIRES, P = w.AMI_PAYS; A.accueil();
+  // Chaque pays : classes de 11 à 17-18 ans, équivalents français valides, examens qui existent dans les fiches.
+  for(const [id, s] of Object.entries(S)){ assert.ok(s.classes.length >= 7, id); assert.ok(s.classes.every(c => w.MATIERES.NIVEAUX.includes(c[1])), id);
+    assert.ok(s.classes.every((c, i) => i === 0 || c[2] >= s.classes[i - 1][2]), id + ' âges'); for(const [e] of s.examens) assert.ok(w.EXAMENS_MONDE[id][e], id + ' ' + e); }
+  assert.strictEqual(S.es.classes.find(c => c[0] === '2º de Bachillerato')[1], 'Tle'); assert.strictEqual(S.uk.classes.find(c => c[0] === 'Year 11')[1], '2nde');
+  for(const [id, l] of Object.entries(w.BLANCS_PAYS)) for(const b of l) assert.ok(S[id] && w.EXAMENS_MONDE[id][b.examen] && b.id.startsWith(id + '-'), b.id);
+  // Carte sur l'écran des matières, France par défaut.
+  bouton(w, 'matieres'); assert.match(d.querySelector('[data-a="pays-ecran"]').textContent, /Mon pays : 🇫🇷 France/);
+  clic(w, '[data-a="pays-ecran"]'); assert.ok(d.querySelector('[data-a="examens"]'), 'France : brevet et bac blancs');
+  // Espagne : classes locales, réglage du niveau, fiche PAU.
+  bouton(w, 'pays'); clic(w, '[data-a="pays-choisir"][data-v="es"]'); assert.strictEqual(A.J().systeme, 'es');
+  assert.match(d.querySelector('main').textContent, /España[\s\S]*1º de ESO ≈ 5e en France[\s\S]*PAU[\s\S]*En 2º de Bachillerato[\s\S]*Simulacro · Matemáticas II/);
+  clic(w, '[data-a="pays-classe"][data-v="3"]'); assert.strictEqual(A.J().matieres.niveau, '3e'); assert.strictEqual(A.J().maths.niveau, '3e');
+  assert.ok(d.querySelector('[data-a="pays-classe"][data-v="3"]').classList.contains('actif'));
+  // Entraînement PAU : questions en espagnol, interface restée en français, chrono, sans vanne, note sur 10.
+  const ui = A.base.ui; clic(w, '[data-a="pays-blanc"][data-v="es-pau-mates"]'); assert.strictEqual(A.base.ui, ui, 'langue de l’interface rendue');
+  assert.ok(d.querySelector('#chrono-veille')); assert.ok(A.qzBonne() && !d.querySelector('[data-a="qz-conf"]'), 'contrôle : pas de vanne ni de bouton de confiance');
+  for(let i = 0; i < 20; i++){ const bon = A.qzBonne(); const opts = [...d.querySelectorAll('.piege-opt')]; (i < 15 ? opts.find(x => x.textContent === bon) : opts.find(x => x.textContent !== bon)).click(); }
+  const t = d.querySelector('main').textContent; assert.match(t, /Note : 7,5\/10[\s\S]*15 bonnes réponses sur 20[\s\S]*Calcule ta note d’accès[\s\S]*À revoir/);
+  assert.ok([...d.querySelectorAll('.correction-controle li p[lang="es"]')].length >= 5, 'correction en espagnol');
+  // Note d'accès : 0,6 × 8 + 0,4 × 7,5 = 7,8 ; sous 4/10 à la PAU, pas de calcul.
+  const inp = d.getElementById('pays-media'); inp.value = '8'; inp.dispatchEvent(new w.Event('input', { bubbles:true }));
+  assert.match(d.getElementById('pays-acces').textContent, /Note d’accès : 7,8\/10/); assert.strictEqual(P.acces(8, 3.9), null); assert.strictEqual(P.acces(8.5, 8.062), 8.325);
+  assert.ok(A.J().paysNotes['es-pau-mates'].best === .75);
+  // Barèmes : maturità sur 20, Abitur en %, SAT et GCSE en score brut.
+  assert.strictEqual(P.noteDe(15, 20, 'sur20'), '15/20'); assert.strictEqual(P.noteDe(15, 20, 'pourcent'), '75 %'); assert.strictEqual(P.noteDe(17, 22, 'brut'), '17/22');
+  // Les autres langues : questions générées dans la langue du pays.
+  for(const [l, niv] of [['it', 'Tle'], ['de', 'Tle'], ['en', '1re']]){ const s = P.serieDans(l, niv, 5); assert.ok(s.length === 5 && s.every(q => q.lang === l), l); }
+  // Note du joueur trafiquée : bornée.
+  A.J().paysNotes = { 'es-pau-mates':{ best:99, last:-3 }, 'pirate':{ best:1 } }; bouton(w, 'pays-ecran'); assert.deepStrictEqual(Object.keys(A.J().paysNotes), ['es-pau-mates']); assert.strictEqual(A.J().paysNotes['es-pau-mates'].best, 1);
+  // Interface en anglais.
+  A.base.ui = 'en'; bouton(w, 'pays-ecran'); assert.match(d.querySelector('main').textContent, /My year group[\s\S]*My exams[\s\S]*Practise for the exam/); A.base.ui = 'fr';
+});
+
+await test('v6.77 : anglais section internationale (6e → BFI) — 20 questions par classe, en anglais, niveau qui monte jusqu’au C1-C2, vannes acceptées', () => {
+  const w = page(), d = w.document, A = w.AmiDesMots, M = w.MATIERES, m = M.trouver('anglais-inter'); A.accueil();
+  assert.ok(m, 'matière');
+  const vus = new Set();
+  for(const n of ['6e', '5e', '4e', '3e', '2nde', '1re', 'Tle']){ const ch = M.chapitres('anglais-inter', n); assert.ok(ch.length >= 2, n); assert.ok(m.examens[n], n);
+    for(const c of ch) assert.strictEqual(c.banque.length, 20, n + ' ' + c.id);
+    for(const q of ch.flatMap(c => c.banque)){ assert.strictEqual(q.lang, 'en'); assert.strictEqual(q.faux.length, 3); assert.ok(q.regle, q.enonce);
+      assert.strictEqual(new Set([q.bon, ...q.faux.map(f => f.en)]).size, 4, 'doublon : ' + q.enonce); assert.ok(!vus.has(q.enonce), 'question en double : ' + q.enonce); vus.add(q.enonce);
+      for(const f of q.faux) assert.ok(w.JUGE.juger(f.vanne).ok, n + ' : ' + f.vanne); }
+    const s = M.serie('anglais-inter', 'examen', n, 20, 3, 'taquin'); assert.strictEqual(s.length, 20, n); assert.ok(s.every(q => q.lang === 'en'), n); }
+  // Le niveau monte : la 6e travaille la grammaire de base, le BFI la littérature et la connaissance du monde.
+  assert.match(M.chapitres('anglais-inter', '6e').find(c => c.id === 'si-6e').nom, /A2\+ → B1/); assert.match(M.chapitres('anglais-inter', 'Tle').find(c => c.id === 'bfi-tle').nom, /C1 → C2/);
+  assert.ok(M.chapitres('anglais-inter', 'Tle').find(c => c.id === 'bfi-tle').banque.some(q => /Connaissance du monde/.test(q.enonce)));
+  // Carte sur l'écran des matières, parcours jusqu'à une question en anglais.
+  bouton(w, 'matieres'); assert.match(d.querySelector('[data-a="matiere"][data-v="anglais-inter"]').textContent, /Anglais section internationale/);
+  bouton(w, 'matiere', 'anglais-inter'); bouton(w, 'matiere-niveau', 'anglais-inter|1re'); assert.match(d.querySelector('main').textContent, /BFI 1re/);
+  A.base.ui = 'en'; bouton(w, 'matieres'); assert.match(d.querySelector('[data-a="matiere"][data-v="anglais-inter"]').textContent, /English, international section/); A.base.ui = 'fr';
+});
+
+await test('v6.78 : section internationale — DNL histoire-géo en anglais et méthode, BFI 2026 de A à Z, BFI blanc (écrits, oral), brevet option internationale blanc', async () => {
+  const w = page(), d = w.document, A = w.AmiDesMots, M = w.MATIERES, SI = w.AMI_SECTION_INTER; A.accueil();
+  // Trois chapitres de 20 questions par classe au collège (3e), au moins deux partout ; 340 questions en tout.
+  const total = M.trouver('anglais-inter').chapitres.reduce((t, c) => t + c.banque.length, 0); assert.strictEqual(total, 340);
+  for(const [n, k] of [['6e', 2], ['5e', 2], ['4e', 2], ['3e', 3], ['2nde', 2], ['1re', 3], ['Tle', 3]]) assert.strictEqual(M.chapitres('anglais-inter', n).length, k, n);
+  // Contrôles par trimestre : ils existent pour chaque classe.
+  for(const n of ['6e', '3e', '1re', 'Tle']) assert.ok(M.trimestres('anglais-inter', n), 'trimestres ' + n);
+  // Carte sur l'écran de la matière → hub.
+  bouton(w, 'matieres'); bouton(w, 'matiere', 'anglais-inter'); clic(w, '[data-a="si-examens"]');
+  const t = d.querySelector('main').textContent; assert.match(t, /Le BFI en bref[\s\S]*coefficient 20[\s\S]*BFI blanc[\s\S]*Mon plan de préparation, de A à Z · 0 étapes sur 24[\s\S]*Brevet option internationale blanc[\s\S]*S’entraîner chapitre par chapitre/);
+  assert.ok([...d.querySelectorAll('.si-examens a')].every(a => /^https:\/\/(eduscol\.education\.gouv\.fr|www\.education\.gouv\.fr)\//.test(a.href)), 'sources officielles');
+  // Plan à cocher, gardé.
+  const c = d.querySelector('[data-si-plan="3"]'); c.checked = true; c.dispatchEvent(new w.Event('change', { bubbles:true })); assert.strictEqual(A.J().si.plan.join(), '3');
+  bouton(w, 'si-examens'); assert.match(d.querySelector('main').textContent, /1 étapes sur 24/); assert.ok(d.querySelector('[data-si-plan="3"]').checked);
+  // Écrit ACL : 30 questions en anglais, chrono, sans vanne, note sur 20 et correction.
+  clic(w, '[data-a="si-ecrit"][data-v="acl"]'); assert.ok(d.querySelector('#chrono-veille')); assert.ok(!d.querySelector('[data-a="qz-conf"]'));
+  for(let i = 0; i < 30; i++){ const bon = A.qzBonne(); const o = [...d.querySelectorAll('.piege-opt')]; (i < 24 ? o.find(x => x.textContent === bon) : o.find(x => x.textContent !== bon)).click(); }
+  assert.match(d.querySelector('main').textContent, /Note : 16\/20[\s\S]*À revoir/); assert.strictEqual(A.J().si.notes.acl, 16);
+  // DNL : questions tirées des chapitres de DNL et de méthode de 1re-Tle.
+  clic(w, '[data-a="si-examens"]'); clic(w, '[data-a="si-ecrit"][data-v="dnl"]');
+  for(let i = 0; i < 20; i++){ const bon = A.qzBonne(); [...d.querySelectorAll('.piege-opt')].find(x => x.textContent === bon).click(); }
+  assert.strictEqual(A.J().si.notes.dnl, 20);
+  // Oral de connaissance du monde : sujet, chrono de préparation, exposé, grille → note.
+  clic(w, '[data-a="si-examens"]'); clic(w, '[data-a="si-oral"][data-v="cdm"]');
+  assert.match(d.querySelector('main').textContent, /Ton sujet[\s\S]*Notions à mobiliser[\s\S]*Plan possible[\s\S]*Préparation : 30 min[\s\S]*Rien n’est enregistré/);
+  clic(w, '[data-a="si-expose"]'); assert.match(d.getElementById('si-chrono').textContent, /10:00/);
+  clic(w, '[data-a="si-grille"]'); assert.strictEqual(d.querySelectorAll('.si-grille fieldset').length, 5);
+  d.querySelector('input[name="si-c0"][value="4"]').checked = true; d.querySelector('input[name="si-c1"][value="3"]').checked = true;   // 4 + 3 + 2 + 2 + 2
+  clic(w, '[data-a="si-noter"]'); assert.match(d.querySelector('main').textContent, /Note de l’oral : 13\/20/); assert.strictEqual(A.J().si.notes.cdm, 13);
+  // Bilan du BFI blanc : (16 + 20 + 13) / 3 = 16,3.
+  clic(w, '[data-a="si-examens"]'); assert.match(d.querySelector('main').textContent, /Bilan de mon BFI blanc : 16,3\/20[\s\S]*à titre indicatif/);
+  // Brevet option internationale : écrit de 30 questions de 3e.
+  clic(w, '[data-a="si-ecrit"][data-v="dnb"]'); assert.ok(d.querySelector('#chrono-veille'));
+  // Données trafiquées : bornées.
+  A.J().si = { notes:{ acl:99, cdm:-4, pirate:3 }, plan:[0, 0, 999, 'x'] }; bouton(w, 'si-examens');
+  assert.strictEqual(JSON.stringify(A.J().si.notes), '{"acl":20,"cdm":0}'); assert.strictEqual(A.J().si.plan.join(), '0');
+  // Données : 24 étapes, 16 sujets complets, 5 critères ; interface traduite.
+  assert.strictEqual(SI.PLAN.length, 24); assert.strictEqual(SI.SUJETS.length, 16); assert.ok(SI.SUJETS.every(s => s[0].endsWith('?') && s[1].length >= 4 && s[2].length === 3));
+  // Mon lycée et mes œuvres (v6.79).
+  bouton(w, 'si-examens'); const sel = d.getElementById('si-lycee'); sel.value = 'pissarro'; sel.dispatchEvent(new w.Event('change', { bubbles:true }));
+  assert.strictEqual(A.J().si.lycee, 'pissarro'); assert.match(d.querySelector('.si-lycee').textContent, /britannique, ouverte en 2014/);
+  const o = d.querySelector('[data-si-oeuvre="0"]'); o.value = 'Macbeth <b>'; o.dispatchEvent(new w.Event('change', { bubbles:true })); assert.strictEqual(A.J().si.oeuvres[0], 'Macbeth b');
+  bouton(w, 'si-examens'); assert.strictEqual(d.querySelector('[data-si-oeuvre="0"]').value, 'Macbeth b');
+  assert.ok([...d.querySelectorAll('.si-lycee a')].every(a => a.href.startsWith('https://')));
+  A.J().si.lycee = 'pirate'; bouton(w, 'si-examens'); assert.ok(!A.J().si.lycee);
+  A.base.ui = 'en'; bouton(w, 'si-examens'); assert.match(d.querySelector('h2').textContent, /International section exams/); A.base.ui = 'fr';
+});
+
 console.log(`\n${ok} réussi(s), ${ko} échoué(s)`);
 process.exit(ko ? 1 : 0);
 })();

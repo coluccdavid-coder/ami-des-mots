@@ -107,6 +107,51 @@
     }
     return out;
   }
+  // v6.71+ : « pièges sérieux » pour les contrôles. Une réponse juste longue et précise face à des leurres courts et farfelus
+  // (« une plage privée », « un petit village ») se devine sans rien savoir. En contrôle, ces leurres trop courts sont remplacés
+  // par la bonne réponse d'une AUTRE question du même chapitre (même langue, longueur voisine) : il faut alors vraiment distinguer
+  // les notions proches. Garde-fous pour ne jamais créer deux bonnes réponses : pas de question à trou, négative ou « un exemple » ;
+  // la réponse empruntée ne doit ni ressembler à la bonne réponse, ni venir d'une question sur le même sujet, ni figurer dans la règle.
+  const VIDES = new Set('les des une pour dans avec sans sont qui que quoi quel quelle quels quelles est elle ils leur leurs plus mais donc cette ces son ses aux par sur entre comme what which with from that this their there they have does were when where whom whose about into los las una con para por del que qué cuál cuales como sus der die das den dem des ein eine einer und mit von für ist sind wie was welche welcher'.split(' '));
+  const motsCles = s => new Set(String(s || '').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').split(/[^a-z0-9]+/).filter(w => w.length >= 4 && !VIDES.has(w)));
+  const recouvre = (a, b) => { if(!a.size || !b.size) return 0; let n = 0; a.forEach(w => { if(b.has(w)) n++; }); return n / Math.min(a.size, b.size); };
+  const SANS_PIEGE = /_{2,}|…|\.\.\.|\b(complète|complete|completa|ergänze|vervollständige|exemple|example|ejemplo|beispiel|lequel n|laquelle n|which is not|isn’t|isn't|not\b|ne\b.{0,40}\bpas\b|n’est pas|n'est pas|no es|nicht|kein|sauf|except|excepto|außer|vrai ou faux|true or false|verdadero o falso|richtig oder falsch)/i;
+  const COURT = .45;
+  // Même type de question (où, quand, qui, pourquoi, comment, définition…) et même tournure de réponse (article, préposition, pronom…).
+  const sans = x => String(x || '').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[’']/g, ' ');
+  const TYPES = [['ou', /^(ou |d ou |where |donde |de donde |wo |woher |wohin )/], ['quand', /^(quand |en quelle annee |a quelle epoque |when |in what year |cuando |en que ano |wann |in welchem jahr )/], ['qui', /^(qui |who |quien |quienes |wer )/],
+    ['pourquoi', /^(pourquoi |why |por que |porque |warum |wieso |weshalb )/], ['comment', /^(comment |how |como |wie )/], ['combien', /^(combien |how many |how much |cuant|wie viel)/],
+    ['def', /^(qu est ce qu|que (signifie|designe|veut dire|desigan?)|what (is|are|does)|que es|que son|was (ist|sind|bedeutet))/], ['que', /^(que |qu |what |que |was )/], ['quel', /^(quel|quelle|quels|quelles|which|cual|welche)/]];
+  const typeQ = e => { const x = sans(e).replace(/^[^a-z]+/, '').replace(/^(dans|selon|pour|chez|en|a|au|in|for|according to|segun|para|nach|laut|bei) [^,?]{0,60}, /, ''); const t = TYPES.find(([, r]) => r.test(x)); if(!t) return '';
+    if(t[0] !== 'quel' && t[0] !== 'que') return t[0];
+    // « Quel génocide… » ne se mélange pas avec « Quel trajet… » : on garde le nom (ou le verbe après « que »).
+    const m = x.split(/[^a-z0-9]+/).filter(Boolean).slice(1).filter(w => !/^(est|sont|etait|is|are|was|were|es|son|era|ist|sind|war|le|la|les|l|de|du|des|d|the|of|el|los|las|del|der|die|das|des|von|il|elle|on|ce|cet|cette)$/.test(w));
+    return t[0] + ':' + (m[0] || ''); };
+  const MOT1 = [['det', /^(un|une|le|la|les|l|des|du|the|a|an|el|los|las|una|der|die|das|den|dem|ein|eine|einen)$/], ['prep', /^(a|au|aux|dans|en|pour|par|avec|sur|sous|to|in|for|by|with|at|on|para|por|con|auf|fur|mit|zu|im|am)$/],
+    ['pron', /^(il|ils|elle|elles|on|they|he|she|it|ellos|ellas|ella|el|er|sie|es)$/], ['car', /^(parce|car|because|porque|weil|da)$/], ['quand', /^(quand|lorsque|when|cuando|wenn|als)$/]];
+  const typeR = b => { const w = sans(b).split(/[^a-z0-9]+/).filter(Boolean)[0] || ''; const t = MOT1.find(([, r]) => r.test(w)); return t ? t[0] : /^\d/.test(w) ? 'nb' : 'autre'; };
+  function piegesSerieux(liste, pool){
+    if(!Array.isArray(liste) || !Array.isArray(pool)) return liste;
+    return liste.map(q => {
+      const bon = String(q.bon || ''); if(bon.length < 25 || SANS_PIEGE.test(String(q.enonce || '')) || !Array.isArray(q.faux)) return q;
+      const courts = q.faux.map((f, i) => [f, i]).filter(([f]) => String(f.en).length < COURT * bon.length).sort((a, b) => String(a[0].en).length - String(b[0].en).length);
+      if(!courts.length) return q;
+      const tq = typeQ(q.enonce), tr = typeR(bon); if(!tq) return q;
+      const kb = motsCles(bon), ke = motsCles(q.enonce), regle = String(q.regle || '').toLowerCase(), deja = new Set([bon].concat(q.faux.map(f => String(f.en))).map(x => x.toLowerCase()));
+      const cand = pool.filter(p => p !== q && p.chap === q.chap && (p.lang || 'fr') === (q.lang || 'fr') && p.enonce !== q.enonce && typeof p.bon === 'string').filter(p => {
+        const b = p.bon, l = b.length / bon.length; if(l < .6 || l > 1.6 || typeQ(p.enonce) !== tq || typeR(b) !== tr || deja.has(b.toLowerCase()) || (regle && regle.includes(b.toLowerCase()))) return false;
+        return recouvre(motsCles(b), kb) < .34 && recouvre(motsCles(p.enonce), ke) < .5;
+      });
+      if(!cand.length) return q;
+      const faux = q.faux.map(f => Object.assign({}, f)), pris = new Set();
+      for(const [, i] of courts){
+        const c = cand.find(p => !pris.has(p.bon.toLowerCase())); if(!c) break; pris.add(c.bon.toLowerCase());
+        faux[i] = { en:c.bon, vanne:AUTRE[(q.lang || 'fr')] || AUTRE.fr, emprunt:true };
+      }
+      return Object.assign({}, q, { faux, piegesSerieux:true });
+    });
+  }
+  const AUTRE = { fr:'Ça, c’est la réponse à une autre question du même chapitre : relis bien ce qu’on te demande. 🔍', en:'That is the answer to another question in the same chapter: read carefully what you are asked. 🔍', es:'Esa es la respuesta a otra pregunta del mismo capítulo: lee bien lo que se pregunta. 🔍', de:'Das ist die Antwort auf eine andere Frage aus demselben Kapitel: Lies genau, was gefragt wird. 🔍' };
   function ajouter(m){ if(!trouver(m.id)) LISTE.push(m); }
-  window.MATIERES = { NIVEAUX, LISTE, ajouter, trouver, chapitres, indicesNiveau, niveauxDe, serie, trimestres, serieParts, hasard, melanger, langue:LANGUE, langueDe, traduit, nom, nomChap, nomDom };
+  window.MATIERES = { NIVEAUX, LISTE, ajouter, trouver, chapitres, indicesNiveau, niveauxDe, serie, trimestres, serieParts, piegesSerieux, hasard, melanger, langue:LANGUE, langueDe, traduit, nom, nomChap, nomDom };
 })();

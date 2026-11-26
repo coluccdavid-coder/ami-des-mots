@@ -5,6 +5,155 @@ Avant la v6.44, chaque version avait son propre fichier VERSION-x.y.txt à la ra
 
 ---
 
+## Version 6.79 — corrections de l'audit de la v6.77, « Mon lycée » pour la section internationale
+
+- **Aide aux devoirs par IA soumise à l'accord d'un parent** (point 3 de l'audit) :
+  - nouvelle carte dans l'Espace parents : ce qui est envoyé, à qui, et que rien n'est conservé ;
+  - sans accord, l'élève a la méthode pas à pas, rien n'est envoyé ;
+  - l'appli joint l'accord à chaque demande, et le serveur (devoirs.php) refuse une demande sans accord (403, testé) ;
+  - legal.html le précise.
+- **Paquet de production** (point 5) : `outils/preparer-www.js` (GitHub Pages, Android) regroupe les 186 scripts de la page principale en un seul fichier, dans le même ordre. Le service worker le garde hors connexion, avec un nouveau nom de cache. `--sans-paquet` revient à l'ancien comportement. Nouveau test `tests/paquet.test.js` : le jeu chargé par le paquet est identique à celui des scripts séparés (matières, chapitres, questions, actions), lancé par `npm test`.
+- **« Prêt à publier ? »** (points 1, 2, 6, 7) :
+  - `npm run publication` liste ce qui est réellement activé (serveur, paiement, fonctions masquées), les points bloquants (15 passages de legal.html à compléter, la conservation chez le fournisseur d'IA à préciser) et les vérifications à faire à la main ;
+  - `-- --strict` échoue tant qu'il reste un point bloquant ;
+  - nouveau docs/AVANT-PUBLICATION.md ;
+  - le README dit en tête ce qui est activé, ce qui demande un serveur, ce qui est masqué, et qu'il faut `npm install` avant les tests.
+- **Section internationale, « 🏫 Mon lycée »** :
+  - choix entre Lycée Camille Pissarro (Pontoise), Lycée international Palaiseau Paris-Saclay et Lycée international de Saint-Germain-en-Laye ;
+  - pour chacun, quelques faits vérifiés et les liens officiels ;
+  - « Mes six œuvres au programme » (3 pour l'écrit, 3 pour l'oral) à noter, gardées sur l'appareil.
+- **Ce qui reste hors de portée du code** :
+  - la relecture juridique et les informations de l'éditeur ;
+  - les essais sur de vrais appareils ;
+  - le test d'intrusion d'un serveur déployé ;
+  - le chargement des matières à la demande.
+
+## Version 6.78 — section internationale : préparation complète, du collège au BFI 2026
+
+- **200 questions de plus** (js/mat-anglais-international2.js), en anglais. Avec la v6.77, la section internationale passe à 340 questions : 2 chapitres de 20 par classe, 3 en 3e, 1re et Tle.
+  - **DNL histoire-géographie en anglais**, de la 6e à la terminale. Le programme français d'histoire-géographie y est vu avec le regard britannique des sections internationales : Magna Carta, Tudors, Glorious Revolution, révolution industrielle, abolition de l'esclavage, époque victorienne, guerres mondiales, NHS, guerre froide, Thatcher, Brexit. On y trouve aussi métropolisation, mondialisation, mers, transition démographique et environnement.
+  - **Méthode d'examen** :
+    - 3e : oral et écrit du brevet option internationale (PEE, signposting, registre) ;
+    - 1re : dissertation et commentaire du BFI (thèse, close reading, diction, syntaxe, contre-argument) ;
+    - Tle : oral de connaissance du monde et DNL (problématique, sources, biais, données, échange avec le jury).
+- **🎓 Examens de la section internationale** (js/mod-section-internationale.js), carte sur l'écran de la matière :
+  - **le BFI en bref** : enseignements spécifiques, six œuvres (trois à l'écrit, trois à l'oral), coefficients 20, DNL écrit et oral, avec les liens éduscol et education.gouv.fr ;
+  - **plan de préparation de A à Z** : 24 étapes de septembre de 1re aux résultats, à cocher, avec une barre de progression ;
+  - **BFI blanc** : écrit d'approfondissement culturel et linguistique (30 questions, 60 min), DNL histoire-géographie (20 questions, 40 min), oral de connaissance du monde (16 sujets de questions vives, avec notions à mobiliser et plan possible, chrono de préparation puis d'exposé, grille d'auto-évaluation sur 5 critères). Bilan : moyenne indicative des trois notes ;
+  - **brevet option internationale blanc** : écrit de 30 questions et oral en anglais ;
+  - tous les chapitres de la section et les contrôles par trimestre.
+- **Choix prudents** :
+  - les écrits blancs sont faits des questions du jeu (chronométrés, sans vanne, corrigés à la fin) ;
+  - les durées de l'oral sont des durées d'entraînement, l'écran le dit ;
+  - rien n'est enregistré au micro ;
+  - le bilan reste indicatif (les coefficients officiels s'appliquent au vrai bac).
+- Tests : v6.78 ; le test v6.77 accepte maintenant plusieurs chapitres par classe.
+
+## Version 6.77 — « Mon pays » et anglais de section internationale (6e → BFI)
+
+- **🌍 Mon pays** (js/systemes-scolaires.js, js/mod-parcours-pays.js) : carte sur l'écran des matières.
+  - L'élève choisit son système scolaire : France, Italie, Espagne, Allemagne, États-Unis ou Angleterre.
+  - Il voit ses classes avec l'équivalent français par âge (1º de ESO ≈ 5e, Year 11 ≈ 2nde, 5ª superiore ≈ Tle…). Un clic règle le niveau des matières et des maths.
+  - Il voit les fiches des examens de son pays, avec la classe où on les passe.
+- **Entraînements d'examen en maths, dans la langue du pays** (exercices du coin maths, déjà traduits) : chronométrés, sans vanne, corrigés à la fin et notés comme là-bas.
+  - Espagne : simulacro de Matemáticas II (PAU), noté sur 10, avec le calcul de la note d'accès (60 % bachillerato + 40 % PAU, à partir de 4/10).
+  - Italie : maturità, sur 20 ; Allemagne : Abitur, en % ; États-Unis : SAT Math (22 questions, 35 min, score brut) ; Angleterre : GCSE Maths.
+  - L'interface reste dans la langue choisie ; la langue des questions est rétablie après la génération.
+  - L'écran précise que c'est un entraînement sur les notions, pas le vrai sujet.
+  - La France renvoie aux brevets et bacs blancs existants.
+- **🌐 Anglais section internationale (6e → BFI)** (js/mat-anglais-international.js) : pour les sections internationales britanniques ou américaines (lycée international de Saint-Germain-en-Laye, lycée international Palaiseau Paris-Saclay, section britannique du lycée Camille Pissarro), un niveau qui monte plus vite et plus haut que la LVA. 7 classes × 20 questions, en anglais (questions, réponses, vannes, règles) :
+  - 6e (A2+ → B1) : grammaire et lecture ;
+  - 5e (B1) : récit et poésie (figures de style, rimes) ;
+  - 4e (B1+ → B2) : Shakespeare, rhétorique (ethos, pathos, logos), conditionnels ;
+  - 3e (B2) : inversions, ironie, narrateur, histoire en anglais (révolution industrielle, droit de vote des femmes, NHS, droits civiques), vers le brevet option internationale ;
+  - 2nde (B2 → C1) : sonnet, Orwell, Golding, Steinbeck, Shakespeare ;
+  - BFI 1re (C1) : approfondissement culturel et linguistique (romantisme, Dickens, Austen, modernisme, gothique, dissertation, commentaire) ;
+  - BFI Tle (C1 → C2) : littérature postcoloniale, dystopies, rhétorique (anaphore, chiasme), connaissance du monde (ODD, accord de Paris, ONU, Brexit).
+  - Les œuvres sont citées par leur titre, jamais recopiées.
+- Tests v6.77 (deux tests).
+
+## Version 6.76 — les examens de chaque pays, dans le jeu dès maintenant
+
+- **js/examens-monde.js** : les fiches des examens de fin d'études, vérifiées sur les sources officielles en novembre 2026, sans attendre le serveur :
+  - France : diplôme national du brevet 2026 (épreuves, durées, coefficients, 40 % / 60 %, moyenne de 10/20) et baccalauréat général (épreuves anticipées de français et, nouveau, de mathématiques) ;
+  - Italie : esame di maturità (40 points de crédit + 3 × 20, 60/100, bonus de 3 points, oral sur quatre disciplines) ;
+  - Espagne : PAU (60 % bachillerato + 40 % phase d'accès, au moins 5/10, quatre examens) ;
+  - Allemagne : Abitur (900 points, au moins 300, 4 ou 5 matières) ;
+  - États-Unis : SAT (400 à 1600, deux parties) ;
+  - Angleterre : GCSE (9 à 1) et A levels (A* à E).
+- **Onglet 🏛️ Officiel** : « 🌍 Les examens, pays par pays », avec pour chaque fiche le résumé, les conditions d'obtention, la liste des épreuves, ce qui change et la source officielle. Le titre et les libellés sont traduits en 5 langues ; le contenu des fiches est en français.
+- **Veille** : une ligne de source peut fixer l'identifiant de la fiche (`'id' => 'pau'`…). La fiche publiée par le serveur remplace alors la fiche intégrée au lieu de s'ajouter à côté. Sources ajoutées : PAU (La Moncloa), SAT (College Board), GCSE (gov.uk) ; identifiants fixés pour le brevet, le bac, la maturità et l'Abitur.
+- Tests : v6.76, v6.75 adapté (la fiche du serveur remplace la fiche intégrée) ; test serveur adapté (identifiant fixé).
+
+## Version 6.75 — veille des programmes, des épreuves et des diplômes (toutes matières, plusieurs pays)
+
+- **But** : quand un ministère change un programme, un examen ou un diplôme, le site le repère seul et prépare la mise à jour (voir docs/VEILLE-PROGRAMMES.md).
+- **Serveur** (serveur-php/veille.php, veille-publier.php, veille-sources.php) :
+  - la veille, qui ne suivait que les maths en France, lit maintenant toutes les matières et plusieurs systèmes scolaires : France, Italie, Espagne, Allemagne, États-Unis, Royaume-Uni ;
+  - chaque pays a ses domaines officiels ; un document d'un autre domaine est refusé, même après une redirection ;
+  - nouvelles sortes : `epreuve` et `diplome` (épreuves, durée, notation, conditions d'obtention, ce qui change), en plus de `programme` et `annales` ;
+  - pour un chapitre du programme français que le jeu ne couvre pas encore, l'IA rédige 20 questions (leurres et vannes), à valider ;
+  - un document inchangé n'est pas relu : la veille ne coûte rien tant que rien ne bouge.
+- **Publication automatique (option)** : `veille_publication_auto` dans config.php pour `programme`, `annales`, `epreuve`, `diplome`. Les **questions ne se publient jamais seules**, même si la configuration le demande (test serveur).
+- **Coin admin** : affiche chaque sorte (chapitres reliés ou 🆕 nouveaux, ce qui change, épreuves, questions avec leurs vannes) ; publier() déplacé dans veille-publier.php, partagé avec la publication automatique.
+- programme.php : `?quoi=contenus`, `?quoi=examens`, `?quoi=programmes`. catalogue.json contient maintenant les chapitres des 19 matières (pour relier un programme aux chapitres existants).
+- **Jeu** (js/mod-veille-programmes.js) :
+  - les nouveaux chapitres publiés apparaissent dans la matière et la classe, marqués 🆕 ;
+  - l'onglet 🏛️ Officiel montre « ce qui change » pour les examens, en France et dans les autres pays ;
+  - tout est revérifié dans le jeu : identifiants, format, au moins 10 questions, vannes passées au juge de Plumo, liens https seulement.
+- Sources réelles ajoutées :
+  - France : nouveau programme de français de cycle 4 (en 5e à la rentrée 2026), modalités du DNB 2026, examens 2026 ;
+  - Italie : esame di maturità ;
+  - Espagne : RD 217/2022 (ESO) ;
+  - Allemagne : Abitur (KMK) ;
+  - États-Unis : Common Core.
+- **Documents** : 2 nouveaux en histoire-géo (« Un monde de plus en plus urbain », 6e-5e ; « La croissance de la population mondiale », 5e-2nde). Histoire-géo couvre maintenant toutes les classes, de la 6e à la Tle. 24 documents en tout.
+- **Grands écrans d'ordinateur** : à partir de 1 400 px de large, tout grandit (textes, cartes, boutons) par paliers à 1 400, 1 800 et 2 300 px ; sur 1 800 px et plus, des cartes plus larges. Rien ne change en dessous de 1 400 px (téléphones, tablettes). Si l'élève a choisi une taille de texte dans les Réglages, son choix reste prioritaire.
+- Tests : v6.75 (jeu) et 8 vérifications de plus au test serveur (51 en tout) ; la vérification « le texte du document part vers Claude » est renforcée (les deux documents, sans script).
+
+## Version 6.74 — « sûr(e) / pas sûr(e) » et 8 nouveaux documents
+
+- **🎯 Sûr(e) / 🤔 Pas sûr(e)** : avant de répondre (maths et matières, pas en contrôle), l'élève peut dire s'il est sûr de lui. C'est facultatif ; un second clic annule.
+  - Sûr(e) et faux : message « c'est l'erreur à retenir en priorité » ; l'erreur est marquée et passe en tête de la révision du jour.
+  - Pas sûr(e) et juste : possible coup de chance ; la question entre dans le carnet et revient le lendemain.
+  - Espace parents : carte « Lucidité » (part des réponses « sûr(e) » qui étaient justes, réponses justes malgré un doute), à partir de 5 réponses notées.
+- **8 nouveaux documents (32 questions)**, pour couvrir les classes qui n'en avaient pas :
+  - histoire-géo & EMC : préambule de la Constitution de 1946 (3e, Tle), Jaurès, « Discours à la jeunesse » (1903, 1re-Tle) ;
+  - SVT : première et deuxième injection d'un vaccin (3e, 2nde), une enzyme et la température (2nde, 1re), dater avec le carbone 14 (1re, Tle) ;
+  - physique-chimie : de la glace à la vapeur (6e, 5e), préparer une solution diluée (2nde), vitesse et énergie cinétique (1re, Tle).
+- En tout : 22 documents, 98 questions. Toutes les classes ont au moins un document en histoire-géo (de la 4e à la Tle), français (6e-1re), SVT et physique-chimie. Le test le vérifie, ainsi que la mention « Document d'exercice » sur toutes les données construites en sciences et en SES.
+- Textes d'écran traduits en 5 langues. Test v6.74, test v6.73 complété.
+
+## Version 6.73 — études de documents
+
+- **📄 Études de documents** : un texte ou un tableau de mesures, puis 4 ou 5 questions dessus, comme au brevet et au bac (prélever, comprendre, relier au cours, calculer). Carte « Études de documents (n) » sur l'écran d'une matière quand la classe choisie en a ; liste des documents, un document seul ou « tous à la suite » (20 questions au plus).
+- 14 documents, 66 questions :
+  - histoire-géo & EMC : Déclaration des droits de l'homme (1789), décret d'abolition de l'esclavage (1848), Olympe de Gouges (1791), loi de 1905, Constitution de 1958 ;
+  - français : « Le Corbeau et le Renard », « Demain, dès l'aube… », « L'Albatros » ;
+  - SVT : conditions de la germination, le corps pendant l'effort ;
+  - physique-chimie : loi d'Ohm, mouvement d'un cycliste ;
+  - SES : mesurer le chômage, calculer une évolution de prix.
+- Les textes sont des sources libres de droits (textes officiels, poèmes et fables d'avant 1929), cités exactement. Les mesures et les chiffres sont construits pour l'exercice, et le document le dit (« Document d'exercice », « données fictives »).
+- Le document reste affiché au-dessus de chaque question. Les leurres sont des erreurs typiques (diviser par la mauvaise population, confondre comparaison et métaphore, oublier qu'une baisse se calcule depuis la nouvelle valeur…), avec des vannes acceptées par le juge. Une question ratée part en révision du jour avec son document.
+- Documents en français ; si l'interface est dans une autre langue, l'écran le signale. Module js/mod-documents.js, textes d'écran traduits en 5 langues. Test v6.73.
+
+## Version 6.72 — pièges sérieux en contrôle
+
+- **Le problème** : beaucoup de questions de cours opposaient une bonne réponse longue et précise à des leurres courts et farfelus (« une plage privée », « un petit village »). On trouvait la bonne réponse sans rien savoir, juste à sa longueur.
+- **En contrôle de trimestre (matières)**, un leurre plus court que 45 % de la bonne réponse est remplacé par la bonne réponse d'une AUTRE question du même chapitre : il faut vraiment distinguer les notions proches (métropolisation / aire d'attraction, gène / allèle, incidence / prévalence…). À l'entraînement, rien ne change : les leurres d'origine et leurs vannes restent.
+- **Garde-fous** pour ne jamais créer deux bonnes réponses : seulement les réponses d'au moins 25 caractères ; jamais pour une question à trou, négative, « vrai ou faux » ou « un exemple » ; même type de question (où, quand, qui, pourquoi, définition, « quel » + même nom) et même tournure de réponse (article, préposition…) ; longueur voisine ; rien qui ressemble à la bonne réponse, qui vienne d'une question sur le même sujet ou qui figure dans la règle ; même langue.
+- Sur les 6 209 questions des banques (en français), environ 700 sont concernées, pour environ 1 200 leurres remplacés. Si l'élève choisit un leurre emprunté, la correction lui explique que c'est la réponse d'une autre question du chapitre.
+- Phrase ajoutée sur l'écran des trimestres, traduite en 5 langues. Les maths ne sont pas touchées (leurs leurres sont déjà calculés à partir des erreurs typiques). Test v6.72.
+
+## Version 6.71 — apprendre pour de bon : révision espacée, réponse écrite, signalement
+
+- **🗓️ Révision du jour (révision espacée)** : chaque question ratée — en maths comme dans toutes les matières — revient le lendemain, puis 3, 7 et 21 jours plus tard. Réussie le jour prévu, elle monte d'une boîte ; réussie à la dernière boîte, elle est « maîtrisée » et quitte le carnet ; ratée, elle repart à J+1. Une bonne réponse le jour même ne compte pas. Carte « Révision du jour (n) » sur l'écran des matières et dans le coin maths, avec un bilan à la fin.
+- Changement voulu : avant, une bonne réponse dans « Mes erreurs » retirait tout de suite la question ; le test v5.98 a été adapté à la nouvelle règle (et non masqué). Le carnet garde jusqu'à 200 questions (80 avant), les maths y entrent désormais.
+- **✍️ Réponse écrite (rappel actif)** : interrupteur sur l'écran des matières et dans le coin maths. Pour les réponses courtes (4 mots au plus), l'élève écrit d'abord sa réponse ; les choix n'apparaissent que s'il se trompe ou les demande. Tolérances : majuscules, accents, article de tête, virgule ou point décimal, partie entre parenthèses. Juste = +1 plume bonus et rappel de l'orthographe exacte ; fausse = la question part en révision, même si le bon choix est trouvé ensuite.
+- **🚩 Signaler une erreur** : bouton sous la correction de chaque question de maths ou de matière ; la question est gardée sur l'appareil (300 au plus) et listée dans l'Espace parents, avec un bouton pour vider la liste. Rien n'est envoyé.
+- **Plus d'espace à l'écran** : la limite de 1 760 px saute sur les grands écrans (96 % de la largeur, partout) ; l'intro est centrée ; sur 2 000 px et plus, des cartes plus grandes. Écran de fin de trimestre : bilan par chapitre en grille large (vert/rouge), correction en cartes numérotées côte à côte au lieu d'une colonne centrée.
+- Nouveau module js/mod-revision.js, textes traduits en 5 langues. Test v6.71. Outil de test : `SEUL=v6.71 node tests/jeu.test.js` lance un seul test (par défaut, tous les tests tournent).
+
 ## Version 6.70 — Français, espagnol et allemand du lycée : chaque chapitre à 20 questions (le lycée est complet)
 
 - +109 questions dans `js/mat-langues-lycee-fin.js`.
