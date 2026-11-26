@@ -37,6 +37,8 @@ const SYSTEME_DEVOIRS = "Tu es le tuteur de l'application « Ami des mots », po
   . "Réponds UNIQUEMENT par un objet JSON valide, sans texte autour.";
 
 $d = ami_corps_json(6000000);
+// v6.79 : l'appli n'envoie un devoir qu'avec l'accord d'un parent (Espace parents). Une demande sans cet accord est refusée.
+if (($d['accord_parent'] ?? null) !== true) ami_json(['erreur' => 'accord_parent'], 403);
 // Les signes < et > restent (inéquations de maths) ; seules les balises qui délimitent le devoir sont retirées.
 // L'appli échappe tout ce qu'elle affiche.
 $txt = fn($v, int $max) => mb_substr(trim((string) preg_replace('~</?\s*(devoir|travail|question|conseils)\s*>~i', '', (string) $v)), 0, $max);

@@ -55,4 +55,9 @@ return [
   'admin_mdp_hash' => '',
   // Lancement de la veille par une tâche planifiée web (OVH : « Tâches planifiées - Cron ») : jeton secret.
   'veille_jeton' => '',
+  // v6.75 : publication sans validation pour certaines sortes de la veille (vide = tout passe par le coin admin).
+  // Possibles : 'programme', 'annales', 'epreuve', 'diplome'. Les nouvelles QUESTIONS demandent toujours la validation d'un adulte.
+  'veille_publication_auto' => [],
+  // v6.75 : nombre de nouveaux chapitres pour lesquels l'IA rédige 20 questions à chaque passage (0 à 6).
+  'veille_chapitres_max' => 2,
 ];

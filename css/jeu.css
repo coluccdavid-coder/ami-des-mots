@@ -1967,3 +1967,69 @@ html[data-texte="tres-grand"]{ font-size:125%; } html[data-texte="tres-grand"] b
 .lecon-bloc textarea{ width:100%; box-sizing:border-box; border-radius:12px; padding:10px; font:inherit; margin-top:6px; }
 .lecon-q-eleve{ font-style:italic; opacity:.9; }
 .lecon-verif, .lecon-propose{ text-align:center; margin-top:14px; }
+
+/* v6.71 : plus d'espace sur les grands écrans — écrans de fin (trimestre, examen, révision) et correction en cartes. */
+/* Les très grands écrans (2 560 px et plus) n'étaient remplis qu'aux deux tiers : la limite de 1 760 px saute, on garde une marge de 2 %. */
+@media (min-width:1100px){
+  #app > main:not(.accueil), #app > .barre, #app .barre, #app .partie{ max-width:96vw; }
+  #app > main:not(.accueil){ width:96vw; }
+  #app .pieges-intro{ margin-inline:auto; max-width:min(1100px,100%); }
+  #app .devoirs-hero{ max-width:min(1200px,100%); }
+  #app .ma-classe{ max-width:none; }
+}
+@media (min-width:2000px){
+  #app .cartes-anglais{ grid-template-columns:repeat(auto-fill, minmax(300px, 1fr)); gap:24px; }
+  #app .carte-anglais{ font-size:1.15rem; }
+}
+.trimestre-fin .pieges-cats.bilan-chap{max-width:none;grid-template-columns:repeat(auto-fill,minmax(260px,1fr))}
+.trimestre-fin .pieges-cats.bilan-chap li{display:block;line-height:1.4}
+.trimestre-fin .pieges-cats.bilan-chap li.rate{border-color:rgba(255,110,110,.45)}
+.trimestre-fin .pieges-cats.bilan-chap li.ok{border-color:rgba(110,230,160,.45)}
+.correction-controle{list-style:none;counter-reset:corr;padding:0;margin:12px 0 22px;display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,420px),1fr));gap:12px;text-align:left}
+.correction-controle li{counter-increment:corr;position:relative;padding:14px 16px 12px 52px;border-radius:15px;border:1px solid rgba(255,255,255,.14);background:rgba(255,255,255,.065)}
+.correction-controle li::before{content:counter(corr);position:absolute;left:14px;top:13px;width:26px;height:26px;border-radius:50%;display:grid;place-items:center;font-weight:700;font-size:.9rem;background:rgba(255,255,255,.14)}
+.correction-controle li p{margin:4px 0;line-height:1.4}
+.correction-controle li p:first-child{font-weight:600;margin-bottom:8px}
+.trimestre-fin .liste-chap{max-width:none}
+.reponse-libre{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;align-items:center;margin:14px auto}
+.reponse-libre input{flex:1 1 260px;max-width:440px;font:inherit;font-size:1.15rem;padding:12px 14px;border-radius:14px;border:2px solid rgba(255,255,255,.25);background:rgba(255,255,255,.08);color:inherit}
+.reponse-libre label{flex-basis:100%;font-weight:600}
+.signalements ol{text-align:left}
+/* v6.73 : études de documents */
+.liste-documents{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,320px),1fr));gap:14px;margin:16px 0}
+.carte-document{display:flex;flex-direction:column;gap:6px;text-align:left;font:inherit;color:inherit;cursor:pointer;padding:16px 18px;border-radius:18px;border:1px solid rgba(255,255,255,.16);background:rgba(255,255,255,.07);transition:transform .15s,background .15s}
+.carte-document:hover{transform:translateY(-2px);background:rgba(255,255,255,.12)}
+.carte-document small{opacity:.8;line-height:1.35}.carte-document em{font-style:normal;font-weight:800;opacity:.9}
+.contexte-exo p{white-space:normal}
+/* v6.74 : confiance avant de répondre */
+.confiance{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;align-items:center;margin:6px 0 10px;font-size:.95rem}
+.confiance span{opacity:.85}
+.conf-alerte{font-weight:800;color:#ffd0a0}.conf-doute{font-weight:700;color:#bfe8ff}
+
+/* v6.75 : grands écrans d'ordinateur — tout grandit (textes, cartes, boutons). Rien ne change sous 1 400 px : téléphones et tablettes intacts.
+   Seulement si l'élève n'a pas choisi lui-même une taille de texte (Réglages → Taille du texte). */
+@media (min-width:1400px){
+  html:not([data-texte]){ font-size:112.5%; }
+  html:not([data-texte]) body{ font-size:1.25rem; }
+  #app .carte-anglais small{ font-size:.92em; line-height:1.4; }
+  #app .pieges-intro{ font-size:1.1em; }
+}
+@media (min-width:1800px){
+  html:not([data-texte]){ font-size:125%; }
+  html:not([data-texte]) body{ font-size:1.3rem; }
+  #app .cartes-anglais{ grid-template-columns:repeat(auto-fill, minmax(300px, 1fr)); gap:22px; }
+}
+@media (min-width:2300px){
+  html:not([data-texte]){ font-size:140%; }
+  html:not([data-texte]) body{ font-size:1.4rem; }
+  #app .cartes-anglais{ grid-template-columns:repeat(auto-fill, minmax(340px, 1fr)); gap:26px; }
+}
+/* v6.78 : section internationale — plan à cocher, grille d'oral */
+.si-plan{text-align:left;line-height:1.5;padding-left:1.4em}
+.si-plan li{margin:6px 0}
+.si-examens progress{width:100%;height:12px}
+.si-grille{display:grid;gap:10px;max-width:640px;margin:12px auto;text-align:left}
+.si-grille fieldset{border:1px solid rgba(255,255,255,.18);border-radius:12px;padding:8px 12px}
+.si-grille label{margin-right:12px;cursor:pointer}
+.si-oeuvres{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,280px),1fr));gap:8px;text-align:left}
+.si-oeuvres input{width:100%;box-sizing:border-box;font:inherit;padding:6px 10px;border-radius:10px;border:1px solid rgba(255,255,255,.25);background:rgba(255,255,255,.08);color:inherit}

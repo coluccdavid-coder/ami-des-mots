@@ -5,6 +5,18 @@ Plumo le hibou. Produit **séparé** de reparole.fr : mêmes images, mêmes mots
 même hibou, mais un jeu grand public, pas un outil de soin. reparole.fr
 n'est pas modifié.
 
+## Ce qui est réellement activé aujourd'hui (v6.79)
+
+La configuration publique (`js/config-site.js`) décide de ce que voit le joueur. Pour l'état exact et les points qui bloquent
+encore une ouverture au public : `npm run publication` (voir `docs/AVANT-PUBLICATION.md`).
+
+- **Sans serveur** (`SERVEUR:''`, réglage actuel) : tout le jeu, les matières, les examens blancs et les révisions marchent sur l'appareil,
+  sans compte. Pas d'IA : l'aide aux devoirs donne une méthode pas à pas ; pas de salon en direct, pas de veille des programmes.
+- **Avec serveur** : aide aux devoirs par IA (seulement si un parent l'autorise dans l'Espace parents), veille des programmes,
+  salon en direct, plumes et abonnement (le paiement reste désactivé tant que `MODE_PAYANT` vaut `false`).
+- **Masqués pour l'instant, rien n'est supprimé** : village 2D/3D, Mots City, commentaires vocaux de Plumo, animation de la bouche.
+- Les tests demandent `npm install` (jsdom) avant `npm run verifier`.
+
 ## Ce que contient le jeu
 
 - **8 thèmes** : animaux, à table, la maison, habits, nature, en ville,

@@ -32,7 +32,7 @@
       '<div class="onglets-niveaux" role="tablist">' + G.NIVEAUX.map(n => '<button role="tab" aria-selected="' + (n === e.niveau) + '" class="onglet' + (n === e.niveau ? ' actif' : '') + '" data-a="gb-niveau" data-v="' + n + '" title="' + esc(G.ETAPES[n]) + '">' + n + '</button>').join('') + '</div>' +
       '<p class="petit">' + esc(G.NOMS[e.niveau] + ' · ' + G.ETAPES[e.niveau]) + '</p>' +
       '<div class="cartes-anglais">' + A.cartesModules('matiere') +
-        ((J.carnet || []).length ? carte('carnet-erreurs', '', '🎯', 'My mistakes (' + J.carnet.length + ')', 'Questions you got wrong: get them right to clear them') : '') +
+        ((J.carnet || []).length ? carte('carnet-erreurs', '', '🎯', 'My mistakes (' + J.carnet.length + ')', 'Questions you got wrong: they come back until you master them') : '') +
         liste.map(m => { const n = G.chapitres(m.id, e.niveau).length; return carte('gb-matiere', m.id, m.ic, esc(m.nom), esc(m.sous) + ' · ' + n + ' topic' + (n > 1 ? 's' : '')); }).join('') +
         carte('gb-mtc', '', '✖️', 'Times tables check', 'Like the Year 4 check: 25 questions, 6 seconds each' + (e.mtc ? ' · best: ' + e.mtc + '/25' : '')) +
       '</div><section class="domaine"><h3>🇫🇷 Programme français</h3><div class="cartes-anglais">' + carte('gb-programme', 'fr', '🇫🇷', 'Programme français', 'De la 6e au bac, en français') + '</div></section>');

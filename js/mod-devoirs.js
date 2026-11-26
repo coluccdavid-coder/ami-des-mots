@@ -7,6 +7,9 @@
   'use strict';
   const M = window.AMI_MODULES; if(!M) return;
   M.textes({
+    '📚 Aide aux devoirs par l’IA':['📚 AI homework help', '📚 Ayuda con los deberes por IA', '📚 Hausaufgabenhilfe mit KI', '📚 Aiuto compiti con l’IA', '📚 Ajuda nos trabalhos de casa com IA'],
+    'Si vous l’autorisez, l’énoncé, la photo ou le PDF choisis par l’enfant sont envoyés au serveur du jeu puis à l’IA (Anthropic) pour l’aider à démarrer. Ami des mots ne les conserve pas. Sans autorisation, l’enfant garde une méthode pas à pas, sans rien envoyer.':['If you allow it, the text, photo or PDF your child chooses is sent to the game server and then to the AI (Anthropic) to help them get started. Ami des mots does not keep it. Without permission, your child still gets a step-by-step method, and nothing is sent.', 'Si lo autoriza, el enunciado, la foto o el PDF que elija el niño se envían al servidor del juego y luego a la IA (Anthropic) para ayudarle a empezar. Ami des mots no los conserva. Sin autorización, el niño tiene un método paso a paso, sin enviar nada.', 'Wenn Sie es erlauben, werden der Aufgabentext, das Foto oder das PDF, das Ihr Kind auswählt, an den Server des Spiels und dann an die KI (Anthropic) gesendet, um beim Einstieg zu helfen. Ami des mots speichert nichts davon. Ohne Erlaubnis erhält Ihr Kind eine Schritt-für-Schritt-Methode, und nichts wird gesendet.', 'Se lo autorizza, il testo, la foto o il PDF scelti dal bambino vengono inviati al server del gioco e poi all’IA (Anthropic) per aiutarlo a cominciare. Ami des mots non li conserva. Senza autorizzazione, il bambino ha comunque un metodo passo per passo, senza inviare nulla.', 'Se autorizar, o enunciado, a foto ou o PDF escolhidos pela criança são enviados para o servidor do jogo e depois para a IA (Anthropic) para a ajudar a começar. O Ami des mots não os guarda. Sem autorização, a criança tem um método passo a passo, sem enviar nada.'],
+    'L’aide par l’IA doit d’abord être autorisée par un parent (Espace parents). En attendant, voici une méthode pour bien démarrer :':['AI help must first be allowed by a parent (Parents’ area). Meanwhile, here is a method to get started:', 'La ayuda de la IA debe autorizarla primero un padre o una madre (Espacio para padres). Mientras tanto, aquí tienes un método para empezar bien:', 'Die KI-Hilfe muss zuerst von einem Elternteil erlaubt werden (Elternbereich). Bis dahin hier eine Methode für den Einstieg:', 'L’aiuto dell’IA deve prima essere autorizzato da un genitore (Area genitori). Intanto, ecco un metodo per cominciare bene:', 'A ajuda da IA tem primeiro de ser autorizada por um pai ou uma mãe (Espaço dos pais). Entretanto, aqui está um método para começar bem:'],
     "Lis la consigne deux fois et souligne les verbes (calcule, justifie, décris, compare…).": ["Read the instructions twice and underline the verbs (calculate, justify, describe, compare…).", "Lee el enunciado dos veces y subraya los verbos (calcula, justifica, describe, compara…).", "Lies die Aufgabe zweimal und unterstreiche die Verben (berechne, begründe, beschreibe, vergleiche …).", "Leggi la consegna due volte e sottolinea i verbi (calcola, giustifica, descrivi, confronta…).", "Lê o enunciado duas vezes e sublinha os verbos (calcula, justifica, descreve, compara…)."],
     "Retrouve dans ton cahier la leçon qui correspond, et relis l’exemple fait en classe.": ["Find the matching lesson in your exercise book and reread the example done in class.", "Busca en tu cuaderno la lección correspondiente y relee el ejemplo hecho en clase.", "Such in deinem Heft den passenden Stoff und lies das Beispiel aus dem Unterricht noch einmal.", "Ritrova sul quaderno la lezione corrispondente e rileggi l’esempio fatto in classe.", "Procura no caderno a matéria correspondente e relê o exemplo feito na aula."],
     "Fais un brouillon : note ce que tu sais et ce qu’on te demande.": ["Make a rough draft: write down what you know and what you are asked.", "Haz un borrador: anota lo que sabes y lo que te piden.", "Mach einen Entwurf: Notiere, was du weißt und was verlangt wird.", "Fai una brutta copia: annota ciò che sai e ciò che ti chiedono.", "Faz um rascunho: anota o que sabes e o que te pedem."],
@@ -90,10 +93,17 @@
   const cout = k => api().plumesActives() ? ' ' + plumesTx(COUT[k]) : '';
   const liste = l => '<ul class="devoirs-liste">' + (l || []).map(x => '<li>' + api().esc(x) + '</li>').join('') + '</ul>';
 
+  // v6.79 : l'envoi d'un devoir à l'IA (texte, photo, PDF) doit d'abord être autorisé par un parent, dans l'Espace parents,
+  // comme l'oral noté. Sans accord : la méthode locale, rien n'est envoyé. Le serveur refuse aussi une demande sans accord.
+  const accord = () => api().base().devoirsAccord === true;
+  if(!M.cartes.parents) M.cartes.parents = [];
+  M.cartes.parents.push(() => '<section class="reglage-devoirs"><div class="reglage"><span><strong>' + tx('📚 Aide aux devoirs par l’IA') + '</strong><span class="petit">' +
+    tx('Si vous l’autorisez, l’énoncé, la photo ou le PDF choisis par l’enfant sont envoyés au serveur du jeu puis à l’IA (Anthropic) pour l’aider à démarrer. Ami des mots ne les conserve pas. Sans autorisation, l’enfant garde une méthode pas à pas, sans rien envoyer.') +
+    '</span></span><button class="moyen' + (accord() ? ' plein' : '') + '" data-a="devoirs-accord" aria-pressed="' + accord() + '">' + tx(accord() ? 'Autorisé' : 'Non autorisé') + '</button></div></section>');
   function ecran(){
     const A = api(), esc = A.esc, e = A.etatMatieres(), d = e.derniere || 'francais'; fichier = null; dernier = null;
     const opts = matieres().map(([id, n]) => '<option value="' + esc(id) + '"' + (id === d ? ' selected' : '') + '>' + esc(n) + '</option>').join('');
-    const serveur = !!M.serveur('devoirs.php');
+    const avecServeur = !!M.serveur('devoirs.php'), serveur = avecServeur && accord();
     A.poser(A.barre('matieres') + '<main class="coin-anglais devoirs"><h2>' + tx('📚 Aide aux devoirs') + '</h2>' +
       '<p class="pieges-intro">' + tx('Ici, l’IA ne fait pas ton devoir : elle t’aide à comprendre la consigne, à retrouver ta leçon et à trouver la méthode. C’est toi qui écris la réponse.') + '</p>' +
       '<p><label>' + tx('Matière') + ' <select id="dev-matiere">' + opts + '</select></label>' + (e.classe ? ' <span class="petit">🎒 ' + esc(e.classe === 'Sup' ? A.TXT('Après le bac') : e.classe) + '</span>' : '') + '</p>' +
@@ -103,7 +113,7 @@
         '<p class="petit">' + tx('🤖 L’IA peut se tromper : vérifie avec ta leçon, et demande à ton professeur en cas de doute.') + '</p>' +
         (A.plumesActives() ? '<p class="petit">' + tx('Coût : {0} plumes ({1} avec une photo ou un PDF).', COUT.aide, COUT.aide + COUT.fichier) + '</p>' : '') +
         '<p><button class="gros" data-a="devoirs-aide">' + tx('🧭 M’aider à démarrer') + '</button></p>'
-      : '<p>' + tx('L’aide par l’IA arrive avec le serveur du jeu. En attendant, voici une méthode pour bien démarrer :') + '</p><div id="dev-methode"></div>') +
+      : '<p>' + tx(avecServeur ? 'L’aide par l’IA doit d’abord être autorisée par un parent (Espace parents). En attendant, voici une méthode pour bien démarrer :' : 'L’aide par l’IA arrive avec le serveur du jeu. En attendant, voici une méthode pour bien démarrer :') + '</p><div id="dev-methode"></div>') +
       '<div id="dev-resultat" role="status" aria-live="polite"></div></main>');
     const sel = document.getElementById('dev-matiere'), meth = () => { const z = document.getElementById('dev-methode'); if(z) z.innerHTML = liste(METHODES.commun.concat(famille(sel.value) === 'commun' ? [] : METHODES[famille(sel.value)]).map(x => tx(x))); };
     if(sel) sel.addEventListener('change', meth); meth();
@@ -133,9 +143,10 @@
   function corps(mode, extra){
     const A = api(), e = A.etatMatieres(), sel = document.getElementById('dev-matiere'), id = sel ? sel.value : 'autre';
     const nom = (matieres().find(x => x[0] === id) || [id, id])[1].replace(/^\S+\s/, '');
-    return Object.assign({ mode, matiere:id, nom_matiere:nom, niveau:e.classe || e.niveau, langue:A.base().ui }, extra, A.codePlumes());
+    return Object.assign({ mode, matiere:id, nom_matiere:nom, niveau:e.classe || e.niveau, langue:A.base().ui, accord_parent:accord() }, extra, A.codePlumes());
   }
   async function aide(){
+    if(!accord()) return ecran();
     const A = api(), esc = A.esc, z = document.getElementById('dev-resultat'), t = String((document.getElementById('dev-enonce') || {}).value || '').trim();
     if(!z) return; if(t.length < 10 && !fichier){ z.innerHTML = '<p>' + tx('Colle l’énoncé ou ajoute une photo.') + '</p>'; return; }
     const b = document.querySelector('[data-a="devoirs-aide"]'); if(b) b.disabled = true;
@@ -156,6 +167,7 @@
       '<p><button class="moyen plein" data-a="devoirs-relire">' + tx('🔍 Faire relire') + cout('relire') + '</button></p><div id="dev-relu" role="status" aria-live="polite"></div></section>';
   }
   async function suite(){
+    if(!accord()) return;
     const z = document.getElementById('dev-suite'), q = String((document.getElementById('dev-question') || {}).value || '').trim(); if(!z || !dernier || q.length < 3) return;
     z.innerHTML = '<p class="aide">' + tx('⏳ Lecture de ton devoir…') + '</p>';
     const r = await M.envoyer('devoirs.php', corps('suite', { enonce:dernier.enonce, consignes_precedentes:dernier.conseils, question:q }));
@@ -163,6 +175,7 @@
     z.innerHTML = r.ok && r.d && r.d.reponse ? '<p class="explication-ia">🤖 ' + api().esc(r.d.reponse) + '</p>' : '<p>' + erreur(r) + '</p>';
   }
   async function relire(){
+    if(!accord()) return;
     const z = document.getElementById('dev-relu'), t = String((document.getElementById('dev-travail') || {}).value || '').trim(); if(!z || !dernier || t.length < 10) return;
     z.innerHTML = '<p class="aide">' + tx('⏳ Lecture de ton devoir…') + '</p>';
     const r = await M.envoyer('devoirs.php', corps('relire', { enonce:dernier.enonce, travail:t }));
@@ -172,6 +185,8 @@
       (r.d.pistes && r.d.pistes.length ? '<h3>' + tx('🛠️ Comment t’y prendre') + '</h3>' + liste(r.d.pistes) : '') + '<p class="petit">' + tx('🤖 L’IA peut se tromper : vérifie avec ta leçon, et demande à ton professeur en cas de doute.') + '</p>';
   }
   // v6.38 : l'entrée est la grande carte en tête de l'écran Matières (js/jeu.js).
-  Object.assign(M.actions, { 'devoirs':() => ecran(), 'devoirs-aide':() => aide(), 'devoirs-suite':() => suite(), 'devoirs-relire':() => relire() });
+  Object.assign(M.actions, { 'devoirs-accord':(v, b) => { const base = api().base(); base.devoirsAccord = !accord(); api().garder();
+      if(b){ b.textContent = tx(accord() ? 'Autorisé' : 'Non autorisé'); b.classList.toggle('plein', accord()); b.setAttribute('aria-pressed', String(accord())); } },
+    'devoirs':() => ecran(), 'devoirs-aide':() => aide(), 'devoirs-suite':() => suite(), 'devoirs-relire':() => relire() });
   M.devoirs = { METHODES, famille, COUT };
 })();

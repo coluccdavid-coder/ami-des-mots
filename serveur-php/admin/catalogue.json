@@ -261,5 +261,2155 @@
     ]
    ]
   ]
- ]
+ ],
+ "matieres": {
+  "francais": [
+   [
+    "conjugaison",
+    "Conjugaison",
+    [
+     "6e",
+     "5e",
+     "4e",
+     "3e",
+     "2nde"
+    ]
+   ],
+   [
+    "homophones",
+    "Homophones (a/à, et/est…)",
+    [
+     "6e",
+     "5e",
+     "4e",
+     "3e"
+    ]
+   ],
+   [
+    "accords",
+    "Accord du participe passé",
+    [
+     "5e",
+     "4e",
+     "3e",
+     "2nde"
+    ]
+   ],
+   [
+    "nature",
+    "Nature des mots",
+    [
+     "6e",
+     "5e",
+     "4e",
+     "3e"
+    ]
+   ],
+   [
+    "fonctions",
+    "Fonctions dans la phrase",
+    [
+     "6e",
+     "5e",
+     "4e",
+     "3e",
+     "2nde"
+    ]
+   ],
+   [
+    "vocabulaire",
+    "Vocabulaire",
+    [
+     "6e",
+     "5e",
+     "4e"
+    ]
+   ],
+   [
+    "figures",
+    "Figures de style",
+    [
+     "4e",
+     "3e",
+     "2nde",
+     "1re"
+    ]
+   ],
+   [
+    "litterature",
+    "Auteurs, œuvres, mouvements",
+    [
+     "3e",
+     "2nde",
+     "1re"
+    ]
+   ],
+   [
+    "r-f1",
+    "Œuvres, mouvements et épreuve du bac",
+    [
+     "1re"
+    ]
+   ],
+   [
+    "cours-6e",
+    "Cours de 6e : grammaire, orthographe, lexique, récits et fables",
+    [
+     "6e"
+    ]
+   ],
+   [
+    "cours-5e",
+    "Cours de 5e : phrases, compléments, passé composé, Moyen Âge et Molière",
+    [
+     "5e"
+    ]
+   ],
+   [
+    "cours-4e",
+    "Cours de 4e : subordonnées, voix passive, discours rapporté, nouvelles et Hugo",
+    [
+     "4e"
+    ]
+   ],
+   [
+    "cours-3e",
+    "Cours de 3e : circonstancielles, modalisation, autobiographie, poésie engagée, brevet",
+    [
+     "3e"
+    ]
+   ],
+   [
+    "cours-2nde",
+    "Cours de 2nde : de l’humanisme au XXe siècle, outils de l’analyse littéraire",
+    [
+     "2nde"
+    ]
+   ],
+   [
+    "cours-1re",
+    "Cours de 1re : épreuve anticipée de français, méthode et grands repères",
+    [
+     "1re"
+    ]
+   ],
+   [
+    "cpl-phrases",
+    "Types et formes de phrases",
+    [
+     "6e",
+     "5e",
+     "4e",
+     "3e"
+    ]
+   ],
+   [
+    "cpl-modes",
+    "Conjugaison : subjonctif, impératif, conditionnel et temps composés",
+    [
+     "5e",
+     "4e",
+     "3e"
+    ]
+   ],
+   [
+    "cpl-ortho90",
+    "Orthographe : les rectifications de 1990",
+    [
+     "6e",
+     "5e",
+     "4e",
+     "3e"
+    ]
+   ],
+   [
+    "cpl-amour",
+    "Littérature 4e : dire l’amour",
+    [
+     "4e"
+    ]
+   ],
+   [
+    "cpl-gn-lexique",
+    "Groupe nominal, étymologie et point de vue",
+    [
+     "6e",
+     "5e",
+     "4e",
+     "3e"
+    ]
+   ],
+   [
+    "cpl-5e-entrees",
+    "Français 5e : voyager en poésie, devenir héroïne ou héros",
+    [
+     "5e"
+    ]
+   ]
+  ],
+  "histoire": [
+   [
+    "antiquite",
+    "Antiquité",
+    [
+     "6e"
+    ]
+   ],
+   [
+    "moyen-age",
+    "Moyen Âge et Renaissance",
+    [
+     "5e"
+    ]
+   ],
+   [
+    "revolution",
+    "Révolution et XIXe siècle",
+    [
+     "4e",
+     "2nde"
+    ]
+   ],
+   [
+    "xxe",
+    "Guerres mondiales et XXe siècle",
+    [
+     "3e",
+     "1re",
+     "Tle"
+    ]
+   ],
+   [
+    "seconde-guerre",
+    "La Seconde Guerre mondiale (1939-1945)",
+    [
+     "3e",
+     "1re",
+     "Tle"
+    ]
+   ],
+   [
+    "lycee",
+    "Repères du lycée",
+    [
+     "2nde",
+     "1re",
+     "Tle"
+    ]
+   ],
+   [
+    "geo",
+    "Géographie",
+    [
+     "6e",
+     "5e",
+     "4e",
+     "3e",
+     "2nde"
+    ]
+   ],
+   [
+    "emc",
+    "Enseignement moral et civique",
+    [
+     "6e",
+     "5e",
+     "4e",
+     "3e"
+    ]
+   ],
+   [
+    "sgm-cours",
+    "Cours de 3e : la Seconde Guerre mondiale, une guerre d’anéantissement",
+    [
+     "3e",
+     "1re"
+    ]
+   ],
+   [
+    "r-h6",
+    "Des premiers humains à Rome",
+    [
+     "6e"
+    ]
+   ],
+   [
+    "r-h5",
+    "Moyen Âge et Temps modernes",
+    [
+     "5e"
+    ]
+   ],
+   [
+    "r-h4",
+    "Révolution, Empire, XIXe siècle",
+    [
+     "4e"
+    ]
+   ],
+   [
+    "r-h3",
+    "Le XXe siècle",
+    [
+     "3e",
+     "Tle"
+    ]
+   ],
+   [
+    "r-h2",
+    "Renaissance, Lumières, risques",
+    [
+     "2nde"
+    ]
+   ],
+   [
+    "r-h1",
+    "XIXe siècle, IIIe République, métropoles",
+    [
+     "1re"
+    ]
+   ],
+   [
+    "r-ht",
+    "Crises, guerre froide, Europe, mondialisation",
+    [
+     "Tle"
+    ]
+   ],
+   [
+    "pgm-cours",
+    "Cours de 3e : la Première Guerre mondiale, une guerre totale",
+    [
+     "3e",
+     "1re"
+    ]
+   ],
+   [
+    "cours-h6",
+    "Histoire 6e : de la Préhistoire à l’Empire romain",
+    [
+     "6e"
+    ]
+   ],
+   [
+    "cours-h5",
+    "Histoire 5e : chrétientés et islam, société féodale, Renaissance, Louis XIV",
+    [
+     "5e"
+    ]
+   ],
+   [
+    "cours-h4",
+    "Histoire 4e : Lumières, Révolution et Empire, industrialisation, colonisation, IIIe République",
+    [
+     "4e"
+    ]
+   ],
+   [
+    "cours-h3",
+    "Histoire 3e : totalitarismes, monde bipolaire, décolonisation, Europe, Ve République",
+    [
+     "3e"
+    ]
+   ],
+   [
+    "cours-g6",
+    "Géographie 6e : habiter le monde",
+    [
+     "6e"
+    ]
+   ],
+   [
+    "cours-g5",
+    "Géographie 5e : population, ressources, changement climatique, développement durable",
+    [
+     "5e"
+    ]
+   ],
+   [
+    "cours-g4",
+    "Géographie 4e : urbanisation, mobilités, mondialisation",
+    [
+     "4e"
+    ]
+   ],
+   [
+    "cours-g3",
+    "Géographie 3e : la France et l’Union européenne",
+    [
+     "3e"
+    ]
+   ],
+   [
+    "cours-emc-c3",
+    "EMC 6e-5e : la République, les droits de l’enfant, vivre ensemble au collège",
+    [
+     "6e",
+     "5e"
+    ]
+   ],
+   [
+    "cours-emc-c4",
+    "EMC 4e-3e : citoyenneté, institutions, justice, engagement",
+    [
+     "4e",
+     "3e"
+    ]
+   ],
+   [
+    "cours-hg2",
+    "Histoire-géo 2nde : Méditerranée, Renaissance, révolutions ; risques, population, mers",
+    [
+     "2nde"
+    ]
+   ],
+   [
+    "cours-hg1",
+    "Histoire-géo 1re : le XIXe siècle en France et en Europe ; métropoles, espaces productifs et ruraux, la Chine",
+    [
+     "1re"
+    ]
+   ],
+   [
+    "cours-hgt",
+    "Histoire-géo Tle : de 1945 à nos jours ; mers et océans, la France et l’Europe dans la mondialisation",
+    [
+     "Tle"
+    ]
+   ],
+   [
+    "cours-emc6",
+    "EMC 6e : apprendre à vivre dans une société démocratique",
+    [
+     "6e"
+    ]
+   ],
+   [
+    "cours-emc5",
+    "EMC 5e : égalité, fraternité et solidarité",
+    [
+     "5e"
+    ]
+   ],
+   [
+    "cours-emc4",
+    "EMC 4e : défendre les droits et les libertés",
+    [
+     "4e"
+    ]
+   ],
+   [
+    "cours-emc3",
+    "EMC 3e : faire vivre la démocratie (élections, opinion, médias, engagement)",
+    [
+     "3e"
+    ]
+   ],
+   [
+    "cpl-h4-femmes",
+    "Histoire 4e : conditions des femmes au XIXe siècle",
+    [
+     "4e"
+    ]
+   ],
+   [
+    "cpl-h6-hebreux",
+    "Histoire 6e : la naissance du monothéisme juif",
+    [
+     "6e"
+    ]
+   ],
+   [
+    "cpl-h5-capetiens",
+    "Histoire 5e : l’affirmation de l’État monarchique (Capétiens et Valois)",
+    [
+     "5e"
+    ]
+   ],
+   [
+    "cpl-h3-entre",
+    "Histoire 3e : crise de 1929, régimes totalitaires, Front populaire",
+    [
+     "3e"
+    ]
+   ],
+   [
+    "cpl-h3-gf",
+    "Histoire 3e : guerre froide et décolonisation",
+    [
+     "3e"
+    ]
+   ],
+   [
+    "cpl-h3-france",
+    "Histoire 3e : la France depuis 1945 et la Ve République",
+    [
+     "3e"
+    ]
+   ]
+  ],
+  "svt": [
+   [
+    "vivant",
+    "Le vivant et la cellule",
+    [
+     "6e",
+     "5e",
+     "4e",
+     "3e"
+    ]
+   ],
+   [
+    "corps",
+    "Corps humain et santé",
+    [
+     "5e",
+     "4e",
+     "3e"
+    ]
+   ],
+   [
+    "terre",
+    "La planète Terre",
+    [
+     "5e",
+     "4e",
+     "3e"
+    ]
+   ],
+   [
+    "genetique",
+    "Génétique",
+    [
+     "3e",
+     "2nde",
+     "1re"
+    ]
+   ],
+   [
+    "r-s6",
+    "Le vivant, ses besoins, sa classification",
+    [
+     "6e"
+    ]
+   ],
+   [
+    "r-s54",
+    "Corps humain, effort, Terre active",
+    [
+     "5e",
+     "4e"
+    ]
+   ],
+   [
+    "r-s2",
+    "ADN, biodiversité, reproduction",
+    [
+     "2nde"
+    ]
+   ],
+   [
+    "r-s1",
+    "Mitose, immunité, mutations, plaques",
+    [
+     "1re"
+    ]
+   ],
+   [
+    "r-st",
+    "Méiose, évolution, climat, nerfs",
+    [
+     "Tle"
+    ]
+   ],
+   [
+    "cours-s6",
+    "Sciences 6e : le vivant, sa diversité, ses besoins, son développement",
+    [
+     "6e"
+    ]
+   ],
+   [
+    "cours-s5",
+    "SVT 5e : respiration, circulation, digestion, effort ; volcans, séismes, paysages",
+    [
+     "5e"
+    ]
+   ],
+   [
+    "cours-s4",
+    "SVT 4e : reproduction humaine, système nerveux, tectonique des plaques",
+    [
+     "4e"
+    ]
+   ],
+   [
+    "cours-s3",
+    "SVT 3e : génétique, évolution, immunité, climat et santé",
+    [
+     "3e"
+    ]
+   ],
+   [
+    "cours-sv2",
+    "SVT 2nde : cellule, biodiversité, géosciences et sol, corps humain et santé",
+    [
+     "2nde"
+    ]
+   ],
+   [
+    "cours-sv1",
+    "SVT 1re : génome et mutations, géologie de la lithosphère, écosystèmes, immunité",
+    [
+     "1re"
+    ]
+   ],
+   [
+    "cours-svt",
+    "SVT Tle : génétique et évolution, climat, géologie des continents, cerveau, plantes",
+    [
+     "Tle"
+    ]
+   ],
+   [
+    "cpl-s6",
+    "La planète Terre en 6e : jour et nuit, saisons, volcans, séismes",
+    [
+     "6e"
+    ]
+   ]
+  ],
+  "physique": [
+   [
+    "matiere",
+    "La matière et ses états",
+    [
+     "5e",
+     "4e",
+     "3e",
+     "2nde"
+    ]
+   ],
+   [
+    "elec",
+    "Électricité",
+    [
+     "5e",
+     "4e",
+     "3e"
+    ]
+   ],
+   [
+    "mouvement",
+    "Vitesse et poids",
+    [
+     "4e",
+     "3e",
+     "2nde"
+    ]
+   ],
+   [
+    "energie",
+    "Énergie",
+    [
+     "3e",
+     "2nde"
+    ]
+   ],
+   [
+    "masse-vol",
+    "Masse volumique",
+    [
+     "4e",
+     "3e",
+     "2nde"
+    ]
+   ],
+   [
+    "r-p6",
+    "États de la matière et mélanges",
+    [
+     "6e",
+     "5e"
+    ]
+   ],
+   [
+    "r-p1",
+    "Moles, énergie, ondes",
+    [
+     "1re"
+    ]
+   ],
+   [
+    "r-pt",
+    "Newton, pH, radioactivité",
+    [
+     "Tle"
+    ]
+   ],
+   [
+    "cours-p5",
+    "Physique-chimie 5e : états de la matière, mélanges, circuits, lumière",
+    [
+     "5e"
+    ]
+   ],
+   [
+    "cours-p4",
+    "Physique-chimie 4e : atomes et molécules, combustions, tension et intensité, vitesse, son",
+    [
+     "4e"
+    ]
+   ],
+   [
+    "cours-p3",
+    "Physique-chimie 3e : atomes et ions, pH, loi d’Ohm, puissance et énergie, poids et gravitation",
+    [
+     "3e"
+    ]
+   ],
+   [
+    "cours-pc2",
+    "Physique-chimie 2nde : constitution de la matière, transformations, mouvement, ondes et signaux",
+    [
+     "2nde"
+    ]
+   ],
+   [
+    "cours-pc1",
+    "Physique-chimie 1re : oxydoréduction, chimie organique, énergie, lois de Newton, ondes et lumière",
+    [
+     "1re"
+    ]
+   ],
+   [
+    "cours-pct",
+    "Physique-chimie Tle : acides et bases, cinétique, mécanique, thermodynamique, ondes, radioactivité",
+    [
+     "Tle"
+    ]
+   ],
+   [
+    "cours-p6",
+    "Sciences et technologie 6e : matière, mélanges, énergie, mouvement, signaux, objets techniques",
+    [
+     "6e"
+    ]
+   ],
+   [
+    "cpl-p6",
+    "Sciences et technologie 6e : premiers algorithmes et programmes",
+    [
+     "6e"
+    ]
+   ],
+   [
+    "cpl-pc-elec",
+    "Électricité : sécurité, signaux et information",
+    [
+     "4e",
+     "3e"
+    ]
+   ],
+   [
+    "cpl-p6-materiaux",
+    "Sciences et technologie 6e : familles de matériaux et leurs propriétés",
+    [
+     "6e"
+    ]
+   ],
+   [
+    "cpl-pc-univers",
+    "Physique-chimie : composition de l’Univers et éléments chimiques",
+    [
+     "4e",
+     "3e"
+    ]
+   ]
+  ],
+  "medecine": [
+   [
+    "anatomie",
+    "Anatomie",
+    [
+     "Sup"
+    ]
+   ],
+   [
+    "physio",
+    "Physiologie, microbes et essais cliniques",
+    [
+     "Sup"
+    ]
+   ],
+   [
+    "etudes",
+    "Les études de santé",
+    [
+     "Sup"
+    ]
+   ],
+   [
+    "sang-immunite",
+    "Sang, hormones et immunité",
+    [
+     "Sup"
+    ]
+   ],
+   [
+    "biochimie",
+    "Biochimie",
+    [
+     "Sup"
+    ]
+   ],
+   [
+    "cellule",
+    "Biologie cellulaire",
+    [
+     "Sup"
+    ]
+   ],
+   [
+    "histologie",
+    "Histologie et embryologie",
+    [
+     "Sup"
+    ]
+   ],
+   [
+    "genetique",
+    "Génétique",
+    [
+     "Sup"
+    ]
+   ],
+   [
+    "biophysique",
+    "Biophysique et imagerie",
+    [
+     "Sup"
+    ]
+   ],
+   [
+    "pharmacologie",
+    "Pharmacologie",
+    [
+     "Sup"
+    ]
+   ],
+   [
+    "sante-publique",
+    "Santé publique et biostatistiques",
+    [
+     "Sup"
+    ]
+   ],
+   [
+    "semiologie",
+    "Sémiologie et spécialités",
+    [
+     "Sup"
+    ]
+   ],
+   [
+    "secours",
+    "Gestes de premiers secours",
+    [
+     "Sup"
+    ]
+   ],
+   [
+    "ethique",
+    "Éthique et droit de la santé",
+    [
+     "Sup"
+    ]
+   ]
+  ],
+  "droit": [
+   [
+    "institutions",
+    "Les institutions",
+    [
+     "Sup"
+    ]
+   ],
+   [
+    "bases",
+    "Les bases du droit et les métiers",
+    [
+     "Sup"
+    ]
+   ],
+   [
+    "droit-quotidien",
+    "Le droit au quotidien",
+    [
+     "Sup"
+    ]
+   ],
+   [
+    "introduction",
+    "Introduction au droit (sources, hiérarchie des normes)",
+    [
+     "Sup"
+    ]
+   ],
+   [
+    "histoire-droit",
+    "Histoire du droit et des institutions",
+    [
+     "Sup"
+    ]
+   ],
+   [
+    "methodologie",
+    "Méthodologie juridique (cas pratique, arrêt, dissertation)",
+    [
+     "Sup"
+    ]
+   ],
+   [
+    "constitutionnel",
+    "Droit constitutionnel (Ve République)",
+    [
+     "Sup"
+    ]
+   ],
+   [
+    "administratif",
+    "Droit administratif",
+    [
+     "Sup"
+    ]
+   ],
+   [
+    "libertes",
+    "Libertés fondamentales",
+    [
+     "Sup"
+    ]
+   ],
+   [
+    "finances",
+    "Finances publiques et fiscalité",
+    [
+     "Sup"
+    ]
+   ],
+   [
+    "europeen",
+    "Droit de l’Union européenne et CEDH",
+    [
+     "Sup"
+    ]
+   ],
+   [
+    "international",
+    "Droit international public",
+    [
+     "Sup"
+    ]
+   ],
+   [
+    "personnes",
+    "Droit des personnes et de la famille",
+    [
+     "Sup"
+    ]
+   ],
+   [
+    "obligations",
+    "Contrats et responsabilité (droit des obligations)",
+    [
+     "Sup"
+    ]
+   ],
+   [
+    "biens",
+    "Droit des biens",
+    [
+     "Sup"
+    ]
+   ],
+   [
+    "penal",
+    "Droit pénal et procédure pénale",
+    [
+     "Sup"
+    ]
+   ],
+   [
+    "affaires",
+    "Droit des affaires et des sociétés",
+    [
+     "Sup"
+    ]
+   ],
+   [
+    "travail",
+    "Droit du travail",
+    [
+     "Sup"
+    ]
+   ],
+   [
+    "justice",
+    "Organisation de la justice et métiers",
+    [
+     "Sup"
+    ]
+   ]
+  ],
+  "astro": [
+   [
+    "etoiles",
+    "Étoiles, galaxies et Univers",
+    [
+     "Sup"
+    ]
+   ],
+   [
+    "calculs",
+    "Calculs d’astrophysicien",
+    [
+     "Sup"
+    ]
+   ],
+   [
+    "nasa",
+    "Travailler à la NASA, à l’ESA ou au CNES",
+    [
+     "1re",
+     "Tle",
+     "Sup"
+    ]
+   ],
+   [
+    "systeme-solaire",
+    "Le système solaire",
+    [
+     "Sup"
+    ]
+   ],
+   [
+    "lumiere",
+    "Lumière et spectroscopie",
+    [
+     "Sup"
+    ]
+   ],
+   [
+    "gravitation",
+    "Gravitation et lois de Kepler",
+    [
+     "Sup"
+    ]
+   ],
+   [
+    "vie-etoiles",
+    "Vie et mort des étoiles",
+    [
+     "Sup"
+    ]
+   ],
+   [
+    "galaxies",
+    "Galaxies et matière noire",
+    [
+     "Sup"
+    ]
+   ],
+   [
+    "cosmologie",
+    "Cosmologie (Big Bang, expansion)",
+    [
+     "Sup"
+    ]
+   ],
+   [
+    "exoplanetes",
+    "Exoplanètes",
+    [
+     "Sup"
+    ]
+   ],
+   [
+    "instruments",
+    "Télescopes et missions spatiales",
+    [
+     "Sup"
+    ]
+   ],
+   [
+    "objets-compacts",
+    "Trous noirs, étoiles à neutrons, ondes gravitationnelles",
+    [
+     "Sup"
+    ]
+   ]
+  ],
+  "langlais": [
+   [
+    "be-have",
+    "Be et have got",
+    [
+     "6e",
+     "5e"
+    ]
+   ],
+   [
+    "present",
+    "Le présent simple",
+    [
+     "6e",
+     "5e"
+    ]
+   ],
+   [
+    "there",
+    "There is / there are, prépositions",
+    [
+     "6e"
+    ]
+   ],
+   [
+    "can",
+    "Can et l’impératif",
+    [
+     "6e",
+     "5e"
+    ]
+   ],
+   [
+    "poss",
+    "Possessifs et génitif (’s)",
+    [
+     "6e",
+     "5e"
+    ]
+   ],
+   [
+    "vocab6",
+    "Jours, heures, nombres, pays",
+    [
+     "6e"
+    ]
+   ],
+   [
+    "continu",
+    "Présent en be + -ing",
+    [
+     "5e",
+     "4e"
+    ]
+   ],
+   [
+    "preterit",
+    "Le prétérit (be et verbes réguliers)",
+    [
+     "5e",
+     "4e"
+    ]
+   ],
+   [
+    "compar",
+    "Comparatifs et superlatifs",
+    [
+     "5e",
+     "4e"
+    ]
+   ],
+   [
+    "quant",
+    "Much, many, some, any",
+    [
+     "5e",
+     "4e"
+    ]
+   ],
+   [
+    "culture",
+    "Pays et fêtes anglophones",
+    [
+     "5e",
+     "4e",
+     "3e"
+    ]
+   ],
+   [
+    "irreg",
+    "Les verbes irréguliers",
+    [
+     "4e",
+     "3e",
+     "2nde"
+    ]
+   ],
+   [
+    "pperfect",
+    "Le present perfect (for, since)",
+    [
+     "4e",
+     "3e"
+    ]
+   ],
+   [
+    "futur",
+    "Will et be going to",
+    [
+     "4e",
+     "3e"
+    ]
+   ],
+   [
+    "modaux",
+    "Must, should, have to",
+    [
+     "4e",
+     "3e"
+    ]
+   ],
+   [
+    "passif",
+    "La voix passive",
+    [
+     "3e",
+     "2nde"
+    ]
+   ],
+   [
+    "condition",
+    "If… will / If… would",
+    [
+     "3e",
+     "2nde"
+    ]
+   ],
+   [
+    "discours",
+    "Le discours indirect",
+    [
+     "3e",
+     "2nde"
+    ]
+   ],
+   [
+    "relatives",
+    "Who, which, whose",
+    [
+     "3e",
+     "2nde"
+    ]
+   ],
+   [
+    "fauxamis",
+    "Les faux amis",
+    [
+     "3e",
+     "2nde",
+     "1re"
+    ]
+   ],
+   [
+    "ppcont",
+    "Present perfect en be + -ing",
+    [
+     "2nde",
+     "1re"
+    ]
+   ],
+   [
+    "deduction",
+    "Must, can’t, might : la déduction",
+    [
+     "2nde",
+     "1re"
+    ]
+   ],
+   [
+    "wish",
+    "Wish et if only",
+    [
+     "2nde",
+     "1re"
+    ]
+   ],
+   [
+    "phrasal",
+    "Les phrasal verbs",
+    [
+     "2nde",
+     "1re",
+     "Tle"
+    ]
+   ],
+   [
+    "connect",
+    "Les mots de liaison",
+    [
+     "2nde",
+     "1re",
+     "Tle"
+    ]
+   ],
+   [
+    "axes2",
+    "Les axes du programme de 2nde",
+    [
+     "2nde"
+    ]
+   ],
+   [
+    "cond3",
+    "Le conditionnel passé (If… had…)",
+    [
+     "1re",
+     "Tle"
+    ]
+   ],
+   [
+    "causatif",
+    "Have something done",
+    [
+     "1re",
+     "Tle"
+    ]
+   ],
+   [
+    "gerondif",
+    "V-ing ou to + base",
+    [
+     "1re",
+     "Tle"
+    ]
+   ],
+   [
+    "traduction",
+    "Pièges de traduction",
+    [
+     "1re",
+     "Tle"
+    ]
+   ],
+   [
+    "axes",
+    "Les axes du cycle terminal",
+    [
+     "1re",
+     "Tle"
+    ]
+   ],
+   [
+    "ce",
+    "Compréhension de l’écrit",
+    [
+     "2nde",
+     "1re",
+     "Tle"
+    ]
+   ],
+   [
+    "inversion",
+    "L’inversion (Never have I…)",
+    [
+     "Tle"
+    ]
+   ],
+   [
+    "rather",
+    "It’s time, I’d rather",
+    [
+     "Tle"
+    ]
+   ],
+   [
+    "emphase",
+    "L’insistance (do, It was… who)",
+    [
+     "Tle"
+    ]
+   ],
+   [
+    "methode",
+    "Le bac et l’attestation de langues",
+    [
+     "1re",
+     "Tle"
+    ]
+   ],
+   [
+    "sup-certifs",
+    "Certifications : TOEIC, IELTS, Cambridge",
+    [
+     "Sup"
+    ]
+   ],
+   [
+    "sup-academic",
+    "Anglais universitaire",
+    [
+     "Sup"
+    ]
+   ],
+   [
+    "sup-science",
+    "Anglais scientifique (et de la NASA)",
+    [
+     "Sup"
+    ]
+   ],
+   [
+    "sup-pro",
+    "Anglais professionnel : e-mails, CV, entretiens",
+    [
+     "Sup"
+    ]
+   ],
+   [
+    "sup-c1",
+    "Grammaire et expressions de niveau C1",
+    [
+     "Sup"
+    ]
+   ],
+   [
+    "cours-a6",
+    "Anglais 6e : se présenter, be et have got, présent simple, la maison, l’heure",
+    [
+     "6e"
+    ]
+   ],
+   [
+    "cours-a5",
+    "Anglais 5e : présent en be + -ing, prétérit, comparatifs, quantités, pays anglophones",
+    [
+     "5e"
+    ]
+   ],
+   [
+    "cours-a4",
+    "Anglais 4e : present perfect, prétérit en be + -ing, modaux, relatifs, récit",
+    [
+     "4e"
+    ]
+   ],
+   [
+    "cours-a3",
+    "Anglais 3e : futur, conditionnel, passif, discours rapporté, brevet",
+    [
+     "3e"
+    ]
+   ],
+   [
+    "ang-gram6",
+    "Anglais 6e : want to, this/these, pronoms, why/how, very/too",
+    [
+     "6e"
+    ]
+   ],
+   [
+    "ang-gram5",
+    "Anglais 5e : should/could, opinion, réfléchis, ago, dérivation",
+    [
+     "5e"
+    ]
+   ],
+   [
+    "ang-ru",
+    "Anglais 5e : le Royaume-Uni (axe culturel obligatoire)",
+    [
+     "5e"
+    ]
+   ],
+   [
+    "ang-irl",
+    "Anglais 4e : l’Irlande",
+    [
+     "4e"
+    ]
+   ],
+   [
+    "ang-usa",
+    "Anglais 3e : les États-Unis (axe culturel obligatoire)",
+    [
+     "3e"
+    ]
+   ]
+  ],
+  "philo": [
+   [
+    "r-philo",
+    "Auteurs, notions et méthode",
+    [
+     "Tle"
+    ]
+   ],
+   [
+    "r-philo2",
+    "Auteurs et distinctions conceptuelles",
+    [
+     "Tle"
+    ]
+   ],
+   [
+    "n-art",
+    "L’art",
+    [
+     "Tle"
+    ]
+   ],
+   [
+    "n-bonheur",
+    "Le bonheur",
+    [
+     "Tle"
+    ]
+   ],
+   [
+    "n-conscience",
+    "La conscience",
+    [
+     "Tle"
+    ]
+   ],
+   [
+    "n-devoir",
+    "Le devoir",
+    [
+     "Tle"
+    ]
+   ],
+   [
+    "n-etat",
+    "L’État",
+    [
+     "Tle"
+    ]
+   ],
+   [
+    "n-inconscient",
+    "L’inconscient",
+    [
+     "Tle"
+    ]
+   ],
+   [
+    "n-justice",
+    "La justice",
+    [
+     "Tle"
+    ]
+   ],
+   [
+    "n-langage",
+    "Le langage",
+    [
+     "Tle"
+    ]
+   ],
+   [
+    "n-liberte",
+    "La liberté",
+    [
+     "Tle"
+    ]
+   ],
+   [
+    "n-nature",
+    "La nature",
+    [
+     "Tle"
+    ]
+   ],
+   [
+    "n-raison",
+    "La raison",
+    [
+     "Tle"
+    ]
+   ],
+   [
+    "n-religion",
+    "La religion",
+    [
+     "Tle"
+    ]
+   ],
+   [
+    "n-science",
+    "La science",
+    [
+     "Tle"
+    ]
+   ],
+   [
+    "n-technique",
+    "La technique",
+    [
+     "Tle"
+    ]
+   ],
+   [
+    "n-temps",
+    "Le temps",
+    [
+     "Tle"
+    ]
+   ],
+   [
+    "n-travail",
+    "Le travail",
+    [
+     "Tle"
+    ]
+   ],
+   [
+    "n-verite",
+    "La vérité",
+    [
+     "Tle"
+    ]
+   ]
+  ],
+  "lespagnol": [
+   [
+    "es-bases",
+    "Se présenter, articles, gustar",
+    [
+     "5e",
+     "4e"
+    ]
+   ],
+   [
+    "es-present",
+    "Présent irrégulier, estar + gérondif",
+    [
+     "5e",
+     "4e",
+     "3e"
+    ]
+   ],
+   [
+    "es-vocab",
+    "Jours, couleurs, famille, classe",
+    [
+     "5e",
+     "4e",
+     "3e"
+    ]
+   ],
+   [
+    "es-passe",
+    "Passé, futur proche, obligation",
+    [
+     "3e",
+     "2nde",
+     "1re"
+    ]
+   ],
+   [
+    "es-ser",
+    "Ser ou estar, pronoms",
+    [
+     "2nde",
+     "1re"
+    ]
+   ],
+   [
+    "es-lycee",
+    "Subjonctif, hypothèse, faux amis",
+    [
+     "1re",
+     "Tle"
+    ]
+   ],
+   [
+    "es-bases-lycee",
+    "Révisions des bases",
+    [
+     "2nde",
+     "Tle"
+    ]
+   ],
+   [
+    "cours-e5",
+    "Espagnol 5e : saluer, se présenter, la famille, les goûts, l’école (A1)",
+    [
+     "5e"
+    ]
+   ],
+   [
+    "cours-e4",
+    "Espagnol 4e : routine, verbes à diphtongue, l’heure, la ville, le passé composé",
+    [
+     "4e"
+    ]
+   ],
+   [
+    "cours-e3",
+    "Espagnol 3e : passé simple, imparfait, futur, impératif, monde hispanique (A2)",
+    [
+     "3e"
+    ]
+   ],
+   [
+    "es-cult",
+    "Espagnol : repères culturels du monde hispanique",
+    [
+     "5e",
+     "4e",
+     "3e"
+    ]
+   ],
+   [
+    "es-gram",
+    "Espagnol 4e-3e : comparatifs, pronoms, impératif négatif, muy et mucho",
+    [
+     "4e",
+     "3e"
+    ]
+   ]
+  ],
+  "lallemand": [
+   [
+    "de-bases",
+    "Se présenter, articles, négation, ordre des mots",
+    [
+     "5e",
+     "4e",
+     "3e"
+    ]
+   ],
+   [
+    "de-vocab",
+    "Jours, couleurs, famille, classe",
+    [
+     "5e",
+     "4e"
+    ]
+   ],
+   [
+    "de-college",
+    "Modaux, parfait, subordonnées, datif",
+    [
+     "4e",
+     "3e",
+     "2nde"
+    ]
+   ],
+   [
+    "de-2nde",
+    "Prétérit, comparatif, wenn ou als",
+    [
+     "2nde",
+     "1re"
+    ]
+   ],
+   [
+    "de-lycee",
+    "Konjunktiv II, passif, relatives, faux amis",
+    [
+     "1re",
+     "Tle"
+    ]
+   ],
+   [
+    "de-revisions",
+    "Révisions du collège",
+    [
+     "2nde",
+     "1re",
+     "Tle"
+    ]
+   ],
+   [
+    "cours-d5",
+    "Allemand 5e : se présenter, la famille, les nombres, les goûts, l’école (A1)",
+    [
+     "5e"
+    ]
+   ],
+   [
+    "cours-d4",
+    "Allemand 4e : place du verbe, accusatif, verbes de modalité, la ville, le parfait",
+    [
+     "4e"
+    ]
+   ],
+   [
+    "cours-d3",
+    "Allemand 3e : subordonnées, datif, prétérit, comparatif, pays germanophones (A2)",
+    [
+     "3e"
+    ]
+   ],
+   [
+    "de-cult",
+    "Allemand : repères culturels des pays germanophones",
+    [
+     "5e",
+     "4e",
+     "3e"
+    ]
+   ],
+   [
+    "de-gram",
+    "Allemand 4e-3e : pluriels, prépositions, futur, prétérit, superlatif",
+    [
+     "4e",
+     "3e"
+    ]
+   ]
+  ],
+  "ses": [
+   [
+    "ses-1re",
+    "Marchés, monnaie, socialisation",
+    [
+     "1re",
+     "Tle"
+    ]
+   ],
+   [
+    "ses-tle",
+    "Inégalités, mobilité, commerce international",
+    [
+     "Tle"
+    ]
+   ],
+   [
+    "cours-ses",
+    "SES 1re-Tle : marché, monnaie, croissance, socialisation, chômage, action publique",
+    [
+     "1re",
+     "Tle"
+    ]
+   ]
+  ],
+  "hggsp": [
+   [
+    "hggsp-1re",
+    "Puissance, frontières, ONU",
+    [
+     "1re",
+     "Tle"
+    ]
+   ],
+   [
+    "hggsp-tle",
+    "Espace, mémoire, patrimoine, environnement",
+    [
+     "Tle"
+    ]
+   ],
+   [
+    "cours-hggsp",
+    "HGGSP 1re-Tle : démocratie, puissance, frontières, information, guerre et paix, patrimoine, environnement",
+    [
+     "1re",
+     "Tle"
+    ]
+   ]
+  ],
+  "hlp": [
+   [
+    "hlp-1re",
+    "Les pouvoirs de la parole, les représentations du monde",
+    [
+     "1re",
+     "Tle"
+    ]
+   ],
+   [
+    "hlp-tle",
+    "La recherche de soi, l’Humanité en question",
+    [
+     "Tle"
+    ]
+   ],
+   [
+    "cours-hlp",
+    "HLP 1re-Tle : pouvoirs de la parole, représentations du monde, l’humain, la recherche de soi",
+    [
+     "1re",
+     "Tle"
+    ]
+   ]
+  ],
+  "nsi": [
+   [
+    "nsi-1re",
+    "Données, Python, réseaux, SQL",
+    [
+     "1re",
+     "Tle"
+    ]
+   ],
+   [
+    "nsi-tle",
+    "Structures de données et algorithmes",
+    [
+     "Tle"
+    ]
+   ],
+   [
+    "cours-nsi",
+    "NSI 1re-Tle : données, algorithmes, réseaux, bases de données, structures, programmation",
+    [
+     "1re",
+     "Tle"
+    ]
+   ]
+  ],
+  "techno": [
+   [
+    "cours-t5",
+    "Technologie 5e : objets techniques, besoins, matériaux, énergie, premiers programmes",
+    [
+     "5e"
+    ]
+   ],
+   [
+    "cours-t4",
+    "Technologie 4e : chaîne d’information et d’énergie, capteurs, programmation, réseaux",
+    [
+     "4e"
+    ]
+   ],
+   [
+    "cours-t3",
+    "Technologie 3e : projet, innovation, systèmes automatisés, objets connectés, brevet",
+    [
+     "3e"
+    ]
+   ],
+   [
+    "cpl-t-num",
+    "Numérique : données, unités, fichiers, intelligence artificielle, cybersécurité",
+    [
+     "5e",
+     "4e",
+     "3e"
+    ]
+   ],
+   [
+    "cpl-t-meca",
+    "Énergie, mécanismes, matériaux et fabrication",
+    [
+     "5e",
+     "4e",
+     "3e"
+    ]
+   ],
+   [
+    "cpl-t-projet",
+    "Projet : cahier des charges, normes, prototype, tests, objets communicants",
+    [
+     "5e",
+     "4e",
+     "3e"
+    ]
+   ]
+  ],
+  "arts": [
+   [
+    "ap-bases",
+    "Arts plastiques : couleurs, composition, techniques, mouvements",
+    [
+     "6e",
+     "5e",
+     "4e",
+     "3e"
+    ]
+   ],
+   [
+    "mu-bases",
+    "Éducation musicale : son, instruments, notes, genres, compositeurs",
+    [
+     "6e",
+     "5e",
+     "4e",
+     "3e"
+    ]
+   ],
+   [
+    "hda-3e",
+    "Histoire des arts (3e) : grandes œuvres et repères pour l’oral du brevet",
+    [
+     "4e",
+     "3e"
+    ]
+   ]
+  ],
+  "eps": [
+   [
+    "eps-sante",
+    "EPS : s’échauffer, l’effort, la santé et la sécurité",
+    [
+     "6e",
+     "5e",
+     "4e",
+     "3e"
+    ]
+   ],
+   [
+    "eps-regles",
+    "EPS : règles des sports collectifs et de l’athlétisme",
+    [
+     "6e",
+     "5e",
+     "4e",
+     "3e"
+    ]
+   ]
+  ],
+  "lca": [
+   [
+    "la-5e",
+    "Latin 5e : premiers mots, Rome et sa mythologie",
+    [
+     "5e",
+     "4e"
+    ]
+   ],
+   [
+    "la-3e",
+    "Latin 4e-3e : cas, étymologie, Rome impériale",
+    [
+     "4e",
+     "3e"
+    ]
+   ],
+   [
+    "gr-3e",
+    "Grec ancien 3e : alphabet, mythes et racines grecques",
+    [
+     "3e"
+    ]
+   ]
+  ],
+  "anglais-inter": [
+   [
+    "si-6e",
+    "6e internationale : reading and grammar (A2+ → B1)",
+    [
+     "6e"
+    ]
+   ],
+   [
+    "si-5e",
+    "5e internationale : narrative and poetry (B1)",
+    [
+     "5e"
+    ]
+   ],
+   [
+    "si-4e",
+    "4e internationale : Shakespeare, rhetoric and grammar (B1+ → B2)",
+    [
+     "4e"
+    ]
+   ],
+   [
+    "si-3e",
+    "3e internationale : towards the brevet international option (B2)",
+    [
+     "3e"
+    ]
+   ],
+   [
+    "si-2nde",
+    "2nde internationale : literature (B2 → C1)",
+    [
+     "2nde"
+    ]
+   ],
+   [
+    "bfi-1re",
+    "BFI 1re : approfondissement culturel et linguistique (C1)",
+    [
+     "1re"
+    ]
+   ],
+   [
+    "bfi-tle",
+    "BFI Tle : littérature, rhétorique et connaissance du monde (C1 → C2)",
+    [
+     "Tle"
+    ]
+   ],
+   [
+    "dnl-6e",
+    "DNL 6e : history-geography in English (first civilisations, ancient world, cities)",
+    [
+     "6e"
+    ]
+   ],
+   [
+    "dnl-5e",
+    "DNL 5e : history-geography in English (Middle Ages to absolute monarchy)",
+    [
+     "5e"
+    ]
+   ],
+   [
+    "dnl-4e",
+    "DNL 4e : history-geography in English (Enlightenment, revolutions, industry, empire)",
+    [
+     "4e"
+    ]
+   ],
+   [
+    "dnl-3e",
+    "DNL 3e : history-geography in English (20th century, France and Europe)",
+    [
+     "3e"
+    ]
+   ],
+   [
+    "dnl-2nde",
+    "DNL 2nde : history-geography in English (Mediterranean to revolutions, population and environment)",
+    [
+     "2nde"
+    ]
+   ],
+   [
+    "dnl-1re",
+    "DNL BFI 1re : history-geography in English (1789–1914, metropolisation)",
+    [
+     "1re"
+    ]
+   ],
+   [
+    "dnl-tle",
+    "DNL BFI Tle : history-geography in English (1929 to today, seas and globalisation)",
+    [
+     "Tle"
+    ]
+   ],
+   [
+    "methode-3e",
+    "3e : speaking and writing skills (brevet international option)",
+    [
+     "3e"
+    ]
+   ],
+   [
+    "methode-1re",
+    "BFI 1re : essay and commentary method",
+    [
+     "1re"
+    ]
+   ],
+   [
+    "methode-tle",
+    "BFI Tle : Connaissance du monde oral and DNL method",
+    [
+     "Tle"
+    ]
+   ]
+  ]
+ }
 }

@@ -33,6 +33,7 @@
   const N = 20, MINUTES = 40;
 
   M.textes({
+    'En contrôle, pas de réponse farfelue pour deviner : les pièges sont de vraies notions du chapitre.':['In tests, no silly answers to guess from: the traps are real ideas from the chapter.', 'En el control no hay respuestas absurdas para adivinar: las trampas son nociones reales del capítulo.', 'Im Test gibt es keine albernen Antworten zum Raten: Die Fallen sind echte Begriffe aus dem Kapitel.', 'Nella verifica niente risposte assurde per indovinare: le trappole sono vere nozioni del capitolo.', 'No teste não há respostas disparatadas para adivinhar: as armadilhas são noções reais do capítulo.'],
     '📅 Mes trimestres de spé maths':['📅 My maths specialism terms', '📅 Mis trimestres de matemáticas', '📅 Meine Mathe-Trimester', '📅 I miei trimestri di matematica', '📅 Os meus trimestres de matemática'],
     'Entraînements et contrôles du 1er, 2e et 3e trimestre':['Practice and tests for the 1st, 2nd and 3rd term', 'Prácticas y controles del 1.º, 2.º y 3.er trimestre', 'Übungen und Tests für das 1., 2. und 3. Trimester', 'Esercizi e verifiche del 1º, 2º e 3º trimestre', 'Treinos e testes do 1.º, 2.º e 3.º trimestre'],
     'Chaque trimestre : un entraînement (corrigé, sans chrono) et un contrôle de {0} questions en {1} minutes, noté sur 20.':['Each term: a practice round (with corrections, no timer) and a {0}-question test in {1} minutes, marked out of 20.', 'Cada trimestre: una práctica (corregida, sin cronómetro) y un control de {0} preguntas en {1} minutos, sobre 20.', 'Jedes Trimester: eine Übung (mit Korrektur, ohne Zeitlimit) und ein Test mit {0} Fragen in {1} Minuten, bewertet von 0 bis 20.', 'Ogni trimestre: un esercizio (corretto, senza tempo) e una verifica di {0} domande in {1} minuti, con voto su 20.', 'Cada trimestre: um treino (corrigido, sem cronómetro) e um teste de {0} perguntas em {1} minutos, com nota de 0 a 20.'],
@@ -131,6 +132,8 @@
       parts:t => t === 'bilan' ? tous : T[TR.indexOf(t)], noms:t => (t === 'bilan' ? [...new Set(tous.map(p => p.ch))].map(nomChap) : T[TR.indexOf(t)].map(nomPart)), nomChap,
       themes:() => '', repere:'Répartition indicative dans l’ordre du programme ; ton prof peut avoir la sienne : c’est un repère, pas le vrai contrôle de ta classe.',
       serie:t => { const l = MT.serieParts(id, t === 'bilan' ? tous : T[TR.indexOf(t)], niv, N, Math.floor(Math.random() * 1e9), api().etatMaths().ton); lq = l.length && l.every(q => q.lang && q.lang !== 'fr') ? l[0].lang : 'fr'; return l; }, lang:() => lq,
+      // v6.72 : en contrôle, les leurres trop faciles cèdent la place à des réponses d'autres questions du même chapitre.
+      pieges:(t, l) => MT.piegesSerieux ? MT.piegesSerieux(l, MT.serieParts(id, t === 'bilan' ? tous : T[TR.indexOf(t)], niv, 400, Math.floor(Math.random() * 1e9), api().etatMaths().ton)) : l,
       chapBouton:cid => '<button class="chap" data-a="matiere-chap" data-v="' + api().esc(id + '|' + cid) + '"><span>' + api().esc(nomChap(cid)) + '</span><em>▶</em></button>',
       ecran:'mat-tri', entr:'mat-tri-entr', ctrl:'mat-tri-ctrl', v:t => id + '|' + t, retour:'matiere', retourTx:'📚 Matière', retourV:id, id };
   }
@@ -142,6 +145,7 @@
     A.poser(A.barre(S.cle === 'maths' ? 'maths' : 'matieres') + '<main class="coin-anglais coin-maths trimestres-ecran"><h2>' + esc(S.titre) + ' · ' + esc(S.niv) + '</h2>' +
       '<p class="pieges-intro">' + esc(S.cle === 'maths' ? tx('Chaque trimestre : un entraînement (corrigé, sans chrono) et un contrôle de {0} questions en {1} minutes, noté sur 20.', N, MINUTES) : tx('Chaque trimestre : un entraînement (corrigé, sans chrono) et un contrôle de {0} questions au plus en {1} minutes, noté sur 20.', N, MINUTES)) + '</p>' +
       '<p class="petit">' + esc(tx('Pendant le contrôle : ni vanne ni correction, comme en classe. La correction détaillée arrive à la fin.')) + '</p>' +
+      (S.pieges ? '<p class="petit">' + esc(tx('En contrôle, pas de réponse farfelue pour deviner : les pièges sont de vraies notions du chapitre.')) + '</p>' : '') +
       '<p class="petit">' + esc(tx(S.repere)) + '</p>' +
       '<div class="domaines">' + TR.map(t => '<section class="domaine trimestre"><h3>' + esc(tx(NOMS[t])) + ' <small>' + esc(tx(MOIS[t])) + '</small></h3>' +
         (S.themes(t) ? '<p><strong>' + esc(S.themes(t)) + '</strong></p>' : '') +
@@ -156,7 +160,8 @@
 
   function lancer(S, t, controle){
     const A = api(); if(!S || (t !== 'bilan' && !TR.includes(t))) return accueil(S);
-    const liste = S.serie(t); if(!liste.length) return accueil(S);
+    let liste = S.serie(t); if(!liste.length) return accueil(S);
+    if(controle && S.pieges) liste = S.pieges(t, liste);
     const titre = (controle ? tx('📝 Contrôle') : tx('🏋️ Entraînement')) + ' · ' + S.niv + ' · ' + (t === 'bilan' ? tx('🏆 Contrôle bilan de l’année') : tx(NOMS[t]));
     const bilan = {}, e = A.etatMaths(), em = S.cle === 'mat' ? A.etatMatieres() : null;
     A.questionsGo(liste, { titre, retour:S.cle === 'maths' ? 'maths' : 'matieres', prof:S.cle === 'maths', sujet:S.id, lang:S.lang(), finA:controle ? Date.now() + MINUTES * 60000 : 0, sansVanne:!!controle,

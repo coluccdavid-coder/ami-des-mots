@@ -93,7 +93,7 @@
   // v6.0 : les nouveautés vivent dans des modules séparés (js/mod-*.js) pour ne plus grossir ce fichier.
   // Un module ajoute des actions (data-a), des cartes dans les écrans, et écoute les réponses ; il passe par AMI_MODULES.api.
   const MODULES = window.AMI_MODULES = Object.assign({ actions:{}, hooks:{ reponse:[], question:[] }, cartes:{ battle:[], matiere:[], parents:[], anglais:[], accueil:[], plus:[] } }, window.AMI_MODULES || {});
-  if(!MODULES.cartes.plus) MODULES.cartes.plus = []; if(!MODULES.cartes.maths) MODULES.cartes.maths = []; if(!MODULES.cartes['matiere-ecran']) MODULES.cartes['matiere-ecran'] = [];   // v6.65 : cartes dans le coin maths (contrôles du trimestre)
+  if(!MODULES.cartes.plus) MODULES.cartes.plus = []; if(!MODULES.cartes.maths) MODULES.cartes.maths = []; if(!MODULES.cartes['matiere-ecran']) MODULES.cartes['matiere-ecran'] = []; if(!MODULES.cartes.officiel) MODULES.cartes.officiel = [];   // v6.65 : cartes dans le coin maths (contrôles du trimestre)
   if(!MODULES.hooks.question) MODULES.hooks.question = [];
   const cartesModules = zone => (MODULES.cartes[zone] || []).map(f => { try{ return f(base.ui) || ''; }catch(e){ return ''; } }).join('');
   // v5.99.3 : textes des écrans dans la langue de l'interface (js/textes-ecrans.js) ; le français reste le français.
@@ -2875,11 +2875,19 @@
     const z = qz; if(!z) return coinAnglais();
     if(z.i >= z.liste.length || (z.finA && Date.now() >= z.finA)) return z.fin(z);   // v6.0 : finA = fin du chrono (veille de contrôle)
     const q = z.liste[z.i]; z.repondu = false; z.options = A_EN().melanger([q.bon].concat(q.faux.map(f => f.en)));
+    z.libre = libreActif(z, q); z.libreRate = false; z.libreOk = false;
+    z.confiance = '';
     poser(barre(z.retour || 'anglais') + '<main class="piege-ecran">' + (z.finA ? '<p class="chrono-veille" id="chrono-veille" role="timer">⏱️ ' + chrono(z.finA) + '</p>' : '') + '<p class="piege-cat">' + esc(z.titre) + ' · ' + (z.i + 1) + '/' + z.liste.length + '</p>' +
       (q.contexte ? TXT('<details class="contexte-exo" open><summary>📄 Énoncé de l’exercice</summary><p>') + esc(q.contexte).replace(/\n/g, '<br>') + '</p></details>' : '') +
       '<div class="piege-haut"><div class="ami-moyen" id="ami-qz">' + (q.image ? image(q.image, 'pic-moyenne') : z.prof ? profPi('content') : ami('content')) + '</div>' +
       '<div><p class="piege-consigne">' + esc(q.consigne) + '</p><p class="piege-fr' + (/\n/.test(q.enonce || '') ? ' piege-code' : '') + '">' + esc(q.enonce || '') + (q.ecoute ? ' <button class="bouton-rond" data-a="qz-ecouter" aria-label="Écouter">🔊</button>' + (q.lent ? ' <button class="bouton-rond" data-a="qz-lent" aria-label="Écouter lentement">🐢</button>' : '') : '') + '</p>' + (q.trad ? traduire(q.trad) : '') + '</div></div>' +
-      '<div class="piege-options">' + z.options.map((o, i) => '<button class="moyen piege-opt" data-a="qz-rep" data-v="' + i + '" lang="' + (z.lang || q.lang || 'en') + '">' + esc(o) + '</button>').join('') + '</div>' +
+      // v6.74 : avant de répondre, l'élève peut dire s'il est sûr de lui (facultatif).
+      ((z.prof || q.matiere) && !q.vanneDe && !z.sansVanne ? '<p class="confiance" role="group" aria-label="' + esc(TXT('Avant de répondre :')) + '"><span>' + esc(TXT('Avant de répondre :')) + '</span> ' +
+        '<button class="petit-bouton" data-a="qz-conf" data-v="sur" aria-pressed="false">🎯 ' + esc(TXT('Sûr(e)')) + '</button> <button class="petit-bouton" data-a="qz-conf" data-v="doute" aria-pressed="false">🤔 ' + esc(TXT('Pas sûr(e)')) + '</button></p>' : '') +
+      // v6.71 : réponse écrite — l'élève tape d'abord sa réponse ; les choix n'apparaissent que s'il se trompe ou les demande.
+      (z.libre ? '<div class="reponse-libre"><label for="qz-libre">' + esc(TXT('✍️ Écris ta réponse')) + '</label> <input id="qz-libre" type="text" autocomplete="off" autocapitalize="off" spellcheck="false" maxlength="80" lang="' + (z.lang || q.lang || 'fr') + '"> ' +
+        '<button class="moyen plein" data-a="qz-libre-ok">' + esc(TXT('Valider')) + '</button> <button class="petit-bouton" data-a="qz-libre-choix">' + esc(TXT('Je ne sais pas : montre les choix')) + '</button></div>' : '') +
+      '<div class="piege-options"' + (z.libre ? ' hidden' : '') + '>' + z.options.map((o, i) => '<button class="moyen piege-opt" data-a="qz-rep" data-v="' + i + '" lang="' + (z.lang || q.lang || 'en') + '">' + esc(o) + '</button>').join('') + '</div>' +
       '<div class="piege-retour" id="qz-retour" role="status" aria-live="polite"></div></main>');
     if(q.ecoute) direEcoute(q.ecoute, 'en');
     if(!q.vanneDe && q.faux && q.faux.length && !z.sansVanne){
@@ -2888,29 +2896,97 @@
       iaPrecharger(sujet, [q.consigne, q.enonce].filter(Boolean).join(' — '), q.bon, q.faux.map(x => x.en), ton, 'fr');
     }
   }
-  // v5.98 : carnet d'erreurs — les questions de matières ratées sont gardées (80 au plus, sur l'appareil)
-  // pour une révision avant un contrôle ; une question réussie ensuite sort du carnet.
+  // v5.98 : carnet d'erreurs — les questions ratées sont gardées sur l'appareil pour être revues.
+  // v6.71 : révision espacée (méthode des boîtes) dans toutes les matières ET en maths. Une question ratée revient le lendemain ;
+  // réussie le jour prévu, elle revient 3 jours, 7 jours puis 21 jours plus tard ; réussie une dernière fois, elle est « maîtrisée ».
+  // Une bonne réponse avant le jour prévu ne compte pas (on ne fait pas avancer une question qu'on vient juste de revoir).
+  const INTERVALLES_CARNET = [1, 3, 7, 21];
   const cleQ = q => String(q.enonce || '') + '\u0001' + String(q.bon);
-  function carnetErreurs(q, juste){
-    if(!q || !q.matiere || q.vanneDe || !Array.isArray(q.faux) || !q.faux.length) return;
+  function carnetErreurs(q, juste, z){
+    const mat = q && (q.matiere || (z && z.prof ? 'maths' : ''));
+    if(!q || !mat || q.vanneDe || !Array.isArray(q.faux) || !q.faux.length) return;
     const j = J(); j.carnet = Array.isArray(j.carnet) ? j.carnet : [];
-    const k = cleQ(q), i = j.carnet.findIndex(x => cleQ(x) === k);
-    if(juste){ if(i >= 0) j.carnet.splice(i, 1); return; }
-    const x = { matiere:q.matiere, consigne:q.consigne, enonce:q.enonce, bon:q.bon, regle:q.regle, lang:q.lang, contexte:q.contexte,
-      faux:q.faux.map(f => ({ en:String(f.en), vanne:String(f.vanne || '') })), rate:jour() };
-    if(i >= 0) j.carnet.splice(i, 1); j.carnet.push(x); if(j.carnet.length > 80) j.carnet.splice(0, j.carnet.length - 80);
+    const k = cleQ(q), i = j.carnet.findIndex(x => cleQ(x) === k), auj = jour();
+    if(juste){
+      if(i < 0) return; const x = j.carnet[i]; if(x.prochaine && x.prochaine > auj) return;
+      const b = Math.min(3, Math.max(0, Math.floor(+x.boite) || 0)) + 1;
+      if(b > 3){ j.carnet.splice(i, 1); j.carnetMaitrises = Math.min(1e6, (Math.floor(+j.carnetMaitrises) || 0) + 1); return; }
+      x.boite = b; x.prochaine = jour(INTERVALLES_CARNET[b]); return;
+    }
+    const x = { matiere:mat, chap:q.chap, consigne:q.consigne, enonce:q.enonce, bon:q.bon, regle:q.regle, lang:q.lang, contexte:q.contexte,
+      faux:q.faux.map(f => ({ en:String(f.en), vanne:String(f.vanne || '') })), rate:auj, boite:0, prochaine:jour(INTERVALLES_CARNET[0]) };
+    if(z && z.confiance === 'sur') x.certitude = true;   // v6.74 : erreur commise avec certitude — la plus utile à revoir
+    if(i >= 0) j.carnet.splice(i, 1); j.carnet.push(x); if(j.carnet.length > 200) j.carnet.splice(0, j.carnet.length - 200);
+  }
+  // v6.74 : « 🤔 pas sûr(e) » et pourtant juste = coup de chance possible : la question revient demain, comme une erreur légère.
+  function carnetFragile(q, z){
+    const mat = q && (q.matiere || (z && z.prof ? 'maths' : ''));
+    if(!q || !mat || q.vanneDe || !Array.isArray(q.faux) || !q.faux.length) return;
+    const j = J(); j.carnet = Array.isArray(j.carnet) ? j.carnet : []; const k = cleQ(q);
+    if(j.carnet.some(x => cleQ(x) === k)) return;
+    j.carnet.push({ matiere:mat, chap:q.chap, consigne:q.consigne, enonce:q.enonce, bon:q.bon, regle:q.regle, lang:q.lang, contexte:q.contexte,
+      faux:q.faux.map(f => ({ en:String(f.en), vanne:String(f.vanne || '') })), rate:jour(), boite:0, prochaine:jour(INTERVALLES_CARNET[0]), fragile:true });
+    if(j.carnet.length > 200) j.carnet.splice(0, j.carnet.length - 200);
+  }
+  // v6.74 : lucidité — combien de « sûr(e) » étaient justes, combien de « pas sûr(e) » l'étaient quand même.
+  function noterConfiance(c, juste){
+    if(c !== 'sur' && c !== 'doute') return;
+    const j = J(), o = j.confiance = j.confiance && typeof j.confiance === 'object' ? j.confiance : {}, k = c + (juste ? 'Juste' : 'Faux');
+    o[k] = Math.min(1e6, (Math.floor(+o[k]) || 0) + 1);
+  }
+  // Les questions du carnet à revoir aujourd'hui (les plus anciennes d'abord).
+  const carnetAujourdhui = () => { const auj = jour(); return (J().carnet || []).filter(x => x && (!x.prochaine || x.prochaine <= auj)).sort((a, b) => (b.certitude ? 1 : 0) - (a.certitude ? 1 : 0) || String(a.prochaine || '').localeCompare(String(b.prochaine || ''))); };   // v6.74 : erreurs « sûr(e) » d'abord
+  // v6.71 : réponse écrite — pour les réponses courtes (4 mots au plus), en maths et dans les matières, si l'élève l'a activée.
+  function libreActif(z, q){
+    if(J().reponseLibre !== true || !q || q.vanneDe || !(z.prof || q.matiere)) return false;
+    const b = String(q.bon || '');
+    return b.length > 0 && b.length <= 40 && !/[…\n]|\.\.\./.test(b) && b.trim().split(/\s+/).length <= 4;
+  }
+  const ARTICLES = /^(l'|le |la |les |un |une |des |du |de la |the |a |an |el |los |las |der |die |das |ein |eine )/;
+  const normLibre = s => String(s || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[’`´]/g, "'").replace(/(\d),(\d)/g, '$1.$2')
+    .replace(/[«»"“”!?¿¡;:]/g, ' ').replace(/\.(?!\d)/g, ' ').replace(/\s+/g, ' ').trim().replace(ARTICLES, '').trim();
+  const sansAccents = s => String(s || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+  const variantesLibres = bon => { const s = String(bon || ''), v = [s, s.replace(/\([^)]*\)/g, ' ')], p = s.match(/\(([^)]*)\)/); if(p) v.push(p[1]); return v.map(normLibre).filter(Boolean); };
+  function libreValider(){
+    const z = qz; if(!z || z.repondu || !z.libre) return;
+    const champ = $('#qz-libre'), v = champ ? champ.value : ''; if(!String(v).trim()) return;
+    const q = z.liste[z.i];
+    if(variantesLibres(q.bon).includes(normLibre(v))){
+      // L'orthographe exacte (accents, majuscules mises à part) est rappelée si elle diffère.
+      const exact = normLibre(v) === normLibre(q.bon) && sansAccents(v).toLowerCase() !== v.toLowerCase() || v.toLowerCase().replace(/[.!?\s]+$/, '') === String(q.bon).toLowerCase().replace(/[.!?\s]+$/, '');
+      z.libreOk = true; const sv = !!z.sansVanne; J().plumes += 1;
+      repondreQuestion(z.options.indexOf(q.bon));
+      const r = $('#qz-retour'); if(r && !sv) r.insertAdjacentHTML('afterbegin', '<p class="libre-juste">✍️ ' + esc(TXT('Réponse écrite juste : +1 plume bonus !')) + (exact ? '' : ' ' + esc(TXT('Orthographe exacte :')) + ' « ' + esc(q.bon) + ' »') + '</p>');
+    } else libreChoix(v);
+  }
+  function libreChoix(tape){
+    const z = qz; if(!z || z.repondu || !z.libre) return;
+    z.libreRate = true; z.libre = false;
+    const zone = document.querySelector('.reponse-libre'); if(zone) zone.remove();
+    const o = document.querySelector('.piege-options'); if(o) o.hidden = false;
+    const r = $('#qz-retour'); if(r) r.innerHTML = '<p class="libre-rate">' + (tape ? '✍️ ' + esc(TXT('Pas tout à fait')) + ' (« ' + esc(tape) + ' »). ' : '') + esc(TXT('Choisis maintenant parmi les propositions.')) + '</p>';
+    const b = document.querySelector('.piege-opt'); if(b) b.focus();
+  }
+  // v6.71 : « 🚩 Signaler une erreur » — la question part dans une liste à relire (Espace parents), sur l'appareil.
+  function signalerQuestion(bouton){
+    const z = qz, q = z && z.liste[z.i]; if(!q) return;
+    const l = base.signalements = Array.isArray(base.signalements) ? base.signalements : [];
+    const x = { matiere:String(q.matiere || (z.prof ? 'maths' : '')).slice(0, 30), chap:String(q.chap || '').slice(0, 40), enonce:String(q.enonce || '').slice(0, 300), bon:String(q.bon || '').slice(0, 200), lang:String(q.lang || z.lang || 'fr').slice(0, 5), jour:jour() };
+    if(!l.some(y => y.enonce === x.enonce && y.bon === x.bon)){ l.push(x); if(l.length > 300) l.splice(0, l.length - 300); }
+    garder(); if(bouton && bouton.parentNode) bouton.parentNode.innerHTML = esc(TXT('Merci ! La question est notée pour être vérifiée.'));
   }
   function carnetGo(){
     const l = (J().carnet || []).slice(); if(!l.length) return matieresAccueil();
     for(let i = l.length - 1; i > 0; i--){ const k = Math.floor(Math.random() * (i + 1)); [l[i], l[k]] = [l[k], l[i]]; }
-    questionsGo(l.slice(0, 20).map(x => Object.assign({}, x, { faux:x.faux.map(f => Object.assign({}, f)) })), { titre:'🎯 Mes erreurs', retour:'matieres' });
+    questionsGo(l.slice(0, 20).map(x => Object.assign({}, x, { faux:x.faux.map(f => Object.assign({}, f)) })), { titre:'🎯 Mes erreurs', retour:'matieres', fin:() => matieresAccueil() });
   }
   function repondreQuestion(i){
     const z = qz; if(!z || z.repondu) return;
     const q = z.liste[z.i], choix = z.options[i]; if(choix == null) return;
     z.repondu = true; const juste = choix === q.bon; if(juste) z.bonnes++;
     noterJournal(q.matiere || (z.prof || q.chap ? 'maths' : window.SCIENCES && SCIENCES.Q.some(x => x[0] === q.id) ? 'sciences' : 'anglais'), juste);
-    carnetErreurs(q, juste);
+    carnetErreurs(q, juste && !z.libreRate, z);   // v6.71 : une réponse écrite ratée reste à revoir, même si le bon choix est trouvé ensuite
+    noterConfiance(z.confiance, juste && !z.libreRate); if(juste && !z.libreRate && z.confiance === 'doute') carnetFragile(q, z);
     for(const f of (MODULES.hooks.question || [])) try{ f(juste, q, z); }catch(e){}   // v6.0 : modules (réexplication…)
     if(q.apres) q.apres(juste, choix); garder();
     // v6.65 : mode contrôle (sansVanne) — comme un vrai contrôle : ni vanne ni correction pendant l'épreuve,
@@ -2977,6 +3053,9 @@
     if(r) r.innerHTML = (raccrochage ? '<p class="raccroche">' + esc(raccrochage) + '</p>' : '') + bandeHtml + (juste && bande ? '<p class="piege-bravo">🏆 ' + esc(z.suite + TXT(' d’affilée !')) + '</p>' : juste ? '<p class="piege-bravo">' + esc(bravoTrash || (z.bravo ? z.bravo() : fr_ ? TXT('Bravo ! 🎉') : 'Yes! 🎉')) + '</p>' : '<p class="piege-vanne">' + (z.prof ? '🦝 ' : '😂 ') + esc(f && f.vanne ? f.vanne : fr_ ? TXT('Presque !') : 'Nearly!') + '</p>') +
       ((!juste && f && f.vanne) || (juste && bravoTrash) ? '<p class="avis-vanne"><button class="petit-bouton" data-a="qz-avis" data-v="1">😂 ' + (fr_ ? TXT('Trop drôle') : 'Funny') + '</button> <button class="petit-bouton" data-a="qz-avis" data-v="-1">🙄 ' + (fr_ ? TXT('Pas drôle') : 'Not funny') + '</button></p>' : '') +
       '<p class="piege-bon" lang="' + (fr_ ? 'fr' : 'en') + '">✅ ' + esc(q.bonTexte || q.bon) + '</p>' + (q.regle ? '<p class="piege-regle">💡 ' + esc(q.regle) + '</p>' : '') +
+      (z.confiance === 'sur' && !juste ? '<p class="conf-alerte">🎯 ' + esc(TXT('Tu étais sûr(e) de toi : c’est l’erreur à retenir en priorité. Relis bien la règle.')) + '</p>' : '') +
+      (z.confiance === 'doute' && juste ? '<p class="conf-doute">🤔 ' + esc(TXT('Juste, mais tu hésitais : cette question reviendra demain pour bien l’ancrer.')) + '</p>' : '') +
+      ((z.prof || q.matiere) && !q.vanneDe ? '<p class="signaler"><button class="petit-bouton" data-a="qz-signaler">🚩 ' + esc(TXT('Signaler une erreur')) + '</button></p>' : '') +
       '<button class="moyen plein" data-a="qz-suivant">' + (z.i + 1 < z.liste.length ? TXT('Suivant →') : TXT('Voir le résultat')) + '</button>';
     bruit(juste ? 'juste' : 'faux'); if(!juste && niveauHumour() > 0) bruit('boing');
     if(q.dire) direPhrase(q.dire, 'en');
@@ -3595,7 +3674,7 @@
     // les outils de révision sont regroupés sous les matières ; les jeux ont leur propre bouton.
     const heros = CONFIG.OUVRIR_MATIERES || MODULES.actions.devoirs ? '<button class="devoirs-hero" data-a="devoirs"><span class="ic" aria-hidden="true">📚</span><span><strong>' + TXT('Un devoir à faire ? On t’aide à démarrer') + '</strong><small>' +
       TXT('Aide aux devoirs, toutes les matières : comprendre la consigne, retrouver la leçon, trouver la méthode — sans faire le devoir à ta place') + '</small></span></button>' : '';
-    const outils = cartesModules('matiere') + ((J().carnet || []).length ? c('carnet-erreurs', '', '🎯', 'Mes erreurs (' + J().carnet.length + ')', TXT('Les questions ratées, à revoir avant un contrôle : une bonne réponse les retire')) : '') +
+    const outils = cartesModules('matiere') + ((J().carnet || []).length ? c('carnet-erreurs', '', '🎯', 'Mes erreurs (' + J().carnet.length + ')', TXT('Toutes les questions ratées : elles reviennent jusqu’à ce qu’elles soient maîtrisées')) : '') +
       (window.SCIENCES ? c('sciences', '', '🚀', TXT('Sciences rigolotes'), TXT('Planètes, fusées, médecine… avec des clashs')) : '');
     poser(barre(CONFIG.OUVRIR_MATIERES ? 'bienvenue' : 'accueil') + TXT('<main class="coin-anglais matieres-ecran"><h2>📚 Matières</h2><p class="pieges-intro">Le programme de la 6e au bac, avec Plumo qui vanne les erreurs (jamais toi) et t’explique la bonne réponse.</p>') +
       heros + (window.EPREUVES ? ongletsExamens('matieres') : '') + choixClasse('matieres') +
@@ -3609,6 +3688,7 @@
         (M.trouver('hlp') ? c('matiere', 'hlp', '📜', TXT('HLP (spécialité 1re, Tle)'), TXT('Parole, représentations du monde, recherche de soi')) : '') +
         (M.trouver('nsi') ? c('matiere', 'nsi', '💻', TXT('NSI (spécialité 1re, Tle)'), TXT('Binaire, Python, réseaux, SQL, algorithmes')) : '') +
         (M.trouver('langlais') ? c('matiere', 'langlais', '🇬🇧', TXT('Anglais (6e → bac)'), TXT('Grammaire, verbes irréguliers, faux amis, axes du bac, compréhension')) : '') +
+        (M.trouver('anglais-inter') ? c('matiere', 'anglais-inter', '🌐', TXT('Anglais section internationale (6e → BFI)'), TXT('Littérature, Shakespeare, rhétorique, histoire en anglais, jusqu’au BFI')) : '') +   // v6.77
         (window.MATHS ? c('maths', '', '🔢', TXT('Maths'), TXT('De la 6e au bac, avec Prof Pi')) : '') +
         c('matiere', 'histoire', '🏛️', TXT('Histoire-géo & EMC'), TXT('Repères, géographie, citoyenneté')) +
         c('matiere', 'svt', '🧬', TXT('SVT'), TXT('Le vivant, le corps humain, la Terre, la génétique')) +
@@ -3702,7 +3782,7 @@
     qz = null; const E = window.EPREUVES; if(!E || !E.OFFICIEL) return matieresAccueil();
     const liste = l => '<div class="cartes-anglais">' + l.map(([t, u, d]) => '<a class="carte-anglais lien-carte" href="' + esc(u) + '" target="_blank" rel="noopener"><span class="ic">🔗</span><strong>' + esc(TXT(t)) + '</strong><small>' + esc(TXT(d)) + '</small></a>').join('') + '</div>';
     poser(barre('matieres') + TXT('<main class="coin-anglais matieres-ecran"><h2>🏛️ Programmes et annales officiels</h2><p class="pieges-intro">Les textes officiels et tous les vrais sujets, directement sur les sites du ministère (éduscol et education.gouv.fr). Les sujets jumeaux de Plumo sont dans les onglets Blancs et Annales.</p>') +
-      ongletsExamens('officiel') + '<section class="domaine"><h3>📚 Programmes scolaires</h3>' + liste(E.OFFICIEL.programmes) + TXT('</section><section class="domaine"><h3>🗂️ Toutes les annales officielles</h3>') + liste(E.OFFICIEL.annales) + '</section></main>');
+      ongletsExamens('officiel') + '<section class="domaine"><h3>📚 Programmes scolaires</h3>' + liste(E.OFFICIEL.programmes) + TXT('</section><section class="domaine"><h3>🗂️ Toutes les annales officielles</h3>') + liste(E.OFFICIEL.annales) + '</section>' + cartesModules('officiel') + '</main>');   // v6.75 : la veille (ce qui change)
   }
   function annalesAccueil(){
     qz = null; blanc = null; const E = window.EPREUVES, e = etatMatieres(); if(!E) return matieresAccueil();
@@ -4082,6 +4162,10 @@
       case 'revision': return revisionGo();
       case 'qz-rep': return repondreQuestion(Number(v));
       case 'qz-suivant': if(qz){ qz.i++; } return afficherQuestion();
+      case 'qz-conf': if(qz && !qz.repondu){ qz.confiance = qz.confiance === v ? '' : v; document.querySelectorAll('[data-a="qz-conf"]').forEach(x => x.setAttribute('aria-pressed', String(x.dataset.v === qz.confiance))); } return;
+      case 'qz-libre-ok': return libreValider();
+      case 'qz-libre-choix': return libreChoix('');
+      case 'qz-signaler': return signalerQuestion(b);
       case 'qz-ecouter': if(qz && qz.liste[qz.i] && qz.liste[qz.i].ecoute) direEcoute(qz.liste[qz.i].ecoute, 'en'); return;
       case 'bj-ecouter': if(window.BLAGUES_EN){ const bj = BLAGUES_EN.duJour(); direEcoute(bj.q + ' … ' + bj.r, 'en'); } return;
       case 'histoires': return histoires();
@@ -4207,6 +4291,7 @@
     }
   });
   document.addEventListener('keydown', ev => { if(ev.key === 'Escape' && $('#fenetre')) fermerFenetre(); });
+  document.addEventListener('keydown', ev => { if(ev.key === 'Enter' && ev.target && ev.target.id === 'qz-libre'){ ev.preventDefault(); libreValider(); } });
   document.addEventListener('click', ev => { if(ev.target.id === 'fenetre') fermerFenetre(); });
   document.addEventListener('click', ev => {
     const c = ev.target.closest('#carte'); if(!c) return;
@@ -4259,7 +4344,7 @@
     navigator.serviceWorker.register('sw.js', { updateViaCache:'none' }).then(r => r.update && r.update()).catch(() => {});
   }
   // v6.0 : ce que les modules peuvent utiliser (rien d'autre).
-  MODULES.api = { base:() => base, J, garder, poser, barre, esc, t, tt, TXT, jour, questionsGo, ami, annonce, bruit, plus, accueil, CONFIG,
+  MODULES.api = { base:() => base, J, garder, carnetAujourdhui, mathsAccueil, INTERVALLES_CARNET, poser, barre, esc, t, tt, TXT, jour, questionsGo, ami, annonce, bruit, plus, accueil, CONFIG,
     etatMatieres, matiereAccueil, matieresAccueil, matiereSerie, noterErreur, codePlumes, plumesActives, retour:() => { qz = null; return accueil(); },
     serieMatiere:(id, cible, n, niveau) => window.MATIERES ? MATIERES.serie(id, cible, niveau || etatMatieres().niveau, n, Math.floor(Math.random() * 1e9), etatMaths().ton) : [],
     serieMaths:(n, niveau, graine) => window.MATHS ? MATHS.serie(niveau || etatMaths().niveau, n, graine != null ? graine : Math.floor(Math.random() * 1e9), etatMaths().ton) : [], etatMaths, questionsBattle:typeof questionsBattle === 'function' ? questionsBattle : null, cartesModules };
