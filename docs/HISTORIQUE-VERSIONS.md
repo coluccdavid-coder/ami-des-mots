@@ -5,6 +5,56 @@ Avant la v6.44, chaque version avait son propre fichier VERSION-x.y.txt à la ra
 
 ---
 
+## Version 6.52
+
+```text
+Ami des mots — version 6.52
+- Physique-chimie du collège (et sciences et technologie de 6e) : toutes les leçons de la 6e à la 3e
+  ont au moins 20 questions, en français, anglais, espagnol et allemand (js/mat-physique-college-plus.js,
+  110 questions) : cours de 6e, 5e, 4e et 3e, algorithmes et programmes, familles de matériaux,
+  électricité (sécurité, signaux, information), composition de l'Univers et éléments chimiques,
+  électricité, la matière et ses états, révisions 6e-5e.
+- Chapitres « Par thème » de physique enrichis (états de la matière, chimie, pH, électricité,
+  mouvement, énergie, ondes et lumière).
+- Test « défi du jour » corrigé : il lisait une liste de thèmes gratuits écrite en dur, plus à jour
+  depuis la modification de js/offre.js (habits, musique, atelier) ; il échouait selon la date.
+  Il force maintenant le mode payant et lit les thèmes gratuits dans js/offre.js.
+```
+
+---
+
+## Version 6.51
+
+```text
+Ami des mots — version 6.51
+- Vannes qui ne se répètent plus d'un exercice à l'autre :
+  · mémoire des vannes déjà dites portée de 400 à 2000 par joueur (gardée sur l'appareil et dans la sauvegarde) ;
+  · quand toutes les vannes d'une réserve ont été dites, on reprend seulement les plus anciennes (le dixième le plus ancien) ;
+  · environ 330 vannes nouvelles (js/vannes-fraiches.js) : tchatche, entrées de round, bonnes réponses en trash talk,
+    séries gagnées ou perdues, bonne réponse en ton « tout doux », « taquin » et « cash », réponse lente ou éclair,
+    mot difficile, et bonnes réponses en anglais. Toutes visent la réponse, jamais la personne, et passent le juge.
+- Astrophysique (Sup) : les 10 chapitres de connaissances passent de 4-7 questions à 20, en français, anglais
+  et espagnol (js/mat-astro-plus.js, 152 questions).
+- Tests : réserves de vannes, mémoire de 2000, astrophysique à 20 par chapitre.
+```
+
+---
+
+## Version 6.50
+
+```text
+Ami des mots — version 6.50
+- SVT du collège : toutes les leçons de la 6e à la 3e ont au moins 20 questions, en français,
+  anglais, espagnol et allemand (js/mat-svt-college-plus.js, 87 questions).
+  Corps humain et santé, cours de 6e, 5e, 4e et 3e, la planète Terre en 6e, génétique,
+  révisions 6e et 5e-4e, la planète Terre, le vivant et la cellule.
+- Chapitres « Par thème » de SVT enrichis avec les nouvelles questions (chaque question de révision
+  reste rangée dans un thème ; « Cellule, ADN et génétique » reste hors 6e).
+- Test : chaque leçon de SVT du collège à 20 questions, traductions alignées, séries complètes.
+```
+
+---
+
 ## Version 6.49
 
 ```text
