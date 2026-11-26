@@ -5,6 +5,99 @@ Avant la v6.44, chaque version avait son propre fichier VERSION-x.y.txt à la ra
 
 ---
 
+## Version 6.63 — Anglais du lycée : chaque leçon à 20 questions
+
+- Anglais (2nde, 1re, Tle) : +280 questions dans `js/mat-anglais-lycee-fin.js`.
+- Les 16 leçons du lycée passent chacune à 20 questions :
+  - grammaire : present perfect en be + -ing, déduction, wish, phrasal verbs, mots de liaison, conditionnel passé, have something done, V-ing ou to, inversion, I’d rather, insistance ;
+  - pièges de traduction et compréhension de l’écrit ;
+  - axes de 2nde et du cycle terminal ;
+  - bac et attestation de langues.
+- La banque reste en français, comme les chapitres d’origine : consignes en français, phrases en anglais.
+- Vannes validées par le juge.
+- Nouveau test v6.63 : chaque leçon de lycée a au moins 20 questions, aucun doublon, trois pièges distincts, séries de 20 sans répétition à chaque niveau.
+
+## Version 6.62 — Philosophie : chaque notion à 20 questions
+
+- Philosophie (Tle) : +292 questions réparties dans trois nouveaux fichiers, `js/mat-philo-plus.js`, `js/mat-philo-plus2.js` et `js/mat-philo-plus3.js`.
+- Le cours de l’année (r-philo, r-philo2) et les 17 notions (art, bonheur, conscience, devoir, État, inconscient, justice, langage, liberté, nature, raison, religion, science, technique, temps, travail, vérité) passent chacun à 20 questions.
+- Tout est en français, en anglais et en espagnol. Les titres d’œuvres et les citations sont traduits.
+- Les vannes sont validées par le juge.
+- Nouveau test v6.62 : au moins 20 questions par chapitre, aucun doublon, traductions alignées, vannes validées, séries de 20 complètes.
+
+## Version 6.61
+
+- Anglais après le bac : les 5 chapitres (certifications, anglais universitaire, scientifique, professionnel, niveau C1) passent de 8 à 20 questions (60 questions de plus).
+- Objectif NASA : les 7 chapitres à banque (parcours, métiers, missions, anglais de mission, code, géopolitique, GEOPS) passent à 20 questions (73 questions de plus), traduites en anglais et en espagnol ; les chapitres de calcul restent générés.
+- Nouveau test v6.61 : 20 questions minimum par chapitre, sans doublon, traductions NASA alignées, séries de 20.
+
+## Version 6.60
+
+- Droit (Sup) : les 19 chapitres passent à 20 questions (288 questions de plus) — institutions, bases et métiers, droit au quotidien, introduction, histoire du droit, méthodologie, droit constitutionnel, administratif, libertés fondamentales, finances publiques, droit européen, droit international, personnes et famille, obligations, biens, pénal, affaires, travail, organisation de la justice.
+- Toutes les nouvelles questions sont traduites en anglais et en espagnol, dans le même ordre ; vannes validées par le juge (pas de « nul », pas de dates qui ressemblent à un numéro).
+- Nouveau test v6.60 : 20 questions minimum par chapitre de droit, sans doublon, traductions alignées, séries de 20 dans les 3 langues.
+
+## Version 6.59
+
+- Médecine (Sup) : les 14 chapitres passent à 20 questions (214 questions de plus) — anatomie, physiologie, études de santé (PASS, L.AS, EDN, ECOS, internat), sang et immunité, biochimie, biologie cellulaire, histologie et embryologie, génétique, biophysique et imagerie, pharmacologie, santé publique et biostatistiques, sémiologie, premiers secours, éthique et droit de la santé.
+- Toutes les nouvelles questions sont traduites en anglais et en espagnol, dans le même ordre ; les vannes passent le juge (aucun mot de violence, aucun « Non. » sec).
+- Nouveau test v6.59 : 20 questions minimum par chapitre de médecine, sans doublon, traductions alignées, séries de 20 dans les 3 langues.
+
+## Version 6.58
+
+- Géographie et EMC du collège : les 10 cours de l’année (géographie 6e, 5e, 4e, 3e ; EMC 6e, 5e, 4e, 3e, cycle 3 et cycle 4) passent de 12 à 20 questions (80 questions de plus), traduites en anglais, espagnol et allemand dans le même ordre.
+- Le collège est complet : toutes les leçons de toutes les matières, de la 6e à la 3e, ont maintenant au moins 20 questions.
+- Chapitres « Par thème » : une même question n’y entre plus qu’une fois, même quand un cours de l’année la reprend.
+- Nouveau test v6.58 : aucune leçon du collège sous 20 questions ; géographie et EMC traduites en 4 langues, vannes validées, série complète de 20.
+
+## Version 6.57
+
+- Espagnol LV2 du collège : chaque leçon de la 5e à la 3e passe à au moins 20 questions (48 questions de plus : se présenter, présent irrégulier, vocabulaire, culture, grammaire, passé, cours de l’année 5e, 4e et 3e), traduites en anglais.
+- Allemand LV2 du collège : chaque leçon de la 5e à la 3e passe à au moins 20 questions (44 questions de plus : bases, vocabulaire, culture, grammaire, modaux et parfait, cours de l’année 5e, 4e et 3e), traduites en anglais et en espagnol.
+- Nouveau test v6.57 : 20 questions minimum par leçon d’espagnol et d’allemand, sans doublon, traductions alignées, vannes validées par le juge, série complète de 20.
+
+## Version 6.56
+
+- Français du collège : chaque leçon de la 6e à la 3e passe à au moins 20 questions (120 questions de plus : nature, fonctions, vocabulaire, types et formes de phrases, orthographe rectifiée, groupe nominal et étymologie, accords, modes et temps composés, voyage et héros, figures de style, dire l’amour, littérature, cours de l’année).
+- Toutes les nouvelles questions sont traduites en anglais et en espagnol, dans le même ordre ; les mots français étudiés restent entre guillemets.
+- Nouveau test v6.56 : 20 questions minimum par leçon de français, traductions alignées, vannes validées par le juge, série complète de 20.
+
+## Version 6.55
+
+```text
+Ami des mots — version 6.55
+- Anglais du collège (LV1) : toutes les leçons de la 6e à la 3e ont au moins 20 questions
+  (js/mat-anglais-college-fin.js, environ 155 questions) : be et have got, présent simple, there is,
+  can et impératif, possessifs, vocabulaire, présent en be + -ing, prétérit, comparatifs, quantifieurs,
+  culture, present perfect, futur, modaux, passif, conditionnel, discours indirect, relatives, faux amis,
+  cours de la 6e à la 3e, Royaume-Uni, Irlande, États-Unis.
+- Test : chaque leçon d'anglais du collège à 20 questions, sans doublon, vannes validées par le juge.
+```
+
+---
+
+## Version 6.54
+
+```text
+Ami des mots — version 6.54
+- 📖 « Je n'ai pas compris la leçon » (js/mod-lecon.js + serveur-php/lecon.php) :
+  · un bouton 📖 à côté de chaque chapitre, et en fin de série quand on a moins de 70 % ;
+  · la fiche de la leçon s'affiche toujours, même sans IA : l'essentiel (les explications des questions
+    du niveau, sans doublon) et des exemples question → bonne réponse ;
+  · avec le serveur et la clé Claude : « ✨ Explique-moi la leçon » (idée principale, exemples, astuce),
+    puis 3 questions de l'élève au plus ; 1 plume par réponse si les plumes sont allumées,
+    30 réponses par jour et par IP (lecon_par_jour) ; seuls le chapitre, ses règles et la question partent ;
+    questions avec lien, adresse ou numéro refusées ;
+  · « ✅ Vérifier que j'ai compris » lance 5 questions du chapitre.
+- Écran « 🎮 Jeux et entraînement » : l'ancien accueil, ouvert depuis la table des matières, perd le grand
+  panneau du hibou et les menus de langue (déjà sur la page d'entrée) et la porte « Mes matières » en double ;
+  un bouton retour ramène aux matières. Défi du jour, apprendre 5 mots, à revoir, mot du jour, professeur IA,
+  battle, carnet, réglages et espace parents restent là.
+- Technologie du collège à 20 questions (v6.53) incluse.
+```
+
+---
+
 ## Version 6.53
 
 ```text

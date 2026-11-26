@@ -6,6 +6,7 @@ Aucune donnée personnelle n'est envoyée à l'IA : ni prénom, ni code Plus, ni
 
 | Fonction | Ce qu'elle fait | Pour qui | Garde-fous |
 | --- | --- | --- | --- |
+| Leçon réexpliquée (`lecon.php`, v6.54) | Bouton 📖 « Je n’ai pas compris la leçon » à côté de chaque chapitre (et en fin de série sous 70 %) : Plumo réexplique tout le chapitre, puis répond à 3 questions de l’élève au plus | Tous (1 plume par réponse si les plumes sont allumées) | Seuls le chapitre, ses règles et la question partent ; questions avec lien, adresse ou numéro refusées ; 30 réponses/jour/IP (`lecon_par_jour`) ; sans IA, la fiche de la leçon reste affichée |
 | Vannes en direct (`vannes-direct.php`) | Pour la question à l'écran, une vanne **neuve** par mauvaise réponse, au ton choisi (Tout doux → Trash talk), sans répéter les dernières | Tous (réglage « Vannes inventées en direct ») | Repassée au juge de Plumo ; si l'IA tarde, Plumo garde ses vannes ; 40 demandes/min par appareil |
 | Juge du paquet de vannes (`vanne-juge.php`) | Clash libre : trie les vannes ajoutées par les joueurs (refuse ce qui vise le physique, la famille, l'origine ; vérifie l'anglais) | Tous | Le juge local passe avant ; sans IA, seul le juge local décide |
 | Vannes proposées (`vannes.php`) | Génère des lots de vannes par thème et par ton, à valider par un adulte avant d'entrer dans le jeu | Plus (5 demandes/jour) | Validation humaine obligatoire |

@@ -22,7 +22,7 @@ function page(langue, config, avant){
   w.TextEncoder = TextEncoder; w.TextDecoder = TextDecoder;
   w.__fetch = []; w.fetch = async (u) => { w.__fetch.push(String(u)); return { ok:true, json:async () => (w.__reponse || { actif:false }) }; };
   if(avant) avant(w);
-  for(const f of ['js/donnees.js', 'js/voix.js', 'js/phrases-enregistrees.js', 'js/textes.js', 'js/textes-plus.js', 'js/textes-ecrans.js', 'js/textes-examens.js', 'js/articulation.js', 'js/genres.js', 'js/confusions.js', 'js/vannes.js', 'js/pieges.js', 'js/anglais.js', 'js/clash.js', 'js/histoires.js', 'js/blagues-en.js', 'js/parcours.js', 'js/rigolade.js', 'js/clash-plus.js', 'js/salon.js', 'js/juge.js', 'js/vannes-libres.js', 'js/maths-en.js', 'js/maths-es.js', 'js/maths-de.js', 'js/maths-it.js', 'js/maths-pt.js', 'js/maths.js', 'js/maths-2026-5e.js', 'js/maths-2026-2nde.js', 'js/maths-2026-1re.js', 'js/maths-2026-autres.js', 'js/maths-2026-college.js', 'js/sciences-en.js', 'js/sciences-es.js', 'js/sciences-de.js', 'js/sciences-it.js', 'js/sciences-pt.js', 'js/sciences.js', 'js/sciences-plus.js', 'js/trash-talk.js', 'js/vannes-arrogantes.js', 'js/vannes-fraiches.js', 'js/bande-images.js', 'js/bande-plumo.js', 'js/achats.js', 'js/rappels.js', 'js/epreuves.js', 'js/epreuves-spe.js', 'js/epreuves-plus.js', 'js/epreuves-oraux.js', 'js/epreuves-pro.js', 'js/matieres.js', 'js/mat-trad-es.js', 'js/mat-trad-en.js', 'js/mat-trad-en-sciences.js', 'js/mat-trad-en-sup.js', 'js/mat-trad-en-langues.js', 'js/mat-trad-en-francais.js', 'js/mat-trad-communs.js', 'js/mat-trad-es-sciences.js', 'js/mat-trad-es-sup.js', 'js/mat-trad-es-specialites.js', 'js/mat-trad-es-allemand.js', 'js/mat-trad-es-francais.js', 'js/mat-trad-de-histoire.js', 'js/mat-trad-de-sciences.js', 'js/mat-francais.js', 'js/mat-histoire.js', 'js/mat-histoire-sgm.js', 'js/mat-svt-pc.js', 'js/mat-sup.js', 'js/mat-anglais.js', 'js/mat-renfort.js', 'js/mat-langues.js', 'js/mat-specialites.js', 'js/mat-anglais-sup.js', 'js/mat-sup-droit.js', 'js/mat-sup-medecine.js', 'js/mat-sup-astro.js', 'js/mat-philo-notions.js', 'js/vannes-cash.js', 'js/vannes-ironie.js', 'js/vannes-mots.js', 'js/offre.js', 'js/jeu.js', 'js/mod-base.js', 'js/mod-ligue.js', 'js/mod-saisons.js', 'js/mod-veille.js', 'js/mod-oral.js', 'js/mod-classe.js', 'js/mod-parrainage.js', 'js/mod-ia.js', 'js/mod-devoirs.js', 'js/mod-retro.js', 'js/gb-moteur.js', 'js/gb-maths.js', 'js/gb-english.js', 'js/gb-sciences.js', 'js/gb-humanites.js', 'js/gb-options.js', 'js/gb-plus.js', 'js/gb-programme.js', 'js/gb-programme-plus.js', 'js/gb-examens.js', 'js/gb-sats-reels.js', 'js/gb-options2.js', 'js/nasa.js', 'js/mat-trad-en-nasa.js', 'js/mat-trad-es-nasa.js', 'js/mat-histoire-pgm.js', 'js/mat-cours.js', 'js/mat-cours-francais.js', 'js/mat-cours-histoire.js', 'js/mat-cours-geo-emc.js', 'js/mat-cours-sciences.js', 'js/mat-cours-physique.js', 'js/mat-cours-lycee-lettres.js', 'js/mat-cours-lycee-sciences.js', 'js/mat-cours-specialites.js', 'js/mat-cours-college-fin.js', 'js/mat-techno.js', 'js/mat-cours-emc.js', 'js/mat-cpl-sciences.js', 'js/mat-cpl-lettres.js', 'js/mat-cpl-partiels.js', 'js/mat-langues-cpl.js', 'js/epreuves-dnb-techno.js', 'js/mat-arts-eps-lca.js', 'js/mat-anglais-college-plus.js', 'js/mat-anglais-college-plus2.js', 'js/mat-langues-college-plus.js', 'js/mat-sciences-college-plus.js', 'js/mat-niveaux.js', 'js/mat-histoire-college-plus.js', 'js/mat-college-plus-final.js', 'js/mat-geo-emc-plus.js', 'js/mat-histoire-6-4-plus.js', 'js/mat-histoire-6-4-suite.js', 'js/mat-histoire-3e-plus.js', 'js/mat-svt-college-plus.js', 'js/mat-astro-plus.js', 'js/mat-physique-college-plus.js', 'js/mat-techno-college-plus.js', 'js/mat-noms.js', 'js/mat-noms-it-pt.js', 'js/themes.js', 'js/mod-angleterre.js']) w.eval(lire(f));
+  for(const f of ['js/donnees.js', 'js/voix.js', 'js/phrases-enregistrees.js', 'js/textes.js', 'js/textes-plus.js', 'js/textes-ecrans.js', 'js/textes-examens.js', 'js/articulation.js', 'js/genres.js', 'js/confusions.js', 'js/vannes.js', 'js/pieges.js', 'js/anglais.js', 'js/clash.js', 'js/histoires.js', 'js/blagues-en.js', 'js/parcours.js', 'js/rigolade.js', 'js/clash-plus.js', 'js/salon.js', 'js/juge.js', 'js/vannes-libres.js', 'js/maths-en.js', 'js/maths-es.js', 'js/maths-de.js', 'js/maths-it.js', 'js/maths-pt.js', 'js/maths.js', 'js/maths-2026-5e.js', 'js/maths-2026-2nde.js', 'js/maths-2026-1re.js', 'js/maths-2026-autres.js', 'js/maths-2026-college.js', 'js/sciences-en.js', 'js/sciences-es.js', 'js/sciences-de.js', 'js/sciences-it.js', 'js/sciences-pt.js', 'js/sciences.js', 'js/sciences-plus.js', 'js/trash-talk.js', 'js/vannes-arrogantes.js', 'js/vannes-fraiches.js', 'js/bande-images.js', 'js/bande-plumo.js', 'js/achats.js', 'js/rappels.js', 'js/epreuves.js', 'js/epreuves-spe.js', 'js/epreuves-plus.js', 'js/epreuves-oraux.js', 'js/epreuves-pro.js', 'js/matieres.js', 'js/mat-trad-es.js', 'js/mat-trad-en.js', 'js/mat-trad-en-sciences.js', 'js/mat-trad-en-sup.js', 'js/mat-trad-en-langues.js', 'js/mat-trad-en-francais.js', 'js/mat-trad-communs.js', 'js/mat-trad-es-sciences.js', 'js/mat-trad-es-sup.js', 'js/mat-trad-es-specialites.js', 'js/mat-trad-es-allemand.js', 'js/mat-trad-es-francais.js', 'js/mat-trad-de-histoire.js', 'js/mat-trad-de-sciences.js', 'js/mat-francais.js', 'js/mat-histoire.js', 'js/mat-histoire-sgm.js', 'js/mat-svt-pc.js', 'js/mat-sup.js', 'js/mat-anglais.js', 'js/mat-renfort.js', 'js/mat-langues.js', 'js/mat-specialites.js', 'js/mat-anglais-sup.js', 'js/mat-sup-droit.js', 'js/mat-sup-medecine.js', 'js/mat-sup-astro.js', 'js/mat-philo-notions.js', 'js/vannes-cash.js', 'js/vannes-ironie.js', 'js/vannes-mots.js', 'js/offre.js', 'js/jeu.js', 'js/mod-base.js', 'js/mod-ligue.js', 'js/mod-saisons.js', 'js/mod-veille.js', 'js/mod-oral.js', 'js/mod-classe.js', 'js/mod-parrainage.js', 'js/mod-ia.js', 'js/mod-lecon.js', 'js/mod-devoirs.js', 'js/mod-retro.js', 'js/gb-moteur.js', 'js/gb-maths.js', 'js/gb-english.js', 'js/gb-sciences.js', 'js/gb-humanites.js', 'js/gb-options.js', 'js/gb-plus.js', 'js/gb-programme.js', 'js/gb-programme-plus.js', 'js/gb-examens.js', 'js/gb-sats-reels.js', 'js/gb-options2.js', 'js/nasa.js', 'js/mat-trad-en-nasa.js', 'js/mat-trad-es-nasa.js', 'js/mat-histoire-pgm.js', 'js/mat-cours.js', 'js/mat-cours-francais.js', 'js/mat-cours-histoire.js', 'js/mat-cours-geo-emc.js', 'js/mat-cours-sciences.js', 'js/mat-cours-physique.js', 'js/mat-cours-lycee-lettres.js', 'js/mat-cours-lycee-sciences.js', 'js/mat-cours-specialites.js', 'js/mat-cours-college-fin.js', 'js/mat-techno.js', 'js/mat-cours-emc.js', 'js/mat-cpl-sciences.js', 'js/mat-cpl-lettres.js', 'js/mat-cpl-partiels.js', 'js/mat-langues-cpl.js', 'js/epreuves-dnb-techno.js', 'js/mat-arts-eps-lca.js', 'js/mat-anglais-college-plus.js', 'js/mat-anglais-college-plus2.js', 'js/mat-anglais-college-fin.js', 'js/mat-langues-college-plus.js', 'js/mat-sciences-college-plus.js', 'js/mat-niveaux.js', 'js/mat-histoire-college-plus.js', 'js/mat-college-plus-final.js', 'js/mat-geo-emc-plus.js', 'js/mat-histoire-6-4-plus.js', 'js/mat-histoire-6-4-suite.js', 'js/mat-histoire-3e-plus.js', 'js/mat-svt-college-plus.js', 'js/mat-astro-plus.js', 'js/mat-physique-college-plus.js', 'js/mat-techno-college-plus.js', 'js/mat-francais-college-fin.js', 'js/mat-langues-lv2-fin.js', 'js/mat-geo-emc-fin.js', 'js/mat-sup-medecine-plus.js', 'js/mat-sup-medecine-plus2.js', 'js/mat-sup-droit-plus.js', 'js/mat-sup-droit-plus2.js', 'js/mat-sup-droit-plus3.js', 'js/mat-sup-anglais-nasa-fin.js', 'js/mat-philo-plus.js', 'js/mat-philo-plus2.js', 'js/mat-philo-plus3.js', 'js/mat-anglais-lycee-fin.js', 'js/mat-noms.js', 'js/mat-noms-it-pt.js', 'js/themes.js', 'js/mod-angleterre.js']) w.eval(lire(f));
   return w;
 }
 // Certificats d'abonnement comme les signe le serveur (même format que serveur/functions/ami-abonnement).
@@ -2961,7 +2961,11 @@ await test('v6.38 : l’appli s’ouvre sur la table des matières, l’aide aux
   assert.ok(m.firstElementChild.nextElementSibling.nextElementSibling === heros || m.querySelector('h2 ~ .devoirs-hero'), 'en tête');
   assert.ok(d.querySelector('.outils-revision [data-a]'), 'outils de révision regroupés'); assert.ok(!d.querySelector('.barre [data-a="accueil"]'), 'pas de retour : c’est l’écran d’arrivée');
   d.querySelector('.jeux-lien [data-a="accueil"]').click();
-  assert.ok(d.querySelector('.portes [data-a="matieres"]'), 'porte « Mes matières »'); assert.ok(!d.querySelector('.portes [data-a="maths"]'), 'plus de Maths en double');
+  // v6.54 : l'écran des jeux n'a plus de porte « Mes matières » ni de grand panneau du hibou : un bouton retour y ramène.
+  assert.ok(d.querySelector('main.jeux-ecran h2.jeux-titre'), 'écran Jeux'); assert.ok(d.querySelector('.barre [data-a="matieres"]'), 'retour vers les matières');
+  assert.ok(!d.querySelector('.portes [data-a="matieres"]'), 'plus de porte « Mes matières » en double'); assert.ok(!d.querySelector('.ciel'), 'plus de grand panneau'); assert.equal(d.querySelector('#app').dataset.ecran, 'jeux');
+  assert.ok(d.querySelector('[data-a="defi"]') && d.querySelector('[data-a="lecon"]') && d.querySelector('[data-a="parents"]'), 'défi, apprendre et espace parents toujours là');
+  assert.ok(!d.querySelector('.portes [data-a="maths"]'), 'plus de Maths en double');
   { const x = d.createElement('button'); x.dataset.a = 'maths'; d.body.appendChild(x); x.click(); x.remove(); }
   assert.ok(d.querySelector('.barre [data-a="matieres"]'), 'Maths revient à la table des matières');
   // Plusieurs profils : « Qui joue ? » d'abord, puis la table des matières.
@@ -2996,7 +3000,7 @@ await test('v6.40 : séries de 20 questions, titres d’examens et écran Offici
   clic('ma-classe', '5e|matieres'); clic('matiere', 'histoire');
   const bt = [...d.querySelectorAll('[data-a="matiere-chap"] em')].map(x => x.textContent); assert.ok(bt.includes('▶ 20'), 'série de 20 : ' + bt.join(' '));
   clic('matiere-chap', 'francais|nature'); let k = 0; while(d.querySelector('[data-a="qz-rep"]:not([disabled])') && k < 30){ d.querySelector('[data-a="qz-rep"]:not([disabled])').click(); k++; const s = d.querySelector('[data-a="qz-suivant"]'); if(s) s.click(); }
-  assert.strictEqual(k, 16, 'une leçon de 16 questions donne 16 questions, sans répétition');
+  assert.strictEqual(k, 20, 'une leçon de 20 questions donne 20 questions, sans répétition');
   const titres = new Set(); for(const x of Object.values(E.BLANCS)) titres.add(x.titre); for(const x of Object.values(E.EPREUVES)) titres.add(x.titre); for(const a of E.ANNALES) titres.add(a.titre);
   for(const [t, , de] of [...E.OFFICIEL.programmes, ...E.OFFICIEL.annales]){ titres.add(t); titres.add(de); }
   for(const l of ['en', 'es', 'it', 'pt']) for(const x of titres) if(/[a-zé]{3}/.test(x)) assert.notStrictEqual(w.L(x, l), x, l + ' : ' + x);
@@ -3147,6 +3151,136 @@ await test('v6.53 : technologie du collège — chaque leçon de la 5e à la 3e 
     for(const l of ['en', 'es', 'de']) if(T[l].q['techno/' + c.id]) assert.equal(T[l].q['techno/' + c.id].length, c.banque.length, l + ' ' + c.id);
     assert.equal(M.serie('techno', c.id, n, 20, 3, 'taquin').length, 20, 'série complète ' + n + ' ' + c.id);
   }
+});
+await test('v6.54 : 📖 « Je n’ai pas compris la leçon » — fiche sans IA, explication et 3 questions avec l’IA, vérification en 5 questions', async () => {
+  // Sans serveur : la fiche de la leçon s'affiche quand même (l'essentiel + des exemples), sans appel réseau.
+  const w0 = page('fr', { MODE_PAYANT:false, OUVRIR_MATIERES:true }), d0 = w0.document; await w0.AmiDesMotsPret;
+  d0.querySelector('[data-a="entrer"]').click(); clic(w0, '[data-a="matiere"][data-v="svt"]');
+  const b0 = d0.querySelector('.chap-ligne [data-a="lecon-chap"]'); assert.ok(b0, 'bouton 📖 à côté des chapitres'); b0.click();
+  assert.ok(d0.querySelector('main.lecon-ecran'), 'écran de la leçon'); assert.ok(d0.querySelectorAll('.lecon-bloc li').length >= 3, 'l’essentiel et des exemples');
+  assert.ok(!d0.querySelector('[data-a="lecon-ia"]'), 'pas de bouton IA sans serveur'); assert.match(d0.querySelector('.lecon-ia').textContent, /serveur du jeu/);
+  clic(w0, '[data-a="lecon-verif"]'); assert.equal(d0.querySelectorAll('[data-a="qz-rep"]').length > 0, true, 'vérification lancée');
+  // Avec le serveur : explication puis questions, 3 au plus ; rien de personnel n'est envoyé.
+  const w = page('fr', { MODE_PAYANT:false, OUVRIR_MATIERES:true, SERVEUR:'https://srv.example/' }, serveurFaux({ 'lecon.php':c => ({ statut:200, d:{ texte:c.question ? 'Réponse à : ' + c.question : 'Imagine une usine dans chaque cellule.' } }) })), d = w.document;
+  await w.AmiDesMotsPret; w.AMI_MODULES.actions['lecon-chap']('svt|vivant');
+  clic(w, '[data-a="lecon-ia"]'); await attendre(20);
+  assert.match(d.getElementById('lecon-ia-texte').textContent, /🤖 Imagine une usine/);
+  const e = w.__envois.find(x => x.u.endsWith('lecon.php')).corps;
+  assert.equal(e.question, ''); assert.ok(e.points.length >= 3 && e.chapitre && e.matiere, 'le chapitre et ses règles');
+  assert.deepEqual(Object.keys(e).filter(k => !['matiere', 'niveau', 'chapitre', 'points', 'exemples', 'question', 'langue', 'code'].includes(k)), [], 'rien d’autre');
+  const poser = async q => { d.getElementById('lecon-q').value = q; clic(w, '[data-a="lecon-question"]'); await attendre(20); };
+  await poser('Mon numéro 0612345678'); assert.match(d.getElementById('lecon-ia-texte').textContent, /Pas de lien/);
+  for(const q of ['Pourquoi la cellule ?', 'Et le noyau ?', 'Et la membrane ?']) await poser(q);
+  assert.match(d.getElementById('lecon-ia-texte').textContent, /Réponse à : Et la membrane/); assert.ok(d.getElementById('lecon-question').hidden, '3 questions au plus');
+  assert.equal(w.__envois.filter(x => x.u.endsWith('lecon.php')).length, 4);
+  const php = lire('serveur-php/lecon.php'); assert.ok(/ami_limiter/.test(php) && /ami_credits_garde/.test(php) && /lecon_par_jour/.test(php));
+  assert.ok(!/anthropic_cle'\]\s*\?\?\s*'sk-/.test(php), 'aucune clé dans le code');
+});
+await test('v6.55 : anglais du collège — chaque leçon de la 6e à la 3e a au moins 20 questions, sans doublon, vannes validées', () => {
+  const w = page(), M = w.MATIERES;
+  for(const n of ['6e', '5e', '4e', '3e']) for(const c of M.chapitres('langlais', n).filter(c => !c.theme && Array.isArray(c.banque))){
+    const ix = M.indicesNiveau(c, n); assert.ok((ix ? ix.length : c.banque.length) >= 20, n + ' ' + c.id + ' : ' + (ix ? ix.length : c.banque.length));
+    assert.equal(new Set(c.banque.map(q => q[0] + '|' + q[1])).size, c.banque.length, 'doublon ' + c.id);
+    for(const q of c.banque){ assert.ok(!q[2].some(f => f[0] === q[1]), c.id + ' ' + q[0]); for(const f of q[2]) assert.ok(w.JUGE.juger(f[1]).ok, f[1]); }
+    assert.equal(M.serie('langlais', c.id, n, 20, 11, 'taquin').length, 20, 'série complète ' + n + ' ' + c.id);
+  }
+});
+await test('v6.56 : français du collège — chaque leçon de la 6e à la 3e a au moins 20 questions, traductions alignées, vannes validées', () => {
+  const w = page(), M = w.MATIERES, T = w.MATIERES_LANGUES || {}, trop = [];
+  for(const n of ['6e', '5e', '4e', '3e']) for(const c of M.chapitres('francais', n).filter(c => !c.theme && Array.isArray(c.banque))){
+    const ix = M.indicesNiveau(c, n), nb = ix ? ix.length : c.banque.length; if(nb < 20) trop.push(n + ' ' + c.id + ' : ' + nb);
+    for(const l of ['en', 'es', 'de']){ const q = T[l] && T[l].q && T[l].q['francais/' + c.id]; if(q) assert.equal(q.length, c.banque.length, l + ' ' + c.id); }
+    for(const q of c.banque){ assert.ok(!q[2].some(f => f[0] === q[1]), c.id + ' ' + q[0]); for(const f of q[2]) assert.ok(w.JUGE.juger(f[1]).ok, f[1]); }
+    if(nb >= 20) assert.equal(M.serie('francais', c.id, n, 20, 11, 'taquin').length, 20, 'série complète ' + n + ' ' + c.id);
+  }
+  assert.deepEqual(trop, []);
+});
+await test('v6.57 : espagnol et allemand du collège — chaque leçon de la 5e à la 3e a au moins 20 questions, traductions alignées, vannes validées', () => {
+  const w = page(), M = w.MATIERES, T = w.MATIERES_LANGUES || {}, trop = [];
+  for(const mid of ['lespagnol', 'lallemand']) for(const n of ['5e', '4e', '3e']) for(const c of M.chapitres(mid, n).filter(c => !c.theme && Array.isArray(c.banque))){
+    const ix = M.indicesNiveau(c, n), nb = ix ? ix.length : c.banque.length; if(nb < 20) trop.push(mid + ' ' + n + ' ' + c.id + ' : ' + nb);
+    assert.equal(new Set(c.banque.map(q => q[0] + '|' + q[1])).size, c.banque.length, 'doublon ' + mid + ' ' + c.id);
+    for(const l of ['en', 'es', 'de']){ const q = T[l] && T[l].q && T[l].q[mid + '/' + c.id]; if(q) assert.equal(q.length, c.banque.length, l + ' ' + c.id); }
+    for(const q of c.banque){ assert.ok(!q[2].some(f => f[0] === q[1]), c.id + ' ' + q[0]); for(const f of q[2]) assert.ok(w.JUGE.juger(f[1]).ok, f[1]); }
+    if(nb >= 20) assert.equal(M.serie(mid, c.id, n, 20, 11, 'taquin').length, 20, 'série complète ' + mid + ' ' + n + ' ' + c.id);
+  }
+  assert.deepEqual(trop, []);
+});
+await test('v6.58 : collège complet — toutes les leçons de toutes les matières, de la 6e à la 3e, ont au moins 20 questions ; géographie et EMC traduites en 4 langues', () => {
+  const w = page(), M = w.MATIERES, T = w.MATIERES_LANGUES || {}, trop = [];
+  for(const m of M.LISTE) for(const n of ['6e', '5e', '4e', '3e']) for(const c of M.chapitres(m.id, n).filter(c => !c.theme && Array.isArray(c.banque))){
+    const ix = M.indicesNiveau(c, n), nb = ix ? ix.length : c.banque.length; if(nb < 20) trop.push(m.id + ' ' + n + ' ' + c.id + ' : ' + nb); }
+  assert.deepEqual(trop, []);
+  for(const id of ['cours-g6', 'cours-g5', 'cours-g4', 'cours-g3', 'cours-emc-c3', 'cours-emc6', 'cours-emc5', 'cours-emc-c4', 'cours-emc4', 'cours-emc3']){
+    const c = M.trouver('histoire').chapitres.find(x => x.id === id); assert.ok(c.banque.length >= 20, id);
+    for(const l of ['en', 'es', 'de']) assert.equal(T[l].q['histoire/' + id].length, c.banque.length, l + ' ' + id);
+    for(const q of c.banque){ assert.ok(!q[2].some(f => f[0] === q[1]), id + ' ' + q[0]); for(const f of q[2]) assert.ok(w.JUGE.juger(f[1]).ok, f[1]); }
+    assert.equal(M.serie('histoire', id, c.niv[0], 20, 11, 'taquin').length, 20, 'série complète ' + id);
+  }
+});
+await test('v6.59 : médecine (Sup) — chaque chapitre a au moins 20 questions, traduites en anglais et en espagnol, vannes validées', () => {
+  const w = page(), M = w.MATIERES, T = w.MATIERES_LANGUES, m = M.trouver('medecine'), trop = [];
+  for(const c of m.chapitres.filter(c => !c.theme && Array.isArray(c.banque))){
+    if(c.banque.length < 20) trop.push(c.id + ' : ' + c.banque.length);
+    assert.equal(new Set(c.banque.map(q => q[0])).size, c.banque.length, 'doublon ' + c.id);
+    for(const l of ['en', 'es']) assert.equal(T[l].q['medecine/' + c.id].length, c.banque.length, l + ' ' + c.id);
+    for(const q of c.banque){ assert.ok(!q[2].some(f => f[0] === q[1]), c.id + ' ' + q[0]); for(const f of q[2]) assert.ok(w.JUGE.juger(f[1]).ok, f[1]); }
+    assert.equal(M.serie('medecine', c.id, 'Sup', 20, 11, 'taquin').length, 20, 'série complète ' + c.id);
+  }
+  assert.deepEqual(trop, []);
+  for(const L of ['en', 'es']){ const wl = page(L === 'en' ? 'en-GB' : L), Ml = wl.MATIERES;
+    for(const c of Ml.trouver('medecine').chapitres.filter(c => !c.theme)) for(const q of Ml.serie('medecine', c.id, 'Sup', 20, 7, 'taquin')){ assert.strictEqual(q.lang, L, L + ' ' + c.id); for(const f of q.faux) assert.ok(wl.JUGE.juger(f.vanne).ok, f.vanne); } }
+});
+await test('v6.60 : droit (Sup) — chaque chapitre a au moins 20 questions, traduites en anglais et en espagnol, vannes validées', () => {
+  const w = page(), M = w.MATIERES, T = w.MATIERES_LANGUES, m = M.trouver('droit'), trop = [];
+  for(const c of m.chapitres.filter(c => !c.theme && Array.isArray(c.banque))){
+    if(c.banque.length < 20) trop.push(c.id + ' : ' + c.banque.length);
+    assert.equal(new Set(c.banque.map(q => q[0])).size, c.banque.length, 'doublon ' + c.id);
+    for(const l of ['en', 'es']) assert.equal(T[l].q['droit/' + c.id].length, c.banque.length, l + ' ' + c.id);
+    for(const q of c.banque){ assert.ok(!q[2].some(f => f[0] === q[1]), c.id + ' ' + q[0]); for(const f of q[2]) assert.ok(w.JUGE.juger(f[1]).ok, f[1]); }
+    assert.equal(M.serie('droit', c.id, 'Sup', 20, 11, 'taquin').length, 20, 'série complète ' + c.id);
+  }
+  assert.deepEqual(trop, []);
+  for(const L of ['en', 'es']){ const wl = page(L === 'en' ? 'en-GB' : L), Ml = wl.MATIERES;
+    for(const c of Ml.trouver('droit').chapitres.filter(c => !c.theme)) for(const q of Ml.serie('droit', c.id, 'Sup', 20, 7, 'taquin')){ assert.strictEqual(q.lang, L, L + ' ' + c.id); for(const f of q.faux) assert.ok(wl.JUGE.juger(f.vanne).ok, f.vanne); } }
+});
+await test('v6.61 : anglais après le bac et Objectif NASA — chaque chapitre à banque a au moins 20 questions, NASA traduite en anglais et en espagnol', () => {
+  const w = page(), M = w.MATIERES, T = w.MATIERES_LANGUES, trop = [];
+  const chaps = [['langlais', M.trouver('langlais').chapitres.filter(c => /^sup-/.test(c.id))], ['nasa', M.trouver('nasa').chapitres.filter(c => !c.theme && Array.isArray(c.banque) && c.banque.length)]];
+  for(const [mid, liste] of chaps) for(const c of liste){
+    if(c.banque.length < 20) trop.push(mid + ' ' + c.id + ' : ' + c.banque.length);
+    assert.equal(new Set(c.banque.map(q => q[0] + '|' + q[1])).size, c.banque.length, 'doublon ' + c.id);
+    if(mid === 'nasa') for(const l of ['en', 'es']) assert.equal(T[l].q['nasa/' + c.id].length, c.banque.length, l + ' ' + c.id);
+    for(const q of c.banque){ assert.ok(!q[2].some(f => f[0] === q[1]), c.id + ' ' + q[0]); for(const f of q[2]) assert.ok(w.JUGE.juger(f[1]).ok, f[1]); }
+    assert.equal(M.serie(mid, c.id, 'Sup', 20, 11, 'taquin').length, 20, 'série complète ' + c.id);
+  }
+  assert.ok(chaps[0][1].length === 5 && chaps[1][1].length >= 7);
+  assert.deepEqual(trop, []);
+});
+await test('v6.62 : philosophie (Tle) — chaque chapitre à banque a au moins 20 questions, traduites en anglais et en espagnol', () => {
+  const w = page(), M = w.MATIERES, T = w.MATIERES_LANGUES, trop = [];
+  const liste = M.trouver('philo').chapitres.filter(c => !c.theme && Array.isArray(c.banque) && c.banque.length);
+  for(const c of liste){
+    if(c.banque.length < 20) trop.push(c.id + ' : ' + c.banque.length);
+    assert.equal(new Set(c.banque.map(q => q[0])).size, c.banque.length, 'doublon ' + c.id);
+    for(const l of ['en', 'es']) if(T[l].q['philo/' + c.id]) assert.equal(T[l].q['philo/' + c.id].length, c.banque.length, l + ' ' + c.id);
+    for(const q of c.banque){ assert.ok(!q[2].some(f => f[0] === q[1]), c.id + ' ' + q[0]); for(const f of q[2]) assert.ok(w.JUGE.juger(f[1]).ok, f[1]); }
+    assert.equal(M.serie('philo', c.id, 'Tle', 20, 11, 'taquin').length, 20, 'série complète ' + c.id);
+  }
+  assert.ok(liste.length >= 19);
+  assert.deepEqual(trop, []);
+});
+await test('v6.63 : anglais du lycée — chaque leçon de 2nde, 1re et Tle a au moins 20 questions, vannes validées, séries de 20 sans répétition', () => {
+  const w = page(), M = w.MATIERES, lyc = ['2nde', '1re', 'Tle'], trop = [];
+  const liste = M.trouver('langlais').chapitres.filter(c => !c.theme && Array.isArray(c.banque) && c.banque.length && c.niv.some(n => lyc.includes(n)));
+  for(const c of liste){
+    if(c.banque.length < 20) trop.push(c.id + ' : ' + c.banque.length);
+    assert.equal(new Set(c.banque.map(q => q[0])).size, c.banque.length, 'doublon ' + c.id);
+    for(const q of c.banque){ assert.ok(!q[2].some(f => f[0] === q[1]), c.id + ' ' + q[0]); assert.equal(new Set(q[2].map(f => f[0])).size, 3, c.id + ' ' + q[0]); for(const f of q[2]) assert.ok(w.JUGE.juger(f[1]).ok, f[1]); }
+    for(const n of c.niv.filter(n => lyc.includes(n))){ const s = M.serie('langlais', c.id, n, 20, 11, 'taquin'); assert.equal(s.length, 20, 'série complète ' + n + ' ' + c.id); assert.equal(new Set(s.map(q => q.enonce + q.bon)).size, 20, 'répétition ' + c.id); }
+  }
+  assert.ok(liste.length >= 20);
+  assert.deepEqual(trop, []);
 });
 console.log(`\n${ok} réussi(s), ${ko} échoué(s)`);
 process.exit(ko ? 1 : 0);

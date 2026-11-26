@@ -632,7 +632,8 @@
     const en = base.ui === 'en', porte = (a, ic, titre, sous, cls) => '<button class="porte ' + cls + '" data-a="' + a + '"><span class="porte-ic" aria-hidden="true">' + ic + '</span><strong>' + titre + '</strong><small>' + sous + '</small></button>';
     return '<div class="portes">' +
       porte('porte-mots', '🗣️', esc(progTx('porteLangues')) + ' · ' + esc(LANGUES_APPRENDRE[base.cible] || ''), esc(progTx('porteLanguesSous')), 'porte-mots') +
-      (CONFIG.OUVRIR_MATIERES && window.MATIERES ? porte('matieres', '📚', TXT('Mes matières'), TXT('Toutes tes matières, à ta classe, et l’aide aux devoirs'), 'porte-sciences') : '') +
+      // v6.54 : sur l'écran Jeux, plus de porte « Mes matières » : le bouton retour y ramène déjà.
+
       (window.MATHS && !CONFIG.OUVRIR_MATIERES ? porte('maths', '🔢', TXT('Maths'), en ? 'Year 6 to final exam · Prof Pi teases' : TXT('De la 6e au bac · Prof Pi te vanne'), 'porte-maths') : '') +
       (CONFIG.OUVRIR_MATIERES ? '' : window.MATIERES ? porte('matieres', '📚', en ? 'Subjects' : TXT('Matières'), en ? 'French, history, biology, physics, exams' : TXT('Français, histoire-géo, SVT, physique, brevet & bac'), 'porte-sciences')
         : window.SCIENCES ? porte('sciences', '🚀', TXT('Sciences'), en ? 'Planets, rockets, human body' : TXT('Planètes, fusées, corps humain'), 'porte-sciences') : '') +
@@ -664,8 +665,11 @@
     if(typeof arreterBeat === 'function'){ arreterBeat(); quitterSalon(); }
     if(base.joueurs.length > 1 && !accueil.choisi) return quiJoue();
     const fait = J().jours.includes(jour()), s = serie(), rev = aRevoir().length, defiFait = J().defis.includes(jour());
-    poser(cielAccueil() +
-      '<main class="accueil">' + cartesModules('accueil') +
+    // v6.54 : quand on entre par la table des matières, cet écran devient « 🎮 Jeux et entraînement » :
+    // plus de grand panneau du hibou ni de menus de langue (ils sont sur la page d'entrée), retour vers les matières.
+    const ecranJeux = !!(CONFIG.OUVRIR_MATIERES && window.MATIERES);
+    poser((ecranJeux ? barre('matieres') : cielAccueil()) +
+      '<main class="accueil' + (ecranJeux ? ' jeux-ecran' : '') + '">' + (ecranJeux ? '<h2 class="jeux-titre">' + TXT('🎮 Jeux et entraînement') + '</h2>' : '') + cartesModules('accueil') +
         (s >= 2 && !fait ? '<p class="serie-danger" role="status">' + esc(tt('serie_danger', s)) + '</p>' : '') +
         (function(){ const b = bilanAdaptatif(); return b.total ? '<section class="carte-apprentissage" aria-label="Progression adaptative"><strong>🧠 Ton apprentissage</strong><span>' + b.aRevoir + TXT(' notion(s) à revoir · ') + b.maitrisees + TXT(' maîtrisée(s) · ') + b.total + ' suivie(s)</span></section>' : ''; })() +
         '<button class="gros defi' + (defiFait ? ' fait' : '') + '" data-a="defi">' + (defiFait ? '✓ ' : '⚡ ') + esc(t('defi')) + '</button>' +
@@ -702,8 +706,8 @@
           '<button data-a="parents"><span aria-hidden="true">👪</span>' + (base.ui === 'en' ? 'Parents' : 'Parents') + '</button>' +
         '</nav>' +
         '<p class="liens-legaux"><a href="legal.html#confidentialite">' + esc(tt('confidentialite')) + '</a> · <a href="legal.html#cgu">' + esc(tt('regles')) + '</a> · <a href="legal.html#mentions">' + esc(tt('mentions')) + '</a></p>' +
-      '</main>', 'accueil');
-    brancherLangues(accueil);
+      '</main>', ecranJeux ? 'jeux' : 'accueil');
+    if(!ecranJeux) brancherLangues(accueil);
   }
   // v6.39 : le ciel de l'accueil (Plumo sur sa branche, bonjour, choix de la langue) est partagé avec l'écran d'ouverture,
   // pour que le personnage reste là quand l'appli s'ouvre directement sur la table des matières.
@@ -3634,7 +3638,9 @@
       (chs.length ? '<div class="actions serrees"><button class="moyen plein" data-a="matiere-melange" data-v="' + id + TXT('">🔁 Entraînement mélangé</button>') +
         (ex ? '<button class="moyen" data-a="matiere-examen" data-v="' + id + '">📝 ' + esc(ex) + (e.notes[id + '-' + e.niveau] != null ? ' (' + String(e.notes[id + '-' + e.niveau]).replace('.', ',') + '/20)' : '') + '</button>' : '') + '</div>' +
         '<div class="domaines">' + doms.map(d => '<section class="domaine"><h3>' + esc(M.nomDom(m, d.d)) + ' <small>' + d.l.length + '</small></h3><div class="liste-chap">' +
-          d.l.map(c => '<button class="chap" data-a="matiere-chap" data-v="' + id + '|' + c.id + '"><span>' + esc(M.nomChap(m, c)) + (base.ui !== 'fr' && !M.traduit(m, c) ? ' <small class="pas-traduit" title="' + esc(progTx('pasTraduit')) + '">🇫🇷</small>' : '') + '</span><em>' + (etoiles(c.id) || '▶ ' + nbSerie(c, e.niveau)) + '</em></button>').join('') + '</div></section>').join('') + '</div>'
+          d.l.map(c => { const btn = '<button class="chap" data-a="matiere-chap" data-v="' + id + '|' + c.id + '"><span>' + esc(M.nomChap(m, c)) + (base.ui !== 'fr' && !M.traduit(m, c) ? ' <small class="pas-traduit" title="' + esc(progTx('pasTraduit')) + '">🇫🇷</small>' : '') + '</span><em>' + (etoiles(c.id) || '▶ ' + nbSerie(c, e.niveau)) + '</em></button>';
+            // v6.54 : 📖 « Je n'ai pas compris la leçon » à côté de chaque chapitre qui a des questions écrites.
+            return MODULES.actions['lecon-chap'] && Array.isArray(c.banque) ? '<div class="chap-ligne">' + btn + '<button class="chap-lecon" data-a="lecon-chap" data-v="' + id + '|' + c.id + '" title="' + esc(TXT('📖 Je n’ai pas compris la leçon')) + '" aria-label="' + esc(TXT('📖 Je n’ai pas compris la leçon')) + '">📖</button></div>' : btn; }).join('') + '</div></section>').join('') + '</div>'
         : TXT('<p class="pieges-intro">🛠️ Cette matière arrive bientôt pour la ') + esc(e.niveau) + TXT('. Choisis un autre niveau.</p>')) +
       '</main>', 'matieres');
   }
@@ -3645,14 +3651,16 @@
     const lq = liste.every(q => q.lang && q.lang !== 'fr') ? liste[0].lang : 'fr', BR = lq !== 'fr' && window.MATIERES_LANGUES && MATIERES_LANGUES[lq] && MATIERES_LANGUES[lq].bravo;
     questionsGo(liste, { titre, retour:'matiere', lang:lq, sujet:id, bravo:BR ? () => BR[Math.floor(Math.random() * BR.length)] : undefined,
       onReponse:(juste, q) => { const k = id + ':' + q.chap, s = e.chap[k] || (e.chap[k] = { ok:0, n:0 }); s.n++; if(juste) s.ok++; else noterErreur('mat:' + id + ':' + q.chap); garder(); },
-      fin:fin || (z => finMatiere(z, titre, id)) });
+      fin:fin || (z => finMatiere(z, titre, id, undefined, cible)) });
   }
-  function finMatiere(z, titre, id, note){
+  function finMatiere(z, titre, id, note, cible){
     const p = z.bonnes / z.liste.length; J().plumes += z.bonnes; garder(); bruit('fin');
     const mot = p === 1 ? TXT('Sans faute ! Plumo range ses vannes, il n’en a pas eu besoin. 👏') : p >= .7 ? TXT('Solide ! Plumo a cherché la petite bête… pas trouvée. 😏') : p >= .4 ? TXT('Ça vient ! Plumo a bien rigolé, mais tu progresses.') : TXT('Plumo a vidé tout son stock de vannes. On recommence ? 💪');
     poser(barre('matiere') + '<main class="centre"><div class="ami-moyen">' + ami(p >= .7 ? 'fete' : 'malin') + '</div><h2>' + esc(titre) + '</h2>' +
       (note != null ? '<p class="note-examen">' + String(note).replace('.', ',') + ' / 20</p>' : '<p class="score">' + z.bonnes + ' / ' + z.liste.length + '</p>') + '<p>' + mot + '</p>' +
-      '<div class="actions serrees"><button class="moyen plein" data-a="matiere-melange" data-v="' + esc(id) + TXT('">🔁 Encore</button><button class="moyen" data-a="matiere" data-v="') + esc(id) + '">📚 ' + esc((window.MATIERES.trouver(id) || {}).nom || '') + '</button></div></main>');
+      '<div class="actions serrees"><button class="moyen plein" data-a="matiere-melange" data-v="' + esc(id) + TXT('">🔁 Encore</button><button class="moyen" data-a="matiere" data-v="') + esc(id) + '">📚 ' + esc((window.MATIERES.trouver(id) || {}).nom || '') + '</button></div>' +
+      // v6.54 : moins de 70 % sur un chapitre → Plumo propose de reprendre la leçon.
+      (p < .7 && cible && !['melange', 'examen'].includes(cible) && MODULES.actions['lecon-chap'] ? '<p class="lecon-propose"><button class="gros" data-a="lecon-chap" data-v="' + esc(id + '|' + cible) + '">' + TXT('📖 Je n’ai pas compris la leçon') + '</button></p>' : '') + '</main>');
   }
   // ── v5.78 : Brevet & bac blancs et annales, construits comme les vrais sujets 2026 (js/epreuves.js) ──
   let blanc = null;
@@ -4005,6 +4013,7 @@
         return v === 'examens' ? examensAccueil() : v === 'annales' ? annalesAccueil() : matieresAccueil(); }
       case 'matiere-niveau': { const [id, n] = String(v).split('|'); if(window.MATIERES && MATIERES.NIVEAUX.includes(n)){ etatMatieres().niveau = n; garder(); } return matiereAccueil(id); }
       case 'maths-ton-matiere': { const [id, k] = String(v).split('|'); if(TONS_PROF.some(x => x[0] === k)){ etatMaths().ton = k; garder(); } return matiereAccueil(id); }
+      case 'lecon-chap': return matieresAccueil();   // v6.54 : réponse normale dans js/mod-lecon.js (repli si le module manque)
       case 'matiere-chap': { const [id, c] = String(v).split('|'), m = window.MATIERES && MATIERES.trouver(id), ch = m && m.chapitres.find(x => x.id === c); return ch ? matiereSerie(id, c, SERIE_N, m.ic + ' ' + MATIERES.nomChap(m, ch)) : matieresAccueil(); }
       case 'matiere-melange': { const m = window.MATIERES && MATIERES.trouver(v); return m ? matiereSerie(v, 'melange', SERIE_N, m.ic + ' ' + MATIERES.nom(m) + ' · ' + etatMatieres().niveau) : matieresAccueil(); }
       case 'matiere-examen': { const m = window.MATIERES && MATIERES.trouver(v), e = etatMatieres(), t = m && m.examens && m.examens[e.niveau]; if(!t) return matiereAccueil(v);
@@ -4248,7 +4257,7 @@
   }
   // v6.0 : ce que les modules peuvent utiliser (rien d'autre).
   MODULES.api = { base:() => base, J, garder, poser, barre, esc, t, tt, TXT, jour, questionsGo, ami, annonce, bruit, plus, accueil, CONFIG,
-    etatMatieres, matiereAccueil, matieresAccueil, noterErreur, codePlumes, plumesActives, retour:() => { qz = null; return accueil(); },
+    etatMatieres, matiereAccueil, matieresAccueil, matiereSerie, noterErreur, codePlumes, plumesActives, retour:() => { qz = null; return accueil(); },
     serieMatiere:(id, cible, n, niveau) => window.MATIERES ? MATIERES.serie(id, cible, niveau || etatMatieres().niveau, n, Math.floor(Math.random() * 1e9), etatMaths().ton) : [],
     serieMaths:(n, niveau, graine) => window.MATHS ? MATHS.serie(niveau || etatMaths().niveau, n, graine != null ? graine : Math.floor(Math.random() * 1e9), etatMaths().ton) : [], etatMaths, questionsBattle:typeof questionsBattle === 'function' ? questionsBattle : null, cartesModules };
   // v6.0 : liens d'invitation (?ligue=, ?classe=, ?parrain=) et autres démarrages de modules.

@@ -11,9 +11,10 @@
     const m = M.trouver(mid); if(!m) return;
     const nouveaux = [];
     for(const t of themes){
-      const parts = [];
+      // v6.58 : une même question (même énoncé) n'entre qu'une fois dans un thème, même si un cours de l'année la reprend.
+      const parts = [], vus = new Set();
       for(const [cid, idx] of t.refs){ const ch = m.chapitres.find(c => c.id === cid && c.banque); if(!ch) continue;
-        (idx || ch.banque.map((_, i) => i)).forEach(i => { if(ch.banque[i]) parts.push([ch, i]); }); }
+        (idx || ch.banque.map((_, i) => i)).forEach(i => { const q = ch.banque[i]; if(q && !vus.has(q[0])){ vus.add(q[0]); parts.push([ch, i]); } }); }
       if(!parts.length) continue;
       const nivQ = parts.map(([ch, i]) => ((ch.nivQ && ch.nivQ[i]) || ch.niv).slice());
       const niv = NIV.filter(n => nivQ.some(v => v.includes(n)));
