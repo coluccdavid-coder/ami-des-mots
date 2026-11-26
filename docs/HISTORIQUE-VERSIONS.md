@@ -5,6 +5,51 @@ Avant la v6.44, chaque version avait son propre fichier VERSION-x.y.txt à la ra
 
 ---
 
+## Version 6.70 — Français, espagnol et allemand du lycée : chaque chapitre à 20 questions (le lycée est complet)
+
+- +109 questions dans `js/mat-langues-lycee-fin.js`.
+- Français (fr, en, es) :
+  - r-f1 de 7 à 20 (œuvres, mouvements, apologue, roman épistolaire, anaphore, dissertation) ;
+  - cours-2nde de 12 à 20 (Du Bellay, narrateur omniscient, quatrain, rimes, didascalie, registres) ;
+  - cours-1re de 12 à 20 (explication linéaire, oral, contraction et essai, métaphore, relative, interrogation indirecte, parcours).
+- Espagnol (fr, en) :
+  - es-ser de 4 à 20 (ser ou estar, pronoms, enclise) ;
+  - es-lycee de 5 à 20 (subjonctif, concordance, hypothèse, faux amis, périphrases) ;
+  - es-bases-lycee de 10 à 20.
+- Allemand (fr, en, es) :
+  - de-2nde de 5 à 20 (prétérit, comparatif, wenn ou als, ob, obwohl, dass) ;
+  - de-lycee de 5 à 20 (Konjunktiv I et II, passif, relatives, um … zu, faux amis) ;
+  - de-revisions de 11 à 20.
+- Les vannes allemandes évitent l’article « die » : le juge le lit comme le mot anglais.
+- Tous les chapitres à banque du lycée ont maintenant au moins 20 questions.
+- Nouveau test v6.70 : 20 questions par chapitre, traductions alignées, vannes validées, séries complètes, trimestres d’au moins 12 questions.
+
+## Version 6.69 — Spécialités HGGSP, HLP, NSI et SES : chaque chapitre à 20 questions
+
+- +146 questions en français, anglais et espagnol, dans deux fichiers :
+  - `js/mat-specialites-fin.js` : HGGSP et HLP ;
+  - `js/mat-specialites-fin2.js` : NSI et SES.
+- HGGSP : chapitre de 1re de 5 à 20 questions, chapitre de Tle de 6 à 20, cours 1re-Tle de 12 à 20. Thèmes : puissance, démocratie, frontières, information, mers et espace, mémoire, environnement, connaissance.
+- HLP : 1re de 5 à 20, Tle de 6 à 20, cours de 12 à 20. Titres d’œuvres traduits.
+- NSI : 1re de 6 à 20, Tle de 5 à 20, cours de 12 à 20. Python, web, réseaux, SQL, graphes, programmation objet, complexité, systèmes.
+- SES : 1re de 9 à 20, Tle de 4 à 20, cours de 12 à 20. Marchés, monnaie, socialisation, croissance, chômage, stratification, école, mondialisation, action publique.
+- `MATIERES.trimestres` : un chapitre à banque qui a aussi un générateur (NSI 1re) est maintenant coupé en trois tranches, comme les autres. Les contrôles de chaque trimestre ont ainsi au moins 12 questions.
+- Nouveau test v6.69 : 20 questions par chapitre, traductions alignées, vannes validées, séries complètes dans chaque langue, trimestres d’au moins 12 questions.
+
+## Version 6.68 — Histoire-géographie du lycée : chaque chapitre à 20 questions
+
+- Histoire-géographie (2nde, 1re, Tle) : +88 questions dans `js/mat-histoire-lycee-fin.js`, en français, anglais, espagnol et allemand.
+- Les chapitres de 2nde, 1re et Tle passent à 20 questions :
+  - « Repères du lycée » : de 5 à 20 ;
+  - r-h2 (Renaissance, Lumières, risques) : de 4 à 20 ;
+  - r-h1 (XIXe siècle, IIIe République, métropoles) : de 3 à 20 ;
+  - r-ht (crises, Europe, mondialisation) : de 4 à 20 ;
+  - cours de l’année cours-hg2, cours-hg1 et cours-hgt : de 12 à 20.
+- Les nouvelles questions sont rangées dans les chapitres « Par thème » de leur époque, ajoutées en fin de liste pour ne pas déplacer les compléments de 3e (`js/themes.js`).
+- Aucune question nouvelle ne mentionne une guerre hors de son chapitre de guerre (règle v6.19 respectée).
+- Contrôles par trimestre d’histoire-géo au lycée : 20 questions à chaque trimestre, en 2nde, 1re et Tle (au lieu de 10 à 17).
+- Nouveau test v6.68 : 20 questions par chapitre, traductions alignées, vannes validées, séries complètes, questions de révision rangées dans un thème.
+
 ## Version 6.67 — Physique-chimie du lycée : chaque chapitre à 20 questions
 
 - Physique-chimie (2nde, 1re, Tle) : +45 questions dans `js/mat-physique-lycee-fin.js`, en français, anglais, espagnol et allemand.
