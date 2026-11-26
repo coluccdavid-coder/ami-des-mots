@@ -5,6 +5,17 @@ Avant la v6.44, chaque version avait son propre fichier VERSION-x.y.txt à la ra
 
 ---
 
+## Version 6.53
+
+```text
+Ami des mots — version 6.53
+- Technologie du collège : toutes les leçons de la 5e à la 3e ont au moins 20 questions, en français,
+  anglais, espagnol et allemand (js/mat-techno-college-plus.js, 52 questions) : cours de 5e, 4e et 3e,
+  numérique (données, sécurité, droit à l'image), mécanismes et fabrication, démarche de projet.
+```
+
+---
+
 ## Version 6.52
 
 ```text
