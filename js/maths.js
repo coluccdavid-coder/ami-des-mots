@@ -466,10 +466,12 @@
   const chapitresDe = niv => (carte.niveaux[niv] || { chapitres:[] }).chapitres;
   const disponible = id => !!G[id];
   // Série de n questions d'un chapitre (ou de tout un niveau si id est un niveau), même graine = mêmes questions.
+  // v6.65 : cible peut aussi être une liste de chapitres (contrôles du trimestre) : on mélange comme pour un niveau.
   function serie(cible, n, graine, ton){
-    const r = hasard(graine), ids = NIVEAUX.includes(cible) ? chapitresDe(cible).map(c => c[0]).filter(disponible) : [cible];
+    const liste = Array.isArray(cible), mix = liste || NIVEAUX.includes(cible);
+    const r = hasard(graine), ids = liste ? cible.filter(disponible) : NIVEAUX.includes(cible) ? chapitresDe(cible).map(c => c[0]).filter(disponible) : [cible];
     const out = [], vus = new Set();
-    for(let i = 0; out.length < n && i < n * 30 && ids.length; i++){ const id = ids[NIVEAUX.includes(cible) ? (out.length + Math.floor(r() * ids.length)) % ids.length : 0]; const q = question(id, r, ton);
+    for(let i = 0; out.length < n && i < n * 30 && ids.length; i++){ const id = ids[mix ? (out.length + Math.floor(r() * ids.length)) % ids.length : 0]; const q = question(id, r, ton);
       if(q && !vus.has(q.enonce)){ vus.add(q.enonce); out.push(q); } }
     return out;
   }

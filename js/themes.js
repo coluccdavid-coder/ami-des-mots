@@ -11,6 +11,7 @@
     const m = M.trouver(mid); if(!m) return;
     const nouveaux = [];
     for(const t of themes){
+      // v6.64 : les questions ajoutées aux révisions SVT du lycée (indices 10 à 19) sont rangées dans leurs thèmes.
       // v6.58 : une même question (même énoncé) n'entre qu'une fois dans un thème, même si un cours de l'année la reprend.
       const parts = [], vus = new Set();
       for(const [cid, idx] of t.refs){ const ch = m.chapitres.find(c => c.id === cid && c.banque); if(!ch) continue;
@@ -64,12 +65,12 @@
   });
   // ───── SVT ─────
   ajouterThemes('svt', 'Par thème', [
-    { id:'th-cellule-adn', nom:'Cellule, ADN et génétique', refs:[['vivant', [0, 1, 2]], ['genetique', [2, 3, 15, 16, 17, 18, 19]], ['r-s2', [0, 3, 4, 9]], ['r-s1', [0, 2, 6, 8]], ['r-st', [0, 8]], ['cours-s6', [0]], ['cours-s4', [10]], ['cours-s3', [1, 2, 3, 9]]] },
-    { id:'th-plantes', nom:'Plantes, photosynthèse, classification et développement', refs:[['vivant', [3, 21]], ['r-s6', [0, 2, 5, 6, 7, 8, 10, 11, 12, 16, 17, 18]], ['cours-s6', [1, 3, 4, 5, 10, 11, 14, 15, 16, 19]]] },
-    { id:'th-ecosystemes', nom:'Écosystèmes, biodiversité et évolution', refs:[['vivant', [4, 20]], ['r-s6', [4, 13, 14, 15, 19]], ['r-s2', [1, 7, 8]], ['r-st', [1, 5]], ['cours-s6', [6, 7, 12, 13, 17, 18]], ['cours-s3', [4, 5, 12, 13, 17]]] },
-    { id:'th-immunite', nom:'Microbes et immunité', refs:[['vivant', [18]], ['corps', [1]], ['r-s6', [9]], ['r-s54', [6]], ['r-s1', [1, 4, 5, 9]], ['cours-s6', [8]], ['cours-s3', [6, 7, 14, 15, 16, 19]]] },
-    { id:'th-corps', nom:'Corps humain : nutrition, effort, reproduction, hormones, nerfs', refs:[['corps', [0, 2, 15, 16, 17, 18, 19]], ['r-s6', [3]], ['r-s54', [0, 1, 2, 3, 5, 8, 9, 10, 11, 12, 13, 17, 18]], ['r-s2', [2, 5, 6]], ['r-st', [3, 6, 7]], ['cours-s6', [9]], ['cours-s5', [0, 1, 2, 3, 4, 5, 6, 11, 12, 13, 14, 15]], ['cours-s4', [0, 1, 2, 3, 4, 5, 12, 13, 14, 15, 16, 17]], ['cours-s3', [10, 11]]] },
-    { id:'th-terre', nom:'La Terre : géologie et climat', refs:[['terre', [0, 15, 16, 17, 18, 19]], ['r-s54', [4, 7, 14, 15, 16, 19]], ['r-s1', [3, 7]], ['r-st', [2, 4, 9]], ['cours-s5', [7, 8, 9, 10, 16, 17, 18, 19]], ['cours-s4', [6, 7, 8, 9, 18, 19]], ['cours-s3', [8, 18]], ['cpl-s6']] }
+    { id:'th-cellule-adn', nom:'Cellule, ADN et génétique', refs:[['r-s2', [10, 11, 12]], ['r-s1', [10, 11, 12]], ['r-st', [10]], ['vivant', [0, 1, 2]], ['genetique', [2, 3, 15, 16, 17, 18, 19]], ['r-s2', [0, 3, 4, 9]], ['r-s1', [0, 2, 6, 8]], ['r-st', [0, 8]], ['cours-s6', [0]], ['cours-s4', [10]], ['cours-s3', [1, 2, 3, 9]]] },
+    { id:'th-plantes', nom:'Plantes, photosynthèse, classification et développement', refs:[['r-s2', [13]], ['vivant', [3, 21]], ['r-s6', [0, 2, 5, 6, 7, 8, 10, 11, 12, 16, 17, 18]], ['cours-s6', [1, 3, 4, 5, 10, 11, 14, 15, 16, 19]]] },
+    { id:'th-ecosystemes', nom:'Écosystèmes, biodiversité et évolution', refs:[['r-s2', [14, 15]], ['r-st', [11, 18]], ['vivant', [4, 20]], ['r-s6', [4, 13, 14, 15, 19]], ['r-s2', [1, 7, 8]], ['r-st', [1, 5]], ['cours-s6', [6, 7, 12, 13, 17, 18]], ['cours-s3', [4, 5, 12, 13, 17]]] },
+    { id:'th-immunite', nom:'Microbes et immunité', refs:[['r-s1', [16, 17, 18, 19]], ['vivant', [18]], ['corps', [1]], ['r-s6', [9]], ['r-s54', [6]], ['r-s1', [1, 4, 5, 9]], ['cours-s6', [8]], ['cours-s3', [6, 7, 14, 15, 16, 19]]] },
+    { id:'th-corps', nom:'Corps humain : nutrition, effort, reproduction, hormones, nerfs', refs:[['r-s2', [16, 17, 18, 19]], ['r-st', [12, 13, 14, 19]], ['corps', [0, 2, 15, 16, 17, 18, 19]], ['r-s6', [3]], ['r-s54', [0, 1, 2, 3, 5, 8, 9, 10, 11, 12, 13, 17, 18]], ['r-s2', [2, 5, 6]], ['r-st', [3, 6, 7]], ['cours-s6', [9]], ['cours-s5', [0, 1, 2, 3, 4, 5, 6, 11, 12, 13, 14, 15]], ['cours-s4', [0, 1, 2, 3, 4, 5, 12, 13, 14, 15, 16, 17]], ['cours-s3', [10, 11]]] },
+    { id:'th-terre', nom:'La Terre : géologie et climat', refs:[['r-s1', [13, 14, 15]], ['r-st', [15, 16, 17]], ['terre', [0, 15, 16, 17, 18, 19]], ['r-s54', [4, 7, 14, 15, 16, 19]], ['r-s1', [3, 7]], ['r-st', [2, 4, 9]], ['cours-s5', [7, 8, 9, 10, 16, 17, 18, 19]], ['cours-s4', [6, 7, 8, 9, 18, 19]], ['cours-s3', [8, 18]], ['cpl-s6']] }
   ], {
     en:{ dom:'By topic', ch:{ 'th-cellule-adn':'Cells, DNA and genetics', 'th-plantes':'Plants, photosynthesis, classification and development', 'th-ecosystemes':'Ecosystems, biodiversity and evolution',
       'th-immunite':'Microbes and immunity', 'th-corps':'The human body: nutrition, exercise, reproduction, hormones, nerves', 'th-terre':'The Earth: geology and climate' } },

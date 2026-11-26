@@ -5,6 +5,31 @@ Avant la v6.44, chaque version avait son propre fichier VERSION-x.y.txt à la ra
 
 ---
 
+## Version 6.65 — Spé maths : entraînements et contrôles par trimestre (1re et Tle)
+
+- Nouveau module `js/mod-trimestres.js` : une carte « 📅 Mes trimestres de spé maths » dans le coin maths, en 1re et en Tle.
+- Pour chaque trimestre (T1 septembre → novembre, T2 décembre → mars, T3 mars → juin) :
+  - un entraînement de 20 questions, corrigé, sans chrono ;
+  - un contrôle de 20 questions en 40 minutes, noté sur 20. La dernière et la meilleure note sont gardées.
+- Un contrôle bilan de l’année mélange les trois trimestres.
+- La fin d’un contrôle affiche un bilan par chapitre. Les chapitres sous 60 % sont proposés « à retravailler » et ouvrent directement l’entraînement du chapitre.
+- Progression 1re : second degré et suites, puis dérivation, probabilités conditionnelles et produit scalaire, puis exponentielle, trigonométrie, cercle et variables aléatoires.
+- Progression Tle : suites et fonctions (limites, TVI, dérivation, convexité), puis logarithme, sinus et cosinus, dénombrement et binomiale, puis primitives, intégrales, espérance et variance.
+- La progression suit l’ordre le plus courant : c’est un repère, pas le vrai contrôle de la classe (dit à l’écran).
+- `js/maths.js` : `MATHS.serie` accepte une liste de chapitres et les mélange comme un niveau.
+- `js/jeu.js` : zone de cartes `maths` pour les modules ; actions ajoutées au coin maths.
+- Textes traduits en 5 langues. Les notes lues sur l’appareil sont vérifiées et bornées entre 0 et 20.
+- Nouveau test v6.65 : couverture du programme par les trimestres, séries de 20 sans doublon, chrono, notes gardées, bilan, interface anglaise.
+
+## Version 6.64 — SVT du lycée : chaque chapitre à 20 questions
+
+- SVT (2nde, 1re, Tle) : +54 questions dans `js/mat-svt-lycee-fin.js`, en français, anglais, espagnol et allemand.
+  - Révisions r-s2, r-s1 et r-st : de 10 à 20 questions chacune.
+  - Cours de l’année cours-sv2, cours-sv1 et cours-svt : de 12 à 20 questions chacun.
+- Les nouvelles questions de révision sont rangées dans les chapitres « Par thème » (`js/themes.js`) : cellule et ADN, plantes, écosystèmes, immunité, corps humain, Terre.
+- Vannes validées par le juge en français, anglais et espagnol.
+- Nouveau test v6.64 : au moins 20 questions par chapitre, aucun doublon, traductions alignées dans les trois langues, séries de 20 complètes à chaque niveau.
+
 ## Version 6.63 — Anglais du lycée : chaque leçon à 20 questions
 
 - Anglais (2nde, 1re, Tle) : +280 questions dans `js/mat-anglais-lycee-fin.js`.
