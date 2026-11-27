@@ -161,3 +161,9 @@ Légende : ✅ couvert · 🟡 couvert en partie · ❌ absent · ➕ bonus hors
 
 - Niveaux corrigés : `xxe`, `seconde-guerre` et `sgm-cours` en 3e et Tle (plus en 1re) ; `revolution` en 4e et 1re (plus en 2nde). Aucune question supprimée.
 - 3e : nouveaux chapitres « 1944-1947, refonder la République » (CNR, GPRF, vote des femmes, nationalisations, Sécurité sociale, IVe République) et « Enjeux et conflits dans le monde après 1989 » (Golfe, Yougoslavie, Rwanda, CPI, 11 Septembre, printemps arabes, Ukraine, monde multipolaire). 20 questions chacun, aussi rangés dans les thèmes « France depuis 1945 » et « Europe, ONU et mondialisation ».
+
+## Fait en v6.90
+
+- 5e : califes, Omeyyades et Abbassides, Bagdad et 1258 ; Charles Quint et Soliman ; Saint-Barthélemy, huguenots, Henri IV, révocation de l'édit de Nantes (chapitre `cpl-h5-mondes`).
+- 4e : ports négriers, bourgeoisie marchande, Code noir, Saint-Domingue ; conquête de l'Algérie, partage de l'Afrique, AOF, indigénat (chapitre `cpl-h4-traites`).
+- Reste à faire : géographie (risques industriels en 5e, États-Unis et Afrique en 4e, Afrique australe en 2nde) et EMC lycée.
