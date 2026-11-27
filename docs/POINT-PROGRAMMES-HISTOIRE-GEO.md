@@ -167,3 +167,17 @@ Légende : ✅ couvert · 🟡 couvert en partie · ❌ absent · ➕ bonus hors
 - 5e : califes, Omeyyades et Abbassides, Bagdad et 1258 ; Charles Quint et Soliman ; Saint-Barthélemy, huguenots, Henri IV, révocation de l'édit de Nantes (chapitre `cpl-h5-mondes`).
 - 4e : ports négriers, bourgeoisie marchande, Code noir, Saint-Domingue ; conquête de l'Algérie, partage de l'Afrique, AOF, indigénat (chapitre `cpl-h4-traites`).
 - Reste à faire : géographie (risques industriels en 5e, États-Unis et Afrique en 4e, Afrique australe en 2nde) et EMC lycée.
+
+## Fait en v6.91
+
+- Géographie : risques industriels et technologiques (5e), États-Unis et Afrique de l'Ouest (4e), Afrique australe (2nde).
+- Reste à faire : EMC au lycée (2nde « Droits, libertés et responsabilité », 1re « Cohésion et diversité dans une société démocratique », Tle).
+
+## Fait en v6.94
+
+- **EMC lycée** (programme de l’arrêté du 29 mai 2024, BO n° 24 du 13 juin 2024, appliqué à tous les niveaux à la rentrée 2026) : trois chapitres de 20 questions, en français, anglais, espagnol et allemand (noms en italien et portugais), rangés dans le thème « L’EMC : toutes les questions » :
+  - 2nde « Droits, libertés et responsabilité » : Déclaration de 1789, liberté d’expression et ses limites, lois de 1881, 1901, 1905 et 2004, État de droit, hiérarchie des normes, Conseil constitutionnel et QPC, CEDH, Défenseur des droits, CNIL et RGPD, majorité à 18 ans, responsabilité civile, présomption d’innocence ;
+  - 1re « Cohésion et diversité dans une société démocratique » : devise, article 1er de la Constitution, pluralisme, laïcité, discriminations, Sécurité sociale, impôt progressif, fraternité (2018), lois de 2005 (handicap), 2000 (parité), 2013, langues régionales, nationalité, service civique, harcèlement scolaire (2022), loi SRU ;
+  - Tle « La vie démocratique : débat, délibération et prise de décision » : éthique de la discussion, partis et société civile, sondages, démocratie participative et Convention citoyenne pour le climat, référendum, CESE, bulles de filtres, Arcom, DSA, abstention, légitimité, majorités et consensus, 49.3, navette, primauté du droit européen, Conseil de sécurité.
+- Le tableau « EMC lycée » ci-dessus est donc couvert : il ne reste plus de manque relevé dans ce point.
+

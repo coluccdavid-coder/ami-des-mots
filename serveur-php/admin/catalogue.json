@@ -772,6 +772,48 @@
     [
      "4e"
     ]
+   ],
+   [
+    "cpl-g5-risques",
+    "Géographie 5e : prévenir les risques industriels et technologiques",
+    [
+     "5e"
+    ]
+   ],
+   [
+    "cpl-g4-usa-afrique",
+    "Géographie 4e : les États-Unis et l’Afrique de l’Ouest dans la mondialisation",
+    [
+     "4e"
+    ]
+   ],
+   [
+    "cpl-g2-afrique-australe",
+    "Géographie 2nde : l’Afrique australe, un espace en profonde mutation",
+    [
+     "2nde"
+    ]
+   ],
+   [
+    "cpl-emc2",
+    "EMC 2nde : droits, libertés et responsabilité",
+    [
+     "2nde"
+    ]
+   ],
+   [
+    "cpl-emc1",
+    "EMC 1re : cohésion et diversité dans une société démocratique",
+    [
+     "1re"
+    ]
+   ],
+   [
+    "cpl-emct",
+    "EMC Tle : la vie démocratique, débat, délibération et prise de décision",
+    [
+     "Tle"
+    ]
    ]
   ],
   "svt": [
@@ -1148,6 +1190,76 @@
    [
     "ethique",
     "Éthique et droit de la santé",
+    [
+     "Sup"
+    ]
+   ],
+   [
+    "ifsi-parcours",
+    "Infirmier 1 : le parcours IFSI, du bac au diplôme d’État",
+    [
+     "Sup"
+    ]
+   ],
+   [
+    "ifsi-calculs",
+    "Infirmier 2 : calculs de doses et débits",
+    [
+     "Sup"
+    ]
+   ],
+   [
+    "ifsi-pharmaco",
+    "Infirmier 3 : pharmacologie et administration des médicaments",
+    [
+     "Sup"
+    ]
+   ],
+   [
+    "ifsi-soins",
+    "Infirmier 4 : soins, gestes techniques et surveillance",
+    [
+     "Sup"
+    ]
+   ],
+   [
+    "ifsi-hygiene",
+    "Infirmier 5 : hygiène, infections associées aux soins et gestion des risques",
+    [
+     "Sup"
+    ]
+   ],
+   [
+    "ifsi-urgences",
+    "Infirmier 6 : urgences et gestes de l’AFGSU",
+    [
+     "Sup"
+    ]
+   ],
+   [
+    "ifsi-pathologies",
+    "Infirmier 7 : pathologies courantes et surveillance",
+    [
+     "Sup"
+    ]
+   ],
+   [
+    "ifsi-droit",
+    "Infirmier 8 : droit, éthique et déontologie",
+    [
+     "Sup"
+    ]
+   ],
+   [
+    "ifsi-relation",
+    "Infirmier 9 : relation de soin, éducation et santé publique",
+    [
+     "Sup"
+    ]
+   ],
+   [
+    "ifsi-cas",
+    "Infirmier 10 : cas cliniques de révision du diplôme d’État",
     [
      "Sup"
     ]
