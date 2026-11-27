@@ -3819,7 +3819,7 @@ await test('v6.83 : SVT du collège en italien et en portugais — 10 chapitres,
   // En jeu : interface en italien → questions en italien ; un chapitre de lycée encore non traduit reste en français.
   A.base.ui = 'it'; const s = M.serie('svt', 'vivant', '6e', 10, 3, 'taquin'); assert.ok(s.length === 10 && s.every(q => q.lang === 'it'), 'italien');
   assert.ok(s.every(q => ML.it.q['svt/vivant'].some(x => x[0] === q.enonce)), 'énoncés italiens');
-  const l2 = M.serie('histoire', 'cours-emc6', '6e', 5, 3, 'taquin'); assert.ok(l2.every(q => q.lang === 'fr'), 'EMC non traduite encore : reste en français');
+  const l2 = M.serie('francais', 'homophones', '6e', 5, 3, 'taquin'); assert.ok(l2.every(q => q.lang === 'fr'), 'chapitre non traduit (français : homophones) : reste en français (l’EMC est traduite depuis la v7.5)');
   A.base.ui = 'pt'; assert.ok(M.serie('svt', 'cours-s4', '4e', 8, 4, 'taquin').every(q => q.lang === 'pt'), 'portugais');
   A.base.ui = 'fr'; assert.ok(M.serie('svt', 'vivant', '6e', 5, 3, 'taquin').every(q => q.lang === 'fr'), 'français inchangé');
 });
@@ -3836,7 +3836,45 @@ await test('v6.84 : physique-chimie du collège en italien et en portugais — 1
       for(const x of q[2]) assert.ok(w.JUGE.juger(x[1]).ok, x[1]); }); }
   A.base.ui = 'it'; assert.ok(M.serie('physique', 'elec', '4e', 10, 2, 'taquin').every(q => q.lang === 'it'));
   A.base.ui = 'pt'; assert.ok(M.serie('physique', 'cours-p3', '3e', 10, 2, 'taquin').every(q => q.lang === 'pt'));
-  assert.ok(M.serie('histoire', 'cours-emc6', '6e', 5, 2, 'taquin').every(q => q.lang === 'fr'), 'EMC non traduite encore : reste en français'); A.base.ui = 'fr';
+  assert.ok(M.serie('francais', 'homophones', '6e', 5, 2, 'taquin').every(q => q.lang === 'fr'), 'chapitre non traduit (français : homophones) : reste en français (l’EMC est traduite depuis la v7.5)'); A.base.ui = 'fr';
+});
+
+await test('v7.6 : bac de français — on lit d’abord le sujet (un texte à commenter + trois dissertations), puis on choisit commentaire OU dissertation', async () => {
+  const w = page('fr', { MODE_PAYANT:false, OUVRIR_MATIERES:true }), d = w.document; await w.AmiDesMotsPret; const A = w.AmiDesMots, E = w.EPREUVES, T = E._test;
+  const $ = s => d.querySelector(s), $$ = s => [...d.querySelectorAll(s)];
+  const clic = (a, v) => { const b = d.createElement('button'); b.dataset.a = a; if(v != null) b.dataset.v = v; d.body.appendChild(b); b.click(); b.remove(); };
+  assert.strictEqual(T.COMMENTAIRES.length, 4); assert.strictEqual(T.DISSERTATIONS.length, T.OEUVRES.length);
+  T.DISSERTATIONS.forEach((x, i) => assert.strictEqual(x[0], T.OEUVRES[i][1], 'dissertation ' + i + ' alignée sur son œuvre'));
+  for(let g = 1; g < 60; g++){ const ep = E.construire('eaf', g), S = ep.sujets;
+    assert.ok(S && S.com.texte.length > 300 && S.dis.length === 3, 'sujet complet ' + g);
+    assert.ok(S.dis.every(x => T.OEUVRES[x.idx][2] === S.objetDis) && S.objetDis !== S.com.objet, 'dissertations sur un autre objet d’étude que le commentaire');
+    for(const c of ['com', 'dis0', 'dis1', 'dis2']){ const e = E.choisirSujet(E.construire('eaf', g), c); assert.ok(Math.abs(e.total - 20) < 1e-9, 'barème sur 20');
+      assert.ok(e.liste[0].contexte.includes(c === 'com' ? S.com.texte.slice(0, 40) : S.dis[+c[3]].sujet), 'le sujet choisi reste affiché');
+      for(const q of e.liste){ assert.ok(q.faux.length >= 1 && !q.faux.some(f => f.en === q.bon)); for(const f of q.faux) assert.ok(w.JUGE.juger(f.vanne).ok, f.vanne); } } }
+  // À l'écran : le sujet d'abord, puis le choix.
+  clic('examens'); clic('examen-go', 'bac-francais');
+  assert.ok($('.texte-sujet'), 'le texte à commenter est affiché'); assert.strictEqual($$('[data-a="examen-sujet"]').length, 4, '1 commentaire + 3 dissertations');
+  assert.match($('main').textContent, /Vous commenterez ce texte[\s\S]*Dissertation[\s\S]*parcours/);
+  clic('examen-sujet', 'dis1'); assert.match($('.contexte-exo').textContent, /Sujet :/); assert.match($('main').textContent, /Dissertation/);
+  let k = 0; while($('[data-a="qz-rep"]:not([disabled])') && k < 40){ const b = $$('[data-a="qz-rep"]'); b[k % b.length].click(); k++; const s = $('[data-a="qz-suivant"]'); if(s) s.click(); }
+  assert.match($('main').textContent, /[\d,]+ \/ 20/);
+  // Annale 2026 : même étape, ici le commentaire.
+  clic('annale-go', 'eaf26'); assert.ok($('.texte-sujet')); clic('annale-sujet', 'com');
+  assert.match($('.contexte-exo').textContent, /Vous commenterez ce texte/); assert.match($('main').textContent, /Commentaire/);
+});
+
+await test('v7.5 : EMC du collège et du lycée en italien et en portugais — toute l’histoire-géographie-EMC est traduite, thème EMC compris', async () => {
+  const w = page(), M = w.MATIERES, T = w.MATIERES_LANGUES, h = M.trouver('histoire');
+  const ids = ['emc', 'cours-emc-c3', 'cours-emc-c4', 'cours-emc6', 'cours-emc5', 'cours-emc4', 'cours-emc3', 'cpl-emc2', 'cpl-emc1', 'cpl-emct'];
+  for(const id of ids){ const c = h.chapitres.find(x => x.id === id);
+    for(const L of ['it', 'pt']){ const t = T[L].q['histoire/' + id]; assert.ok(t && t.length === c.banque.length, L + ' ' + id);
+      t.forEach((q, i) => { assert.strictEqual(new Set([q[1], ...q[2].map(f => f[0])]).size, 4, L + ' ' + id + ' ' + i); assert.notStrictEqual(q[0], c.banque[i][0], L + ' ' + id + ' ' + i); for(const f of q[2]) assert.ok(w.JUGE.juger(f[1]).ok, L + ' ' + f[1]); });
+      assert.ok(T[L].noms.histoire.ch[id] || id === 'emc', L + ' nom ' + id); } }
+  for(const L of ['it', 'pt']){ assert.strictEqual(h.chapitres.filter(c => c.banque && !c.theme && !T[L].q['histoire/' + c.id]).map(c => c.id).join(', '), '', L + ' : toute l’histoire-géo-EMC');
+    const wl = page(L), Ml = wl.MATIERES, hl = Ml.trouver('histoire');
+    assert.ok(Ml.traduit(hl, hl.chapitres.find(c => c.id === 'th-emc')), L + ' thème EMC traduit');
+    assert.ok(Ml.serie('histoire', 'cours-emc6', '6e', 10, 4, 'taquin').every(q => q.lang === L), L + ' EMC 6e en jeu');
+    assert.ok(Ml.serie('histoire', 'cpl-emct', 'Tle', 10, 4, 'taquin').every(q => q.lang === L), L + ' EMC Tle en jeu'); }
 });
 
 await test('v7.4 : géographie entière en italien et en portugais — chapitre « geo », risques industriels, États-Unis et Afrique de l’Ouest, Afrique australe, thème géographie', async () => {
@@ -4136,7 +4174,7 @@ await test('v6.88 : histoire de 5e en italien et en portugais — 4 chapitres, m
       for(const x of q[2]) assert.ok(w.JUGE.juger(x[1]).ok, x[1]); }); }
   A.base.ui = 'it'; assert.ok(M.serie('histoire', 'cours-h5', '5e', 10, 3, 'taquin').every(q => q.lang === 'it'), 'italien');
   A.base.ui = 'pt'; assert.ok(M.serie('histoire', 'moyen-age', '5e', 10, 3, 'taquin').every(q => q.lang === 'pt'), 'portugais');
-  assert.ok(M.serie('histoire', 'cours-emc6', '6e', 5, 3, 'taquin').every(q => q.lang === 'fr'), 'l’EMC reste en français pour l’instant (histoire traduite jusqu’à la v7.1, cours de géographie du collège en v7.2)'); A.base.ui = 'fr';
+  assert.ok(M.serie('francais', 'homophones', '6e', 5, 3, 'taquin').every(q => q.lang === 'fr'), 'un chapitre non traduit (français : homophones) reste en français ; l’histoire-géographie-EMC est entièrement traduite depuis la v7.5'); A.base.ui = 'fr';
 });
 
 await test('v6.87 : histoire de 6e en italien et en portugais — 4 chapitres, même ordre, vannes acceptées', async () => {
@@ -4150,7 +4188,7 @@ await test('v6.87 : histoire de 6e en italien et en portugais — 4 chapitres, m
       for(const x of q[2]) assert.ok(w.JUGE.juger(x[1]).ok, x[1]); }); }
   A.base.ui = 'it'; assert.ok(M.serie('histoire', 'cours-h6', '6e', 10, 3, 'taquin').every(q => q.lang === 'it'), 'italien');
   A.base.ui = 'pt'; assert.ok(M.serie('histoire', 'antiquite', '6e', 10, 3, 'taquin').every(q => q.lang === 'pt'), 'portugais');
-  assert.ok(M.serie('histoire', 'cours-emc6', '6e', 5, 3, 'taquin').every(q => q.lang === 'fr'), 'l’EMC reste en français pour l’instant (histoire traduite jusqu’à la v7.1, cours de géographie du collège en v7.2)'); A.base.ui = 'fr';
+  assert.ok(M.serie('francais', 'homophones', '6e', 5, 3, 'taquin').every(q => q.lang === 'fr'), 'un chapitre non traduit (français : homophones) reste en français ; l’histoire-géographie-EMC est entièrement traduite depuis la v7.5'); A.base.ui = 'fr';
 });
 
 await test('v6.86 : SVT et physique-chimie du lycée en italien et en portugais — même ordre, vannes acceptées', async () => {
