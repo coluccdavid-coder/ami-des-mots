@@ -3851,9 +3851,23 @@
         '<div class="actions serrees"><button class="moyen plein" data-a="examen-go" data-v="' + ex.k + '">🔁 Un autre sujet</button><button class="moyen" data-a="annales">🗂️ Les annales</button></div></main>');
     }
     const [id] = ex.x.epreuves[ex.i], ep = E.construire(id, ex.graine + ex.i * 7919); ex.ep = ep;
+    if(ep.sujets) return ecranSujetEAF(ep, 'examens', 'examen-sujet', '<p class="piege-cat">' + esc(TXT(ex.x.titre)) + TXT(' · épreuve ') + (ex.i + 1) + '/' + ex.x.epreuves.length + '</p><h2>' + esc(TXT(ep.titre)) + '</h2><p>⏱️ Au vrai examen : ' + esc(ep.duree) + '</p>');
     poser(barre('examens') + '<main class="centre"><div class="ami-moyen">' + ami('malin') + '</div><p class="piege-cat">' + esc(TXT(ex.x.titre)) + TXT(' · épreuve ') + (ex.i + 1) + '/' + ex.x.epreuves.length + '</p><h2>' + esc(TXT(ep.titre)) + '</h2>' +
       '<p>⏱️ Au vrai examen : ' + esc(ep.duree) + TXT('<br>📋 Barème officiel : ') + esc(ep.officiel) + '</p><p>' + ep.liste.length + TXT(' questions dans l’appli. Prends ton temps : c’est le jour J pour de faux. 📝</p>') +
       (ep.nonNote ? '<p class="petit">✍️ ' + esc(ep.nonNote).replace(/\n/g, '<br>') + '</p>' : '') + TXT('<button class="gros" data-a="examen-suite">C’est parti ▶</button></main>'));
+  }
+  // v7.6 : bac de français — d'abord le sujet complet, puis le choix commentaire OU dissertation, comme le jour J.
+  function ecranSujetEAF(ep, retour, action, entete){
+    const S = ep.sujets, c = S.com;
+    poser(barre(retour) + '<main class="coin-anglais sujet-eaf"><div class="ami-moyen centre">' + ami('malin') + '</div>' + entete +
+      TXT('<p class="pieges-intro">📄 Lis tout le sujet, puis choisis : le commentaire OU une dissertation. Au vrai bac, tu as 4 heures et tu rédiges sur papier.</p>') +
+      '<section class="domaine sujet-bloc"><h3>' + TXT('Sujet 1 · Commentaire') + '</h3><p class="petit">Objet d’étude : ' + esc(c.objet) + '</p><p><strong>Vous commenterez ce texte.</strong></p>' +
+        '<blockquote class="texte-sujet"><p><strong>« ' + esc(c.titre) + ' »</strong></p><p>' + esc(c.texte).replace(/\n/g, '<br>') + '</p></blockquote><p class="petit">Texte d’entraînement écrit pour Ami des mots.</p>' +
+        '<button class="moyen plein" data-a="' + action + '" data-v="com">' + TXT('📖 Je travaille le commentaire') + '</button></section>' +
+      '<section class="domaine sujet-bloc"><h3>' + TXT('Sujet 2 · Dissertation') + '</h3><p class="petit">Objet d’étude : ' + esc(S.objetDis) + '. Choisis le sujet sur l’œuvre que tu as étudiée en classe.</p>' +
+        S.dis.map((d, i) => '<div class="sujet-dis"><p><strong>' + esc(d.auteur) + ', « ' + esc(d.oeuvre) + ' »</strong> — parcours « ' + esc(d.parcours) + ' »</p><p>' + esc(d.sujet) + '</p>' +
+          '<button class="moyen" data-a="' + action + '" data-v="dis' + i + '">' + TXT('✍️ Je travaille cette dissertation') + '</button></div>').join('') + '</section>' +
+      (ep.nonNote ? '<p class="petit">✍️ ' + esc(ep.nonNote) + '</p>' : '') + '</main>');
   }
   function blancSuite(){
     const ex = blanc; if(!ex || !ex.ep) return examensAccueil();
@@ -3863,6 +3877,7 @@
   function annaleGo(id){
     const E = window.EPREUVES, a = E && E.annale(id, Math.floor(Math.random() * 1e9)); if(!a) return annalesAccueil();
     annaleEnCours = a;
+    if(a.sujets) return ecranSujetEAF(a, 'annales', 'annale-sujet', TXT('<p class="piege-cat">🗂️ Annales · jumeau du sujet ') + esc(a.ref) + '</p><h2>' + esc(TXT(a.titre)) + '</h2><p><a class="lien-officiel" href="' + esc(a.url) + '" target="_blank" rel="noopener">📄 Sujet officiel (PDF)</a></p>');
     poser(barre('annales') + '<main class="centre"><div class="ami-moyen">' + ami('malin') + TXT('</div><p class="piege-cat">🗂️ Annales · jumeau du sujet ') + esc(a.ref) + '</p><h2>' + esc(TXT(a.titre)) + '</h2>' +
       TXT('<p>Même construction que le vrai sujet, avec d’autres nombres et d’autres textes. ') + a.liste.length + TXT(' questions, notées sur 20.</p><p><a class="lien-officiel" href="') + esc(a.url) + TXT('" target="_blank" rel="noopener">📄 Voir le sujet officiel (PDF)</a></p>') +
       TXT('<button class="gros" data-a="annale-suite">C’est parti ▶</button></main>'));
@@ -4141,6 +4156,8 @@
       case 'examens': return examensAccueil();
       case 'examen-go': return blancGo(v);
       case 'examen-suite': return blancSuite();
+      case 'examen-sujet': if(blanc && blanc.ep) window.EPREUVES.choisirSujet(blanc.ep, v); return blancSuite();
+      case 'annale-sujet': if(annaleEnCours) window.EPREUVES.choisirSujet(annaleEnCours, v); return annaleSuite();
       case 'annales': return annalesAccueil();
       case 'officiel': return officielAccueil();
       case 'bac-tle': return bacTerminale();

@@ -2046,3 +2046,8 @@ html[data-texte="tres-grand"]{ font-size:125%; } html[data-texte="tres-grand"] b
 .cahier-choix label.case{ display:block; margin:6px 0; }
 .cahier-ligne{ display:flex; gap:8px; align-items:stretch; list-style:none; }
 .cahier-ligne .chap{ flex:1; min-width:0; }
+
+/* v7.6 : sujet du bac de français — lire, puis choisir commentaire ou dissertation */
+.sujet-eaf .sujet-bloc{ text-align:left; }
+.sujet-eaf .texte-sujet{ margin:10px 0; padding:12px 16px; border-left:4px solid rgba(110,231,183,.7); background:rgba(255,255,255,.05); border-radius:12px; line-height:1.6; }
+.sujet-eaf .sujet-dis{ margin:12px 0; padding:10px 14px; border:1px solid rgba(255,255,255,.15); border-radius:14px; }

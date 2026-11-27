@@ -5,6 +5,27 @@ Avant la v6.44, chaque version avait son propre fichier VERSION-x.y.txt à la ra
 
 ---
 
+## Version 7.6.0 — Bac de français : on lit le sujet, puis on choisit commentaire ou dissertation
+
+- Avant les questions, l’écran affiche le sujet complet, comme le jour J :
+  - **Sujet 1 · Commentaire** : un texte à commenter (poésie, roman, théâtre ou littérature d’idées), avec son objet d’étude et la consigne « Vous commenterez ce texte » ;
+  - **Sujet 2 · Dissertation** : trois sujets, un par œuvre au programme d’un autre objet d’étude, avec le parcours associé.
+- L’élève choisit « 📖 Je travaille le commentaire » ou « ✍️ Je travaille cette dissertation ». Les questions portent alors sur le sujet choisi, qui reste affiché pendant toute l’épreuve :
+  - commentaire (12 pts) : procédés repérés dans le texte, registre, point de vue, problématique, plan ;
+  - dissertation (8 pts) : mots-clés, problématique, plan dialectique, choix des exemples, gestion des 4 heures ; plus les œuvres au programme (4 pts) ;
+  - puis méthode (4 pts) et question de grammaire de l’oral (4 pts). Toujours sur 20.
+- Les 4 textes à commenter sont écrits pour Ami des mots (aucun extrait d’auteur reproduit). Les 12 sujets de dissertation portent sur les œuvres du programme 2026-2027.
+- Même étape pour l’annale « Bac 2026 · Français ».
+- Test v7.6.
+
+## Version 7.5.0 — L’EMC en italien et en portugais : toute l’histoire-géographie-EMC est traduite
+
+- EMC du collège traduite en italien et en portugais : chapitre « Enseignement moral et civique », EMC 6e-5e, EMC 4e-3e, EMC 6e, 5e, 4e et 3e (140 questions, vannes comprises).
+- EMC du lycée traduite : 2nde (droits, libertés, responsabilité), 1re (cohésion et diversité), Tle (vie démocratique, débat, décision) — 60 questions.
+- Le thème EMC suit automatiquement : en italien et en portugais, toute la matière histoire-géographie-EMC est maintenant traduite, de la 6e à la Tle.
+- Les noms propres d’institutions françaises sont gardés quand il le faut (Palais Bourbon, Hôtel Matignon, cour d’assises, Arcom, CNIL…), avec une explication dans la langue.
+- Tests : v7.5. Les anciens tests qui vérifiaient « l’EMC reste en français » vérifient désormais qu’un chapitre encore non traduit (français : homophones) reste en français.
+
 ## Version 7.4.0 — Toute la géographie en italien et en portugais
 
 - Chapitre « Géographie » (68 questions) traduit en italien et en portugais, avec ses vannes.
