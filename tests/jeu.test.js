@@ -27,7 +27,7 @@ function page(langue, config, avant){
   w.TextEncoder = TextEncoder; w.TextDecoder = TextDecoder;
   w.__fetch = []; w.fetch = async (u) => { w.__fetch.push(String(u)); return { ok:true, json:async () => (w.__reponse || { actif:false }) }; };
   if(avant) avant(w);
-  for(const f of ['js/donnees.js', 'js/voix.js', 'js/phrases-enregistrees.js', 'js/textes.js', 'js/textes-plus.js', 'js/textes-ecrans.js', 'js/textes-examens.js', 'js/articulation.js', 'js/genres.js', 'js/confusions.js', 'js/vannes.js', 'js/pieges.js', 'js/anglais.js', 'js/clash.js', 'js/histoires.js', 'js/blagues-en.js', 'js/parcours.js', 'js/rigolade.js', 'js/clash-plus.js', 'js/salon.js', 'js/juge.js', 'js/vannes-libres.js', 'js/maths-en.js', 'js/maths-es.js', 'js/maths-de.js', 'js/maths-it.js', 'js/maths-pt.js', 'js/maths.js', 'js/maths-2026-5e.js', 'js/maths-2026-2nde.js', 'js/maths-2026-1re.js', 'js/maths-2026-autres.js', 'js/maths-2026-college.js', 'js/sciences-en.js', 'js/sciences-es.js', 'js/sciences-de.js', 'js/sciences-it.js', 'js/sciences-pt.js', 'js/sciences.js', 'js/sciences-plus.js', 'js/trash-talk.js', 'js/vannes-arrogantes.js', 'js/vannes-fraiches.js', 'js/bande-images.js', 'js/bande-plumo.js', 'js/achats.js', 'js/rappels.js', 'js/epreuves.js', 'js/epreuves-spe.js', 'js/epreuves-plus.js', 'js/epreuves-oraux.js', 'js/epreuves-pro.js', 'js/matieres.js', 'js/mat-trad-es.js', 'js/mat-trad-en.js', 'js/mat-trad-en-sciences.js', 'js/mat-trad-en-sup.js', 'js/mat-trad-en-langues.js', 'js/mat-trad-en-francais.js', 'js/mat-trad-communs.js', 'js/mat-trad-es-sciences.js', 'js/mat-trad-es-sup.js', 'js/mat-trad-es-specialites.js', 'js/mat-trad-es-allemand.js', 'js/mat-trad-es-francais.js', 'js/mat-trad-de-histoire.js', 'js/mat-trad-de-sciences.js', 'js/mat-trad-it-svt.js', 'js/mat-trad-pt-svt.js', 'js/mat-trad-it-physique.js', 'js/mat-trad-pt-physique.js', 'js/mat-trad-it-techno.js', 'js/mat-trad-pt-techno.js', 'js/mat-trad-it-histoire.js', 'js/mat-trad-pt-histoire.js', 'js/mat-francais.js', 'js/mat-histoire.js', 'js/mat-histoire-sgm.js', 'js/mat-svt-pc.js', 'js/mat-sup.js', 'js/mat-anglais.js', 'js/mat-renfort.js', 'js/mat-langues.js', 'js/mat-specialites.js', 'js/mat-anglais-sup.js', 'js/mat-sup-droit.js', 'js/mat-sup-medecine.js', 'js/mat-sup-astro.js', 'js/mat-philo-notions.js', 'js/vannes-cash.js', 'js/vannes-ironie.js', 'js/vannes-mots.js', 'js/offre.js', 'js/jeu.js', 'js/mod-base.js', 'js/mod-ligue.js', 'js/mod-saisons.js', 'js/mod-veille.js', 'js/mod-oral.js', 'js/mod-classe.js', 'js/mod-parrainage.js', 'js/mod-ia.js', 'js/mod-lecon.js', 'js/mod-devoirs.js', 'js/mod-retro.js', 'js/mod-trimestres.js', 'js/mod-revision.js', 'js/mod-documents.js', 'js/mod-ifsi.js', 'js/examens-monde.js', 'js/mod-veille-programmes.js', 'js/systemes-scolaires.js', 'js/pays-commun.js', 'js/pays-italie.js', 'js/pays-espagne.js', 'js/pays-allemagne.js', 'js/pays-usa.js', 'js/pays-italie2.js', 'js/pays-espagne2.js', 'js/pays-allemagne2.js', 'js/pays-usa2.js', 'js/pays-portugal.js', 'js/mod-parcours-pays.js', 'js/mod-section-internationale.js', 'js/gb-moteur.js', 'js/gb-maths.js', 'js/gb-english.js', 'js/gb-sciences.js', 'js/gb-humanites.js', 'js/gb-options.js', 'js/gb-plus.js', 'js/gb-programme.js', 'js/gb-programme-plus.js', 'js/gb-examens.js', 'js/gb-sats-reels.js', 'js/gb-options2.js', 'js/nasa.js', 'js/mat-trad-en-nasa.js', 'js/mat-trad-es-nasa.js', 'js/mat-histoire-pgm.js', 'js/mat-cours.js', 'js/mat-cours-francais.js', 'js/mat-cours-histoire.js', 'js/mat-cours-geo-emc.js', 'js/mat-cours-sciences.js', 'js/mat-cours-physique.js', 'js/mat-cours-lycee-lettres.js', 'js/mat-cours-lycee-sciences.js', 'js/mat-cours-specialites.js', 'js/mat-cours-college-fin.js', 'js/mat-techno.js', 'js/mat-cours-emc.js', 'js/mat-cpl-sciences.js', 'js/mat-cpl-lettres.js', 'js/mat-cpl-partiels.js', 'js/mat-langues-cpl.js', 'js/epreuves-dnb-techno.js', 'js/mat-arts-eps-lca.js', 'js/mat-anglais-college-plus.js', 'js/mat-anglais-college-plus2.js', 'js/mat-anglais-college-fin.js', 'js/mat-langues-college-plus.js', 'js/mat-sciences-college-plus.js', 'js/mat-niveaux.js', 'js/mat-histoire-college-plus.js', 'js/mat-college-plus-final.js', 'js/mat-geo-emc-plus.js', 'js/mat-histoire-6-4-plus.js', 'js/mat-histoire-6-4-suite.js', 'js/mat-histoire-3e-plus.js', 'js/mat-svt-college-plus.js', 'js/mat-astro-plus.js', 'js/mat-physique-college-plus.js', 'js/mat-techno-college-plus.js', 'js/mat-francais-college-fin.js', 'js/mat-langues-lv2-fin.js', 'js/mat-geo-emc-fin.js', 'js/mat-sup-medecine-plus.js', 'js/mat-sup-medecine-plus2.js', 'js/mat-sup-infirmier.js', 'js/mat-sup-infirmier-2.js', 'js/mat-sup-droit-plus.js', 'js/mat-sup-droit-plus2.js', 'js/mat-sup-droit-plus3.js', 'js/mat-sup-anglais-nasa-fin.js', 'js/mat-philo-plus.js', 'js/mat-philo-plus2.js', 'js/mat-philo-plus3.js', 'js/mat-anglais-lycee-fin.js', 'js/mat-svt-lycee-fin.js', 'js/mat-physique-lycee-fin.js', 'js/mat-histoire-lycee-fin.js', 'js/mat-specialites-fin.js', 'js/mat-specialites-fin2.js', 'js/mat-langues-lycee-fin.js', 'js/mat-anglais-international.js', 'js/mat-anglais-international2.js', 'js/mat-noms.js', 'js/mat-noms-it-pt.js', 'js/mat-histoire-3e-programme.js', 'js/mat-histoire-5e4e-programme.js', 'js/mat-geo-programme.js', 'js/mat-emc-lycee.js', 'js/mat-histoire-niveaux.js', 'js/themes.js', 'js/mod-angleterre.js', 'js/mod-programmes.js']) w.eval(lire(f));
+  for(const f of ['js/donnees.js', 'js/voix.js', 'js/phrases-enregistrees.js', 'js/textes.js', 'js/textes-plus.js', 'js/textes-ecrans.js', 'js/textes-examens.js', 'js/articulation.js', 'js/genres.js', 'js/confusions.js', 'js/vannes.js', 'js/pieges.js', 'js/anglais.js', 'js/clash.js', 'js/histoires.js', 'js/blagues-en.js', 'js/parcours.js', 'js/rigolade.js', 'js/clash-plus.js', 'js/salon.js', 'js/juge.js', 'js/vannes-libres.js', 'js/maths-en.js', 'js/maths-es.js', 'js/maths-de.js', 'js/maths-it.js', 'js/maths-pt.js', 'js/maths.js', 'js/maths-2026-5e.js', 'js/maths-2026-2nde.js', 'js/maths-2026-1re.js', 'js/maths-2026-autres.js', 'js/maths-2026-college.js', 'js/sciences-en.js', 'js/sciences-es.js', 'js/sciences-de.js', 'js/sciences-it.js', 'js/sciences-pt.js', 'js/sciences.js', 'js/sciences-plus.js', 'js/trash-talk.js', 'js/vannes-arrogantes.js', 'js/vannes-fraiches.js', 'js/bande-images.js', 'js/bande-plumo.js', 'js/achats.js', 'js/rappels.js', 'js/epreuves.js', 'js/epreuves-spe.js', 'js/epreuves-plus.js', 'js/epreuves-oraux.js', 'js/epreuves-pro.js', 'js/matieres.js', 'js/mat-trad-es.js', 'js/mat-trad-en.js', 'js/mat-trad-en-sciences.js', 'js/mat-trad-en-sup.js', 'js/mat-trad-en-langues.js', 'js/mat-trad-en-francais.js', 'js/mat-trad-communs.js', 'js/mat-trad-es-sciences.js', 'js/mat-trad-es-sup.js', 'js/mat-trad-es-specialites.js', 'js/mat-trad-es-allemand.js', 'js/mat-trad-es-francais.js', 'js/mat-trad-de-histoire.js', 'js/mat-trad-de-sciences.js', 'js/mat-trad-it-svt.js', 'js/mat-trad-pt-svt.js', 'js/mat-trad-it-physique.js', 'js/mat-trad-pt-physique.js', 'js/mat-trad-it-techno.js', 'js/mat-trad-pt-techno.js', 'js/mat-trad-it-histoire.js', 'js/mat-trad-pt-histoire.js', 'js/mat-francais.js', 'js/mat-histoire.js', 'js/mat-histoire-sgm.js', 'js/mat-svt-pc.js', 'js/mat-sup.js', 'js/mat-anglais.js', 'js/mat-renfort.js', 'js/mat-langues.js', 'js/mat-specialites.js', 'js/mat-anglais-sup.js', 'js/mat-sup-droit.js', 'js/mat-sup-medecine.js', 'js/mat-sup-astro.js', 'js/mat-philo-notions.js', 'js/vannes-cash.js', 'js/vannes-ironie.js', 'js/vannes-mots.js', 'js/offre.js', 'js/jeu.js', 'js/mod-base.js', 'js/mod-ligue.js', 'js/mod-saisons.js', 'js/mod-veille.js', 'js/mod-oral.js', 'js/mod-classe.js', 'js/mod-parrainage.js', 'js/mod-ia.js', 'js/mod-lecon.js', 'js/mod-devoirs.js', 'js/mod-retro.js', 'js/mod-trimestres.js', 'js/mod-revision.js', 'js/mod-documents.js', 'js/mod-ifsi.js', 'js/mod-cahier.js', 'js/examens-monde.js', 'js/mod-veille-programmes.js', 'js/systemes-scolaires.js', 'js/pays-commun.js', 'js/pays-italie.js', 'js/pays-espagne.js', 'js/pays-allemagne.js', 'js/pays-usa.js', 'js/pays-italie2.js', 'js/pays-espagne2.js', 'js/pays-allemagne2.js', 'js/pays-usa2.js', 'js/pays-portugal.js', 'js/mod-parcours-pays.js', 'js/mod-section-internationale.js', 'js/gb-moteur.js', 'js/gb-maths.js', 'js/gb-english.js', 'js/gb-sciences.js', 'js/gb-humanites.js', 'js/gb-options.js', 'js/gb-plus.js', 'js/gb-programme.js', 'js/gb-programme-plus.js', 'js/gb-examens.js', 'js/gb-sats-reels.js', 'js/gb-options2.js', 'js/nasa.js', 'js/mat-trad-en-nasa.js', 'js/mat-trad-es-nasa.js', 'js/mat-histoire-pgm.js', 'js/mat-cours.js', 'js/mat-cours-francais.js', 'js/mat-cours-histoire.js', 'js/mat-cours-geo-emc.js', 'js/mat-cours-sciences.js', 'js/mat-cours-physique.js', 'js/mat-cours-lycee-lettres.js', 'js/mat-cours-lycee-sciences.js', 'js/mat-cours-specialites.js', 'js/mat-cours-college-fin.js', 'js/mat-techno.js', 'js/mat-cours-emc.js', 'js/mat-cpl-sciences.js', 'js/mat-cpl-lettres.js', 'js/mat-cpl-partiels.js', 'js/mat-langues-cpl.js', 'js/epreuves-dnb-techno.js', 'js/mat-arts-eps-lca.js', 'js/mat-anglais-college-plus.js', 'js/mat-anglais-college-plus2.js', 'js/mat-anglais-college-fin.js', 'js/mat-langues-college-plus.js', 'js/mat-sciences-college-plus.js', 'js/mat-niveaux.js', 'js/mat-histoire-college-plus.js', 'js/mat-college-plus-final.js', 'js/mat-geo-emc-plus.js', 'js/mat-histoire-6-4-plus.js', 'js/mat-histoire-6-4-suite.js', 'js/mat-histoire-3e-plus.js', 'js/mat-svt-college-plus.js', 'js/mat-astro-plus.js', 'js/mat-physique-college-plus.js', 'js/mat-techno-college-plus.js', 'js/mat-francais-college-fin.js', 'js/mat-langues-lv2-fin.js', 'js/mat-geo-emc-fin.js', 'js/mat-sup-medecine-plus.js', 'js/mat-sup-medecine-plus2.js', 'js/mat-sup-infirmier.js', 'js/mat-sup-infirmier-2.js', 'js/mat-sup-droit-plus.js', 'js/mat-sup-droit-plus2.js', 'js/mat-sup-droit-plus3.js', 'js/mat-sup-anglais-nasa-fin.js', 'js/mat-philo-plus.js', 'js/mat-philo-plus2.js', 'js/mat-philo-plus3.js', 'js/mat-anglais-lycee-fin.js', 'js/mat-svt-lycee-fin.js', 'js/mat-physique-lycee-fin.js', 'js/mat-histoire-lycee-fin.js', 'js/mat-specialites-fin.js', 'js/mat-specialites-fin2.js', 'js/mat-langues-lycee-fin.js', 'js/mat-anglais-international.js', 'js/mat-anglais-international2.js', 'js/mat-noms.js', 'js/mat-noms-it-pt.js', 'js/mat-histoire-3e-programme.js', 'js/mat-histoire-5e4e-programme.js', 'js/mat-geo-programme.js', 'js/mat-emc-lycee.js', 'js/mat-histoire-niveaux.js', 'js/themes.js', 'js/mod-angleterre.js', 'js/mod-programmes.js']) w.eval(lire(f));
   FENETRES.push(w);
   return w;
 }
@@ -3819,7 +3819,7 @@ await test('v6.83 : SVT du collège en italien et en portugais — 10 chapitres,
   // En jeu : interface en italien → questions en italien ; un chapitre de lycée encore non traduit reste en français.
   A.base.ui = 'it'; const s = M.serie('svt', 'vivant', '6e', 10, 3, 'taquin'); assert.ok(s.length === 10 && s.every(q => q.lang === 'it'), 'italien');
   assert.ok(s.every(q => ML.it.q['svt/vivant'].some(x => x[0] === q.enonce)), 'énoncés italiens');
-  const l2 = M.serie('histoire', 'cours-hg2', '2nde', 5, 3, 'taquin'); assert.ok(l2.every(q => q.lang === 'fr'), 'matière non traduite encore en français');
+  const l2 = M.serie('histoire', 'cours-emc6', '6e', 5, 3, 'taquin'); assert.ok(l2.every(q => q.lang === 'fr'), 'EMC non traduite encore : reste en français');
   A.base.ui = 'pt'; assert.ok(M.serie('svt', 'cours-s4', '4e', 8, 4, 'taquin').every(q => q.lang === 'pt'), 'portugais');
   A.base.ui = 'fr'; assert.ok(M.serie('svt', 'vivant', '6e', 5, 3, 'taquin').every(q => q.lang === 'fr'), 'français inchangé');
 });
@@ -3836,7 +3836,132 @@ await test('v6.84 : physique-chimie du collège en italien et en portugais — 1
       for(const x of q[2]) assert.ok(w.JUGE.juger(x[1]).ok, x[1]); }); }
   A.base.ui = 'it'; assert.ok(M.serie('physique', 'elec', '4e', 10, 2, 'taquin').every(q => q.lang === 'it'));
   A.base.ui = 'pt'; assert.ok(M.serie('physique', 'cours-p3', '3e', 10, 2, 'taquin').every(q => q.lang === 'pt'));
-  assert.ok(M.serie('histoire', 'cours-hg2', '2nde', 5, 2, 'taquin').every(q => q.lang === 'fr'), 'matière non traduite encore en français'); A.base.ui = 'fr';
+  assert.ok(M.serie('histoire', 'cours-emc6', '6e', 5, 2, 'taquin').every(q => q.lang === 'fr'), 'EMC non traduite encore : reste en français'); A.base.ui = 'fr';
+});
+
+await test('v7.4 : géographie entière en italien et en portugais — chapitre « geo », risques industriels, États-Unis et Afrique de l’Ouest, Afrique australe, thème géographie', async () => {
+  const w = page(), M = w.MATIERES, T = w.MATIERES_LANGUES, h = M.trouver('histoire');
+  for(const id of ['geo', 'cpl-g5-risques', 'cpl-g4-usa-afrique', 'cpl-g2-afrique-australe']){ const c = h.chapitres.find(x => x.id === id);
+    for(const L of ['it', 'pt']){ const t = T[L].q['histoire/' + id]; assert.ok(t && t.length === c.banque.length, L + ' ' + id);
+      t.forEach((q, i) => { assert.strictEqual(new Set([q[1], ...q[2].map(f => f[0])]).size, 4, L + ' ' + id + ' ' + i); assert.notStrictEqual(q[0], c.banque[i][0], L + ' ' + id + ' ' + i + ' : pas le français'); for(const f of q[2]) assert.ok(w.JUGE.juger(f[1]).ok, L + ' ' + f[1]); });
+      if(id !== 'geo') assert.ok(T[L].noms.histoire.ch[id], L + ' nom ' + id); } }
+  for(const [L, x] of [['it', 'la Loira'], ['pt', 'o Loire']]) assert.strictEqual(T[L].q['histoire/geo'][0][1], x);
+  for(const L of ['it', 'pt']){ const wl = page(L), Ml = wl.MATIERES, hl = Ml.trouver('histoire'), th = hl.chapitres.find(c => c.id === 'th-geo');
+    assert.ok(Ml.traduit(hl, th), L + ' thème géographie traduit');
+    assert.ok(Ml.serie('histoire', 'cpl-g2-afrique-australe', '2nde', 10, 4, 'taquin').every(q => q.lang === L), L + ' Afrique australe en jeu'); }
+});
+
+await test('v7.3 : cahier de leçons et contrôle construit par l’élève — textes à trous, fiches, chapitres de l’appli, IA en option avec accord parental', async () => {
+  const w = page(), d = w.document, A = w.AmiDesMots, M = w.AMI_MODULES, C = w.AMI_CAHIER;
+  const LECON = 'La Révolution française commence en 1789. Le 14 juillet 1789, le peuple de Paris prend la Bastille, symbole de l’arbitraire royal.\n' +
+    'Le 26 août 1789, les députés adoptent la Déclaration des droits de l’homme et du citoyen. En 1792, la République est proclamée.\n' +
+    'Le roi Louis XVI est exécuté en janvier 1793. Robespierre dirige la Terreur jusqu’en juillet 1794.';
+  // Ajouter une leçon par l'écran.
+  bouton(w, 'cahier'); assert.match(d.querySelector('h2').textContent, /Mon cahier de leçons/);
+  bouton(w, 'cahier-edit', ''); d.getElementById('cahier-matiere').value = 'histoire'; d.getElementById('cahier-titre').value = 'La Révolution';
+  d.getElementById('cahier-texte').value = LECON; d.getElementById('cahier-fiches').value = 'Prise de la Bastille = 14 juillet 1789\nDDHC = 26 août 1789\nRépublique = 1792\nExécution du roi = 1793';
+  clic(w, '[data-a="cahier-enregistrer"]');
+  const c = A.J().cahier; assert.strictEqual(c.lecons.length, 1); assert.strictEqual(c.lecons[0].fiches.length, 4); assert.ok(d.querySelector('[data-a="cahier-edit"][data-v="' + c.lecons[0].id + '"]'));
+  // Sans titre ni texte : rien n'est enregistré.
+  bouton(w, 'cahier-edit', ''); clic(w, '[data-a="cahier-enregistrer"]'); assert.ok(d.getElementById('cahier-erreur').textContent.length > 10); assert.strictEqual(A.J().cahier.lecons.length, 1);
+  // Textes à trous : le mot caché est dans la phrase, trois leurres différents.
+  const tr = C.trous(c.lecons[0], 'histoire'); assert.ok(tr.length >= 4, 'trous : ' + tr.length);
+  for(const q of tr){ assert.ok(/_____/.test(q.enonce) && q.regle.includes(q.bon), q.enonce); assert.strictEqual(new Set([q.bon, ...q.faux.map(f => f.en)]).size, 4, q.enonce); }
+  assert.strictEqual(C.lireFiches('a = b\nsans signe\nx=y=z').map(f => f.join('|')).join(' / '), 'a|b / x|y=z');
+  // Construire : la leçon + un chapitre de l'appli, 10 questions, 20 min ; sans accord d'un parent, pas de bouton IA.
+  bouton(w, 'cahier-construire'); d.getElementById('ctl-matiere').value = 'histoire'; d.getElementById('ctl-matiere').dispatchEvent(new w.Event('change'));
+  assert.ok(d.querySelector('input[name="ctl-lecon"]:checked')); assert.ok(!d.querySelector('[data-a="cahier-lancer"][data-v="ia"]'));
+  d.querySelector('input[name="ctl-chap"]').checked = true; d.getElementById('ctl-duree').value = '20';
+  clic(w, '[data-a="cahier-lancer"][data-v="local"]'); await new Promise(r => setTimeout(r, 30));
+  assert.ok(d.querySelector('#chrono-veille'), 'chronométré');
+  const vus = []; for(let i = 0; i < 10; i++){ const bon = A.qzBonne(), o = [...d.querySelectorAll('.piege-opt')]; assert.strictEqual(o.length, 4, 'q' + i); vus.push(d.querySelector('main').textContent); (i < 7 ? o.find(x => x.textContent === bon) : o.find(x => x.textContent !== bon)).click(); }
+  assert.ok(vus.some(t => /📒/.test(t)) && vus.some(t => !/📒/.test(t)), 'questions de la leçon et de l’appli mêlées');
+  assert.match(d.querySelector('main').textContent, /Note : 14\/20[\s\S]*7 bonnes réponses sur 10[\s\S]*Corrigé/);
+  assert.ok(A.J().carnet.length >= 3, 'les erreurs vont dans le carnet');
+  clic(w, '[data-a="cahier-garder"]'); assert.strictEqual(A.J().cahier.controles.length, 1); assert.strictEqual(A.J().cahier.controles[0].note, 14);
+  bouton(w, 'cahier'); assert.ok(d.querySelector('[data-a="cahier-refaire"]')); clic(w, '[data-a="cahier-refaire"]'); assert.ok(A.qzBonne());
+  // Option IA : seulement avec l'accord d'un parent ; le texte de la leçon est envoyé, les questions reçues sont jouées (🤖).
+  A.base.devoirsAccord = true; A.CONFIG.SERVEUR = 'https://serveur.example/'; let envoi = null;
+  const avant = M.envoyer; M.envoyer = async (f, corps) => { envoi = { f, corps }; return { ok:true, statut:200, d:{ questions:[1, 2, 3, 4, 5].map(i => ({ q:'Question IA ' + i + ' ?', bon:'oui ' + i, faux:['non ' + i, 'peut-être ' + i, 'jamais ' + i], regle:'D’après ta leçon.' })) } }; };
+  try{
+    bouton(w, 'cahier-construire'); assert.ok(d.querySelector('[data-a="cahier-lancer"][data-v="ia"]'));
+    d.getElementById('ctl-n').value = '5'; clic(w, '[data-a="cahier-lancer"][data-v="ia"]'); await new Promise(r => setTimeout(r, 30));
+    assert.ok(envoi && envoi.f === 'controle.php' && envoi.corps.accord_parent === true && /Bastille/.test(envoi.corps.texte));
+    assert.match(d.querySelector('main').textContent, /🤖/);
+  } finally { M.envoyer = avant; A.CONFIG.SERVEUR = null; }
+  // Supprimer demande une confirmation : refusée, la leçon reste ; acceptée, elle part.
+  const id = A.J().cahier.lecons[0].id; w.confirm = () => false; bouton(w, 'cahier-suppr', id); assert.strictEqual(A.J().cahier.lecons.length, 1);
+  w.confirm = () => true; bouton(w, 'cahier-suppr', id); assert.strictEqual(A.J().cahier.lecons.length, 0);
+  // Carte présente dans l'écran des matières et sur l'écran d'une matière.
+  bouton(w, 'matieres'); assert.ok(d.querySelector('[data-a="cahier"]'));
+  { const php = lire('serveur-php/controle.php'); for(const m of [/UNIQUEMENT sur ce qui est écrit dans la leçon/, /'accord_parent'\], 403/, /ami_credits_garde/, /ami_credits_rembourser_garde/]) assert.match(php, m); }
+});
+
+await test('v7.2 : géographie du collège en italien et en portugais — cours de 6e, 5e, 4e et 3e', async () => {
+  const w = page(), M = w.MATIERES, T = w.MATIERES_LANGUES, h = M.trouver('histoire');
+  for(const id of ['cours-g6', 'cours-g5', 'cours-g4', 'cours-g3']) for(const L of ['it', 'pt']){ const t = T[L].q['histoire/' + id], c = h.chapitres.find(x => x.id === id);
+    assert.ok(t && t.length === c.banque.length, L + ' ' + id); t.forEach((q, i) => { assert.ok(q.length === 4 && q[2].length === 3, L + ' ' + id + ' ' + i); for(const f of q[2]) assert.ok(w.JUGE.juger(f[1]).ok, L + ' ' + f[1]); if(/^[\d-]+$/.test(c.banque[i][1])) assert.strictEqual(q[1], c.banque[i][1], L + ' même nombre'); }); }
+  for(const L of ['it', 'pt']){ w.AmiDesMots.base.ui = L; assert.ok(M.serie('histoire', 'cours-g4', '4e', 10, 2, 'taquin').every(q => q.lang === L), L); }
+  w.AmiDesMots.base.ui = 'fr';
+});
+
+await test('v7.1 : histoire du lycée complète en italien et en portugais — révision de Tle, cours de 2nde, 1re et Tle', async () => {
+  const w = page(), M = w.MATIERES, T = w.MATIERES_LANGUES, h = M.trouver('histoire');
+  for(const id of ['r-ht', 'cours-hg2', 'cours-hg1', 'cours-hgt']) for(const L of ['it', 'pt']){ const t = T[L].q['histoire/' + id], c = h.chapitres.find(x => x.id === id);
+    assert.ok(t && t.length === c.banque.length, L + ' ' + id); t.forEach((q, i) => { assert.ok(q.length === 4 && q[2].length === 3, L + ' ' + id + ' ' + i); for(const f of q[2]) assert.ok(w.JUGE.juger(f[1]).ok, L + ' ' + f[1]); if(/^[\d-]+$/.test(c.banque[i][1])) assert.strictEqual(q[1], c.banque[i][1], L + ' même date'); }); }
+  // Toutes les leçons d'histoire et de cours d'histoire-géographie du lycée existent en italien et en portugais (hors compléments de géographie et d'EMC).
+  for(const c of h.chapitres.filter(c => !c.theme && c.banque && c.niv.some(n => ['2nde', '1re', 'Tle'].includes(n)) && !/^cpl-(g|emc)/.test(c.id) && c.id !== 'geo')) for(const L of ['it', 'pt']) assert.ok(T[L].q['histoire/' + c.id], L + ' ' + c.id);
+});
+
+await test('v7.0 : histoire du lycée en italien et en portugais, 1re partie — repères du lycée, révisions de 2nde et de 1re', async () => {
+  const w = page(), M = w.MATIERES, T = w.MATIERES_LANGUES, h = M.trouver('histoire');
+  for(const id of ['lycee', 'r-h2', 'r-h1']) for(const L of ['it', 'pt']){ const t = T[L].q['histoire/' + id], c = h.chapitres.find(x => x.id === id);
+    assert.ok(t && t.length === c.banque.length, L + ' ' + id); t.forEach((q, i) => { assert.ok(q.length === 4 && q[2].length === 3, L + ' ' + id + ' ' + i); for(const f of q[2]) assert.ok(w.JUGE.juger(f[1]).ok, L + ' ' + f[1]); if(/^[\d-]+$/.test(c.banque[i][1])) assert.strictEqual(q[1], c.banque[i][1], L + ' même date'); }); }
+  for(const L of ['it', 'pt']){ w.AmiDesMots.base.ui = L; assert.ok(M.serie('histoire', 'r-h1', '1re', 10, 2, 'taquin').every(q => q.lang === L), L); }
+  w.AmiDesMots.base.ui = 'fr';
+});
+
+await test('v6.99 : histoire de 3e complète en italien et en portugais — refonder la République, le monde après 1989', async () => {
+  const w = page(), M = w.MATIERES, T = w.MATIERES_LANGUES, h = M.trouver('histoire');
+  for(const id of ['cpl-h3-refonder', 'cpl-h3-apres89']) for(const L of ['it', 'pt']){ const t = T[L].q['histoire/' + id], c = h.chapitres.find(x => x.id === id);
+    assert.ok(t && t.length === c.banque.length, L + ' ' + id); t.forEach((q, i) => { assert.ok(q.length === 4 && q[2].length === 3, L + ' ' + id + ' ' + i); for(const f of q[2]) assert.ok(w.JUGE.juger(f[1]).ok, L + ' ' + f[1]); if(/^[\d-]+$/.test(c.banque[i][1])) assert.strictEqual(q[1], c.banque[i][1], L + ' même date'); }); }
+  // Toutes les leçons d'histoire de 4e et de 3e (hors géographie et EMC) existent désormais en italien et en portugais.
+  const hist = h.chapitres.filter(c => !c.theme && c.banque && (c.niv.includes('4e') || c.niv.includes('3e')) && !['geo', 'emc'].includes(c.id) && !/^cours-(g|emc)|^cpl-g|^cpl-emc/.test(c.id));
+  for(const c of hist) for(const L of ['it', 'pt']) assert.ok(T[L].q['histoire/' + c.id], L + ' ' + c.id);
+});
+
+await test('v6.98 : histoire de 3e en italien et en portugais, 3e partie — crise de 1929 et totalitarismes, guerre froide, France depuis 1945', async () => {
+  const w = page(), M = w.MATIERES, T = w.MATIERES_LANGUES, h = M.trouver('histoire');
+  for(const id of ['cpl-h3-entre', 'cpl-h3-gf', 'cpl-h3-france']) for(const L of ['it', 'pt']){ const t = T[L].q['histoire/' + id], c = h.chapitres.find(x => x.id === id);
+    assert.ok(t && t.length === c.banque.length, L + ' ' + id); t.forEach((q, i) => { assert.ok(q.length === 4 && q[2].length === 3, L + ' ' + id + ' ' + i); for(const f of q[2]) assert.ok(w.JUGE.juger(f[1]).ok, L + ' ' + f[1]); if(/^[\d-]+$/.test(c.banque[i][1])) assert.strictEqual(q[1], c.banque[i][1], L + ' même date'); }); }
+  for(const L of ['it', 'pt']){ w.AmiDesMots.base.ui = L; assert.ok(M.serie('histoire', 'cpl-h3-gf', '3e', 10, 2, 'taquin').every(q => q.lang === L), L); }
+  w.AmiDesMots.base.ui = 'fr';
+});
+
+await test('v6.97 : histoire de 3e en italien et en portugais, 2e partie — révision 3e, cours de 3e, Première Guerre mondiale', async () => {
+  const w = page(), M = w.MATIERES, T = w.MATIERES_LANGUES, h = M.trouver('histoire');
+  for(const id of ['r-h3', 'cours-h3', 'pgm-cours']) for(const L of ['it', 'pt']){ const t = T[L].q['histoire/' + id], c = h.chapitres.find(x => x.id === id);
+    assert.ok(t && t.length === c.banque.length, L + ' ' + id); t.forEach((q, i) => { assert.ok(q.length === 4 && q[2].length === 3, L + ' ' + id + ' ' + i); for(const f of q[2]) assert.ok(w.JUGE.juger(f[1]).ok, L + ' ' + f[1]); if(/^[\d-]+$/.test(c.banque[i][1])) assert.strictEqual(q[1], c.banque[i][1], L + ' même date'); }); }
+  for(const L of ['it', 'pt']){ w.AmiDesMots.base.ui = L; assert.ok(M.serie('histoire', 'pgm-cours', '3e', 10, 2, 'taquin').every(q => q.lang === L), L); }
+  w.AmiDesMots.base.ui = 'fr';
+});
+
+await test('v6.96 : histoire de 3e en italien et en portugais, 1re partie — XXe siècle et Seconde Guerre mondiale', async () => {
+  const w = page(), M = w.MATIERES, T = w.MATIERES_LANGUES, h = M.trouver('histoire');
+  for(const id of ['xxe', 'seconde-guerre', 'sgm-cours']) for(const L of ['it', 'pt']){ const t = T[L].q['histoire/' + id], c = h.chapitres.find(x => x.id === id);
+    assert.ok(t && t.length === c.banque.length, L + ' ' + id); t.forEach((q, i) => { assert.ok(q.length === 4 && q[2].length === 3, L + ' ' + id + ' ' + i); for(const f of q[2]) assert.ok(w.JUGE.juger(f[1]).ok, L + ' ' + f[1]); if(/^[\d-]+$/.test(c.banque[i][1])) assert.strictEqual(q[1], c.banque[i][1], L + ' même date'); }); }
+  for(const L of ['it', 'pt']){ w.AmiDesMots.base.ui = L; assert.ok(M.serie('histoire', 'seconde-guerre', '3e', 10, 2, 'taquin').every(q => q.lang === L), L); }
+  w.AmiDesMots.base.ui = 'fr';
+});
+
+await test('v6.95 : histoire de 4e en italien et en portugais ; cartes d’une matière côte à côte dans une seule grille', async () => {
+  const w = page(), d = w.document, M = w.MATIERES, T = w.MATIERES_LANGUES, h = M.trouver('histoire');
+  for(const id of ['revolution', 'r-h4', 'cours-h4', 'cpl-h4-femmes', 'cpl-h4-traites']) for(const L of ['it', 'pt']){ const t = T[L].q['histoire/' + id], c = h.chapitres.find(x => x.id === id);
+    assert.ok(t && t.length === c.banque.length, L + ' ' + id); t.forEach((q, i) => { assert.ok(q.length === 4 && q[2].length === 3, L + ' ' + id + ' ' + i); for(const f of q[2]) assert.ok(w.JUGE.juger(f[1]).ok, L + ' ' + f[1]); if(/^\d+$/.test(c.banque[i][1])) assert.strictEqual(q[1], c.banque[i][1], L + ' même date'); }); }
+  w.AmiDesMots.base.ui = 'it'; assert.ok(M.serie('histoire', 'cours-h4', '4e', 10, 2, 'taquin').every(q => q.lang === 'it')); w.AmiDesMots.base.ui = 'pt'; assert.ok(M.serie('histoire', 'r-h4', '4e', 10, 2, 'taquin').every(q => q.lang === 'pt')); w.AmiDesMots.base.ui = 'fr';
+  bouton(w, 'matieres'); bouton(w, 'matiere', 'medecine'); bouton(w, 'matiere-niveau', 'medecine|Sup');
+  const grilles = [...d.querySelectorAll('main .cartes-anglais')].filter(g => g.querySelector('[data-a="ifsi"], [data-a="docs"], [data-a="trimestres"], [data-a^="trim"]'));
+  assert.strictEqual(grilles.length, 1, 'une seule grille'); assert.ok(grilles[0].querySelector('[data-a="ifsi"]') && grilles[0].querySelector('[data-a="docs"]') && grilles[0].children.length >= 3, 'cartes côte à côte');
 });
 
 await test('v6.94 : EMC du lycée selon le programme de 2024 — 2nde droits et libertés, 1re cohésion et diversité, Tle vie démocratique', async () => {
@@ -4011,7 +4136,7 @@ await test('v6.88 : histoire de 5e en italien et en portugais — 4 chapitres, m
       for(const x of q[2]) assert.ok(w.JUGE.juger(x[1]).ok, x[1]); }); }
   A.base.ui = 'it'; assert.ok(M.serie('histoire', 'cours-h5', '5e', 10, 3, 'taquin').every(q => q.lang === 'it'), 'italien');
   A.base.ui = 'pt'; assert.ok(M.serie('histoire', 'moyen-age', '5e', 10, 3, 'taquin').every(q => q.lang === 'pt'), 'portugais');
-  assert.ok(M.serie('histoire', 'cours-h4', '4e', 5, 3, 'taquin').every(q => q.lang === 'fr'), 'la 4e reste en français pour l’instant'); A.base.ui = 'fr';
+  assert.ok(M.serie('histoire', 'cours-emc6', '6e', 5, 3, 'taquin').every(q => q.lang === 'fr'), 'l’EMC reste en français pour l’instant (histoire traduite jusqu’à la v7.1, cours de géographie du collège en v7.2)'); A.base.ui = 'fr';
 });
 
 await test('v6.87 : histoire de 6e en italien et en portugais — 4 chapitres, même ordre, vannes acceptées', async () => {
@@ -4025,7 +4150,7 @@ await test('v6.87 : histoire de 6e en italien et en portugais — 4 chapitres, m
       for(const x of q[2]) assert.ok(w.JUGE.juger(x[1]).ok, x[1]); }); }
   A.base.ui = 'it'; assert.ok(M.serie('histoire', 'cours-h6', '6e', 10, 3, 'taquin').every(q => q.lang === 'it'), 'italien');
   A.base.ui = 'pt'; assert.ok(M.serie('histoire', 'antiquite', '6e', 10, 3, 'taquin').every(q => q.lang === 'pt'), 'portugais');
-  assert.ok(M.serie('histoire', 'cours-h4', '4e', 5, 3, 'taquin').every(q => q.lang === 'fr'), 'la 4e reste en français pour l’instant'); A.base.ui = 'fr';
+  assert.ok(M.serie('histoire', 'cours-emc6', '6e', 5, 3, 'taquin').every(q => q.lang === 'fr'), 'l’EMC reste en français pour l’instant (histoire traduite jusqu’à la v7.1, cours de géographie du collège en v7.2)'); A.base.ui = 'fr';
 });
 
 await test('v6.86 : SVT et physique-chimie du lycée en italien et en portugais — même ordre, vannes acceptées', async () => {

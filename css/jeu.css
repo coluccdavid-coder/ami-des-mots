@@ -2039,3 +2039,10 @@ html[data-texte="tres-grand"]{ font-size:125%; } html[data-texte="tres-grand"] b
 .si-grille label{margin-right:12px;cursor:pointer}
 .si-oeuvres{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,280px),1fr));gap:8px;text-align:left}
 .si-oeuvres input{width:100%;box-sizing:border-box;font:inherit;padding:6px 10px;border-radius:10px;border:1px solid rgba(255,255,255,.25);background:rgba(255,255,255,.08);color:inherit}
+
+/* v7.3 : cahier de leçons et contrôle construit par l'élève */
+.cahier-ecran textarea, .cahier-ecran input[type="text"], .cahier-ecran input:not([type]){ width:100%; box-sizing:border-box; }
+.cahier-choix{ border:1px solid rgba(255,255,255,.18); border-radius:16px; padding:10px 14px; }
+.cahier-choix label.case{ display:block; margin:6px 0; }
+.cahier-ligne{ display:flex; gap:8px; align-items:stretch; list-style:none; }
+.cahier-ligne .chap{ flex:1; min-width:0; }
