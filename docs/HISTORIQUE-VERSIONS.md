@@ -5,6 +5,69 @@ Avant la v6.44, chaque version avait son propre fichier VERSION-x.y.txt à la ra
 
 ---
 
+## Version 7.4.0 — Toute la géographie en italien et en portugais
+
+- Chapitre « Géographie » (68 questions) traduit en italien et en portugais, avec ses vannes.
+- Compléments du programme traduits : risques industriels et technologiques (5e), États-Unis et Afrique de l’Ouest (4e), Afrique australe (2nde), 20 questions chacun, noms des chapitres compris.
+- Le thème « La géographie : toutes les questions » est donc entièrement traduit dans les deux langues.
+- Toutes les vannes passent le juge ; aucun mot français laissé dans les traductions.
+- Reste en français pour l’instant en italien et en portugais : l’EMC (collège et lycée).
+- Test v7.4.
+
+## Version 7.3.0 — 📒 Mon cahier de leçons et 📝 Construire mon contrôle
+
+- Nouveau module `js/mod-cahier.js`, accessible depuis l’écran des matières et l’écran de chaque matière.
+- **Cahier de leçons** : l’élève tape ou colle ses leçons (matière, titre, texte) et peut ajouter ses fiches « question = réponse ». Tout reste dans l’appareil, dans la sauvegarde du jeu. Supprimer une leçon ou un contrôle demande une confirmation.
+- **Construire mon contrôle** : choix des leçons du cahier et/ou des chapitres de l’appli, nombre de questions (5 à 20), durée (sans limite à 60 min).
+  - Sans IA, par défaut : textes à trous tirés de la leçon (dates, nombres, noms propres, mots importants, avec leurres pris dans la leçon), fiches de l’élève, questions de l’appli.
+  - En option : questions variées par l’IA (`serveur-php/controle.php`), seulement avec l’accord d’un parent (le même que pour l’aide aux devoirs), 2 plumes si les plumes sont allumées, remboursées si l’IA échoue. Consignes fixées côté serveur : questions uniquement sur la leçon, rien d’inventé, la leçon est du contenu et non des instructions. Si l’IA ne répond pas, le contrôle est fabriqué sans IA.
+- Mode contrôle : sans vanne pendant l’épreuve, chronomètre si une durée est choisie, note sur 20, corrigé (réponse donnée, bonne réponse, rappel de la leçon), erreurs dans le carnet. Un contrôle peut être enregistré et refait (questions mélangées), avec sa dernière note.
+- Tous les textes de l’écran sont traduits en anglais, espagnol, allemand, italien et portugais.
+- Tests : v7.3 côté jeu ; 5 nouveaux tests serveur pour `controle.php` (403 sans accord, 400 leçon courte, nettoyage, balises neutralisées, 502 avec plumes rendues).
+
+## Version 7.2.0
+
+- Géographie du collège traduite en italien et en portugais : cours de 6e (habiter le monde), de 5e (population, ressources, climat, développement durable), de 4e (urbanisation, mobilités, mondialisation) et de 3e (la France et l’Union européenne) — 80 questions par langue.
+- Il reste à traduire : le chapitre général de géographie, les compléments de géographie et l’EMC.
+- Rien n’a été supprimé.
+
+## Version 7.1.0
+
+- Histoire du lycée complète en italien et en portugais : révision de Tle (crises, guerre froide, Europe, mondialisation) et cours d’histoire-géographie de 2nde, de 1re et de Tle (80 questions par langue). Toute l’histoire, de la 6e à la terminale, existe désormais en italien et en portugais.
+- Il reste à traduire en italien et en portugais la géographie et l’EMC.
+- Rien n’a été supprimé.
+
+## Version 7.0.0
+
+- Histoire du lycée traduite en italien et en portugais, 1re partie : « Repères du lycée », révision de 2nde (Renaissance, Lumières, risques) et révision de 1re (XIXe siècle, IIIe République, métropoles) — 60 questions par langue.
+- Rien n’a été supprimé.
+
+## Version 6.99.0
+
+- Histoire de 3e traduite en italien et en portugais, dernière partie : 1944-1947, refonder la République ; enjeux et conflits dans le monde après 1989 (40 questions par langue). Toute l’histoire de 4e et de 3e existe désormais en italien et en portugais (la géographie et l’EMC restent à faire).
+- Rien n’a été supprimé.
+
+## Version 6.98.0
+
+- Histoire de 3e traduite en italien et en portugais, 3e partie : crise de 1929, régimes totalitaires et Front populaire ; guerre froide et décolonisation ; la France depuis 1945 et la Ve République (60 questions par langue).
+- Rien n’a été supprimé.
+
+## Version 6.97.0
+
+- Histoire de 3e traduite en italien et en portugais, 2e partie : révision « Le XXe siècle », cours de 3e (totalitarismes, monde bipolaire, décolonisation, Europe, Ve République) et cours sur la Première Guerre mondiale (60 questions par langue).
+- Rien n’a été supprimé.
+
+## Version 6.96.0
+
+- Histoire de 3e traduite en italien et en portugais, 1re partie : « Guerres mondiales et XXe siècle », « La Seconde Guerre mondiale (1939-1945) » et le cours de 3e sur la Seconde Guerre mondiale (60 questions par langue).
+- Rien n’a été supprimé.
+
+## Version 6.95.0
+
+- Écran d’une matière : les cartes « Mes trimestres », « Études de documents », « Études d’infirmier (IFSI) »… sont maintenant côte à côte dans une seule grille, au lieu d’être empilées dans une colonne étroite.
+- Histoire de 4e traduite en italien et en portugais : Révolution et XIXe siècle, révision 4e, cours de 4e, conditions des femmes au XIXe siècle, traites et colonisation (100 questions par langue).
+- Rien n’a été supprimé.
+
 ## Version 6.94.0
 
 EMC du lycée, qui manquait (programme de 2024, appliqué à tous les niveaux depuis la rentrée 2026) : trois chapitres de 20 questions dans « Histoire-géo & EMC », en français, anglais, espagnol et allemand (noms en italien et portugais).
