@@ -615,7 +615,7 @@
     if(CONFIG.OUVRIR_MATIERES && window.MATIERES){
       if(!bienvenue.entre) return bienvenue();
       if(base.joueurs.length > 1 && !accueil.choisi) return quiJoue();
-      return matieresAccueil();
+      return window.AMI_PROGRAMMES ? AMI_PROGRAMMES.ouvrir() : matieresAccueil();
     }
     return accueil();
   }
@@ -668,6 +668,8 @@
     // v6.54 : quand on entre par la table des matières, cet écran devient « 🎮 Jeux et entraînement » :
     // plus de grand panneau du hibou ni de menus de langue (ils sont sur la page d'entrée), retour vers les matières.
     const ecranJeux = !!(CONFIG.OUVRIR_MATIERES && window.MATIERES);
+    // v6.87 : plus d'écran « Jeux et entraînement » séparé : tout ce qu'il proposait est rangé sur la table des matières (blocJeux).
+    if(ecranJeux) return window.AMI_PROGRAMMES ? AMI_PROGRAMMES.ouvrir() : matieresAccueil();
     poser((ecranJeux ? barre('matieres') : cielAccueil()) +
       '<main class="accueil' + (ecranJeux ? ' jeux-ecran' : '') + '">' + (ecranJeux ? '<h2 class="jeux-titre">' + TXT('🎮 Jeux et entraînement') + '</h2>' : '') + cartesModules('accueil') +
         (s >= 2 && !fait ? '<p class="serie-danger" role="status">' + esc(tt('serie_danger', s)) + '</p>' : '') +
@@ -722,13 +724,14 @@
         (J().nom ? '<p class="joueur">' + esc(t('bonjour', J().nom)) + (base.joueurs.length > 1 ? ' · <button class="lien" data-a="qui">' + esc(t('changer_joueur')) + '</button>' : '') + '</p>' : '<p class="accroche">' + esc(t('accroche')) + '</p>') +
         '<div class="choix-langues">' +
           '<label>' + esc(progTx('maLangue')) + '<select id="ui">' + opts(parleVisibles(), base.ui) + '</select></label>' +
-          '<label>' + esc(progTx('monProg')) + '<select id="programme">' + ['fr', 'gb'].map(k => '<option value="' + k + '"' + ((base.programme === 'gb' ? 'gb' : 'fr') === k ? ' selected' : '') + '>' + esc(progTx(k + 'Court')) + '</option>').join('') + '</select></label>' +
+          '<label>' + esc(progTx('monProg')) + '<select id="programme">' + (window.AMI_PROGRAMMES ? AMI_PROGRAMMES.liste().map(p => '<option value="' + p.id + '"' + (AMI_PROGRAMMES.courant() === p.id ? ' selected' : '') + '>' + esc(p.id === 'fr' ? progTx('frCourt') : p.id === 'uk' ? progTx('gbCourt') : p.drapeau + ' ' + p.nom) + '</option>').join('')
+            : ['fr', 'gb'].map(k => '<option value="' + k + '"' + ((base.programme === 'gb' ? 'gb' : 'fr') === k ? ' selected' : '') + '>' + esc(progTx(k + 'Court')) + '</option>').join('')) + '</select></label>' +
         '</div>' + (suite || '') + '</div></section>';
   }
   function brancherLangues(redessiner){
     const ui = $('#ui'), pr = $('#programme');
     if(ui) ui.addEventListener('change', ev => { base.ui = ev.target.value; if(base.cible === base.ui) base.cible = base.ui === 'en' ? 'fr' : 'en'; garder(); redessiner(); });
-    if(pr) pr.addEventListener('change', ev => { base.programme = ev.target.value === 'gb' ? 'gb' : 'fr'; garder(); redessiner(); });
+    if(pr) pr.addEventListener('change', ev => { const v = ev.target.value; if(!(window.AMI_PROGRAMMES && AMI_PROGRAMMES.choisir(v))) base.programme = v === 'gb' || v === 'uk' ? 'gb' : 'fr'; garder(); redessiner(); });
   }
   // Le décor de l'accueil : aurore, collines, lucioles, une étoile filante.
   function paysage(){
@@ -2935,7 +2938,10 @@
     o[k] = Math.min(1e6, (Math.floor(+o[k]) || 0) + 1);
   }
   // Les questions du carnet à revoir aujourd'hui (les plus anciennes d'abord).
-  const carnetAujourdhui = () => { const auj = jour(); return (J().carnet || []).filter(x => x && (!x.prochaine || x.prochaine <= auj)).sort((a, b) => (b.certitude ? 1 : 0) - (a.certitude ? 1 : 0) || String(a.prochaine || '').localeCompare(String(b.prochaine || ''))); };   // v6.74 : erreurs « sûr(e) » d'abord
+  // v6.89 : un programme = un pays — chaque programme ne voit que ses propres erreurs (gb-… = Angleterre, it-/es-/de-/us-/pt-… = ce pays).
+  const programmeDe = mat => window.AMI_PROGRAMMES ? AMI_PROGRAMMES.programmeDe(mat) : 'fr';
+  const carnetDe = prog => (J().carnet || []).filter(x => x && (!prog || programmeDe(x.matiere) === prog));
+  const carnetAujourdhui = prog => { const auj = jour(); return carnetDe(prog).filter(x => x && (!x.prochaine || x.prochaine <= auj)).sort((a, b) => (b.certitude ? 1 : 0) - (a.certitude ? 1 : 0) || String(a.prochaine || '').localeCompare(String(b.prochaine || ''))); };   // v6.74 : erreurs « sûr(e) » d'abord
   // v6.71 : réponse écrite — pour les réponses courtes (4 mots au plus), en maths et dans les matières, si l'élève l'a activée.
   function libreActif(z, q){
     if(J().reponseLibre !== true || !q || q.vanneDe || !(z.prof || q.matiere)) return false;
@@ -2975,10 +2981,11 @@
     if(!l.some(y => y.enonce === x.enonce && y.bon === x.bon)){ l.push(x); if(l.length > 300) l.splice(0, l.length - 300); }
     garder(); if(bouton && bouton.parentNode) bouton.parentNode.innerHTML = esc(TXT('Merci ! La question est notée pour être vérifiée.'));
   }
-  function carnetGo(){
-    const l = (J().carnet || []).slice(); if(!l.length) return matieresAccueil();
+  function carnetGo(prog){
+    const ouvrir = () => window.AMI_PROGRAMMES ? AMI_PROGRAMMES.ouvrir() : matieresAccueil();
+    const l = carnetDe(prog || null).slice(); if(!l.length) return ouvrir();
     for(let i = l.length - 1; i > 0; i--){ const k = Math.floor(Math.random() * (i + 1)); [l[i], l[k]] = [l[k], l[i]]; }
-    questionsGo(l.slice(0, 20).map(x => Object.assign({}, x, { faux:x.faux.map(f => Object.assign({}, f)) })), { titre:'🎯 Mes erreurs', retour:'matieres', fin:() => matieresAccueil() });
+    questionsGo(l.slice(0, 20).map(x => Object.assign({}, x, { faux:x.faux.map(f => Object.assign({}, f)) })), { titre:'🎯 Mes erreurs', retour:'matieres', fin:() => ouvrir() });
   }
   function repondreQuestion(i){
     const z = qz; if(!z || z.repondu) return;
@@ -3667,6 +3674,8 @@
   function nbSerie(c, niveau){ if(c.gen || !Array.isArray(c.banque)) return SERIE_N; const ix = MATIERES.indicesNiveau(c, niveau); return Math.min(SERIE_N, ix ? ix.length : c.banque.length); }
   function matieresAccueil(){
     qz = null; const M = window.MATIERES; if(!M) return accueil();
+    // v6.89 : la table des matières française ne s'affiche que pour le programme français ; les autres pays ont leur écran.
+    if(window.AMI_PROGRAMMES && AMI_PROGRAMMES.courant() !== 'fr') return AMI_PROGRAMMES.ouvrir();
     const fc = filtreClasse(), voit = (a, v) => !fc || (a === 'matiere' ? M.chapitres(v, fc).length > 0 : a === 'maths' ? !!(window.MATHS && MATHS.NIVEAUX.includes(fc)) : true);
     const c = (a, v, ic, t1, t2) => !voit(a, v) ? '' : '<button class="carte-anglais" data-a="' + a + '"' + (v ? ' data-v="' + v + '"' : '') + (a === 'matiere' || a === 'maths' ? ' data-o="classe"' : '') + '><span class="ic">' + ic + '</span><strong>' + t1 + '</strong><small>' + t2 + '</small></button>';
     const cs = (a, v, ic, t1, t2) => '<button class="carte-anglais" data-a="' + a + '"' + (v ? ' data-v="' + v + '"' : '') + (a === 'matiere' || a === 'maths' ? ' data-o="classe"' : '') + '><span class="ic">' + ic + '</span><strong>' + t1 + '</strong><small>' + t2 + '</small></button>';
@@ -3674,10 +3683,10 @@
     // les outils de révision sont regroupés sous les matières ; les jeux ont leur propre bouton.
     const heros = CONFIG.OUVRIR_MATIERES || MODULES.actions.devoirs ? '<button class="devoirs-hero" data-a="devoirs"><span class="ic" aria-hidden="true">📚</span><span><strong>' + TXT('Un devoir à faire ? On t’aide à démarrer') + '</strong><small>' +
       TXT('Aide aux devoirs, toutes les matières : comprendre la consigne, retrouver la leçon, trouver la méthode — sans faire le devoir à ta place') + '</small></span></button>' : '';
-    const outils = cartesModules('matiere') + ((J().carnet || []).length ? c('carnet-erreurs', '', '🎯', 'Mes erreurs (' + J().carnet.length + ')', TXT('Toutes les questions ratées : elles reviennent jusqu’à ce qu’elles soient maîtrisées')) : '') +
+    const nErr = carnetDe('fr').length, outils = cartesModules('matiere') + (nErr ? c('carnet-erreurs', 'fr', '🎯', 'Mes erreurs (' + nErr + ')', TXT('Toutes les questions ratées : elles reviennent jusqu’à ce qu’elles soient maîtrisées')) : '') +
       (window.SCIENCES ? c('sciences', '', '🚀', TXT('Sciences rigolotes'), TXT('Planètes, fusées, médecine… avec des clashs')) : '');
     poser(barre(CONFIG.OUVRIR_MATIERES ? 'bienvenue' : 'accueil') + TXT('<main class="coin-anglais matieres-ecran"><h2>📚 Matières</h2><p class="pieges-intro">Le programme de la 6e au bac, avec Plumo qui vanne les erreurs (jamais toi) et t’explique la bonne réponse.</p>') +
-      heros + (window.EPREUVES ? ongletsExamens('matieres') : '') + choixClasse('matieres') +
+      (window.AMI_PROGRAMMES ? AMI_PROGRAMMES.onglets('fr') : '') + heros + (window.EPREUVES ? ongletsExamens('matieres') : '') + choixClasse('matieres') +
       '<div class="cartes-anglais">' +
         c('matiere', 'francais', '📝', TXT('Français'), TXT('Conjugaison, orthographe, grammaire, figures de style, littérature')) +
         (M.trouver('lespagnol') ? c('matiere', 'lespagnol', '🇪🇸', TXT('Espagnol (LVB, 5e → bac)'), TXT('Ser ou estar, passé, subjonctif, faux amis')) : '') +
@@ -3700,7 +3709,34 @@
       '</div>' + (outils ? '<section class="domaine outils-revision"><h3>' + TXT('🧰 Outils pour réviser') + '</h3><div class="cartes-anglais">' + outils + '</div></section>' : '') + (M.trouver('medecine') && (!fc || fc === 'Tle' || fc === 'Sup') ? TXT('<section class="domaine"><h3>🎓 Après le bac</h3><div class="cartes-anglais">') +
         cs('matiere', 'medecine', '🩺', TXT('Médecine'), TXT('Anatomie, physiologie, études de santé')) + cs('matiere', 'droit', '⚖️', TXT('Droit'), TXT('Institutions, bases du droit, métiers')) +
         cs('matiere', 'astro', '🔭', 'Astrophysique', 'Étoiles, galaxies, calculs d’astrophysicien') + '</div></section>' : '') +
-      (CONFIG.OUVRIR_MATIERES ? '<p class="jeux-lien"><button class="gros" data-a="accueil">' + TXT('🎮 Jeux et entraînement') + '</button><br><small>' + TXT('Mots en images, défi du jour, battles, professeur IA') + '</small></p>' : '') + '</main>');
+      (CONFIG.OUVRIR_MATIERES ? blocJeux() : '') + '</main>');
+  }
+  // v6.87 : le bouton « 🎮 Jeux et entraînement » disparaît ; ce qui n'était que sur cet écran vient ici, sans doublon
+  // (Maths, Sciences, Mes erreurs et le professeur de correction sont déjà dans les matières et les outils).
+  function blocJeux(){
+    const en = base.ui === 'en', rev = aRevoir().length, s = serie(), fait = J().jours.includes(jour()), defiFait = J().defis.includes(jour());
+    const k = (a, ic, t1, t2, cls, href) => href ? '<a class="carte-anglais' + (cls ? ' ' + cls : '') + '" href="' + href + '"><span class="ic">' + ic + '</span><strong>' + t1 + '</strong><small>' + t2 + '</small></a>'
+      : '<button class="carte-anglais' + (cls ? ' ' + cls : '') + '" data-a="' + a + '"><span class="ic">' + ic + '</span><strong>' + t1 + '</strong><small>' + t2 + '</small></button>';
+    const b = bilanAdaptatif();
+    return '<section class="domaine jeux-matieres" aria-label="' + esc(TXT('🎮 Jeux et entraînement')) + '"><h3>' + TXT('🎮 Jeux et entraînement') + '</h3>' + cartesModules('accueil') +
+      (s >= 2 && !fait ? '<p class="serie-danger" role="status">' + esc(tt('serie_danger', s)) + '</p>' : '') +
+      (b.total ? '<p class="carte-apprentissage"><strong>🧠 Ton apprentissage</strong> <span>' + b.aRevoir + TXT(' notion(s) à revoir · ') + b.maitrisees + TXT(' maîtrisée(s) · ') + b.total + ' suivie(s)</span></p>' : '') +
+      '<div class="cartes-anglais">' +
+        k('defi', defiFait ? '✓' : '⚡', esc(t('defi')), esc(TXT('Quelques questions chaque jour pour garder ta série')), 'defi' + (defiFait ? ' fait' : '')) +
+        k('lecon', '📚', esc(t('apprendre')), en ? '5 new words with pictures' : TXT('5 nouveaux mots en images')) +
+        (rev ? k('revoir', '🔁', esc(t('revoir')) + ' (' + rev + ')', en ? 'Words to practise again' : TXT('Les mots à retravailler')) : '') +
+        k('porte-mots', '🗣️', esc(progTx('porteLangues')) + ' · ' + esc(LANGUES_APPRENDRE[base.cible] || ''), esc(progTx('porteLanguesSous'))) +
+        k('', '🧑‍🏫', esc(progTx('profIA')), esc(progTx('profIASous')), '', 'professeur.html') +
+        (window.MATHS || A_EN() ? k('potes', '⚔️', 'Battle', en ? 'Battle with friends — maths, English, comebacks' : TXT('Battle entre potes — maths, anglais et vannes')) : '') +
+      '</div>' +
+      '<p class="objectif"><span>' + esc(fait ? t('objectif_fait') : t('objectif')) + '</span>' + (s ? '<span class="serie">🔥 ' + esc(t('serie', s)) + '</span>' : '') + '</p>' + motDuJour() +
+      (installation ? TXT('<button class="moyen plein installer-appli" data-a="installer">📲 Installer l’appli sur cet appareil</button>') : '') +
+      (CONFIG.MODE_PAYANT && !plus() ? '<button class="bandeau-plus" data-a="plus">✨ <strong>' + esc(t('plus')) + '</strong> · ' + esc(t('plus_court')) + '</button>' : '') +
+      '<nav class="raccourcis">' +
+        '<button data-a="carnet"><span aria-hidden="true">📒</span>' + esc(t('carnet')) + '</button>' +
+        '<button data-a="reglages"><span aria-hidden="true">⚙️</span>' + esc(t('reglages')) + '</button>' +
+        '<button data-a="parents"><span aria-hidden="true">👪</span>Parents</button>' +
+      '</nav></section>';
   }
   function matiereAccueil(id){
     qz = null; const M = window.MATIERES, m = M && M.trouver(id); if(!m) return matieresAccueil();
@@ -4259,7 +4295,7 @@
         base.joueurs.splice(Number(v), 1); base.actif = 0; garder(); return reglages();
       case 'facile': J().facile = !J().facile; garder(); return reglages();
       case 'taille-texte': base.texte = ['normal', 'grand', 'tres-grand'].includes(v) ? v : 'normal'; garder(); appliquerTexte(); return reglages();
-      case 'carnet-erreurs': return carnetGo();
+      case 'carnet-erreurs': return carnetGo(v);
       case 'consigne': return lireConsigne(($('#consigne') || {}).textContent);
       case 'humour': J().humour = Math.max(0, Math.min(3, Number(v) || 0)); garder(); return reglages();
       case 'langue-blagues': J().langueBlagues = v === 'en' ? 'en' : 'fr'; garder(); return reglages();
@@ -4344,7 +4380,7 @@
     navigator.serviceWorker.register('sw.js', { updateViaCache:'none' }).then(r => r.update && r.update()).catch(() => {});
   }
   // v6.0 : ce que les modules peuvent utiliser (rien d'autre).
-  MODULES.api = { base:() => base, J, garder, carnetAujourdhui, mathsAccueil, INTERVALLES_CARNET, poser, barre, esc, t, tt, TXT, jour, questionsGo, ami, annonce, bruit, plus, accueil, CONFIG,
+  MODULES.api = { base:() => base, J, garder, carnetAujourdhui, carnetDe, programmeDe, bienvenue, mathsAccueil, INTERVALLES_CARNET, poser, barre, esc, t, tt, TXT, jour, questionsGo, ami, annonce, bruit, plus, accueil, CONFIG,
     etatMatieres, matiereAccueil, matieresAccueil, matiereSerie, noterErreur, codePlumes, plumesActives, retour:() => { qz = null; return accueil(); },
     serieMatiere:(id, cible, n, niveau) => window.MATIERES ? MATIERES.serie(id, cible, niveau || etatMatieres().niveau, n, Math.floor(Math.random() * 1e9), etatMaths().ton) : [],
     serieMaths:(n, niveau, graine) => window.MATHS ? MATHS.serie(niveau || etatMaths().niveau, n, graine != null ? graine : Math.floor(Math.random() * 1e9), etatMaths().ton) : [], etatMaths, questionsBattle:typeof questionsBattle === 'function' ? questionsBattle : null, cartesModules };

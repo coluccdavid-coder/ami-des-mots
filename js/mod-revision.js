@@ -45,7 +45,7 @@
     'Ta réponse a été ajoutée à la révision du jour.':['Your answer has been added to today’s review.', 'Tu respuesta se ha añadido al repaso del día.', 'Deine Antwort wurde zur heutigen Wiederholung hinzugefügt.', 'La tua risposta è stata aggiunta al ripasso del giorno.', 'A tua resposta foi adicionada à revisão do dia.']
   });
 
-  const dus = () => api().carnetAujourdhui();
+  const dus = () => api().carnetAujourdhui('fr');   // v6.89 : la révision du jour appartient au programme français (chaque pays a ses erreurs)
   const carteRevision = ecran => { const n = dus().length; return n ? '<div class="cartes-anglais">' + M.carte('revision-jour', ecran, '🗓️', api().esc(tx('🗓️ Révision du jour ({0})', n)).replace(/^🗓️ /, ''), api().esc(tx('Les questions ratées reviennent le lendemain, puis 3, 7 et 21 jours après : 10 minutes suffisent.'))) + '</div>' : ''; };
   const carteLibre = ecran => { const on = api().J().reponseLibre === true;
     return '<div class="cartes-anglais">' + M.carte('reponse-libre', ecran, '✍️', api().esc(tx(on ? '✍️ Réponse écrite : activée' : '✍️ Réponse écrite : désactivée')).replace(/^✍️ /, ''), api().esc(tx('Écrire la réponse avant de voir les choix : c’est plus dur, et on retient bien mieux. +1 plume si c’est juste.'))) + '</div>'; };

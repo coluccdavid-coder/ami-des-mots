@@ -28,14 +28,17 @@
   function accueil(){
     const A = api(), e = etat(), J = A.J(); A.garder();
     const liste = G.LISTE.filter(m => G.chapitres(m.id, e.niveau).length);
-    poser('accueil', '<h2>🏴 England curriculum</h2><p class="pieges-intro">The national curriculum from Year 6 to Year 13: SATs, GCSE and A level. Plumo roasts your mistakes (never you) and always explains the right answer.</p>' + (NOTE_LANGUE[api().base().ui] ? '<p class="petit pas-traduit" lang="' + api().base().ui + '">🗣️ ' + esc(NOTE_LANGUE[api().base().ui]) + '</p>' : '') + onglets('gb-accueil') +
+    // v6.89 : un programme = un pays — ici seulement l'Angleterre : plus de cartes du programme français, les erreurs anglaises seulement.
+    const P = window.AMI_PROGRAMMES, nErr = A.carnetDe ? A.carnetDe('uk').length : (J.carnet || []).length;
+    poser(api().CONFIG && api().CONFIG.OUVRIR_MATIERES ? 'bienvenue' : 'accueil', '<h2>🏴 England curriculum</h2>' + (P ? P.onglets('uk') : '') + '<p class="pieges-intro">The national curriculum from Year 6 to Year 13: SATs, GCSE and A level. Plumo roasts your mistakes (never you) and always explains the right answer.</p>' + (NOTE_LANGUE[api().base().ui] ? '<p class="petit pas-traduit" lang="' + api().base().ui + '">🗣️ ' + esc(NOTE_LANGUE[api().base().ui]) + '</p>' : '') + onglets('gb-accueil') +
       '<div class="onglets-niveaux" role="tablist">' + G.NIVEAUX.map(n => '<button role="tab" aria-selected="' + (n === e.niveau) + '" class="onglet' + (n === e.niveau ? ' actif' : '') + '" data-a="gb-niveau" data-v="' + n + '" title="' + esc(G.ETAPES[n]) + '">' + n + '</button>').join('') + '</div>' +
       '<p class="petit">' + esc(G.NOMS[e.niveau] + ' · ' + G.ETAPES[e.niveau]) + '</p>' +
-      '<div class="cartes-anglais">' + A.cartesModules('matiere') +
-        ((J.carnet || []).length ? carte('carnet-erreurs', '', '🎯', 'My mistakes (' + J.carnet.length + ')', 'Questions you got wrong: they come back until you master them') : '') +
+      '<div class="cartes-anglais">' + (P ? '' : A.cartesModules('matiere')) +
+        (nErr ? carte('carnet-erreurs', P ? 'uk' : '', '🎯', 'My mistakes (' + nErr + ')', 'Questions you got wrong: they come back until you master them') : '') +
         liste.map(m => { const n = G.chapitres(m.id, e.niveau).length; return carte('gb-matiere', m.id, m.ic, esc(m.nom), esc(m.sous) + ' · ' + n + ' topic' + (n > 1 ? 's' : '')); }).join('') +
+        (P && M.actions['pays-ecran'] ? carte('pays-ecran-uk', '', '🎓', 'My year group & exams', 'Your Year, GCSE and A level exams, timed exam practice') : '') +
         carte('gb-mtc', '', '✖️', 'Times tables check', 'Like the Year 4 check: 25 questions, 6 seconds each' + (e.mtc ? ' · best: ' + e.mtc + '/25' : '')) +
-      '</div><section class="domaine"><h3>🇫🇷 Programme français</h3><div class="cartes-anglais">' + carte('gb-programme', 'fr', '🇫🇷', 'Programme français', 'De la 6e au bac, en français') + '</div></section>');
+      '</div>' + (P ? '' : '<section class="domaine"><h3>🇫🇷 Programme français</h3><div class="cartes-anglais">' + carte('gb-programme', 'fr', '🇫🇷', 'Programme français', 'De la 6e au bac, en français') + '</div></section>'));
   }
   function matiere(id){
     const A = api(), m = G.trouver(id), e = etat(); if(!m) return accueil();
@@ -187,7 +190,8 @@
   // Mention de licence des vrais sujets (exigée par l'Open Government Licence).
   const ogl = id => { const R = G.REELS && G.REELS[id]; return R ? '<p class="petit licence-ogl">' + esc(R.attrib) + ' <a href="' + esc(G.LICENCE_OGL) + '" target="_blank" rel="noopener">OGL v3.0</a></p>' : ''; };
   // ───────── Branchements ─────────
-  M.cartes.matiere.unshift(() => actif() ? '' : carte('gb-programme', 'gb', '🏴', 'England curriculum', 'Year 6 → A level, in English: SATs, GCSE, A level'));
+  // v6.89 : sans les onglets de pays (js/mod-programmes.js), la carte « England curriculum » reste le chemin vers le programme anglais.
+  M.cartes.matiere.unshift(() => actif() || window.AMI_PROGRAMMES ? '' : carte('gb-programme', 'gb', '🏴', 'England curriculum', 'Year 6 → A level, in English: SATs, GCSE, A level'));
   M.gb = { actif, etat, serie:(id, cible, n) => G.serie(id, cible, etat().niveau, n, Math.floor(Math.random() * 1e9), etat().ton) };
   Object.assign(M.actions, {
     'matieres': () => actif() ? accueil() : api().matieresAccueil(),

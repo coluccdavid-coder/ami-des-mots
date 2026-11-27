@@ -47,21 +47,22 @@
     { id:'th-xixe', nom:'Le XIXe siècle et la IIIe République', refs:[['revolution', [3, 4, 5, 12, 13]], ['r-h4', [3, 4]], ['r-h1', [0]], ['cours-h4', [5, 6, 7, 8, 9, 10, 11]], ['cpl-h4-femmes'], ['lycee', [8, 9]], ['r-h1', [3, 4, 5, 6, 7, 8, 9, 11, 12, 13, 14]], ['cours-hg1', [12, 13, 14, 15]]] },
     { id:'th-1gm', nom:'La Première Guerre mondiale (1914-1918)', refs:[['xxe', [0]], ['r-h3', [0, 1]], ['pgm-cours']] },
     { id:'th-entre-deux', nom:'L’entre-deux-guerres : crise, totalitarismes, Front populaire', refs:[['r-h3', [2]], ['lycee', [1]], ['cours-h3', [0, 1, 2]], ['cpl-h3-entre'], ['lycee', [11]], ['r-ht', [4]], ['r-ht', [0]]] },
-    { id:'th-2gm', nom:'La Seconde Guerre mondiale (1939-1945) : toutes les questions', refs:[['xxe', [1, 7]], ['seconde-guerre'], ['sgm-cours']] },
-    { id:'th-guerre-froide', nom:'Guerre froide et décolonisation', refs:[['xxe', [4, 5]], ['lycee', [3]], ['r-ht', [1]], ['cours-h3', [4, 5, 6, 11]], ['cpl-h3-gf'], ['lycee', [14, 16, 17]], ['r-ht', [5, 6, 7, 8]]] },
-    { id:'th-france-1945', nom:'La France depuis 1945 et la Ve République', refs:[['xxe', [2, 3]], ['r-h3', [6]], ['lycee', [2]], ['cours-h3', [3, 8, 9, 10]], ['cpl-h3-france'], ['lycee', [10, 12, 13, 15]], ['r-ht', [16]]] },
+    { id:'th-2gm', nom:'La Seconde Guerre mondiale (1939-1945) : toutes les questions', refs:[['xxe', [1, 7]], ['seconde-guerre'], ['sgm-cours'], ['cpl-h3-refonder', [11]]] },
+    { id:'th-guerre-froide', nom:'Guerre froide et décolonisation', refs:[['xxe', [4, 5]], ['lycee', [3]], ['r-ht', [1]], ['cours-h3', [4, 5, 6, 11]], ['cpl-h3-gf'], ['lycee', [14, 16, 17]], ['r-ht', [5, 6, 7, 8]], ['cpl-h3-refonder', [17]]] },
+    { id:'th-france-1945', nom:'La France depuis 1945 et la Ve République', refs:[['xxe', [2, 3]], ['r-h3', [6]], ['lycee', [2]], ['cours-h3', [3, 8, 9, 10]], ['cpl-h3-france'], ['lycee', [10, 12, 13, 15]], ['r-ht', [16]], ['cpl-h3-refonder', [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 12, 13, 14, 15, 16, 18, 19]]] },
     { id:'th-europe-monde', nom:'Construction européenne, ONU et mondialisation', refs:[['xxe', [6]], ['r-ht', [2]], ['lycee', [4]], ['cours-h3', [7]], ['lycee', [18]], ['r-ht', [9, 10, 11, 12, 13, 14, 15, 17, 18, 19]], ['cours-hgt', [12, 13, 14]]] },
+    { id:'th-apres-89', nom:'Le monde après 1989 : enjeux et conflits', refs:[['cpl-h3-apres89']] },
     { id:'th-geo', nom:'La géographie : toutes les questions', refs:[['geo'], ['r-h6', [5]], ['r-h5', [5]], ['r-h4', [5]], ['r-h2', [3]], ['r-h1', [2]], ['r-ht', [3]], ['cours-g6'], ['cours-g5'], ['cours-g4'], ['cours-g3'], ['r-h2', [14, 15, 16, 17, 18, 19]], ['r-h1', [15, 16, 17, 18, 19]], ['cours-hg2', [16, 17, 18, 19]], ['cours-hg1', [16, 17, 18, 19]], ['cours-hgt', [15, 16, 17, 18, 19]]] },
     { id:'th-emc', nom:'L’EMC : toutes les questions', refs:[['emc'], ['cours-emc-c3'], ['cours-emc-c4'], ['cours-emc6'], ['cours-emc5'], ['cours-emc4'], ['cours-emc3']] }
   ], {
     en:{ dom:'By topic', ch:{ 'th-antiquite':'Antiquity and the first humans', 'th-moyen-age':'The Middle Ages', 'th-renaissance':'Renaissance, Reformations, absolutism and the Enlightenment',
       'th-revolution':'The French Revolution and the Empire', 'th-xixe':'The 19th century and the Third Republic', 'th-1gm':'The First World War (1914–1918)',
       'th-entre-deux':'Between the wars: crisis, totalitarianism, Popular Front', 'th-2gm':'The Second World War (1939–1945): every question', 'th-guerre-froide':'Cold War and decolonisation',
-      'th-france-1945':'France since 1945 and the Fifth Republic', 'th-europe-monde':'European integration, the UN and globalisation', 'th-geo':'Geography: every question', 'th-emc':'Civics (EMC): every question' } },
+      'th-france-1945':'France since 1945 and the Fifth Republic', 'th-europe-monde':'European integration, the UN and globalisation', 'th-apres-89':'The world after 1989: issues and conflicts', 'th-geo':'Geography: every question', 'th-emc':'Civics (EMC): every question' } },
     es:{ dom:'Por temas', ch:{ 'th-antiquite':'La Antigüedad y los primeros humanos', 'th-moyen-age':'La Edad Media', 'th-renaissance':'Renacimiento, Reformas, absolutismo e Ilustración',
       'th-revolution':'La Revolución francesa y el Imperio', 'th-xixe':'El siglo XIX y la Tercera República', 'th-1gm':'La Primera Guerra Mundial (1914-1918)',
       'th-entre-deux':'El periodo de entreguerras: crisis, totalitarismos, Frente Popular', 'th-2gm':'La Segunda Guerra Mundial (1939-1945): todas las preguntas', 'th-guerre-froide':'Guerra Fría y descolonización',
-      'th-france-1945':'Francia desde 1945 y la Quinta República', 'th-europe-monde':'Construcción europea, ONU y globalización', 'th-geo':'La geografía: todas las preguntas', 'th-emc':'La EMC: todas las preguntas' } }
+      'th-france-1945':'Francia desde 1945 y la Quinta República', 'th-europe-monde':'Construcción europea, ONU y globalización', 'th-apres-89':'El mundo después de 1989: retos y conflictos', 'th-geo':'La geografía: todas las preguntas', 'th-emc':'La EMC: todas las preguntas' } }
   });
   // ───── SVT ─────
   ajouterThemes('svt', 'Par thème', [

@@ -5,6 +5,104 @@ Avant la v6.44, chaque version avait son propre fichier VERSION-x.y.txt à la ra
 
 ---
 
+## Version 6.89.0
+
+- Histoire alignée sur les programmes officiels (voir docs/POINT-PROGRAMMES-HISTOIRE-GEO.md), sans rien supprimer :
+  - la Seconde Guerre mondiale et l'après-1945 (`xxe`, `seconde-guerre`, `sgm-cours`) ne sont plus proposés en 1re, mais en 3e et en terminale ;
+  - la Révolution française (`revolution`) passe de la 2nde à la 1re, comme dans le programme de 2019.
+- Deux chapitres de 3e ajoutés : « 1944-1947, refonder la République » et « Enjeux et conflits dans le monde après 1989 » (20 questions chacun, vannes validées par le juge).
+- **Un programme = un pays, sans mélange** (js/mod-programmes.js) : en haut des matières, une rangée d'onglets 🇫🇷 France · 🏴 England · 🇺🇸 United States · 🇮🇹 Italia · 🇪🇸 España · 🇵🇹 Portugal · 🇩🇪 Deutschland. Chaque onglet n'ouvre que son programme :
+  - l'écran England n'affiche plus les outils du programme français (révision du jour, réponse écrite, veille de contrôle, défi de classe, correction par Plumo, défi rétro, « Mon pays : France ») ni le lien « Programme français » en bas ; il garde ses Years, Mocks, Past papers et gagne une carte « My year group & exams » ;
+  - la table des matières française n'affiche plus les cartes « England curriculum » et « Mon pays » ;
+  - chaque pays a son écran (classes, matières dans sa langue, maths dans sa langue, examens) ;
+  - « Mes erreurs » et la révision du jour sont triées par programme : chaque pays ne revoit que ses propres erreurs ;
+  - le menu « Mon programme » de la page d'accueil propose les 7 programmes ; « Entrer » ouvre directement le programme choisi.
+  Rien n'est supprimé : les anciens chemins (« Choisis ton pays », gb-programme) mènent au même endroit.
+- Tests v6.89 ajoutés (histoire et tri par pays) ; tests v6.1 et v6.77 adaptés aux onglets.
+
+## Version 6.88.0
+
+- Histoire de 5e traduite en italien et en portugais : Moyen Âge et Renaissance, révision 5e, cours de 5e, l'affirmation de l'État monarchique (4 chapitres, 80 questions par langue, mêmes dates qu'en français).
+- 951 questions traduites par langue au total. Test v6.88 ajouté.
+
+## Version 6.87.0
+
+- Première page (table des matières) : le bouton « 🎮 Jeux et entraînement » est retiré. Ce qui n'était que sur cet écran est rangé directement sur la page, dans un bloc « Jeux et entraînement » : défi du jour, apprendre des mots, mots à revoir, mots et langues, professeur IA, battle, objectif et série, mot du jour, carnet, réglages, espace parents. Pas de doublon : Maths, Sciences, Mes erreurs et la correction par Plumo restent là où ils étaient déjà.
+- L'ancien écran des jeux n'est plus affiché : les boutons retour qui y menaient ramènent à la table des matières (le code est conservé).
+- Histoire de 6e traduite en italien et en portugais : Antiquité, révision 6e, cours de 6e, naissance du monothéisme juif (4 chapitres, 80 questions par langue, mêmes dates qu'en français).
+- Tests v6.38 et v6.87 mis à jour / ajoutés.
+
+## Version 6.86.0
+
+- SVT du lycée traduites en italien et en portugais : génétique, révisions 2nde/1re/Tle, cours de 2nde, 1re et Terminale (7 chapitres).
+- Physique-chimie du lycée traduite en italien et en portugais : révisions 1re/Tle, cours de 2nde, 1re et Terminale (5 chapitres).
+- 791 questions traduites par langue au total ; mêmes réponses et même ordre que le français, vannes validées par le juge.
+- Test v6.86 ajouté ; les tests v6.83/v6.84 vérifient désormais qu'une matière non traduite (histoire) reste en français.
+
+## Version 6.85.0 — la technologie en italien et en portugais
+
+- **Nouveaux fichiers** `js/mat-trad-it-techno.js` et `js/mat-trad-pt-techno.js` : les **6 chapitres de technologie** (cours de 5e, 4e et 3e ; numérique et cybersécurité ; énergie, mécanismes et fabrication ; démarche de projet), soit **120 questions par langue**, traduites depuis le français dans le même ordre, avec explications et vannes de Plumo (validées par le juge).
+- Quand une question parle d’une réalité française (brevet, numéro 3018, loi), la traduction le précise (« esame francese », « em França »).
+- Total traduit en italien et en portugais : SVT, physique-chimie et technologie du collège (551 questions par langue). À suivre : SVT et physique-chimie du lycée, puis histoire-géographie.
+- Test v6.85 ajouté.
+
+## Version 6.84.0 — la physique-chimie du collège en italien et en portugais
+
+- **Nouveaux fichiers** `js/mat-trad-it-physique.js` et `js/mat-trad-pt-physique.js` : les **11 chapitres de physique-chimie du collège** (la matière et ses états, électricité, révisions 6e, cours de 6e, 5e, 4e et 3e, premiers algorithmes, sécurité électrique et signaux, matériaux, composition de l’Univers), soit **229 questions par langue**, traduites depuis le français dans le même ordre, avec explications et vannes de Plumo (validées par le juge).
+- Les calculs de physique fabriqués à la volée (vitesse, poids, énergie, masse volumique, électricité) parlaient déjà italien et portugais.
+- Total traduit en italien et en portugais : SVT et physique-chimie du collège (431 questions par langue). À suivre : technologie, puis lycée et histoire-géographie.
+- Test v6.84 ajouté (mêmes nombres dans les réponses chiffrées qu’en français).
+
+## Version 6.83.0 — les matières françaises commencent à parler italien et portugais : les SVT du collège
+
+- **Nouveaux fichiers** `js/mat-trad-it-svt.js` et `js/mat-trad-pt-svt.js` : les **10 chapitres de SVT du collège** (6e → 3e : le vivant et la cellule, corps humain et santé, la planète Terre, révisions 6e et 5e-4e, cours de 6e, 5e, 4e et 3e, la Terre en 6e), soit **202 questions par langue**, traduites depuis le français dans le même ordre, avec leurs explications et les vannes de Plumo (validées par le juge).
+- Interface en italien ou en portugais : ces chapitres s’affichent dans la langue ; les chapitres pas encore traduits restent en français, comme avant.
+- Ce qui reste à traduire en italien et en portugais (questions différentes, par langue) : SVT du lycée (~130), physique-chimie (~325), technologie (120), histoire-géographie et EMC (~830), puis les autres matières (français, philosophie, droit, médecine, astronomie, spécialités…). Les cours d’anglais ne sont pas concernés.
+- Test v6.83 ajouté.
+
+## Version 6.82.0 — le Portugal dans « Mon pays »
+
+- **Système scolaire** : du 6.º ao 12.º ano, avec l’équivalent français de chaque classe (9.º ano ≈ 3e, 12.º ano ≈ Tle).
+- **Fiches d’examens** (`js/examens-monde.js`, vérifiées en novembre 2026) : *provas finais do 9.º ano* (portugais et mathématiques, 30 % de la note finale, sur ordinateur en 2026) et *exames finais nacionais do ensino secundário* (0 à 200 points, épreuves d’entrée à l’université). Depuis 2025, l’EduQA reprend les missions de l’IAVE et de la DGE.
+- **4 matières en portugais européen** (`js/pays-portugal.js`, **140 questions**) : *Português* (Camões, Gil Vicente, Eça, Camilo, Garrett, Pessoa et ses hétéronymes, Saramago, Sophia), *História e Cidadania* (de D. Afonso Henriques au 25 de Abril, Constitution de 1976, institutions), *Ciências* (Ciências Naturais, Físico-Química ; Biologia e Geologia, Física e Química A ; Egas Moniz) et *Filosofia* au secondaire (argumentation, libre arbitre, Kant, Mill, Rawls, Popper, Kuhn).
+- **7 entraînements d’examen** : prova final de Matemática et de Português ; exames nacionais de Matemática A (635), Português (639), História A (623), Biologia e Geologia / Física e Química A, Filosofia (714). Les maths utilisent les exercices du coin maths en portugais.
+- **Veille des programmes** : le Portugal est ajouté (sources officielles : Aprendizagens Essenciais, EduQA).
+- Test v6.76 mis à jour (7 pays au lieu de 6), test v6.82 ajouté.
+
+## Version 6.81.0 — les programmes des pays, suite : sciences, philosophie, géographie
+
+Chaque pays de « 🌍 Mon pays » passe de 2 à 4 matières, toujours dans sa langue.
+
+- **Nouveaux fichiers** `js/pays-italie2.js`, `js/pays-espagne2.js`, `js/pays-allemagne2.js`, `js/pays-usa2.js` : 8 matières, 14 chapitres, **280 questions** (20 par chapitre), avec explication et vannes validées par le juge.
+  - 🇮🇹 *Scienze* (materia, cellula, Galileo ; DNA, Mendel, Volta, Fermi, Levi-Montalcini) et *Filosofia* au liceo (presocratici → Freud, colloquio).
+  - 🇪🇸 *Ciencias* (Biología y Geología, Física y Química ; Ramón y Cajal, Margarita Salas, PAU) et *Filosofía* en Bachillerato (Platón → Ortega y Gasset, María Zambrano, comentario PAU).
+  - 🇩🇪 *Naturwissenschaften* (Biologie, Chemie, Physik ; Röntgen, Einstein, Hahn und Meitner) et *Erdkunde* (Deutschland, Klimadiagramm, Strukturwandel ; Globalisierung, Stadt, Klima, Operatoren).
+  - 🇺🇸 *Science* (life, earth and physical science ; biology, chemistry, physics) et *Geography* (U.S. and world ; AP Human Geography).
+- `js/pays-commun.js` : une matière peut n'exister qu'au lycée (la philosophie n'apparaît pas en collège).
+- **8 nouveaux entraînements d'examen** : colloquio di filosofia, verifica di scienze ; PAU Historia de la Filosofía et Ciencias ; Abitur Naturwissenschaften et Geographie ; AP Human Geography, Biology/Chemistry/Physics.
+- Catalogue de la veille : 36 matières. Test v6.81 ajouté.
+
+## Version 6.80.0 — les programmes des pays (Italie, Espagne, Allemagne, États-Unis, Angleterre)
+
+« 🌍 Mon pays » ne propose plus seulement des maths : chaque pays a ses vrais chapitres, écrits dans sa langue.
+
+- **Nouveaux fichiers** `js/pays-commun.js`, `js/pays-italie.js`, `js/pays-espagne.js`, `js/pays-allemagne.js`, `js/pays-usa.js` : 8 matières, 16 chapitres, **320 questions** (20 par chapitre, partie collège et partie lycée), avec explication et vannes douces dans la langue du pays, toutes validées par le juge.
+  - 🇮🇹 *Italiano* (Manzoni, Dante, Leopardi, Verga, Pirandello, metrica, analisi del testo) et *Storia ed educazione civica* (Comuni, Risorgimento, 1861, Resistenza, Repubblica, Costituzione 1948).
+  - 🇪🇸 *Lengua castellana y literatura* (tilde, subjuntivo, Siglo de Oro, 98, 27, comentario de texto, PAU) et *Geografía e Historia* (al-Ándalus, 1492, Cádiz 1812, Guerra Civil, Transición, Constitución 1978).
+  - 🇩🇪 *Deutsch* (Kasus, Nebensatz, Konjunktiv I, Klassik, Kafka, Brecht, Erörterung) et *Geschichte und Politik* (Reformation, 1871, Weimar, NS-Diktatur, Grundgesetz, Mauer, Einheit, Bundestag).
+  - 🇺🇸 *English Language Arts* (grammar, theme, rhetoric, American literature, digital SAT) et *U.S. History & Civics* (1776, Constitution, amendments, Civil War, civil rights, Cold War, branches of government).
+  - 🇬🇧 L'Angleterre ouvre désormais le **programme anglais complet déjà présent** (Year 6 → A level) au bon Year, avec ses Mocks.
+- **Mon pays** : section « 📚 Mes matières (programme du pays) » (chapitre de la classe, trimestres et contrôles, écran de la matière), **« 🔢 Maths dans ma langue »** (20 questions de la classe, avec les vannes) et **nouveaux entraînements d'examen** : prima prova, storia, esame di terza media ; PAU Lengua et Historia de España, control ESO ; Abitur Deutsch et Geschichte, Klassenarbeit ; SAT Reading & Writing, U.S. History & Government, Civics test ; GCSE English, GCSE History, A level English Literature.
+- Ces matières n'apparaissent pas dans la table des matières française ; elles entrent dans le catalogue de la veille (`serveur-php/admin/catalogue.json`, 28 matières) pour les mises à jour de programmes.
+- Test v6.80 ajouté.
+
+## Version 6.79.1 — les tests tiennent dans la mémoire d'un Codespace
+
+- `npm run verifier` s'arrêtait sur un Codespace avec « JavaScript heap out of memory ». Avec la v6.78, les ~250 pages de test (jsdom) dépassaient les 2 Go de mémoire que Node s'accorde par défaut.
+- Chaque page ouverte pendant un test est maintenant fermée à la fin du test.
+- Le test principal tourne avec `--max-old-space-size=4096` (pic mesuré : environ 3 Go). Ça tient sur un Codespace de 8 Go et sur les machines de GitHub Actions.
+- Mesure de la mémoire test par test : `MEMOIRE=1 node --expose-gc tests/jeu.test.js`.
+
 ## Version 6.79 — corrections de l'audit de la v6.77, « Mon lycée » pour la section internationale
 
 - **Aide aux devoirs par IA soumise à l'accord d'un parent** (point 3 de l'audit) :

@@ -35,6 +35,16 @@
     'Moyenne du bachillerato (sur 10) :':['Bachillerato average (out of 10):', 'Nota media de Bachillerato (sobre 10):', 'Bachillerato-Durchschnitt (von 10):', 'Media del bachillerato (su 10):', 'Média do bachillerato (em 10):'],
     'Note d’accès : {0}/10 (60 % bachillerato + 40 % PAU).':['Access mark: {0}/10 (60% bachillerato + 40% PAU).', 'Nota de acceso: {0}/10 (60 % Bachillerato + 40 % PAU).', 'Zugangsnote: {0}/10 (60 % Bachillerato + 40 % PAU).', 'Voto di accesso: {0}/10 (60 % bachillerato + 40 % PAU).', 'Nota de acesso: {0}/10 (60 % bachillerato + 40 % PAU).'],
     'Il faut au moins 4/10 à la PAU pour que la note d’accès soit calculée.':['You need at least 4/10 in the PAU for the access mark to be calculated.', 'Hace falta al menos un 4/10 en la PAU para calcular la nota de acceso.', 'Man braucht mindestens 4/10 in der PAU, damit die Zugangsnote berechnet wird.', 'Serve almeno 4/10 nella PAU per calcolare il voto di accesso.', 'É preciso pelo menos 4/10 na PAU para calcular a nota de acesso.'],
+    // v6.80 : les matières du programme du pays, les maths dans la langue du pays, le programme anglais complet.
+    '📚 Mes matières (programme du pays)':['📚 My subjects (country curriculum)', '📚 Mis asignaturas (programa del país)', '📚 Meine Fächer (Lehrplan des Landes)', '📚 Le mie materie (programma del paese)', '📚 As minhas disciplinas (programa do país)'],
+    'Questions écrites dans la langue du pays. Ta classe choisit la partie collège ou lycée.':['Questions written in the country’s language. Your year group picks the lower or upper secondary part.', 'Preguntas escritas en el idioma del país. Tu curso elige la parte de ESO o de Bachillerato.', 'Fragen in der Landessprache. Deine Klasse wählt den Teil Sekundarstufe I oder Oberstufe.', 'Domande scritte nella lingua del paese. La tua classe sceglie la parte media o superiore.', 'Perguntas escritas na língua do país. A tua turma escolhe a parte do básico ou do secundário.'],
+    '▶ S’entraîner ({0})':['▶ Practise ({0})', '▶ Practicar ({0})', '▶ Üben ({0})', '▶ Allenati ({0})', '▶ Praticar ({0})'],
+    '📅 Trimestres et contrôles':['📅 Terms and tests', '📅 Trimestres y controles', '📅 Trimester und Tests', '📅 Trimestri e verifiche', '📅 Períodos e testes'],
+    '🔢 Maths dans ma langue':['🔢 Maths in my language', '🔢 Matemáticas en mi idioma', '🔢 Mathe in meiner Sprache', '🔢 Matematica nella mia lingua', '🔢 Matemática na minha língua'],
+    '{0} questions de ta classe, dans la langue du pays, avec les vannes de Plumo':['{0} questions for your year group, in the country’s language, with Plumo’s teasing', '{0} preguntas de tu curso, en el idioma del país, con las bromas de Plumo', '{0} Fragen für deine Klasse, in der Landessprache, mit Plumos Sprüchen', '{0} domande della tua classe, nella lingua del paese, con le battute di Plumo', '{0} perguntas da tua turma, na língua do país, com as piadas do Plumo'],
+    'Le programme anglais complet, de Year 6 à l’A level : matières, chapitres, étoiles.':['The full English curriculum, Year 6 to A level: subjects, topics, stars.', 'El programa inglés completo, de Year 6 al A level: asignaturas, temas, estrellas.', 'Der komplette englische Lehrplan, von Year 6 bis A level: Fächer, Themen, Sterne.', 'Il programma inglese completo, dallo Year 6 all’A level: materie, capitoli, stelle.', 'O programa inglês completo, do Year 6 ao A level: disciplinas, capítulos, estrelas.'],
+    'SATs, GCSE et A level blancs, et les sujets jumeaux 2026.':['Mock SATs, GCSE and A level, plus the 2026 twin papers.', 'Simulacros de SATs, GCSE y A level, y los exámenes gemelos 2026.', 'Probe-SATs, -GCSE und -A level, dazu die Zwillingsaufgaben 2026.', 'Simulazioni di SATs, GCSE e A level, e le prove gemelle 2026.', 'Simulados de SATs, GCSE e A level, e as provas gémeas 2026.'],
+    '🔢 Maths : {0}':['🔢 Maths: {0}', '🔢 Matemáticas: {0}', '🔢 Mathe: {0}', '🔢 Matematica: {0}', '🔢 Matemática: {0}'],
     'Meilleure note : {0}':['Best mark: {0}', 'Mejor nota: {0}', 'Beste Note: {0}', 'Voto migliore: {0}', 'Melhor nota: {0}']
   });
 
@@ -45,7 +55,8 @@
     for(const [k, v] of Object.entries(o)) if(/^[a-z]{2}-[a-z0-9-]{1,40}$/.test(k) && v && Number.isFinite(+v.best)) r[k] = { best:Math.max(0, Math.min(1, +v.best)), last:Math.max(0, Math.min(1, +v.last || 0)) };
     j.paysNotes = r; return r; };
 
-  M.cartes.matiere.push(() => { const s = S()[pays()]; return s ? '<div class="cartes-anglais">' + M.carte('pays-ecran', '', '🌍', api().esc(tx('🌍 Mon pays : {0}', s.drapeau + ' ' + s.nom)).replace(/^🌍 /, ''), api().esc(tx('Ton système scolaire, tes classes, tes examens et des entraînements dans la langue du pays.'))) + '</div>' : ''; });
+  // v6.89 : avec les onglets de pays (js/mod-programmes.js), plus de carte « Mon pays » mélangée aux matières françaises.
+  M.cartes.matiere.push(() => { const s = S()[pays()]; return s && !window.AMI_PROGRAMMES ? '<div class="cartes-anglais">' + M.carte('pays-ecran', '', '🌍', api().esc(tx('🌍 Mon pays : {0}', s.drapeau + ' ' + s.nom)).replace(/^🌍 /, ''), api().esc(tx('Ton système scolaire, tes classes, tes examens et des entraînements dans la langue du pays.'))) + '</div>' : ''; });
 
   function choix(){
     const A = api(), esc = A.esc, cur = pays();
@@ -59,12 +70,35 @@
         (Array.isArray(x.epreuves) && x.epreuves.length ? '<ul>' + x.epreuves.map(e => '<li>' + esc(e.nom) + [e.duree, e.notation, e.format].filter(Boolean).map(v => ' · ' + esc(v)).join('') + '</li>').join('') + '</ul>' : '') + '</article>'; };
     const blancs = (B()[id] || []).map(b => '<button class="carte-anglais" data-a="pays-blanc" data-v="' + esc(b.id) + '"><span class="ic">📝</span><strong>' + esc(b.titre) + '</strong><small>' + esc(tx('{0} questions · {1} min · dans la langue du pays, sans vanne, corrigé à la fin', b.n, b.minutes)) +
       (nt[b.id] ? ' · ' + esc(tx('Meilleure note : {0}', noteDe(Math.round(nt[b.id].best * b.n), b.n, b.bareme))) : '') + '</small></button>').join('');
-    A.poser(A.barre('matieres') + '<main class="coin-anglais pays-ecran"><h2>' + s.drapeau + ' ' + esc(s.nom) + '</h2>' +
+    const P = window.AMI_PROGRAMMES;
+    A.poser(A.barre(P && A.CONFIG && A.CONFIG.OUVRIR_MATIERES ? 'bienvenue' : 'matieres') + '<main class="coin-anglais pays-ecran"><h2>' + s.drapeau + ' ' + esc(s.nom) + '</h2>' + (P ? P.onglets(id) : '') +
       '<h3>' + esc(tx('Ma classe')) + '</h3><div class="ma-classe pays-classes">' + s.classes.map(([nom, eq], i) => '<button class="petit-bouton' + (eq === niv ? ' actif' : '') + '" data-a="pays-classe" data-v="' + i + '" aria-pressed="' + (eq === niv) + '">' + esc(nom) + ' <small>' + esc(tx('≈ {0} en France', eq)) + '</small></button>').join('') + '</div>' +
+      matieres(id, s, niv) + (P ? '<div class="cartes-anglais">' + P.carteErreurs(id) + '</div>' : '') +
       '<h3>' + esc(tx('Mes examens')) + '</h3>' + s.examens.map(fiche).join('') +
       '<h3>' + esc(tx('S’entraîner pour l’examen')) + '</h3>' + (id === 'fr' ? '<div class="actions serrees"><button class="moyen plein" data-a="examens">' + esc(tx('📝 Brevet et bac blancs')) + '</button></div>'
         : '<p class="petit">' + esc(tx('C’est un entraînement avec les exercices du jeu, pas le vrai sujet : il prépare aux notions, pas au format exact.')) + '</p><div class="cartes-anglais">' + blancs + '</div>') +
-      '<div class="actions serrees"><button class="moyen" data-a="pays">' + esc(tx('Changer de pays')) + '</button></div></main>');
+      (P ? '' : '<div class="actions serrees"><button class="moyen" data-a="pays">' + esc(tx('Changer de pays')) + '</button></div>') + '</main>');
+  }
+  // v6.80 : les matières du programme du pays (js/pays-*.js) ; l'Angleterre ouvre le programme anglais complet (js/gb-*.js).
+  const gbNiveau = nom => { const m = /Year (\d+)/.exec(nom || ''); return m ? 'Y' + m[1] : null; };
+  function matieres(id, s, niv){
+    const A = api(), esc = A.esc, Ms = window.MATIERES, l = (s.matieres || []).map(x => Ms && Ms.trouver(x)).filter(Boolean);
+    const maths = window.MATHS && MATHS.NIVEAUX.includes(niv) && id !== 'fr' ? M.carte('pays-maths', '', '🔢', esc(tx('🔢 Maths dans ma langue')).replace(/^🔢 /, ''), esc(tx('{0} questions de ta classe, dans la langue du pays, avec les vannes de Plumo', 20))) : '';
+    const gb = id === 'uk' && window.ENGLAND && M.actions['gb-programme'] ? M.carte('pays-gb', '', '🏴', 'England curriculum', esc(tx('Le programme anglais complet, de Year 6 à l’A level : matières, chapitres, étoiles.'))) +
+      M.carte('pays-gb-mocks', '', '📝', 'Mocks', esc(tx('SATs, GCSE et A level blancs, et les sujets jumeaux 2026.'))) : '';
+    if(!l.length && !maths && !gb) return '';
+    const bloc = m => { const chs = Ms.chapitres(m.id, niv); if(!chs.length) return '';
+      return '<section class="domaine pays-matiere"><h4>' + m.ic + ' ' + esc(Ms.nom(m)) + '</h4><div class="actions serrees">' +
+        chs.map(c => '<button class="moyen plein" data-a="matiere-chap" data-v="' + esc(m.id + '|' + c.id) + '">' + esc(tx('▶ S’entraîner ({0})', c.nom)) + '</button>').join('') +
+        (Ms.trimestres(m.id, niv) && M.actions['mat-tri'] ? '<button class="moyen" data-a="mat-tri" data-v="' + esc(m.id) + '">' + esc(tx('📅 Trimestres et contrôles')) + '</button>' : '') +
+        '<button class="moyen" data-a="matiere" data-v="' + esc(m.id) + '">📚 ' + esc(Ms.nom(m)) + '</button></div></section>'; };
+    return '<h3>' + esc(tx('📚 Mes matières (programme du pays)')) + '</h3>' + (l.length ? '<p class="petit">' + esc(tx('Questions écrites dans la langue du pays. Ta classe choisit la partie collège ou lycée.')) + '</p>' : '') +
+      l.map(bloc).join('') + '<div class="cartes-anglais">' + gb + maths + '</div>';
+  }
+  function maths(){
+    const A = api(), id = pays(), s = S()[id], niv = A.etatMatieres().niveau, l = serieDans(s.langue, niv, 20); if(!l.length) return ecran();
+    const b = { id:id + '-maths-' + niv.toLowerCase(), titre:tx('🔢 Maths : {0}', s.drapeau + ' ' + niv), n:l.length, bareme:'brut', rejouer:['pays-maths', ''] };
+    A.questionsGo(l, { titre:b.titre, retour:'pays-ecran', prof:true, lang:s.langue, fin:z => fin(b, z) });
   }
   // Les exercices du coin maths, générés dans la langue du pays (traductions js/maths-xx.js), puis l'interface reprend sa langue.
   function serieDans(langue, niveau, n){
@@ -74,7 +108,11 @@
   }
   function blanc(bid){
     const A = api(), id = pays(), b = (B()[id] || []).find(x => x.id === bid); if(!b) return ecran();
-    const l = serieDans(S()[id].langue, b.niveau, b.n); if(!l.length) return ecran();
+    const graine = Math.floor(Math.random() * 1e9);
+    const l = b.matiere ? (window.MATIERES ? MATIERES.serie(b.matiere, b.chap || 'examen', b.niveau, b.n, graine, 'taquin') : [])
+      : b.england ? (window.ENGLAND ? ENGLAND.serie(b.england, 'examen', b.niveau, b.n, graine, 'taquin') : [])
+      : serieDans(S()[id].langue, b.niveau, b.n);
+    if(!l.length) return ecran();
     A.questionsGo(l, { titre:'📝 ' + b.titre, retour:'matieres', prof:true, lang:S()[id].langue, finA:Date.now() + b.minutes * 60000, sansVanne:true, fin:z => fin(b, z) });
   }
   function fin(b, z){
@@ -85,7 +123,7 @@
     A.poser(A.barre('matieres') + '<main class="centre trimestre-fin pays-fin"><h2>' + esc('📝 ' + b.titre) + '</h2><p class="gros-score">' + esc(tx('Note : {0}', noteDe(z.bonnes, n, b.bareme))) + '</p><p>' + esc(tx('{0} bonnes réponses sur {1}', z.bonnes, n)) + '</p>' +
       (b.bareme === 'sur10' ? '<section class="calcul-acces"><h3>' + esc(tx('Calcule ta note d’accès')) + '</h3><label>' + esc(tx('Moyenne du bachillerato (sur 10) :')) + ' <input id="pays-media" type="number" min="0" max="10" step="0.01" inputmode="decimal"></label> <span id="pays-acces" data-pau="' + (10 * part) + '" aria-live="polite"></span></section>' : '') +
       (err.length || sans.length ? '<h3>' + esc(tx('À revoir')) + '</h3><ol class="correction-controle">' + err.map(r => item(r.q, '<p>❌ ' + esc(tx('Ta réponse :')) + ' <span lang="' + esc(r.q.lang || 'fr') + '">' + esc(r.choix) + '</span></p>')).join('') + sans.map(q => item(q, '<p>⏱️ ' + esc(tx('Pas de réponse (temps écoulé).')) + '</p>')).join('') + '</ol>' : '') +
-      '<div class="actions serrees"><button class="moyen plein" data-a="pays-blanc" data-v="' + esc(b.id) + '">' + esc(tx('🔁 Recommencer')) + '</button><button class="moyen" data-a="pays-ecran">🌍 ' + esc(S()[pays()].nom) + '</button></div></main>');
+      '<div class="actions serrees"><button class="moyen plein" data-a="' + esc((b.rejouer || ['pays-blanc'])[0]) + '" data-v="' + esc(b.rejouer ? b.rejouer[1] : b.id) + '">' + esc(tx('🔁 Recommencer')) + '</button><button class="moyen" data-a="pays-ecran">🌍 ' + esc(S()[pays()].nom) + '</button></div></main>');
   }
   // PAU : note d'accès = 0,6 × moyenne du bachillerato + 0,4 × PAU, calculée seulement à partir de 4/10 à la PAU.
   const acces = (media, pau) => pau < 4 ? null : Math.round((0.6 * media + 0.4 * pau) * 1000) / 1000;
@@ -98,7 +136,11 @@
     'pays-ecran':() => ecran(),
     'pays-choisir':v => { if(S()[v]){ api().J().systeme = v; api().garder(); } return ecran(); },
     'pays-classe':v => { const A = api(), s = S()[pays()], c = s && s.classes[+v]; if(c){ const j = A.J(); A.etatMatieres().niveau = c[1]; j.matieres = Object.assign(j.matieres || {}, { niveau:c[1] });
-      const em = A.etatMaths && A.etatMaths(); if(em) em.niveau = c[1]; j.maths = Object.assign(j.maths || {}, { niveau:c[1] }); A.garder(); } return ecran(); },
+      const em = A.etatMaths && A.etatMaths(); if(em) em.niveau = c[1]; j.maths = Object.assign(j.maths || {}, { niveau:c[1] });
+      const y = pays() === 'uk' && gbNiveau(c[0]); if(y) j.gb = Object.assign(j.gb && typeof j.gb === 'object' ? j.gb : {}, { niveau:y }); A.garder(); } return ecran(); },
+    'pays-maths':() => maths(),
+    'pays-gb':() => M.actions['gb-programme']('gb'),
+    'pays-gb-mocks':() => { api().base().programme = 'gb'; api().garder(); return M.actions['gb-mocks'] ? M.actions['gb-mocks']() : M.actions['gb-programme']('gb'); },
     'pays-blanc':v => blanc(v)
   });
   window.AMI_PAYS = { pays, serieDans, noteDe, acces };

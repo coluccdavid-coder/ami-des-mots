@@ -6,7 +6,7 @@ const R = path.join(__dirname, '..'), lire = f => fs.readFileSync(path.join(R, f
 const w = new JSDOM('<main id="app"></main>', { runScripts:'outside-only', url:'https://jeu.example/admin.html' }).window;
 for(const f of ['js/donnees.js', 'js/textes.js', 'js/offre.js', 'js/admin.js']) w.eval(lire(f));
 // v6.75 : les chapitres des matières, pour que la veille rattache un programme officiel aux chapitres existants.
-const scripts = [...lire('index.html').matchAll(/src="(js\/[^"]+)"/g)].map(m => m[1]).filter(f => /^js\/(matieres|mat-|themes)/.test(f));
+const scripts = [...lire('index.html').matchAll(/src="(js\/[^"]+)"/g)].map(m => m[1]).filter(f => /^js\/(matieres|mat-|themes|pays-)/.test(f));
 const wm = new JSDOM('<main></main>', { runScripts:'outside-only' }).window;
 for(const f of scripts) wm.eval(lire(f));
 const matieres = {};

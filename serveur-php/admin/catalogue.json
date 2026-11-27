@@ -467,7 +467,7 @@
     "Révolution et XIXe siècle",
     [
      "4e",
-     "2nde"
+     "1re"
     ]
    ],
    [
@@ -475,7 +475,6 @@
     "Guerres mondiales et XXe siècle",
     [
      "3e",
-     "1re",
      "Tle"
     ]
    ],
@@ -484,7 +483,6 @@
     "La Seconde Guerre mondiale (1939-1945)",
     [
      "3e",
-     "1re",
      "Tle"
     ]
    ],
@@ -523,7 +521,7 @@
     "Cours de 3e : la Seconde Guerre mondiale, une guerre d’anéantissement",
     [
      "3e",
-     "1re"
+     "Tle"
     ]
    ],
    [
@@ -743,6 +741,20 @@
    [
     "cpl-h3-france",
     "Histoire 3e : la France depuis 1945 et la Ve République",
+    [
+     "3e"
+    ]
+   ],
+   [
+    "cpl-h3-refonder",
+    "Histoire 3e : 1944-1947, refonder la République",
+    [
+     "3e"
+    ]
+   ],
+   [
+    "cpl-h3-apres89",
+    "Histoire 3e : enjeux et conflits dans le monde après 1989",
     [
      "3e"
     ]
@@ -2158,6 +2170,396 @@
     "cours-nsi",
     "NSI 1re-Tle : données, algorithmes, réseaux, bases de données, structures, programmation",
     [
+     "1re",
+     "Tle"
+    ]
+   ]
+  ],
+  "it-italiano": [
+   [
+    "it-italiano-college",
+    "Scuola media: grammatica e letteratura",
+    [
+     "6e",
+     "5e",
+     "4e",
+     "3e"
+    ]
+   ],
+   [
+    "it-italiano-lycee",
+    "Scuola superiore: letteratura e analisi del testo",
+    [
+     "2nde",
+     "1re",
+     "Tle"
+    ]
+   ]
+  ],
+  "it-storia": [
+   [
+    "it-storia-college",
+    "Scuola media: dal Medioevo all’Italia repubblicana",
+    [
+     "6e",
+     "5e",
+     "4e",
+     "3e"
+    ]
+   ],
+   [
+    "it-storia-lycee",
+    "Scuola superiore: dal Rinascimento a oggi, Costituzione",
+    [
+     "2nde",
+     "1re",
+     "Tle"
+    ]
+   ]
+  ],
+  "es-lengua": [
+   [
+    "es-lengua-college",
+    "ESO: ortografía, gramática y literatura",
+    [
+     "6e",
+     "5e",
+     "4e",
+     "3e"
+    ]
+   ],
+   [
+    "es-lengua-lycee",
+    "Bachillerato: literatura española e hispanoamericana, comentario",
+    [
+     "2nde",
+     "1re",
+     "Tle"
+    ]
+   ]
+  ],
+  "es-historia": [
+   [
+    "es-historia-college",
+    "ESO: historia y geografía de España",
+    [
+     "6e",
+     "5e",
+     "4e",
+     "3e"
+    ]
+   ],
+   [
+    "es-historia-lycee",
+    "Bachillerato: Historia de España (hacia la PAU)",
+    [
+     "2nde",
+     "1re",
+     "Tle"
+    ]
+   ]
+  ],
+  "de-deutsch": [
+   [
+    "de-deutsch-college",
+    "Sekundarstufe I: Grammatik, Rechtschreibung, Literatur",
+    [
+     "6e",
+     "5e",
+     "4e",
+     "3e"
+    ]
+   ],
+   [
+    "de-deutsch-lycee",
+    "Oberstufe: Epochen, Werke, Analyse",
+    [
+     "2nde",
+     "1re",
+     "Tle"
+    ]
+   ]
+  ],
+  "de-geschichte": [
+   [
+    "de-geschichte-college",
+    "Sekundarstufe I: vom Mittelalter zur Einheit",
+    [
+     "6e",
+     "5e",
+     "4e",
+     "3e"
+    ]
+   ],
+   [
+    "de-geschichte-lycee",
+    "Oberstufe: Nation, Diktatur, Demokratie, Europa",
+    [
+     "2nde",
+     "1re",
+     "Tle"
+    ]
+   ]
+  ],
+  "us-ela": [
+   [
+    "us-ela-college",
+    "Middle school: grammar, reading and literature",
+    [
+     "6e",
+     "5e",
+     "4e",
+     "3e"
+    ]
+   ],
+   [
+    "us-ela-lycee",
+    "High school: American literature, rhetoric and the SAT",
+    [
+     "2nde",
+     "1re",
+     "Tle"
+    ]
+   ]
+  ],
+  "us-history": [
+   [
+    "us-history-college",
+    "Middle school: colonies, founding and civics",
+    [
+     "6e",
+     "5e",
+     "4e",
+     "3e"
+    ]
+   ],
+   [
+    "us-history-lycee",
+    "High school: from Reconstruction to today, government",
+    [
+     "2nde",
+     "1re",
+     "Tle"
+    ]
+   ]
+  ],
+  "it-scienze": [
+   [
+    "it-scienze-college",
+    "Scuola media: materia, viventi, Terra",
+    [
+     "6e",
+     "5e",
+     "4e",
+     "3e"
+    ]
+   ],
+   [
+    "it-scienze-lycee",
+    "Scuola superiore: biologia, chimica, fisica",
+    [
+     "2nde",
+     "1re",
+     "Tle"
+    ]
+   ]
+  ],
+  "it-filosofia": [
+   [
+    "it-filosofia-lycee",
+    "Licei: dai presocratici al Novecento",
+    [
+     "2nde",
+     "1re",
+     "Tle"
+    ]
+   ]
+  ],
+  "es-ciencias": [
+   [
+    "es-ciencias-college",
+    "ESO: Biología y Geología, Física y Química",
+    [
+     "6e",
+     "5e",
+     "4e",
+     "3e"
+    ]
+   ],
+   [
+    "es-ciencias-lycee",
+    "Bachillerato: Biología, Química y Física (hacia la PAU)",
+    [
+     "2nde",
+     "1re",
+     "Tle"
+    ]
+   ]
+  ],
+  "es-filosofia": [
+   [
+    "es-filosofia-lycee",
+    "Bachillerato: Filosofía e Historia de la Filosofía",
+    [
+     "2nde",
+     "1re",
+     "Tle"
+    ]
+   ]
+  ],
+  "de-naturwissenschaften": [
+   [
+    "de-naturwissenschaften-college",
+    "Sekundarstufe I: Biologie, Chemie, Physik",
+    [
+     "6e",
+     "5e",
+     "4e",
+     "3e"
+    ]
+   ],
+   [
+    "de-naturwissenschaften-lycee",
+    "Oberstufe: Genetik, Chemie, Physik",
+    [
+     "2nde",
+     "1re",
+     "Tle"
+    ]
+   ]
+  ],
+  "de-erdkunde": [
+   [
+    "de-erdkunde-college",
+    "Sekundarstufe I: Deutschland, Europa, Welt",
+    [
+     "6e",
+     "5e",
+     "4e",
+     "3e"
+    ]
+   ],
+   [
+    "de-erdkunde-lycee",
+    "Oberstufe: Globalisierung, Stadt, Klima",
+    [
+     "2nde",
+     "1re",
+     "Tle"
+    ]
+   ]
+  ],
+  "us-science": [
+   [
+    "us-science-college",
+    "Middle school: life, earth and physical science",
+    [
+     "6e",
+     "5e",
+     "4e",
+     "3e"
+    ]
+   ],
+   [
+    "us-science-lycee",
+    "High school: biology, chemistry, physics",
+    [
+     "2nde",
+     "1re",
+     "Tle"
+    ]
+   ]
+  ],
+  "us-geography": [
+   [
+    "us-geography-college",
+    "Middle school: the United States and the world",
+    [
+     "6e",
+     "5e",
+     "4e",
+     "3e"
+    ]
+   ],
+   [
+    "us-geography-lycee",
+    "High school: human geography (AP)",
+    [
+     "2nde",
+     "1re",
+     "Tle"
+    ]
+   ]
+  ],
+  "pt-portugues": [
+   [
+    "pt-portugues-college",
+    "Ensino básico: gramática e literatura",
+    [
+     "6e",
+     "5e",
+     "4e",
+     "3e"
+    ]
+   ],
+   [
+    "pt-portugues-lycee",
+    "Ensino secundário: literatura portuguesa e análise de texto",
+    [
+     "2nde",
+     "1re",
+     "Tle"
+    ]
+   ]
+  ],
+  "pt-historia": [
+   [
+    "pt-historia-college",
+    "Ensino básico: de Afonso Henriques ao 25 de Abril",
+    [
+     "6e",
+     "5e",
+     "4e",
+     "3e"
+    ]
+   ],
+   [
+    "pt-historia-lycee",
+    "Ensino secundário: História A",
+    [
+     "2nde",
+     "1re",
+     "Tle"
+    ]
+   ]
+  ],
+  "pt-ciencias": [
+   [
+    "pt-ciencias-college",
+    "Ensino básico: Ciências Naturais e Físico-Química",
+    [
+     "6e",
+     "5e",
+     "4e",
+     "3e"
+    ]
+   ],
+   [
+    "pt-ciencias-lycee",
+    "Ensino secundário: Biologia e Geologia, Física e Química A",
+    [
+     "2nde",
+     "1re",
+     "Tle"
+    ]
+   ]
+  ],
+  "pt-filosofia": [
+   [
+    "pt-filosofia-lycee",
+    "Ensino secundário: Filosofia (10.º e 11.º anos)",
+    [
+     "2nde",
      "1re",
      "Tle"
     ]

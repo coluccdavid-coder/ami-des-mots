@@ -87,5 +87,27 @@ window.EXAMENS_MONDE = {
       conditions:'Notes de A* (la meilleure) à E.',
       epreuves:[{ nom:'Une épreuve par matière choisie', duree:'', notation:'A* à E', format:'écrits en fin de deuxième année' }],
       changements:[] }
+  },
+  // v6.82 : Portugal. Depuis 2025, l'EduQA (Instituto de Educação, Qualidade e Avaliação) remplace l'IAVE et la DGE.
+  pt:{
+    'provas-finais-9':{ sorte:'epreuve', examen:'Provas finais do 9.º ano', classe:'3e', session:'2026', maj:'2026-11-26',
+      source:'https://eduqa.pt/',
+      resume:'Fin du 3.º ciclo do ensino básico (vers 14-15 ans) : épreuves nationales obligatoires de portugais et de mathématiques, sur ordinateur en 2026.',
+      conditions:'La note de l’épreuve compte pour 30 % de la note finale de chaque matière ; le reste vient de l’évaluation de l’année.',
+      epreuves:[
+        { nom:'Português (91)', duree:'', notation:'en %, puis niveau 1 à 5', format:'écrit ; une partie orale pour certains candidats' },
+        { nom:'Matemática (92)', duree:'', notation:'en %, puis niveau 1 à 5', format:'écrit' }
+      ],
+      changements:[] },
+    'exames-nacionais':{ sorte:'epreuve', examen:'Exames finais nacionais do ensino secundário', classe:'Tle', session:'2026', maj:'2026-11-26',
+      source:'https://eduqa.pt/',
+      resume:'Examens nationaux de fin de lycée (11.º et 12.º anos) : ils comptent pour le diplôme et servent d’épreuves d’entrée à l’université (provas de ingresso).',
+      conditions:'Notes de 0 à 200 points (0 à 20 valores). Chaque formation fixe ses épreuves d’entrée et ses seuils ; la note de candidature combine la moyenne du secondaire et ces épreuves.',
+      epreuves:[
+        { nom:'Português (639), 12.º ano', duree:'', notation:'0 à 200', format:'écrit, obligatoire dans les filières générales' },
+        { nom:'Matemática A (635), História A (623)…', duree:'', notation:'0 à 200', format:'écrit, selon la filière' },
+        { nom:'Biologia e Geologia (702), Física e Química A (715), Filosofia (714)…', duree:'', notation:'0 à 200', format:'écrit, en fin de 11.º ano' }
+      ],
+      changements:['2026 : correction entièrement numérique des examens du secondaire, pour la première fois.', 'Depuis 2025, l’EduQA reprend les missions de l’IAVE et de la DGE.'] }
   }
 };
