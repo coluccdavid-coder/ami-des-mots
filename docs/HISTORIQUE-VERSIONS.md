@@ -5,6 +5,14 @@ Avant la v6.44, chaque version avait son propre fichier VERSION-x.y.txt à la ra
 
 ---
 
+## Version 6.90.0
+
+- 5e complétée selon le programme : nouveau chapitre « Bagdad et les califes, Charles Quint et Soliman, conflits religieux » (Omeyyades, Abbassides, Maison de la sagesse, prise de Bagdad en 1258, Charles Quint, Soliman, siège de Vienne, Saint-Barthélemy, huguenots, Henri IV, révocation de l'édit de Nantes).
+- 4e complétée selon le programme : nouveau chapitre « Ports négriers, Code noir, conquêtes et sociétés coloniales » (Nantes, Bordeaux, Saint-Domingue, Code noir, traite atlantique, Toussaint Louverture, 1802, conquête de l'Algérie, Abd el-Kader, conférence de Berlin, Samory Touré, AOF, indigénat, travail forcé).
+- 20 questions chacun, traduits en anglais, espagnol et allemand (et en italien et portugais pour la 5e), rangés dans les thèmes « Moyen Âge », « Renaissance… Lumières », « Révolution » et « XIXe siècle ». Rien n'est supprimé.
+- Écran d'une matière sur grand écran : les blocs de chapitres (Connaissances, Calculs…) ne se chevauchent plus. Les colonnes sont en rem (elles grandissent avec le texte agrandi des grands écrans) et en auto-fit (elles occupent toute la largeur au lieu de laisser des colonnes vides) ; les titres longs passent à la ligne et le bouton 📖 reste dans son bloc.
+- Test v6.90 ajouté.
+
 ## Version 6.89.0
 
 - Histoire alignée sur les programmes officiels (voir docs/POINT-PROGRAMMES-HISTOIRE-GEO.md), sans rien supprimer :
