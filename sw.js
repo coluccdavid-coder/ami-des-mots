@@ -1,7 +1,7 @@
 // GÉNÉRÉ par outils/construire-sw.js — ne pas éditer.
 // Les ressources locales sont gardées pour jouer hors connexion. Le module 3D charge Three.js en ligne. Les voix (autre site)
 // ne sont pas gardées ici : sans réseau, c'est la voix du téléphone.
-const CACHE = 'amidesmots-1ef339f910';
+const CACHE = 'amidesmots-96e93fdb6b';
 const FICHIERS = [
  "./",
  "index.html",
@@ -42,6 +42,16 @@ const FICHIERS = [
  "js/examens-monde.js",
  "js/mod-veille-programmes.js",
  "js/systemes-scolaires.js",
+ "js/pays-commun.js",
+ "js/pays-italie.js",
+ "js/pays-espagne.js",
+ "js/pays-allemagne.js",
+ "js/pays-usa.js",
+ "js/pays-italie2.js",
+ "js/pays-espagne2.js",
+ "js/pays-allemagne2.js",
+ "js/pays-usa2.js",
+ "js/pays-portugal.js",
  "js/mod-parcours-pays.js",
  "js/mod-section-internationale.js",
  "js/gb-moteur.js",
@@ -122,8 +132,11 @@ const FICHIERS = [
  "js/mat-anglais-international2.js",
  "js/mat-noms.js",
  "js/mat-noms-it-pt.js",
+ "js/mat-histoire-3e-programme.js",
+ "js/mat-histoire-niveaux.js",
  "js/themes.js",
  "js/mod-angleterre.js",
+ "js/mod-programmes.js",
  "js/metiers.js",
  "js/quetes.js",
  "js/pieges.js",
@@ -184,6 +197,14 @@ const FICHIERS = [
  "js/mat-trad-es-francais.js",
  "js/mat-trad-de-histoire.js",
  "js/mat-trad-de-sciences.js",
+ "js/mat-trad-it-svt.js",
+ "js/mat-trad-pt-svt.js",
+ "js/mat-trad-it-physique.js",
+ "js/mat-trad-pt-physique.js",
+ "js/mat-trad-it-techno.js",
+ "js/mat-trad-pt-techno.js",
+ "js/mat-trad-it-histoire.js",
+ "js/mat-trad-pt-histoire.js",
  "js/mat-francais.js",
  "js/mat-histoire.js",
  "js/mat-histoire-sgm.js",

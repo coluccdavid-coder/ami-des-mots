@@ -18,6 +18,7 @@ return [
     'de' => ['nom' => 'Allemagne', 'langue' => 'de', 'domaines' => ['www.kmk.org', 'kmk.org']],
     'us' => ['nom' => 'États-Unis', 'langue' => 'en', 'domaines' => ['www.thecorestandards.org', 'corestandards.org', 'www.nextgenscience.org', 'satsuite.collegeboard.org']],
     'uk' => ['nom' => 'Royaume-Uni', 'langue' => 'en', 'domaines' => ['www.gov.uk']],
+    'pt' => ['nom' => 'Portugal', 'langue' => 'pt', 'domaines' => ['eduqa.pt', 'www.eduqa.pt', 'www.dge.mec.pt', 'dge.mec.pt', 'iave.pt', 'www.iave.pt']],
   ],
   'sources' => [
     // ── France, maths (forme historique) ──
@@ -51,6 +52,9 @@ return [
     // ── États-Unis : SAT ; Royaume-Uni : GCSE et A levels ──
     ['systeme' => 'us', 'sorte' => 'epreuve', 'matiere' => 'toutes', 'classe' => 'Tle', 'url' => 'https://satsuite.collegeboard.org/sat', 'id' => 'sat'],
     ['systeme' => 'uk', 'sorte' => 'diplome', 'matiere' => 'toutes', 'classe' => '3e', 'url' => 'https://www.gov.uk/national-curriculum/key-stage-4', 'id' => 'gcse'],
+    // ── Portugal : Aprendizagens Essenciais (programmes) et EduQA (provas finais, exames nacionais) ──
+    ['systeme' => 'pt', 'sorte' => 'programme', 'matiere' => 'toutes', 'classe' => '3e', 'url' => 'https://www.dge.mec.pt/aprendizagens-essenciais-0'],
+    ['systeme' => 'pt', 'sorte' => 'epreuve', 'matiere' => 'toutes', 'classe' => 'Tle', 'url' => 'https://eduqa.pt/', 'id' => 'exames-nacionais'],
     // ── États-Unis : Common Core (maths et anglais) ──
     ['systeme' => 'us', 'sorte' => 'programme', 'matiere' => 'maths', 'classe' => '4e', 'url' => 'https://www.thecorestandards.org/about-the-standards/'],
   ],
