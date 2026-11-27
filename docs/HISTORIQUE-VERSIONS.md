@@ -5,6 +5,44 @@ Avant la v6.44, chaque version avait son propre fichier VERSION-x.y.txt à la ra
 
 ---
 
+## Version 6.94.0
+
+EMC du lycée, qui manquait (programme de 2024, appliqué à tous les niveaux depuis la rentrée 2026) : trois chapitres de 20 questions dans « Histoire-géo & EMC », en français, anglais, espagnol et allemand (noms en italien et portugais).
+- 2nde : droits, libertés et responsabilité.
+- 1re : cohésion et diversité dans une société démocratique.
+- Tle : la vie démocratique — débat, délibération et prise de décision.
+- Les 60 questions rejoignent le thème « L’EMC : toutes les questions », qui couvre désormais de la 6e à la terminale.
+- Rien n’a été supprimé.
+
+## Version 6.93.0
+
+Études d’infirmier (IFSI), suite : l’espace IFSI compte maintenant 10 leçons de 20 questions (français, anglais, espagnol ; noms en italien et portugais).
+- Infirmier 6 : urgences et gestes de l’AFGSU (15, 112, 114, arrêt cardiaque, DAE, PLS, étouffement, AVC, hypoglycémie, anaphylaxie, Glasgow).
+- Infirmier 7 : pathologies courantes et surveillance (diabète, insuffisance cardiaque, infarctus, BPCO, asthme, AVC, Alzheimer, Parkinson, rein, thrombose, dénutrition, sepsis de chimiothérapie).
+- Infirmier 8 : droit, éthique et déontologie (secret, consentement, loi Kouchner, personne de confiance, directives anticipées, lois Leonetti et Claeys-Leonetti, code de 2016, contention, secret partagé).
+- Infirmier 9 : relation de soin, éducation et santé publique (écoute active, empathie, Rogers, ETP, Henderson, Maslow, préventions, OMS, démarche de soins).
+- Infirmier 10 : 20 cas cliniques de révision du diplôme d’État.
+- Nouvelle carte « 🔁 Révision IFSI : toutes les leçons » : 20 questions mélangées, avec les vannes, erreurs dans le carnet. L’examen blanc pioche désormais dans les 10 leçons.
+- Rien n’a été supprimé.
+
+## Version 6.92.0
+
+Études d’infirmier (IFSI) dans la matière Médecine (niveau Sup), comme les autres matières :
+- 5 chapitres de 20 questions, en français, anglais et espagnol (noms en italien et portugais) : parcours IFSI (référentiels 2009 et 20 février 2026, 180 ECTS, 4 620 h dont 2 310 h de stages, Ordre, rôle propre / prescrit, loi du 27 juin 2025, arrêté du 26 juin 2026), calculs de doses et débits, pharmacologie, soins et surveillance, hygiène et gestion des risques ; chaque chapitre a sa leçon 📖.
+- Espace « 🩺 Études d’infirmier (IFSI) » depuis l’écran Médecine : examen blanc (40 questions, 60 min) et épreuve de calculs de doses (20 questions, 30 min), chronométrés, sans vanne, corrigés à la fin avec la note sur 20.
+- Deux études de documents fictives : lire une prescription, interpréter une feuille de surveillance.
+- Textes officiels : arrêté du 20 février 2026, réingénierie (FHF), fiche RNCP 42589, arrêté du 26 juin 2026 (Légifrance), Parcoursup, Ordre national des infirmiers.
+- Rien n’a été supprimé.
+
+## Version 6.91.0
+
+- Géographie complétée selon le programme, sans rien supprimer :
+  - 5e : « Prévenir les risques industriels et technologiques » (AZF, Bhopal, Fukushima, sites Seveso, Lubrizol, sirènes, PPRT, FR-Alert) — 20 questions ;
+  - 4e : « Les États-Unis et l'Afrique de l'Ouest dans la mondialisation » (Megalopolis, Sun Belt, Rust Belt, Silicon Valley, frontière mexicaine, ACEUM ; Lagos, CEDEAO, cacao, pétrole, Sahel, Lomé, agriculture vivrière) — 20 questions ;
+  - 2nde : « L'Afrique australe, un espace en profonde mutation » (Afrique du Sud, SADC, Johannesburg, trois capitales, apartheid, mines, Botswana, Zambèze, Namib, townships, Kruger, Lesotho) — 20 questions.
+- Traduits en anglais, espagnol et allemand ; rangés dans le thème « La géographie : toutes les questions ».
+- Test v6.91 ajouté.
+
 ## Version 6.90.0
 
 - 5e complétée selon le programme : nouveau chapitre « Bagdad et les califes, Charles Quint et Soliman, conflits religieux » (Omeyyades, Abbassides, Maison de la sagesse, prise de Bagdad en 1258, Charles Quint, Soliman, siège de Vienne, Saint-Barthélemy, huguenots, Henri IV, révocation de l'édit de Nantes).
