@@ -1,7 +1,7 @@
 // GÉNÉRÉ par outils/construire-sw.js — ne pas éditer.
 // Les ressources locales sont gardées pour jouer hors connexion. Le module 3D charge Three.js en ligne. Les voix (autre site)
 // ne sont pas gardées ici : sans réseau, c'est la voix du téléphone.
-const CACHE = 'amidesmots-68d802da15';
+const CACHE = 'amidesmots-f9ee2b7725';
 const FICHIERS = [
  "./",
  "index.html",
@@ -51,6 +51,7 @@ const FICHIERS = [
  "js/cours-fiches-maths-lycee.js",
  "js/cours-fiches-anglais.js",
  "js/cours-fiches-en.js",
+ "js/cours-fiches-complements.js",
  "js/mod-intensif.js",
  "js/mod-grand-oral.js",
  "js/mod-copie.js",
@@ -140,6 +141,7 @@ const FICHIERS = [
  "js/mat-philo-plus2.js",
  "js/mat-philo-plus3.js",
  "js/mat-anglais-lycee-fin.js",
+ "js/mat-anglais-axes-2025.js",
  "js/mat-svt-lycee-fin.js",
  "js/mat-physique-lycee-fin.js",
  "js/mat-histoire-lycee-fin.js",
@@ -197,6 +199,7 @@ const FICHIERS = [
  "js/maths-2026-1re.js",
  "js/maths-2026-autres.js",
  "js/maths-2026-college.js",
+ "js/maths-2026-complements.js",
  "js/sciences-en.js",
  "js/sciences-es.js",
  "js/sciences-de.js",
@@ -205,6 +208,7 @@ const FICHIERS = [
  "js/sciences.js",
  "js/sciences-plus.js",
  "js/trash-talk.js",
+ "js/plumo-vivant.js",
  "js/vannes-arrogantes.js",
  "js/vannes-fraiches.js",
  "js/bande-images.js",

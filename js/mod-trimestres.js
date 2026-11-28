@@ -15,19 +15,19 @@
   const TRIMESTRES = {
     '1re':[
       { id:'T1', mois:'septembre → novembre', themes:'Second degré, suites, automatismes',
-        chap:['1-automatismes', '1-second-degre', '1-nb-solutions', '1-forme-canonique', '1-signe-trinome', '1-suites', '1-recurrence', '1-sommes-suites'] },
+        chap:['1-automatismes', '1-second-degre', '1-nb-solutions', '1-forme-canonique', '1-signe-trinome', '1-suites', '1-recurrence', '1-sommes-suites', '1-approx-affine'] },
       { id:'T2', mois:'décembre → mars', themes:'Dérivation, probabilités conditionnelles, produit scalaire',
-        chap:['1-derivees', '1-tangente', '1-derivee-produit', '1-variations', '1-probas-conditionnelles', '1-produit-scalaire', '1-scalaire-angle'] },
+        chap:['1-derivees', '1-tangente', '1-derivee-produit', '1-variations', '1-derivee-affine', '1-probas-conditionnelles', '1-bernoulli', '1-produit-scalaire', '1-scalaire-angle', '1-projete'] },
       { id:'T3', mois:'mars → juin', themes:'Exponentielle, trigonométrie, géométrie repérée, variables aléatoires',
-        chap:['1-exponentielle', '1-trigonometrie', '1-cercle', '1-esperance', '1-automatismes'] }
+        chap:['1-exponentielle', '1-trigonometrie', '1-cercle', '1-esperance', '1-variance', '1-automatismes'] }
     ],
     'Tle':[
       { id:'T1', mois:'septembre → novembre', themes:'Suites et limites, fonctions : limites, continuité, dérivation, convexité, espace',
-        chap:['T-suites-limites', 'T-limites', 'T-tvi', 'T-derivees', 'T-convexite', 'T-exp-equations', 'T-espace'] },
+        chap:['T-recurrence', 'T-suites-limites', 'T-limites', 'T-tvi', 'T-derivees', 'T-convexite', 'T-exp-equations', 'T-espace'] },
       { id:'T2', mois:'décembre → mars', themes:'Logarithme, sinus et cosinus, dénombrement, loi binomiale, droites de l’espace',
         chap:['T-logarithme', 'T-ln-equations', 'T-croissances-comparees', 'T-derivees-trigo', 'T-denombrement', 'T-binomiale', 'T-espace-parametrique'] },
-      { id:'T3', mois:'mars → juin', themes:'Primitives, calcul intégral, espérance et variance (avant les épreuves de juin)',
-        chap:['T-primitives', 'T-primitives-exp', 'T-integrales', 'T-binomiale-esperance'] }
+      { id:'T3', mois:'mars → juin', themes:'Primitives, calcul intégral, intégration par parties, équations différentielles, sommes de variables aléatoires (avant les épreuves de juin)',
+        chap:['T-primitives', 'T-primitives-exp', 'T-integrales', 'T-ipp', 'T-equa-diff', 'T-binomiale-esperance', 'T-grands-nombres'] }
     ]
   };
   const N = 20, MINUTES = 40;
@@ -50,7 +50,7 @@
     'Exponentielle, trigonométrie, géométrie repérée, variables aléatoires':['Exponential, trigonometry, coordinate geometry, random variables', 'Exponencial, trigonometría, geometría analítica, variables aleatorias', 'Exponentialfunktion, Trigonometrie, analytische Geometrie, Zufallsvariablen', 'Esponenziale, trigonometria, geometria analitica, variabili aleatorie', 'Exponencial, trigonometria, geometria analítica, variáveis aleatórias'],
     'Suites et limites, fonctions : limites, continuité, dérivation, convexité, espace':['Sequences and limits, functions: limits, continuity, differentiation, convexity, 3D geometry', 'Sucesiones y límites, funciones: límites, continuidad, derivación, convexidad, espacio', 'Folgen und Grenzwerte, Funktionen: Grenzwerte, Stetigkeit, Ableitung, Konvexität, Raum', 'Successioni e limiti, funzioni: limiti, continuità, derivazione, convessità, spazio', 'Sucessões e limites, funções: limites, continuidade, derivação, convexidade, espaço'],
     'Logarithme, sinus et cosinus, dénombrement, loi binomiale, droites de l’espace':['Logarithm, sine and cosine, counting, binomial distribution, lines in space', 'Logaritmo, seno y coseno, combinatoria, distribución binomial, rectas del espacio', 'Logarithmus, Sinus und Kosinus, Kombinatorik, Binomialverteilung, Geraden im Raum', 'Logaritmo, seno e coseno, calcolo combinatorio, legge binomiale, rette nello spazio', 'Logaritmo, seno e cosseno, contagem, distribuição binomial, retas no espaço'],
-    'Primitives, calcul intégral, espérance et variance (avant les épreuves de juin)':['Antiderivatives, integration, expectation and variance (before the June exams)', 'Primitivas, cálculo integral, esperanza y varianza (antes de los exámenes de junio)', 'Stammfunktionen, Integralrechnung, Erwartungswert und Varianz (vor den Prüfungen im Juni)', 'Primitive, calcolo integrale, speranza e varianza (prima degli esami di giugno)', 'Primitivas, cálculo integral, valor esperado e variância (antes dos exames de junho)'],
+    'Primitives, calcul intégral, intégration par parties, équations différentielles, sommes de variables aléatoires (avant les épreuves de juin)':['Antiderivatives, integration, integration by parts, differential equations, sums of random variables (before the June exams)', 'Primitivas, cálculo integral, integración por partes, ecuaciones diferenciales, sumas de variables aleatorias (antes de los exámenes de junio)', 'Stammfunktionen, Integralrechnung, partielle Integration, Differentialgleichungen, Summen von Zufallsvariablen (vor den Prüfungen im Juni)', 'Primitive, calcolo integrale, integrazione per parti, equazioni differenziali, somme di variabili aleatorie (prima degli esami di giugno)', 'Primitivas, cálculo integral, integração por partes, equações diferenciais, somas de variáveis aleatórias (antes dos exames de junho)'],
     '🏋️ S’entraîner':['🏋️ Practise', '🏋️ Practicar', '🏋️ Üben', '🏋️ Esercitarsi', '🏋️ Treinar'],
     '📝 Contrôle':['📝 Test', '📝 Control', '📝 Test', '📝 Verifica', '📝 Teste'],
     '🏆 Contrôle bilan de l’année':['🏆 End-of-year test', '🏆 Control final del año', '🏆 Jahresabschlusstest', '🏆 Verifica di fine anno', '🏆 Teste final do ano'],

@@ -107,15 +107,15 @@
     'Plumo pensait que la statue de la Liberté était américaine de naissance. Elle a été fabriquée en France. Surprise ! 🗽');
 
   // ═════════ Lycée ═════════
-  f('axes2', 'Les axes du programme de 2nde',
-    ['Thème de 2nde : « L’art de vivre ensemble », en 8 axes.',
-     'Vivre entre générations ; les univers professionnels, le monde du travail ; le village, le quartier, la ville ; représentation de soi et rapport à autrui.',
-     'Sports et société ; la création et le rapport aux arts ; sauver la planète, penser les futurs possibles ; le passé dans le présent.',
-     'Niveau visé en fin de 2nde (LVA) : B1 du CECRL.'],
-    'Un document sur les selfies et les réseaux sociaux : quel axe ?', ['Il parle de l’image qu’on donne de soi aux autres.', 'Axe « Représentation de soi et rapport à autrui ».'],
-    ['Relie le sujet du document à un axe.', 'Apprends quelques mots clés par axe (the generation gap, a neighbourhood, heritage, peer pressure).'],
-    ['Résumer un document sans le rattacher à un axe.'],
-    'Plumo a rangé un document sur le foot dans « Sauver la planète ». Le ballon était en plastique recyclé, d’accord… mais c’est « Sports et société ». ⚽');
+  f('axes2', 'Les axes du programme de 2nde (programme de 2025)',
+    ['Six axes en 2nde : représentation de soi et rapport à autrui ; vivre entre générations ; le passé dans le présent ; défis et transitions ; créer et recréer ; les pays du Commonwealth : héritages, unité, diversité.',
+     'En voie générale, cinq axes sur six sont traités dans l’année, dont obligatoirement l’axe 6 (le Commonwealth). En voie technologique, au moins trois axes.',
+     'Niveau visé en fin de 2nde : B1+ en LVA, A2+ en LVB.',
+     'Chaque document se relie à un axe : présenter, analyser, mettre en relation, donner un avis argumenté.'],
+    'Un document sur le jubilé du Commonwealth et l’indépendance de l’Inde : quel axe ?', ['Il parle de l’héritage de l’Empire britannique et des liens entre pays.', 'Axe 6 « Les pays du Commonwealth : héritages, unité, diversité », l’axe obligatoire.'],
+    ['Relie le sujet du document à un axe.', 'Apprends quelques mots clés par axe (the generation gap, heritage, peer pressure, a challenge, a remake).'],
+    ['Utiliser les huit axes de l’ancien programme (« Sports et société », « Le village, le quartier, la ville »…), supprimés en 2025.'],
+    'Plumo cherchait encore l’axe « Sports et société ». Il a fini par ranger son ballon dans « Défis et transitions ». Le ballon n’a pas protesté. ⚽');
   f('ce', 'Compréhension de l’écrit',
     ['Lire d’abord le titre, la source, la date et les images : on anticipe le thème.',
      'Repérer les mots transparents, les noms propres, les chiffres, puis les mots de liaison qui organisent les idées.',
