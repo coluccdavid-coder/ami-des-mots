@@ -5,7 +5,7 @@
 // En français pour l'instant. Rien n'est inventé : notions du programme officiel, exemples vérifiés.
 (function(){
   'use strict';
-  const F = {};
+  const F = {}, TR = {};
   const fiche = (cle, o) => { F[cle] = Object.assign({ cle }, o); };
 
   // ═════════ FRANÇAIS ═════════
@@ -312,7 +312,10 @@
   const api = {
     F,
     ajouter:fiche,
-    get:cle => F[cle] || null,
+    // v9.8 : une fiche peut être traduite (TR[langue][clé]) ; sans traduction, la version française est servie.
+    traduire:(lang, cle, o) => { (TR[lang] = TR[lang] || {})[cle] = o; },
+    get:(cle, lang) => { const f = F[cle]; if(!f) return null; const t = lang && lang !== 'fr' && TR[lang] && TR[lang][cle]; return t ? Object.assign({}, f, t, { exemple:Object.assign({}, f.exemple, t.exemple || {}), lang }) : f; },
+    traduite:(cle, lang) => !!(TR[lang] && TR[lang][cle]),
     a:cle => !!F[cle],
     cles:() => Object.keys(F),
     // Les fiches d'une matière (pour la base de connaissances).

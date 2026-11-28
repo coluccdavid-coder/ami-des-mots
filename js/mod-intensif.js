@@ -91,6 +91,19 @@
     'Plumo a sorti son stylo rouge, mais il a aussi vu de belles réponses. Le corrigé est là pour la suite. 🖍️':['Plumo got his red pen out, but he also saw some fine answers. The corrections are here for next time. 🖍️', 'Plumo sacó su boli rojo, pero también vio buenas respuestas. Aquí tienes la corrección para la próxima. 🖍️', 'Plumo hat den Rotstift gezückt, aber auch schöne Antworten gesehen. Die Korrektur hilft beim nächsten Mal. 🖍️', 'Plumo ha tirato fuori la penna rossa, ma ha visto anche belle risposte. La correzione è qui per la prossima volta. 🖍️', 'O Plumo pegou na caneta vermelha, mas também viu boas respostas. A correção fica aqui para a próxima. 🖍️'],
     'Le stylo rouge de Plumo a bien travaillé aujourd’hui. Bonne nouvelle : chaque erreur corrigée ici ne sera plus faite le jour J. 💪':['Plumo’s red pen worked hard today. Good news: every mistake corrected here will not happen on the day. 💪', 'El boli rojo de Plumo ha trabajado mucho hoy. Buena noticia: cada error corregido aquí no se repetirá el día del examen. 💪', 'Plumos Rotstift hatte heute viel zu tun. Gute Nachricht: Jeder Fehler, der hier korrigiert wird, passiert am Prüfungstag nicht mehr. 💪', 'La penna rossa di Plumo ha lavorato molto oggi. Buona notizia: ogni errore corretto qui non si ripeterà il giorno dell’esame. 💪', 'A caneta vermelha do Plumo trabalhou muito hoje. Boa notícia: cada erro corrigido aqui não se repete no dia do exame. 💪'],
     '— (pas encore)':['— (not yet)', '— (todavía no)', '— (noch nicht)', '— (non ancora)', '— (ainda não)'],
+    '🚀 Prendre de l’avance':['🚀 Get ahead', '🚀 Adelantarse', '🚀 Vorarbeiten', '🚀 Portarsi avanti', '🚀 Avançar'],
+    'Tu as appris toutes les leçons de ton année ? Passe le test de passage ({0} / 20 pour réussir) : la classe suivante s’ouvre, matière par matière. Tes erreurs continuent de revenir en révision.':['Learnt every lesson of your year? Take the step-up test ({0} / 20 to pass): the next class opens, subject by subject. Your mistakes keep coming back for review.', '¿Has aprendido todas las lecciones del curso? Haz el test de paso ({0} / 20 para aprobar): el curso siguiente se abre, asignatura por asignatura. Tus errores siguen volviendo al repaso.', 'Alle Lektionen des Jahres gelernt? Mach den Aufstiegstest ({0} / 20 zum Bestehen): Die nächste Klasse öffnet sich, Fach für Fach. Deine Fehler kommen weiter zur Wiederholung.', 'Hai imparato tutte le lezioni dell’anno? Fai il test di passaggio ({0} / 20 per superarlo): la classe successiva si apre, materia per materia. I tuoi errori continuano a tornare nel ripasso.', 'Aprendeste todas as lições do ano? Faz o teste de passagem ({0} / 20 para passar): o ano seguinte abre-se, disciplina a disciplina. Os teus erros continuam a voltar na revisão.'],
+    '(en avance)':['(ahead)', '(adelantado)', '(voraus)', '(in anticipo)', '(adiantado)'],
+    'Notions acquises : {0} / {1} ({2} %)':['Topics mastered: {0} / {1} ({2}%)', 'Nociones dominadas: {0} / {1} ({2} %)', 'Beherrschte Themen: {0} / {1} ({2} %)', 'Nozioni acquisite: {0} / {1} ({2} %)', 'Noções dominadas: {0} / {1} ({2} %)'],
+    'Dernier test : {0} / 20':['Last test: {0} / 20', 'Último test: {0} / 20', 'Letzter Test: {0} / 20', 'Ultimo test: {0} / 20', 'Último teste: {0} / 20'],
+    '📝 Test de passage en {0}':['📝 Step-up test to {0}', '📝 Test de paso a {0}', '📝 Aufstiegstest in die {0}', '📝 Test di passaggio in {0}', '📝 Teste de passagem para o {0}'],
+    '🏁 Programme terminé dans cette matière : place aux niveaux experts !':['🏁 Curriculum completed in this subject: on to the expert levels!', '🏁 Programa terminado en esta asignatura: ¡paso a los niveles expertos!', '🏁 Lehrplan in diesem Fach geschafft: weiter mit den Expertenstufen!', '🏁 Programma finito in questa materia: largo ai livelli esperti!', '🏁 Programa terminado nesta disciplina: vamos aos níveis especialistas!'],
+    '↩️ Revenir à ma classe ({0})':['↩️ Back to my class ({0})', '↩️ Volver a mi curso ({0})', '↩️ Zurück zu meiner Klasse ({0})', '↩️ Torna alla mia classe ({0})', '↩️ Voltar ao meu ano ({0})'],
+    'Bravo ! La {0} s’ouvre en {1} : leçons du jour, séries et fiches passent au niveau supérieur. +100 points.':['Well done! {0} opens in {1}: daily lessons, runs and sheets move up a level. +100 points.', '¡Bravo! {0} se abre en {1}: lecciones del día, series y fichas suben de nivel. +100 puntos.', 'Bravo! Die {0} öffnet sich in {1}: Tageslektionen, Serien und Karten steigen eine Stufe auf. +100 Punkte.', 'Bravo! La {0} si apre in {1}: lezioni del giorno, serie e schede salgono di livello. +100 punti.', 'Parabéns! O {0} abre-se em {1}: lições do dia, séries e fichas sobem de nível. +100 pontos.'],
+    'Pas encore : il faut {0} / 20. Révise les notions ratées ci-dessous et retente quand tu veux.':['Not yet: you need {0} / 20. Revise the topics you missed below and try again whenever you like.', 'Todavía no: hace falta {0} / 20. Repasa las nociones falladas y vuelve a intentarlo cuando quieras.', 'Noch nicht: Es braucht {0} / 20. Wiederhole die verpassten Themen unten und versuch es wieder, wann du willst.', 'Non ancora: servono {0} / 20. Ripassa le nozioni sbagliate qui sotto e riprova quando vuoi.', 'Ainda não: é preciso {0} / 20. Revê as noções falhadas abaixo e tenta outra vez quando quiseres.'],
+    'Notions acquises : {0}':['Topics mastered: {0}', 'Nociones dominadas: {0}', 'Beherrschte Themen: {0}', 'Nozioni acquisite: {0}', 'Noções dominadas: {0}'],
+    'Test de passage {0} : {1} / 20':['Step-up test {0}: {1} / 20', 'Test de paso {0}: {1} / 20', 'Aufstiegstest {0}: {1} / 20', 'Test di passaggio {0}: {1} / 20', 'Teste de passagem {0}: {1} / 20'],
+    'Séries d’examen (meilleure note) :':['Exam runs (best mark):', 'Series de examen (mejor nota):', 'Prüfungsserien (beste Note):', 'Serie d’esame (voto migliore):', 'Séries de exame (melhor nota):'],
     'Recrue':['Recruit', 'Recluta', 'Rekrut', 'Recluta', 'Recruta'], 'Soldat':['Private', 'Soldado', 'Soldat', 'Soldato', 'Soldado'], 'Caporal':['Corporal', 'Cabo', 'Gefreiter', 'Caporale', 'Cabo'],
     'Sergent':['Sergeant', 'Sargento', 'Unteroffizier', 'Sergente', 'Sargento'], 'Adjudant':['Warrant officer', 'Brigada', 'Feldwebel', 'Maresciallo', 'Sargento-ajudante'], 'Lieutenant':['Lieutenant', 'Teniente', 'Leutnant', 'Tenente', 'Tenente'],
     'Capitaine':['Captain', 'Capitán', 'Hauptmann', 'Capitano', 'Capitão'], 'Commandant':['Major', 'Comandante', 'Major', 'Maggiore', 'Major'], 'Colonel':['Colonel', 'Coronel', 'Oberst', 'Colonnello', 'Coronel'], 'Général':['General', 'General', 'General', 'Generale', 'General'],
@@ -122,6 +135,14 @@
   const gagner = n => { const c = camp(); c.pts += Math.max(0, Math.floor(n) || 0); api().garder(); };
   const niveau = () => { const A = api(); return (A.etatMatieres && A.etatMatieres().niveau) || '6e'; };
   const niveauMaths = () => { const A = api(), N = window.MATHS ? MATHS.NIVEAUX : [], n = (A.etatMaths && A.etatMaths().niveau) || niveau(); return N.includes(n) ? n : N.includes(niveau()) ? niveau() : (N[N.length - 1] || '6e'); };
+  // v9.9 : prendre de l'avance — chaque matière (français, anglais, maths) peut avoir un niveau d'avance validé par un test de passage.
+  const ORDRE = ['6e', '5e', '4e', '3e', '2nde', '1re', 'Tle'], PROGRAMME = ['francais', 'langlais', 'maths'];
+  const niveauBase = mid => mid === 'maths' ? niveauMaths() : niveau();
+  const niveauxDispo = mid => mid === 'maths' ? (window.MATHS ? MATHS.NIVEAUX.filter(n => ORDRE.includes(n)) : []) : (MATR() && MATR().trouver(mid) ? ORDRE.filter(n => MATR().chapitres(mid, n).some(c => !c.theme)) : []);
+  const niveauDe = mid => { if(!PROGRAMME.includes(mid)) return niveauBase(mid); const a = (camp().avance || {})[mid], b = niveauBase(mid);
+    return ORDRE.includes(a) && ORDRE.indexOf(a) > ORDRE.indexOf(b) && niveauxDispo(mid).includes(a) ? a : b; };
+  const enAvance = mid => niveauDe(mid) !== niveauBase(mid);
+  const suivant = (mid, n) => { const l = niveauxDispo(mid), i = l.indexOf(n); return i >= 0 && i < l.length - 1 ? l[i + 1] : null; };
   const ton = () => { const A = api(); return (A.etatMaths && A.etatMaths().ton) || 'taquin'; };
   const hasard = () => Math.floor(Math.random() * 1e9);
   const melanger = l => { const a = l.slice(); for(let i = a.length - 1; i > 0; i--){ const k = Math.floor(Math.random() * (i + 1)); [a[i], a[k]] = [a[k], a[i]]; } return a; };
@@ -136,23 +157,24 @@
 
   // ───── Notions (chapitres) ─────
     function notions(mid, toutes){
-    if(mid === 'maths'){ if(!window.MATHS) return []; const nivs = toutes ? MATHS.NIVEAUX : [niveauMaths()];
+    if(mid === 'maths'){ if(!window.MATHS) return []; const nivs = toutes ? MATHS.NIVEAUX : [niveauDe('maths')];
       return nivs.flatMap(n => MATHS.chapitresDe(n).map(c => ({ mid:'maths', cid:c[0], nom:c[2] || c[0], niv:n }))); }
     if(!MATR() || !MATR().trouver(mid)) return [];
-    const Mx = MATR(), m = Mx.trouver(mid), chs = (toutes || EXPERTS.includes(mid)) ? m.chapitres : Mx.chapitres(mid, niveau());
+    const Mx = MATR(), m = Mx.trouver(mid), chs = (toutes || EXPERTS.includes(mid)) ? m.chapitres : Mx.chapitres(mid, niveauDe(mid));
     return chs.filter(c => !c.theme && (Array.isArray(c.banque) || c.gen)).map(c => ({ mid, cid:c.id, nom:MATR().nomChap ? MATR().nomChap(m, c) : c.nom, niv:(c.niv || []).join(', ') }));
   }
   const cle = n => n.mid + '/' + n.cid;
   function questions(n, nb){
     if(n.mid === 'maths'){ if(!window.MATHS) return []; return MATHS.serie([n.cid], nb, hasard(), ton()).map(q => Object.assign({}, q, { matiere:'maths' })); }
-    const A = api(); return A.serieMatiere ? A.serieMatiere(n.mid, n.cid, nb, EXPERTS.includes(n.mid) ? 'Sup' : niveau()) : [];
+    const A = api(), Mx = MATR(), ch = Mx && Mx.trouver(n.mid) && Mx.trouver(n.mid).chapitres.find(c => c.id === n.cid), nv = niveauDe(n.mid);
+    return A.serieMatiere ? A.serieMatiere(n.mid, n.cid, nb, EXPERTS.includes(n.mid) ? 'Sup' : ch && Array.isArray(ch.niv) && !ch.niv.includes(nv) ? ch.niv[0] : nv) : [];
   }
   function questionsMelange(mid, nb){
     const A = api();
-    if(mid === 'maths') return window.MATHS ? MATHS.serie(niveauMaths(), nb, hasard(), ton()).map(q => Object.assign({}, q, { matiere:'maths' })) : [];
+    if(mid === 'maths') return window.MATHS ? MATHS.serie(niveauDe('maths'), nb, hasard(), ton()).map(q => Object.assign({}, q, { matiere:'maths' })) : [];
     if(EXPERTS.includes(mid)){ const l = notions(mid, true); return melanger(l.flatMap(n => questions(n, Math.ceil(nb / Math.max(1, l.length)) + 1))).slice(0, nb); }
     if(mid === 'tout'){ const p = Math.ceil(nb / 3); return melanger(questionsMelange('francais', p).concat(questionsMelange('langlais', p), questionsMelange('maths', p))).slice(0, nb); }
-    return A.serieMatiere ? A.serieMatiere(mid, 'melange', nb, niveau()) : [];
+    return A.serieMatiere ? A.serieMatiere(mid, 'melange', nb, niveauDe(mid)) : [];
   }
   // Leçon du jour : on tourne entre français, anglais et maths ; d'abord les notions qui ont une fiche rédigée, puis les autres.
   function leconDuJour(){
@@ -169,18 +191,18 @@
     for(const q of questions(n, 12)){ const r = String(q.regle || '').trim(); if(r && !vus.has(r)){ vus.add(r); out.push(r); } if(out.length >= 6) break; }
     return out; }
   function htmlFiche(n){
-    const A = api(), esc = A.esc, F = window.AMI_COURS && AMI_COURS.get(cle(n));
+    const A = api(), esc = A.esc, F = window.AMI_COURS && AMI_COURS.get(cle(n), A.base().ui);
     const liste = (t, l) => l && l.length ? '<h3>' + esc(tx(t)) + '</h3><ul>' + l.map(x => '<li>' + esc(x) + '</li>').join('') + '</ul>' : '';
     if(!F){ const e = essentielTire(n); return '<p class="petit">' + esc(tx('Pas encore de fiche rédigée : voici l’essentiel, tiré des questions.')) + '</p>' + liste('🧠 L’essentiel', e); }
-    return liste('🧠 L’essentiel', F.essentiel) +
+    return '<div lang="' + (F.lang || 'fr') + '">' + liste('🧠 L’essentiel', F.essentiel) +
       (F.exemple ? '<h3>' + esc(tx('✏️ Exemple corrigé')) + '</h3><p><strong>' + esc(F.exemple.enonce) + '</strong></p><ol>' + F.exemple.etapes.map(x => '<li>' + esc(x) + '</li>').join('') + '</ol>' : '') +
-      liste('🧭 Méthode', F.methode) + liste('⚠️ Pièges', F.pieges) + (F.vanne ? '<p class="vanne-fiche">🦜 ' + esc(F.vanne) + '</p>' : '');
+      liste('🧭 Méthode', F.methode) + liste('⚠️ Pièges', F.pieges) + (F.vanne ? '<p class="vanne-fiche">🦜 ' + esc(F.vanne) + '</p>' : '') + '</div>';
   }
   function mesFiches(mid){ const C = window.AMI_CAHIER; if(!C) return []; const l = C.cahier().lecons; return mid ? l.filter(x => x.matiere === mid || (mid === 'mathematicien' && x.matiere === 'maths')) : l; }
   function ecranFiche(v, depuis){
     const A = api(), esc = A.esc, [mid, cid] = String(v || '').split('/'), n = notions(mid, true).find(x => x.cid === cid); if(!n) return base(mid);
     const c = camp(), acq = c.acquis.includes(cle(n)), perso = mesFiches(mid);
-    A.poser(A.barre('matieres') + '<main class="coin-anglais matieres-ecran fiche-cours"><h2>' + esc((window.AMI_COURS && AMI_COURS.get(cle(n)) || {}).titre || n.nom) + (acq ? ' <small>' + esc(tx('✅ acquise')) + '</small>' : '') + '</h2>' +
+    A.poser(A.barre('matieres') + '<main class="coin-anglais matieres-ecran fiche-cours"><h2>' + esc((window.AMI_COURS && AMI_COURS.get(cle(n), A.base().ui) || {}).titre || n.nom) + (acq ? ' <small>' + esc(tx('✅ acquise')) + '</small>' : '') + '</h2>' +
       htmlFiche(n) +
       '<div class="actions"><button class="moyen plein" data-a="camp-entrainer" data-v="' + esc(cle(n) + '|' + (depuis || '')) + '">' + esc(tx('💪 M’entraîner (10 questions)')) + '</button> ' +
       '<button class="moyen" data-a="camp-sansfilet-notion" data-v="' + esc(cle(n)) + '">' + esc(tx('🪂 Sans filet')) + '</button> ' +
@@ -273,6 +295,40 @@
     } });
   }
 
+  // ───── 🚀 Prendre de l'avance : bilan de l'année, test de passage, niveau suivant ─────
+  const NOMS_MAT = { francais:'Français', langlais:'Anglais', maths:'Maths' }, SEUIL_PASSAGE = 15;
+  function bilan(mid){ const l = notions(mid, false), c = camp(), n = l.filter(x => c.acquis.includes(cle(x))).length; return { niv:niveauDe(mid), total:l.length, acquises:n, pct:l.length ? Math.round(100 * n / l.length) : 0 }; }
+  function questionsNiveau(mid, niv, nb){ const A = api();
+    if(mid === 'maths') return window.MATHS ? MATHS.serie(niv, nb, hasard(), ton()).map(q => Object.assign({}, q, { matiere:'maths' })) : [];
+    return A.serieMatiere ? A.serieMatiere(mid, 'melange', nb, niv) : []; }
+  function annee(){
+    const A = api(), esc = A.esc, c = camp();
+    A.poser(A.barre('matieres') + '<main class="coin-anglais matieres-ecran camp-avance"><h2>' + esc(tx('🚀 Prendre de l’avance')) + '</h2>' +
+      '<p class="pieges-intro">' + esc(tx('Tu as appris toutes les leçons de ton année ? Passe le test de passage ({0} / 20 pour réussir) : la classe suivante s’ouvre, matière par matière. Tes erreurs continuent de revenir en révision.', SEUIL_PASSAGE)) + '</p>' +
+      PROGRAMME.map(mid => { const b = bilan(mid), nx = suivant(mid, b.niv), p = (c.passages || {})[mid + '/' + b.niv];
+        return '<section class="avance-matiere"><h3>' + esc(tx(NOMS_MAT[mid])) + ' · ' + esc(b.niv) + (enAvance(mid) ? ' <small>' + esc(tx('(en avance)')) + '</small>' : '') + '</h3>' +
+          '<p>' + esc(tx('Notions acquises : {0} / {1} ({2} %)', b.acquises, b.total, b.pct)) + (p != null ? ' · ' + esc(tx('Dernier test : {0} / 20', virg(p))) : '') + '</p>' +
+          '<div class="actions">' + (nx ? '<button class="moyen plein" data-a="camp-passage" data-v="' + mid + '">' + esc(tx('📝 Test de passage en {0}', nx)) + '</button>' : '<span>' + esc(tx('🏁 Programme terminé dans cette matière : place aux niveaux experts !')) + '</span>') +
+          (enAvance(mid) ? ' <button class="petit-bouton" data-a="camp-avance-retour" data-v="' + mid + '">' + esc(tx('↩️ Revenir à ma classe ({0})', niveauBase(mid))) + '</button>' : '') + '</div></section>'; }).join('') +
+      '<div class="actions"><button class="moyen" data-a="camp">' + esc(tx('↩️ Retour au camp')) + '</button></div></main>');
+  }
+  function passage(mid){
+    const A = api(), niv = niveauDe(mid), nx = suivant(mid, niv); if(!nx) return annee();
+    const l = questionsNiveau(mid, niv, N_EXAMEN); if(!l.length) return annee();
+    A.questionsGo(copie(melanger(l)), { titre:tx('📝 Test de passage en {0}', nx) + ' · ' + tx(NOMS_MAT[mid]), retour:'matieres', sansVanne:true, finA:Date.now() + MINUTES_EXAMEN * 60000, fin:z => {
+      const c = camp(), esc = A.esc, n = z.liste.length, note = Math.round(z.bonnes / n * 40) / 2, ok = note >= SEUIL_PASSAGE;
+      c.passages = c.passages && typeof c.passages === 'object' ? c.passages : {}; c.passages[mid + '/' + niv] = note;
+      c.avance = c.avance && typeof c.avance === 'object' ? c.avance : {};
+      if(ok){ c.avance[mid] = nx; gagner(100); } else gagner(z.bonnes);
+      const rep = new Map((z.reponses || []).map(r => [r.q, r])), fautes = z.liste.filter(q => !(rep.get(q) || {}).juste);
+      A.poser(A.barre('matieres') + '<main class="coin-anglais matieres-ecran fin-examen"><div class="ami-moyen">' + A.ami(ok ? 'fete' : 'malin') + '</div>' +
+        '<h2>' + esc(tx('Note : {0} / 20', virg(note))) + '</h2><p>' + esc(ok ? tx('Bravo ! La {0} s’ouvre en {1} : leçons du jour, séries et fiches passent au niveau supérieur. +100 points.', nx, tx(NOMS_MAT[mid])) : tx('Pas encore : il faut {0} / 20. Révise les notions ratées ci-dessous et retente quand tu veux.', SEUIL_PASSAGE)) + '</p>' +
+        (fautes.length ? '<h3>' + esc(tx('✏️ Corrigé')) + '</h3><ol class="corrige-examen">' + fautes.map(q => { const r = rep.get(q);
+          return '<li><p><strong>' + esc(q.enonce || '') + '</strong></p><p>' + esc(tx('Ta réponse :')) + ' ' + esc(r ? r.choix : tx('Pas de réponse (temps écoulé)')) + '</p><p>' + esc(tx('Bonne réponse :')) + ' <strong>' + esc(q.bon) + '</strong></p>' + (q.regle ? '<p class="petit">' + esc(q.regle) + '</p>' : '') + '</li>'; }).join('') + '</ol>' : '') +
+        '<div class="actions"><button class="moyen plein" data-a="camp-annee">' + esc(tx('🚀 Prendre de l’avance')) + '</button> <button class="moyen" data-a="camp">' + esc(tx('↩️ Retour au camp')) + '</button></div></main>');
+    } });
+  }
+
   // ───── Compte à rebours ─────
   function rebours(){ const o = camp().objectif, x = EXAMENS.find(e => e[0] === o.examen); if(!x || !x[0] || !/^\d{4}-\d{2}-\d{2}$/.test(o.date || '')) return '';
     const j = Math.round((new Date(o.date + 'T12:00:00') - new Date(aujourdhui() + 'T12:00:00')) / 864e5); if(j < 0) return '';
@@ -290,8 +346,10 @@
       (m.fini ? '<p>' + esc(tx('✅ Mission accomplie ! Repos, soldat. Reviens demain pour la suivante.')) + '</p>' : '<div class="actions"><button class="gros plein" data-a="camp-etape">' + esc(tx('▶️ Étape suivante')) + '</button></div>') + '</section>' +
       '<section><h3>' + esc(tx('🪂 Séries sans filet')) + '</h3><div class="cartes-anglais">' + MATS.concat([['tout', '🎲', 'Tout mélangé']]).filter(x => x[0] === 'maths' || x[0] === 'tout' || (MATR() && MATR().trouver(x[0]))).map(x =>
         M.carte('camp-sansfilet', x[0], x[1], esc(tx(x[2])), esc(tx('Chrono serré, aucun indice : une erreur et la série s’arrête. Record : {0}.', Math.floor(+c.records[x[0]]) || 0)))).join('') + '</div></section>' +
+      '<section><div class="cartes-anglais">' + M.carte('camp-annee', '', '🚀', esc(tx('🚀 Prendre de l’avance')).replace(/^🚀 /, ''), esc(PROGRAMME.map(mid => tx(NOMS_MAT[mid]) + ' ' + niveauDe(mid) + (enAvance(mid) ? ' ⏩' : '')).join(' · '))) + '</div></section>' +
       '<section><h3>' + esc(tx('📝 Séries d’examen')) + '</h3><div class="cartes-anglais">' + EXAMENS.filter(e => e[0]).sort((a, b) => (b[0] === c.objectif.examen) - (a[0] === c.objectif.examen)).map(e => { const ex = (c.examens || {})[e[0]];
-        return M.carte('camp-examen', e[0], '📝', esc(tx(e[1])), esc(tx('20 questions au format de l’examen, 20 minutes, sans vanne ni correction pendant l’épreuve : note sur 20 et corrigé à la fin. Meilleure note : {0}.', ex && ex.meilleure != null ? virg(ex.meilleure) + ' / 20' : tx('— (pas encore)')))); }).join('') + '</div></section>' +
+        return M.carte('camp-examen', e[0], '📝', esc(tx(e[1])), esc(tx('20 questions au format de l’examen, 20 minutes, sans vanne ni correction pendant l’épreuve : note sur 20 et corrigé à la fin. Meilleure note : {0}.', ex && ex.meilleure != null ? virg(ex.meilleure) + ' / 20' : tx('— (pas encore)')))); }).join('') +
+        (window.AMI_GRAND_ORAL ? M.carte('camp-go', '', '🎤', esc(tx('🎤 Grand oral blanc')).replace(/^🎤 /, ''), esc(tx('Au format 2027 : tes deux questions, 20 min de préparation, 10 min de présentation, 10 min d’échange avec le jury, puis la grille d’évaluation.'))) : '') + '</div></section>' +
       '<section><div class="cartes-anglais">' + M.carte('camp-base', 'francais', '📚', esc(tx('📚 Base de connaissances')).replace(/^📚 /, ''), esc(tx('Toutes les notions du programme, avec leur fiche de cours, et tes propres fiches.'))) +
         M.carte('examens', '', '📝', esc(tx('📝 Examens blancs')).replace(/^📝 /, ''), '') + (window.AMI_CAHIER ? M.carte('cahier', '', '📒', esc(tx('📒 Mon cahier')).replace(/^📒 /, ''), '') : '') + '</div></section>' +
       '<section><h3>' + esc(tx('🗓️ Mon objectif')) + '</h3><p><label>' + esc(tx('Examen visé')) + ' <select id="camp-examen">' + EXAMENS.map(e => '<option value="' + e[0] + '"' + (e[0] === c.objectif.examen ? ' selected' : '') + '>' + esc(tx(e[1])) + '</option>').join('') + '</select></label> ' +
@@ -302,13 +360,24 @@
     const l = notions(mid, !!toutes), perso = mesFiches(mid);
     A.poser(A.barre('matieres') + '<main class="coin-anglais matieres-ecran base-connaissances"><h2>' + esc(tx('📚 Base de connaissances')) + '</h2>' +
       '<div class="onglets-matieres" role="tablist">' + MATS.filter(x => x[0] === 'maths' || (MATR() && MATR().trouver(x[0]))).map(x => '<button class="onglet' + (x[0] === mid ? ' actif' : '') + '" role="tab" aria-selected="' + (x[0] === mid) + '"' + (x[0] === mid ? '' : ' data-a="camp-base" data-v="' + x[0] + '"') + '>' + x[1] + ' ' + esc(tx(x[2])) + '</button>').join('') + '</div>' +
-      (EXPERTS.includes(mid) ? '' : '<p>' + esc(tx('Classe : {0}', mid === 'maths' ? niveauMaths() : niveau())) + ' · <button class="petit-bouton" data-a="' + (toutes ? 'camp-base' : 'camp-base-tout') + '" data-v="' + mid + '">' + esc(tx(toutes ? 'Ma classe seulement' : 'Toutes les classes')) + '</button></p>') +
+      (EXPERTS.includes(mid) ? '' : '<p>' + esc(tx('Classe : {0}', niveauDe(mid)) + (enAvance(mid) ? ' ' + tx('(en avance)') : '')) + ' · <button class="petit-bouton" data-a="' + (toutes ? 'camp-base' : 'camp-base-tout') + '" data-v="' + mid + '">' + esc(tx(toutes ? 'Ma classe seulement' : 'Toutes les classes')) + '</button></p>') +
       '<ul class="liste-notions">' + l.map(n => '<li><button class="petit-bouton" data-a="camp-fiche" data-v="' + esc(cle(n)) + '">' + esc(n.nom) + '</button>' + (toutes ? ' <small>(' + esc(n.niv) + ')</small>' : '') +
         (F && F.a(cle(n)) ? ' <small>' + esc(tx('📚 fiche')) + '</small>' : '') + (c.acquis.includes(cle(n)) ? ' <small>' + esc(tx('✅ acquise')) + '</small>' : '') + '</li>').join('') + '</ul>' +
       '<h3>' + esc(tx('📒 Mes fiches ({0})', perso.length)) + '</h3>' + (perso.length ? '<ul>' + perso.slice(0, 50).map(x => '<li><button class="petit-bouton" data-a="cahier-edit" data-v="' + esc(x.id) + '">' + esc(x.titre) + '</button></li>').join('') + '</ul>' : '<p class="petit">' + esc(tx('Tu n’as pas encore écrit de fiche. Écris-en une : ce qu’on reformule soi-même, on le retient.')) + '</p>') +
       (window.AMI_CAHIER ? '<div class="actions"><button class="moyen" data-a="cahier-edit" data-v="">' + esc(tx('📒 Écrire ma fiche')) + '</button></div>' : '') +
       '<div class="actions"><button class="moyen" data-a="camp">' + esc(tx('↩️ Retour au camp')) + '</button></div></main>');
   }
+
+  // v10.0 : Espace parents — le camp d'un coup d'œil : grade, régularité, classe atteinte par matière, tests de passage, séries d'examen.
+  M.cartes.parents.push(() => {
+    const A = api(), esc = A.esc, c = camp(); if(!c.pts && !Object.keys(c.jours).length) return '';
+    const g = gradeDe(c.pts), ex = c.examens || {}, pa = c.passages || {};
+    return '<section class="parents-camp"><h3>' + esc(tx('🎖️ Camp d’entraînement')) + '</h3>' +
+      '<p>' + esc(tx('Grade : {0}', tx(g[1]))) + ' · ' + esc(tx('{0} points · {1} jour(s) de service d’affilée', c.pts, c.serie)) + ' · ' + esc(tx('Notions acquises : {0}', c.acquis.length)) + '</p>' +
+      '<ul>' + PROGRAMME.map(mid => '<li>' + esc(tx(NOMS_MAT[mid])) + ' : ' + esc(niveauDe(mid)) + (enAvance(mid) ? ' ' + esc(tx('(en avance)')) : '') +
+        Object.keys(pa).filter(k => k.startsWith(mid + '/')).map(k => ' · ' + esc(tx('Test de passage {0} : {1} / 20', k.split('/')[1], virg(pa[k])))).join('') + '</li>').join('') + '</ul>' +
+      (Object.keys(ex).length ? '<p>' + esc(tx('Séries d’examen (meilleure note) :')) + ' ' + EXAMENS.filter(e => ex[e[0]]).map(e => esc(tx(e[1])) + ' ' + virg(ex[e[0]].meilleure) + '/20').join(' · ') + '</p>' : '') + '</section>';
+  });
 
   const carteCamp = () => '<div class="cartes-anglais">' + M.carte('camp', '', '🎖️', api().esc(tx('🎖️ Camp d’entraînement')).replace(/^🎖️ /, ''), api().esc(tx('Mission du jour, séries sans filet, fiches de cours : l’entraînement intensif pour réussir ses examens.'))) + '</div>';
   M.cartes.matiere.unshift(carteCamp);
@@ -322,10 +391,13 @@
     'camp-fiche':v => { const [k, d] = String(v || '').split('|'); return ecranFiche(k, d); },
     'camp-entrainer':v => entrainer(v),
     'camp-examen':v => serieExamen(v),
+    'camp-annee':() => annee(),
+    'camp-passage':v => passage(PROGRAMME.includes(v) ? v : 'maths'),
+    'camp-avance-retour':v => { const c = camp(); if(c.avance && PROGRAMME.includes(v)) delete c.avance[v]; api().garder(); return annee(); },
     'camp-sansfilet':v => sansFilet(v), 'camp-sansfilet-notion':v => sansFilet(v),
     'camp-objectif':() => { const A = api(), c = camp(), d = document, e = d.getElementById('camp-examen'), t = d.getElementById('camp-date');
       const ex = e && EXAMENS.some(x => x[0] === e.value) ? e.value : '', da = t && /^\d{4}-\d{2}-\d{2}$/.test(t.value) ? t.value : '';
       c.objectif = { examen:ex, date:da }; A.garder(); return accueil(); }
   });
-  window.AMI_CAMP = { SERIES_EXAMEN, questionsExamen, serieExamen, GRADES, gradeDe, camp, mission, notions, leconDuJour, accueil, base, sansFilet, etapeSuivante, validerJour };
+  window.AMI_CAMP = { niveauDe, niveauBase, suivant, bilan, annee, passage, SEUIL_PASSAGE, SERIES_EXAMEN, questionsExamen, serieExamen, GRADES, gradeDe, camp, mission, notions, leconDuJour, accueil, base, sansFilet, etapeSuivante, validerJour };
 })();

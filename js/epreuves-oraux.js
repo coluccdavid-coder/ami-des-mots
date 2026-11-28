@@ -22,10 +22,10 @@
     ['Une explication linéaire suit :', 'L’ordre du texte, mouvement par mouvement', [['L’ordre alphabétique des mots', 'Créatif, mais faux.'], ['Seulement la fin du texte', 'Il faut tout le passage, dans l’ordre.']], 'Introduction, lecture, mouvements, conclusion.']
   ];
   const GRAND_ORAL = [
-    ['Le Grand oral dure :', '20 minutes, après 20 minutes de préparation', [['1 heure', 'Plumo a vérifié trois fois : c’est toujours non. Mais c’était audacieux.'], ['10 minutes', 'Plus que ça : 20 minutes.']], 'Depuis la session 2027 : présentation d’une question (10 min) puis échange avec le jury (10 min).'],
+    ['Le Grand oral dure :', '20 minutes, après 20 minutes de préparation', [['1 heure', 'Plumo a vérifié trois fois : c’est toujours non. Mais c’était audacieux.'], ['10 minutes', 'Plus que ça : 20 minutes.']], 'Deux temps depuis la session 2024 : présentation d’une question (10 min) puis échange avec le jury (10 min) ; la note de service du 17 septembre 2026 les reconduit pour la session 2027.'],
     ['Sur quoi portent les questions du Grand oral ?', 'Sur une ou deux spécialités suivies en terminale', [['Sur la philosophie uniquement', 'Non : sur les spécialités.'], ['Sur n’importe quel sujet du jour', 'Le candidat prépare deux questions à l’avance.']], 'Le jury choisit l’une des deux questions.'],
-    ['Pendant la présentation de la question, le candidat :', 'Parle sans notes, debout en général', [['Lit sa copie', 'Pas de lecture : on parle à l’oral, vraiment.'], ['Montre un film', 'Celle-là, même un GPS en panne ne l’aurait pas choisie.']], 'Environ 10 minutes depuis la session 2027 (5 minutes avant). Le support éventuel n’est pas évalué.'],
-    ['Depuis la session 2027, le Grand oral se déroule en :', 'Deux temps de 10 minutes : la présentation d’une question, puis l’échange avec le jury', [['Trois temps, avec un échange final sur le projet d’orientation', 'C’était la règle jusqu’à la session 2026 : ce troisième temps a été supprimé.'], ['Un seul exposé de 20 minutes, sans question du jury', 'Le jury échange bien avec toi pendant 10 minutes.']], 'Note de service du 17 septembre 2026 (BO spécial n° 4).'],
+    ['Pendant la présentation de la question, le candidat :', 'Parle debout, sans lire, en s’appuyant au besoin sur le support préparé', [['Lit sa copie', 'Pas de lecture : on parle à l’oral, vraiment.'], ['Montre un film', 'Celle-là, même un GPS en panne ne l’aurait pas choisie.']], '10 minutes depuis la session 2024 (5 minutes avant). Le support, facultatif, se montre au jury mais ne lui est pas remis, et il n’est pas évalué.'],
+    ['Pour la session 2027, le Grand oral se déroule en :', 'Deux temps de 10 minutes : la présentation d’une question, puis l’échange avec le jury', [['Trois temps, avec un échange final sur le projet d’orientation', 'C’était la règle jusqu’à la session 2023 : ce troisième temps a été supprimé à partir de la session 2024.'], ['Un seul exposé de 20 minutes, sans question du jury', 'Le jury échange bien avec toi pendant 10 minutes.']], 'Note de service du 17 septembre 2026 (BO spécial n° 4).'],
     ['Coefficient du Grand oral en voie générale à partir de la session 2027 :', '8', [['10', '10, c’était jusqu’à la session 2026 incluse.'], ['16', '16, c’est une spécialité.']], 'Et 12 en voie technologique (14 jusqu’en 2026).']
   ];
   Object.assign(E.EPREUVES, {
@@ -34,7 +34,7 @@
     'eaf-oral':{ titre:'Oral de français', matiere:'francais', duree:'20 min, préparation 30 min', officiel:'Explication + grammaire (12 pts), œuvre choisie + entretien (8 pts)',
       faire:r => [bloc('Déroulé et méthode', 20, '', ORAL_EAF, r, 5)], nonNote:'Entraîne-toi à expliquer un extrait à voix haute en 10 minutes.' },
     'grand-oral':{ titre:'Grand oral', matiere:'francais', duree:'20 min, préparation 20 min', officiel:'Session 2027 : présentation d’une question (10 min) puis échange avec le jury (10 min) · coefficient 8',
-      faire:r => [bloc('Déroulé et méthode', 20, '', GRAND_ORAL, r, 5)], nonNote:'Prépare tes deux questions et entraîne-toi à en présenter une sans notes en 10 minutes.' }
+      faire:r => [bloc('Déroulé et méthode', 20, '', GRAND_ORAL, r, 5)], nonNote:'Prépare tes deux questions et entraîne-toi à en présenter une en 10 minutes, debout, sans lire.' }
   });
   E.BLANCS['oral-dnb'] = { titre:'Oral du brevet', ic:'🎤', niveau:'3e', epreuves:[['dnb-oral', 1]] };
   E.BLANCS['oral-eaf'] = { titre:'Oral de français', ic:'🎤', niveau:'1re', epreuves:[['eaf-oral', 1]] };
