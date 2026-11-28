@@ -34,6 +34,10 @@
     'Ta réponse :':['Your answer:', 'Tu respuesta:', 'Deine Antwort:', 'La tua risposta:', 'A tua resposta:'],
     'Pas de réponse (temps écoulé).':['No answer (time is up).', 'Sin respuesta (se acabó el tiempo).', 'Keine Antwort (Zeit abgelaufen).', 'Nessuna risposta (tempo scaduto).', 'Sem resposta (o tempo acabou).'],
     '🔁 Recommencer':['🔁 Try again', '🔁 Volver a empezar', '🔁 Noch einmal', '🔁 Ricomincia', '🔁 Recomeçar'],
+    '📄 Note de synthèse blanche':['📄 Mock synthesis note', '📄 Nota de síntesis de prueba', '📄 Probe-Synthesenote', '📄 Nota di sintesi di prova', '📄 Nota de síntese simulada'],
+    'Un dossier court à synthétiser, sans donner ton avis, en deux parties ; corrigé dans « Mes copies »':['A short file to summarise, without giving your opinion, in two parts; marked in “My papers”', 'Un expediente breve que sintetizar, sin dar tu opinión, en dos partes; corregido en «Mis ejercicios»', 'Eine kurze Akte zusammenfassen, ohne eigene Meinung, in zwei Teilen; korrigiert in „Meine Arbeiten“', 'Un fascicolo breve da sintetizzare, senza dare la tua opinione, in due parti; corretto in «I miei elaborati»', 'Um dossiê curto para sintetizar, sem dar a tua opinião, em duas partes; corrigido em «As minhas provas»'],
+    'Au CRFPA, la note de synthèse dure 5 heures (coefficient 3) et porte sur un dossier d’une trentaine de documents, à résumer en quatre pages au plus. Ici, un dossier court pour s’entraîner à la méthode.':['At the CRFPA, the synthesis note lasts 5 hours (coefficient 3) and covers a file of about thirty documents, to be summarised in four pages at most. Here, a short file to practise the method.', 'En el CRFPA, la nota de síntesis dura 5 horas (coeficiente 3) y versa sobre un expediente de unos treinta documentos, que se resume en cuatro páginas como máximo. Aquí, un expediente breve para practicar el método.', 'Beim CRFPA dauert die Synthesenote 5 Stunden (Koeffizient 3) und betrifft eine Akte von etwa dreißig Dokumenten, die auf höchstens vier Seiten zusammenzufassen ist. Hier eine kurze Akte, um die Methode zu üben.', 'Al CRFPA la nota di sintesi dura 5 ore (coefficiente 3) e riguarda un fascicolo di una trentina di documenti, da riassumere in quattro pagine al massimo. Qui un fascicolo breve per esercitarsi nel metodo.', 'No CRFPA, a nota de síntese dura 5 horas (coeficiente 3) e incide sobre um dossiê de cerca de trinta documentos, a resumir em quatro páginas no máximo. Aqui, um dossiê curto para treinar o método.'],
+    'Les documents sont des résumés pédagogiques de textes réels (lois, décisions), pas des citations.':['The documents are teaching summaries of real texts (laws, decisions), not quotations.', 'Los documentos son resúmenes pedagógicos de textos reales (leyes, resoluciones), no citas.', 'Die Dokumente sind didaktische Zusammenfassungen echter Texte (Gesetze, Entscheidungen), keine Zitate.', 'I documenti sono riassunti didattici di testi reali (leggi, decisioni), non citazioni.', 'Os documentos são resumos pedagógicos de textos reais (leis, decisões), não citações.'],
     'Contenu éducatif : il ne remplace ni la préparation à l’examen, ni l’école d’avocats, ni le conseil d’un avocat.':['Educational content: it replaces neither exam preparation, nor law school, nor a lawyer’s advice.', 'Contenido educativo: no sustituye ni la preparación del examen, ni la escuela de abogados, ni el consejo de un abogado.', 'Lerninhalt: Er ersetzt weder die Prüfungsvorbereitung noch die Anwaltsschule noch den Rat eines Anwalts.', 'Contenuto educativo: non sostituisce né la preparazione all’esame, né la scuola per avvocati, né il consiglio di un avvocato.', 'Conteúdo educativo: não substitui nem a preparação para o exame, nem a escola de advogados, nem o conselho de um advogado.']
   });
 
@@ -69,6 +73,47 @@
     'Pendant l’entretien de 30 minutes : écoute la question en entier, reconnais ce que tu ne sais pas, raisonne à voix haute.'
   ];
 
+  // v8.6 : note de synthèse blanche (CRFPA). Le vrai dossier compte souvent une trentaine de documents ;
+  // ici, un dossier court d'entraînement. Les documents sont des résumés pédagogiques de textes réels (pas des citations).
+  const SYNTHESES = [
+    { id:'oubli', titre:'Le droit à l’oubli numérique', docs:[
+      ['Document 1 — Règlement général sur la protection des données (RGPD), article 17 (résumé)', 'Toute personne peut obtenir du responsable du traitement l’effacement, dans les meilleurs délais, de données à caractère personnel la concernant, notamment lorsqu’elles ne sont plus nécessaires au regard des finalités pour lesquelles elles ont été collectées, lorsqu’elle retire son consentement ou lorsque les données ont fait l’objet d’un traitement illicite. Ce droit ne s’applique pas lorsque le traitement est nécessaire, notamment, à l’exercice du droit à la liberté d’expression et d’information, au respect d’une obligation légale, à des motifs d’intérêt public dans le domaine de la santé publique, à des fins archivistiques, de recherche scientifique ou historique, ou à la défense de droits en justice.'],
+      ['Document 2 — Cour de justice de l’Union européenne, 13 mai 2014, Google Spain, C-131/12 (résumé)', 'La Cour juge que l’exploitant d’un moteur de recherche est responsable du traitement de données personnelles qu’il effectue. Une personne peut lui demander de supprimer de la liste des résultats obtenus à partir de son nom des liens vers des pages contenant des informations la concernant, même lorsque leur publication est licite, si ces informations sont inadéquates, non pertinentes ou excessives au regard du temps écoulé. Ce droit doit toutefois être mis en balance avec l’intérêt du public à accéder à l’information, notamment en raison du rôle joué par la personne dans la vie publique.'],
+      ['Document 3 — Cour de justice de l’Union européenne, 24 septembre 2019, Google c. CNIL, C-507/17 (résumé)', 'La Cour précise que l’exploitant d’un moteur de recherche qui fait droit à une demande de déréférencement n’est pas tenu par le droit de l’Union de l’opérer sur toutes les versions de son moteur dans le monde, mais sur les versions correspondant à l’ensemble des États membres. Il doit aussi prendre des mesures pour empêcher ou décourager sérieusement les internautes européens d’accéder aux liens en cause depuis une autre version.'],
+      ['Document 4 — Loi n° 2016-1321 du 7 octobre 2016 pour une République numérique (résumé)', 'La loi renforce le droit à l’effacement des données collectées lorsque la personne concernée était mineure : sur demande, le responsable du traitement doit les effacer dans les meilleurs délais. À défaut de réponse ou en cas de réponse négative dans un délai d’un mois, la personne peut saisir la Commission nationale de l’informatique et des libertés (CNIL), qui se prononce dans un délai de trois semaines.'],
+      ['Document 5 — Loi n° 78-17 du 6 janvier 1978 relative à l’informatique, aux fichiers et aux libertés (résumé)', 'La loi crée la CNIL, autorité administrative indépendante chargée de veiller à ce que l’informatique soit au service de chaque citoyen et ne porte atteinte ni à l’identité humaine, ni aux droits de l’homme, ni à la vie privée, ni aux libertés individuelles ou publiques. La CNIL peut recevoir des réclamations, contrôler les responsables de traitement et prononcer des sanctions.']
+    ]},
+    { id:'gav', titre:'La garde à vue et les droits de la défense', docs:[
+      ['Document 1 — Code de procédure pénale, article 63-1 (résumé)', 'La personne placée en garde à vue est immédiatement informée, dans une langue qu’elle comprend, de son placement, de la durée de la mesure, de l’infraction qu’elle est soupçonnée d’avoir commise et de ses droits : faire prévenir un proche et son employeur, être examinée par un médecin, être assistée par un avocat, être assistée par un interprète, et, lors des auditions, faire des déclarations, répondre aux questions ou se taire.'],
+      ['Document 2 — Conseil constitutionnel, décision n° 2010-14/22 QPC du 30 juillet 2010 (résumé)', 'Saisi par la voie de la question prioritaire de constitutionnalité, le Conseil juge contraires à la Constitution les dispositions de droit commun sur la garde à vue : elles ne permettaient pas à la personne d’être assistée effectivement par un avocat pendant les interrogatoires et ne prévoyaient pas la notification du droit de garder le silence. Il reporte au 1er juillet 2011 la date de l’abrogation, pour laisser au législateur le temps d’intervenir.'],
+      ['Document 3 — Loi n° 2011-392 du 14 avril 2011 relative à la garde à vue (résumé)', 'La loi pose que la garde à vue doit être l’unique moyen de parvenir à certains objectifs précis de l’enquête. Elle permet à l’avocat d’assister aux auditions de la personne gardée à vue, après un entretien confidentiel de trente minutes, et impose la notification du droit de se taire. Aucune condamnation ne peut être prononcée sur le seul fondement de déclarations faites sans avoir pu s’entretenir avec un avocat.'],
+      ['Document 4 — Cour européenne des droits de l’homme, 27 novembre 2008, Salduz c. Turquie (résumé)', 'La Cour juge que l’article 6 de la Convention (droit à un procès équitable) exige, en règle générale, que l’accès à un avocat soit consenti dès le premier interrogatoire d’un suspect par la police, sauf raisons impérieuses. Il est en principe porté une atteinte irrémédiable aux droits de la défense lorsque des déclarations incriminantes faites sans l’assistance d’un avocat sont utilisées pour fonder une condamnation.'],
+      ['Document 5 — Code de procédure pénale, durée de la garde à vue (résumé)', 'En droit commun, la garde à vue ne peut excéder vingt-quatre heures. Elle peut être prolongée de vingt-quatre heures au plus, sur autorisation écrite et motivée du procureur de la République, si l’infraction est punie d’au moins un an d’emprisonnement. Pour certaines infractions de criminalité organisée ou de terrorisme, des prolongations supplémentaires sont possibles, sous le contrôle d’un juge.']
+    ]}
+  ];
+  const texteDossier = s => s.docs.map(([t, x]) => t + '\n' + x).join('\n\n');
+  const SYNTH_METHODE = [
+    'Lis tout le dossier en notant, pour chaque document, son idée principale.',
+    'Regroupe les idées par thème : c’est de là que naît ton plan, pas d’un document après l’autre.',
+    'Introduction : présente le sujet et son actualité, puis annonce un plan en deux parties.',
+    'Deux parties (I, II), chacune avec deux sous-parties (A, B) et des titres apparents.',
+    'Chaque information renvoie à sa source : (doc. 1), (doc. 3 et 5). Utilise tous les documents.',
+    'Aucune opinion personnelle, aucune connaissance extérieure au dossier : tu restes neutre.'
+  ];
+  function syntheses(){
+    const A = api(), esc = A.esc;
+    A.poser(A.barre('avocat') + '<main class="coin-anglais avocat-synthese"><h2>' + esc(tx('📄 Note de synthèse blanche')) + '</h2>' +
+      '<p class="pieges-intro">' + esc(tx('Au CRFPA, la note de synthèse dure 5 heures (coefficient 3) et porte sur un dossier d’une trentaine de documents, à résumer en quatre pages au plus. Ici, un dossier court pour s’entraîner à la méthode.')) + '</p>' +
+      '<section class="domaine"><h3>' + esc(tx('La méthode')) + '</h3><ol>' + SYNTH_METHODE.map(m => '<li>' + esc(m) + '</li>').join('') + '</ol></section>' +
+      '<div class="cartes-anglais">' + SYNTHESES.map(s => M.carte('avocat-synthese-go', s.id, '📄', esc(s.titre), esc(s.docs.length + ' documents'))).join('') + '</div>' +
+      '<p class="petit">' + esc(tx('Les documents sont des résumés pédagogiques de textes réels (lois, décisions), pas des citations.')) + '</p>' +
+      '<div class="actions serrees"><button class="moyen" data-a="avocat">' + esc(tx('⚖️ Devenir avocat')) + '</button></div></main>');
+  }
+  function synthese(id){
+    const s = SYNTHESES.find(x => x.id === id); if(!s || !M.copieOuvrir) return syntheses();
+    M.copieOuvrir({ key:'crfpa:synthese:' + s.id, sorte:'synthese', titre:'Note de synthèse — ' + s.titre,
+      sujet:'À partir des seuls documents du dossier, rédigez une note de synthèse sur « ' + s.titre + ' », en deux parties, sans donner votre avis.', texteSujet:texteDossier(s), duree:300 });
+  }
   const virg = n => String(Math.round(n * 10) / 10).replace('.', ',');
   const EPREUVES = { blanc:{ titre:'📝 CRFPA blanc', n:40, minutes:60 }, revision:{ titre:'🔁 Révision : devenir avocat', n:20, minutes:0, vannes:true } };
   const ECRITS = ['obligations', 'penal', 'libertes', 'justice'];   // chapitres de droit proches des écrits du CRFPA
@@ -111,6 +156,7 @@
       '<div class="cartes-anglais">' +
         carte('avocat-epreuve', 'blanc', '📝', esc(tx('📝 CRFPA blanc')).replace(/^📝 /, ''), esc(tx('{0} questions · {1} min · chronométré, sans vanne, corrigé à la fin', EPREUVES.blanc.n, EPREUVES.blanc.minutes))) +
         carte('avocat-go', '', '🎤', esc(tx('🎤 Grand oral blanc')).replace(/^🎤 /, ''), esc(tx('Un sujet sur les libertés et droits fondamentaux, 1 h de préparation, la méthode de l’exposé'))) +
+        (M.copieOuvrir ? carte('avocat-synthese', '', '📄', esc(tx('📄 Note de synthèse blanche')).replace(/^📄 /, ''), esc(tx('Un dossier court à synthétiser, sans donner ton avis, en deux parties ; corrigé dans « Mes copies »'))) : '') +
         carte('avocat-epreuve', 'revision', '🔁', esc(tx('🔁 Révision : devenir avocat')).replace(/^🔁 /, ''), esc(tx('20 questions mélangées, avec les vannes de Plumo ; les erreurs vont dans le carnet'))) +
       '</div>' +
       '<section class="domaine"><h3>📚 ' + esc(MT.nomDom(m, 'Devenir avocat')) + '</h3><div class="liste-chap">' +
@@ -125,7 +171,9 @@
     'avocat':() => ecran(),
     'avocat-epreuve':v => EPREUVES[v] ? lancer(v) : ecran(),
     'avocat-go':v => grandOral(v === '' || v == null ? null : +v),
+    'avocat-synthese':() => syntheses(),
+    'avocat-synthese-go':v => synthese(v),
     'matiere-droit':() => api().matiereAccueil('droit')
   });
-  window.AMI_AVOCAT = { OFFICIEL, EPREUVES, SUJETS_GO, liste };
+  window.AMI_AVOCAT = { OFFICIEL, EPREUVES, SUJETS_GO, liste, SYNTHESES };
 })();

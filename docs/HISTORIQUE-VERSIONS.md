@@ -5,6 +5,66 @@ Avant la v6.44, chaque version avait son propre fichier VERSION-x.y.txt à la ra
 
 ---
 
+## Version 9.1.0
+
+**📚 46 nouvelles fiches de cours** (js/cours-fiches-college.js) — la base de connaissances couvre maintenant l’essentiel du collège :
+- **Français** : conjugaison, nature et fonctions des mots, vocabulaire, figures de style, auteurs et mouvements, types et formes de phrases, modes (subjonctif, impératif, conditionnel).
+- **Anglais** : be et have got, présent simple, there is/are, can et impératif, possessifs et génitif, be + -ing, prétérit, comparatifs, quantifieurs, verbes irréguliers, futur, passif, relatives, discours indirect, faux amis.
+- **Maths** : priorités, fractions, proportionnalité, pourcentages, aire et périmètre, relatifs, équations, distributivité, moyenne, puissances, notation scientifique, cosinus, factorisation, fonctions affines, trigonométrie, probabilités, arithmétique, médiane.
+- Chaque fiche : l’essentiel, un exemple corrigé pas à pas, la méthode, les pièges et une vanne de Plumo. Elles servent aussi de « leçon du jour » dans le camp d’entraînement.
+
+**Un chapitre de plus par niveau expert** (js/mat-experts-plus.js), 20 questions et une fiche chacun :
+- 🧠 Mathématicien : suites, limites et analyse (croissances comparées, TVI, primitives, convexité).
+- 🧬 Généticien : évolution, phylogénie et génomique (spéciation, homologies, horloge moléculaire, paléogénomique).
+- 🌋 Géophysicien : volcans, risques et planètes (types d’éruptions, surveillance, tsunamis, Olympus Mons, Io, Vénus).
+
+## Version 9.0.0
+
+**🎖️ Le camp d’entraînement** (Matières et Maths → « Camp d’entraînement », js/mod-intensif.js) — un entraînement intensif pour qui le veut :
+- **Mission du jour, dans un ordre imposé** : 1) revoir ses erreurs (révision espacée), 2) la leçon du jour — fiche de cours (l’essentiel, un exemple corrigé pas à pas, la méthode, les pièges), puis 10 questions, 7 pour valider la notion —, 3) une série commando sans filet, 4) ses propres fiches (cahier). La leçon tourne entre français, anglais et maths, dans la classe de l’élève.
+- **Séries sans filet** : chrono serré (25 s par question), une erreur et la série s’arrête ; records par matière.
+- **Grades** de Recrue à Général, points, jours de service d’affilée, **compte à rebours** vers l’examen choisi (brevet, bac de français, maths anticipées, bac, diplôme du supérieur), accès direct aux examens blancs et au cahier.
+- **📚 Base de connaissances** : toutes les notions du programme par classe (ou toutes classes), avec leur fiche rédigée ou l’essentiel tiré des questions, la marque « acquise », et les **fiches écrites par l’élève** (📒 Mon cahier, sur l’appareil) ; bouton « Écrire ma fiche » sur chaque notion.
+- Plumo joue le sergent instructeur : il taquine la réponse, jamais l’élève.
+
+**📚 21 fiches de cours rédigées** (js/cours-fiches.js) : français (grammaire de l’oral, méthode commentaire/dissertation, accords et phrase complexe, participe passé, homophones), anglais (écrire, parler, present perfect, conditionnel, modaux), maths (Pythagore, Thalès, second degré, identités remarquables), et les niveaux experts.
+
+**Français du lycée renforcé** (js/mat-francais-bac.js, traduit en anglais et en espagnol) : « Bac : la question de grammaire de l’oral » (2nde, 1re), « Bac : méthode du commentaire et de la dissertation » (1re), « Langue en 2nde : accords et phrase complexe » — 20 questions chacun. La 1re passe de 80 à 120 questions.
+
+**Anglais** (js/mat-anglais-ecrire.js) : « Écrire en anglais : l’expression écrite (B1 → B2) » et « Parler en anglais : prise de parole et interaction » (dont l’interrogation orale de 10 minutes de l’attestation de langues, session 2027) — 20 questions chacun.
+
+**Niveaux experts**, au-delà du programme (Tle, supérieur ; visibles avec « Voir toutes les matières » pour les plus jeunes) :
+- **🧠 Niveau mathématicien** : raisonnement et logique, arithmétique (PGCD, Bézout, Gauss, congruences, Fermat), nombres complexes.
+- **🧬 Niveau généticien** : génétique moléculaire (de l’ADN à la protéine, mutations, PCR, CRISPR), hérédité, méiose et génétique des populations (Hardy-Weinberg).
+- **🌋 Niveau géophysicien** : sismologie et intérieur de la Terre, géodynamique (plaques, paléomagnétisme, isostasie, gravité). Les chapitres GEOPS d’Objectif NASA restent en place.
+- 20 questions par chapitre, une vanne par mauvaise réponse, une fiche de cours par chapitre. Questions en français pour l’instant (noms traduits dans les 5 langues).
+
+## Version 8.9.0
+
+- **Astronomie traduite en italien et en portugais** : les 10 chapitres joués (étoiles, Système solaire, lumière, gravitation, vie des étoiles, galaxies, cosmologie, exoplanètes, instruments, objets compacts), 20 questions chacun, avec leurs vannes et leurs règles. Fichiers chargés à la demande (`js/mat-trad-it-sup.js`, `js/mat-trad-pt-sup.js`).
+- **Après le bac, la carte d'anglais change d'intitulé** : « Anglais du supérieur — TOEIC, IELTS, anglais universitaire, scientifique et professionnel, niveau C1 » au lieu de « Anglais (6e → bac) ». Le contenu ne change pas (les 5 leçons du supérieur existaient déjà) ; la carte habituelle reste pour les autres classes. Textes traduits en 5 langues.
+- Restent en français en italien/portugais : droit et médecine (prochaines livraisons).
+
+## Version 8.8.0 — Spécialités HGGSP, HLP et NSI en italien et en portugais
+
+- HGGSP (1re, Tle, cours), HLP (1re, Tle, cours) et NSI (1re, Tle, cours) entièrement traduits : 180 questions par langue, titres d’œuvres traduits, aucune citation inventée.
+- Le test qui vérifie qu’une matière non traduite reste en français porte maintenant sur l’astronomie.
+
+## Version 8.7.0 — Chargement à la demande des traductions italiennes et portugaises
+
+- Les dix fichiers de traduction des matières en italien et en portugais (≈ 1,7 Mo sur 11,3 Mo de scripts) ne sont plus chargés au démarrage pour tout le monde. `js/charge-langues.js` les charge, dans l’ordre, quand la langue de l’interface passe à l’italien ou au portugais, une fois le jeu chargé.
+- Ils restent dans le cache du service worker : le jeu en italien ou en portugais fonctionne toujours hors connexion.
+- Dans la version publiée, le paquet de scripts ne les contient plus ; ils restent des fichiers à part.
+- Tests : chargeur (rien en français, ordre des fichiers, pas de double chargement) et paquet de production.
+- **Correctif d’affichage** : après une erreur, le bouton « J’ai compris — continuer » pouvait passer sur deux lignes et recouvrir la fin de l’explication de Plumo. La bulle se place maintenant juste au-dessus de la rangée de boutons, quelle que soit sa hauteur (et à chaque redimensionnement) ; sur grand écran, le bouton tient sur une ligne.
+
+## Version 8.6.0 — Copies de SES, de HGGSP et note de synthèse du CRFPA
+
+- **SES (terminale)** : deux sujets de dissertation à rédiger dans « 🖊️ Mes copies » depuis l’examen de spécialité. Vérification de méthode adaptée : exemples chiffrés, mécanismes expliqués, auteurs et théories.
+- **HGGSP (terminale)** : comme le jour J, une dissertation ET une étude critique de document (déclaration Schuman du 9 mai 1950 ou préambule de la Charte des Nations unies, extraits exacts vérifiés). Vérification : dates et repères, présentation du document, citations, regard critique.
+- **Note de synthèse blanche (CRFPA)**, dans « ⚖️ Devenir avocat » : deux dossiers de cinq documents (le droit à l’oubli numérique ; la garde à vue et les droits de la défense), résumés pédagogiques de textes réels, avec la méthode. Vérification : références aux documents, neutralité (repère « à mon avis », « je pense »…), plan annoncé en deux parties ; pas de conclusion exigée.
+- **Correction par l’IA** (serveur) : quatre nouveaux barèmes sur 20 (SES, HGGSP dissertation, HGGSP étude critique, note de synthèse).
+
 ## Version 8.5.0 — Examens à jour du BO spécial n° 4 du 17 septembre 2026
 
 - **Brevet 2027** : le brevet blanc devient « Brevet blanc 2027 » ; barèmes officiels mis à jour (histoire-géographie notée sur 40 avec un exercice sur documents de 15 points et un exercice de 25 points : développement construit d’au moins 30 lignes + croquis, schéma ou frise ; sciences : deux disciplines sur trois annoncées deux mois avant, 1 point de maîtrise de la langue chacune ; maths : 2 points de maîtrise de la langue ; pas de QCM au vrai brevet en maths et en sciences). Coefficients inchangés.

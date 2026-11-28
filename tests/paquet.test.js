@@ -32,6 +32,14 @@ test('un dossier de destination placé dans le projet (_site) ne se recopie pas 
 const srcs = h => [...h.matchAll(/<script defer src="(js\/[^"]+)"><\/script>/g)].map(m => m[1]);
 const pageDev = fs.readFileSync(path.join(ICI, 'index.html'), 'utf8'), pageProd = fs.readFileSync(path.join(DEST, 'index.html'), 'utf8');
 
+// v8.7 : les traductions it/pt chargées à la demande ne sont pas dans le paquet, mais bien copiées et gardées hors connexion.
+test('les traductions italiennes et portugaises restent des fichiers à part, copiés et gardés hors connexion', () => {
+  const C = fs.readFileSync(path.join(ICI, 'js/charge-langues.js'), 'utf8'), lazy = [...C.matchAll(/'(js\/mat-trad-(?:it|pt)-[a-z]+\.js)'/g)].map(m => m[1]);
+  const paquet = srcs(pageProd)[0], corps = fs.readFileSync(path.join(DEST, paquet), 'utf8'), sw = fs.readFileSync(path.join(DEST, 'sw.js'), 'utf8');
+  assert.strictEqual(lazy.length, 12);
+  for(const f of lazy){ assert.ok(fs.existsSync(path.join(DEST, f)), f); assert.ok(!corps.includes('// ── ' + f), f + ' hors du paquet'); assert.ok(sw.includes('"' + f + '"'), f + ' hors connexion'); }
+  assert.ok(corps.includes('// ── js/charge-langues.js'), 'le chargeur est dans le paquet');
+});
 test('la page de production ne charge qu’un seul script, le paquet', () => {
   const p = srcs(pageProd); assert.strictEqual(p.length, 1); assert.match(p[0], /^js\/paquet-[0-9a-f]{10}\.js$/);
   assert.ok(srcs(pageDev).length > 150, 'la page de développement garde ses scripts séparés');

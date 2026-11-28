@@ -59,10 +59,10 @@
     return d ? { key:'eaf:d' + d.idx, sorte:'dissertation', titre:'Dissertation — « ' + d.oeuvre + ' »', sujet:d.sujet, texteSujet:'', oeuvre:d.auteur + ', « ' + d.oeuvre + ' » — parcours « ' + d.parcours + ' »', cles, titreOeuvre:d.oeuvre }
       : { key:'eaf:c' + S.com.idx, sorte:'commentaire', titre:'Commentaire — « ' + S.com.titre + ' »', sujet:'Vous commenterez ce texte (objet d’étude : ' + S.com.objet + ').', texteSujet:'« ' + S.com.titre + ' »\n' + S.com.texte, oeuvre:'', cles:'', titreOeuvre:'' };
   }
-  const NIVEAU = { commentaire:'1re', dissertation:'1re', philo:'Tle', redaction:'3e', developpement:'3e' }, COURTS = ['redaction', 'developpement'];
+  const NIVEAU = { commentaire:'1re', dissertation:'1re', philo:'Tle', redaction:'3e', developpement:'3e', ses:'Tle', hggsp:'Tle', 'hggsp-etude':'Tle', synthese:'Sup' }, COURTS = ['redaction', 'developpement'];
   // v7.8 : les autres écrits d'examen (rédaction du brevet, développement construit d'histoire-géo, dissertation de philosophie).
   function depuisEcrit(ep, i){ const e = ep && ep.ecrits && ep.ecrits[+i]; if(!e) return null;
-    return { key:'ecrit:' + e.key, sorte:e.sorte, genre:e.genre || '', titre:e.titre, sujet:e.sujet, texteSujet:'', oeuvre:'', cles:'', titreOeuvre:'', duree:e.duree || 240 }; }
+    return { key:'ecrit:' + e.key, sorte:e.sorte, genre:e.genre || '', titre:e.titre, sujet:e.sujet, texteSujet:e.texteSujet || '', oeuvre:'', cles:'', titreOeuvre:'', duree:e.duree || 240 }; }
   function ouvrir(info){
     const c = copies(); let x = c[info.key];
     if(!x){ const cles = Object.keys(c); if(cles.length >= MAX){ cles.sort((a, b) => (c[a].maj || 0) - (c[b].maj || 0)); delete c[cles[0]]; }
@@ -78,12 +78,17 @@
     dissertation:{ mots:900, court:400, paras:5, connect:8, pages:'souvent 4 à 6 pages, soit environ 1 000 à 1 800 mots' },
     philo:{ mots:900, court:400, paras:5, connect:8, pages:'souvent 4 à 8 pages, soit environ 1 000 à 2 000 mots' },
     redaction:{ mots:300, court:150, paras:3, connect:4, pages:'au moins une quarantaine de lignes, soit environ 300 à 450 mots' },
-    developpement:{ mots:270, court:150, paras:2, connect:4, pages:'au moins trente lignes (brevet 2027), soit environ 270 à 450 mots' }
+    developpement:{ mots:270, court:150, paras:2, connect:4, pages:'au moins trente lignes (brevet 2027), soit environ 270 à 450 mots' },
+    // v8.6 : SES, HGGSP (dissertation et étude critique) et note de synthèse du CRFPA.
+    ses:{ mots:900, court:400, paras:5, connect:8, pages:'souvent 4 à 6 pages, soit environ 1 000 à 1 800 mots' },
+    hggsp:{ mots:600, court:300, paras:4, connect:6, pages:'environ 2 heures de travail, soit 600 à 1 000 mots' },
+    'hggsp-etude':{ mots:450, court:220, paras:3, connect:5, pages:'environ 2 heures de travail, soit 450 à 800 mots' },
+    synthese:{ mots:600, court:300, paras:4, connect:6, pages:'pour ce dossier court, environ 600 à 1 000 mots (au CRFPA : quatre pages au plus)' }
   };
   const AUTEURS = /\b(Platon|Socrate|Aristote|Épicure|Épictète|Sénèque|Marc Aurèle|Augustin|Thomas d[’']Aquin|Montaigne|Machiavel|Descartes|Pascal|Spinoza|Hobbes|Locke|Leibniz|Hume|Rousseau|Voltaire|Diderot|Kant|Hegel|Marx|Nietzsche|Schopenhauer|Kierkegaard|Freud|Bergson|Alain|Husserl|Heidegger|Sartre|Beauvoir|Camus|Arendt|Merleau-Ponty|Levinas|Weil|Lévi-Strauss|Foucault|Bachelard|Popper|Rawls|Jonas|Tocqueville|Mill|Durkheim|Weber)\b/gu;
   function analyser(x){
     const t = String(x.texte || ''), mots = (t.match(/[\p{L}\p{N}’'-]+/gu) || []).length, so = PROFILS[x.sorte] ? x.sorte : 'commentaire', P = PROFILS[so];
-    const com = so === 'commentaire', bac = ['commentaire', 'dissertation', 'philo'].includes(so);
+    const com = so === 'commentaire', bac = ['commentaire', 'dissertation', 'philo', 'ses', 'hggsp'].includes(so), synth = so === 'synthese';
     const paras = t.split(/\n\s*\n/).map(p => p.trim()).filter(p => p.length > 30);
     const blocs = paras.length >= 2 ? paras : t.split(/\n+/).map(p => p.trim()).filter(p => p.length > 30);
     const intro = blocs[0] || '', concl = blocs.length > 1 ? blocs[blocs.length - 1] : '';
@@ -113,7 +118,7 @@
     }
     if(so === 'philo') v(compte(t, /\b(définir|définition|on entend|désigne|signifie|c[’']est-à-dire|au sens de|se définit)\b/giu) >= 1, 'Définition des termes du sujet', 'Tu définis les notions du sujet : c’est le point de départ d’une vraie réflexion.',
       'Commence par définir les mots du sujet (« Par … on entend … »). En philosophie, c’est souvent en examinant les sens d’un mot qu’on découvre le problème.');
-    if(so !== 'redaction' || x.genre !== 'imagination') v(/\b(en conclusion|pour conclure|ainsi|en définitive|finalement|au terme de|en somme)\b/iu.test(concl), 'Conclusion', 'Ton texte se termine par une vraie conclusion.',
+    if(!synth && (so !== 'redaction' || x.genre !== 'imagination')) v(/\b(en conclusion|pour conclure|ainsi|en définitive|finalement|au terme de|en somme)\b/iu.test(concl), 'Conclusion', 'Ton texte se termine par une vraie conclusion.',
       'Ton dernier paragraphe ne conclut pas encore. Commence-le par « Ainsi » ou « En conclusion » et réponds clairement à la question posée' + (bac ? ', puis ouvre sur une autre question.' : '.'));
     if(com) v(citations >= 6, 'Citations (' + citations + ')', 'Tu t’appuies sur le texte avec de nombreuses citations.', 'Un commentaire s’appuie sur le texte : cite-le souvent, entre guillemets « … », puis analyse chaque citation.');
     if(so === 'dissertation') v(citations >= 3 || titreVu >= 3, 'Citations et exemples (' + citations + ')', 'Tu prouves tes arguments par des passages précis.', 'Une dissertation s’appuie sur des exemples précis : cite des passages de l’œuvre entre guillemets « … ».');
@@ -126,6 +131,20 @@
     if(so === 'redaction' && x.genre === 'imagination') v(compte(t, /\b(peur|joie|tristesse|colère|émotion|émue?|frisson\w*|angoiss\w*|cœur|larmes?|sourire|trembl\w*|soulag\w*|surpris\w*|inquiet\w*|honte|fier|fierté|bonheur)\b/giu) >= 3, 'Émotions', 'Ton récit exprime les émotions du narrateur, comme le demande le sujet.',
       'Le sujet demande de mêler récit et émotions : dis ce que ressent le narrateur (peur, surprise, soulagement…) et montre-le par des gestes et des sensations.');
     if(so === 'redaction' && x.genre !== 'imagination') v(compte(t, /\b(par exemple|ainsi|comme le montre|prenons|c[’']est le cas)\b/giu) >= 2, 'Arguments et exemples', 'Tes arguments sont illustrés par des exemples.', 'Un sujet de réflexion demande des arguments ET des exemples : après chaque idée, donne un exemple précis (« Par exemple, … »).');
+    if(so === 'ses'){
+      v(compte(t, /\b(\d+[,.]?\d*\s?(%|€|euros?|millions?|milliards?|points?)|en (19|20)\d{2})\b/giu) >= 2, 'Exemples chiffrés', 'Tu appuies ton raisonnement sur des données chiffrées et datées.', 'En SES, un argument se prouve : donne des données chiffrées et datées (taux, montants, évolutions), comme celles d’un dossier documentaire.');
+      v(compte(t, /\b(mécanisme|effet|entraîne|provoque|conduit à|se traduit par|par conséquent|donc|ce qui|en effet)\b/giu) >= 5, 'Mécanismes expliqués', 'Tu expliques des enchaînements de causes et d’effets.', 'Explique les mécanismes pas à pas : « A entraîne B, ce qui provoque C ». C’est le cœur d’une dissertation de SES.');
+      v(compte(t, /\b(Smith|Ricardo|Schumpeter|Keynes|Solow|Romer|Durkheim|Weber|Marx|Bourdieu|Boudon|Lipset|Akerlof|Krugman|Friedman|Phillips|Okun|Piketty|Goldthorpe)\b/gu) >= 1, 'Auteurs et théories', 'Tu mobilises des auteurs ou des théories du programme.', 'Cite au moins un auteur ou une théorie du programme (Schumpeter, Keynes, Ricardo, Bourdieu…) et explique ce qu’il apporte.'); }
+    if(so === 'hggsp' || so === 'hggsp-etude'){ const dates = compte(t, /\b(1[0-9]{3}|20[0-9]{2})\b/g);
+      v(dates >= (so === 'hggsp' ? 4 : 2), 'Dates et repères (' + dates + ')', 'Tu situes précisément les faits dans le temps.', 'Ancre ta copie dans des repères précis : dates, événements, acteurs. En HGGSP, une idée sans repère reste une opinion.'); }
+    if(so === 'hggsp-etude'){
+      v(compte(intro, /\b(document|extrait|discours|déclaration|charte|texte|auteur|rédigé|prononcé|signé|publié|date|nature|contexte)\b/giu) >= 3, 'Présentation du document', 'Tu présentes le document : nature, auteur, date, contexte.', 'Commence par présenter le document : sa nature (discours, traité, article…), son auteur, sa date, son contexte et son destinataire.');
+      v(citations >= 2, 'Citations du document (' + citations + ')', 'Tu t’appuies sur le texte en le citant.', 'Cite le document entre guillemets « … » puis explique chaque citation avec tes connaissances.');
+      v(compte(t, /\b(limite|limites|portée|critique|point de vue|subjectif|nuancer|nuance|cependant|toutefois|en réalité|bilan|n[’']a pas|silence|omet)\b/giu) >= 3, 'Regard critique', 'Tu portes un regard critique : portée, limites, point de vue de l’auteur.', 'Une étude critique ne paraphrase pas : montre la portée du document ET ses limites (ce qu’il ne dit pas, le point de vue de l’auteur, ce qui s’est passé ensuite).'); }
+    if(synth){ const docs = compte(t, /\b(doc(?:ument)?\.?\s*n?°?\s*\d)/giu), opinions = compte(t, /(?<!\p{L})(je pense|je crois|à mon avis|selon moi|il me semble|personnellement|j[’']estime|nous pensons)(?!\p{L})/giu);
+      v(docs >= 4, 'Références aux documents (' + docs + ')', 'Chaque idée renvoie au document qui la porte.', 'Dans une note de synthèse, chaque information renvoie à sa source entre parenthèses : (doc. 1), (doc. 2 et 4). Tous les documents doivent être utilisés.');
+      v(opinions === 0, 'Neutralité', 'Ta note reste neutre : aucune opinion personnelle.', 'La note de synthèse est neutre : aucune opinion personnelle (« je pense », « à mon avis »…) et aucune connaissance extérieure au dossier.');
+      v(annonce >= 2 || /\b(I\.|II\.|I –|II –|première partie|seconde partie)/u.test(t), 'Plan annoncé et apparent', 'Ton plan est annoncé et visible.', 'Annonce ton plan en fin d’introduction, puis fais apparaître deux parties (I, II) et leurs sous-parties (A, B) avec des titres.'); }
     if(so === 'developpement'){
       v(compte(t, /\b(1[0-9]{3}|20[0-9]{2})\b/g) >= 3, 'Dates (' + compte(t, /\b(1[0-9]{3}|20[0-9]{2})\b/g) + ')', 'Tu situes les faits avec des dates précises.', 'Un développement construit doit contenir des repères précis : cite au moins trois dates importantes du thème.');
       v(compte(t, /(?<=[\s’'(«-])[A-ZÀ-ÖØ-Þ][\p{L}’'-]{2,}/gu) >= 4, 'Acteurs et lieux', 'Tu nommes des acteurs, des lieux, des institutions.', 'Nomme des acteurs (personnes, États, organisations) et des lieux précis : ce sont les preuves de tes connaissances.'); }
@@ -227,6 +246,8 @@
     'copie-verifier':() => verifier(), 'copie-rendre':() => { lireChamps(); cour = null; return api().rendreCopie ? api().rendreCopie() : liste(); }, 'copie-ia':() => corrigerIA(), 'copies':() => { lireChamps(); liste(); }, 'copie-suppr':v => supprimer(v)
   });
   // v7.8 : boutons des autres écrits (rédaction du brevet, développement construit, dissertation de philo) sur l'écran d'une épreuve.
+  // v8.6 : ouvrir une copie depuis un autre module (ex. la note de synthèse du CRFPA dans « Devenir avocat »).
+  M.copieOuvrir = info => ecrire(ouvrir(Object.assign({ genre:'', texteSujet:'', oeuvre:'', cles:'', titreOeuvre:'', duree:240 }, info)));
   M.boutonsEcrits = ep => (ep && ep.ecrits || []).length ? '<section class="domaine sujet-bloc"><h3>' + api().esc(tx('🖊️ Rédiger ma copie')) + '</h3>' + ep.ecrits.map((e, i) => '<div class="sujet-dis"><p><strong>' + api().esc(e.titre) + '</strong></p><p>' + api().esc(e.sujet) + '</p>' +
     '<button class="moyen" data-a="copie-ecrit" data-v="' + i + '">' + api().esc(tx('🖊️ Rédiger ma copie')) + '</button></div>').join('') + '</section>' : '';
   // Bouton « Rédiger ma copie » placé par jeu.js sur l'écran du sujet du bac de français.

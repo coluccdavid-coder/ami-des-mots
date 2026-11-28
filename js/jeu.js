@@ -1475,10 +1475,20 @@
       partie.dernierModele = derniereBlague;
       const suite = $('#continuer-erreur');
       if(suite){ suite.hidden = false; suite.focus({preventScroll:true}); }
+      placerBulle();   // v8.7 : la bulle se pose juste au-dessus des boutons, quelle que soit leur hauteur
       // Une seule lecture vocale : la blague ET la bonne réponse, dans cet ordre.
       direPhrase(message, langueBlagues());
     }
   }
+  // v8.7 : après une erreur, la bulle ne doit jamais passer sous la rangée de boutons (« J’ai compris — continuer » peut tenir sur deux lignes).
+  function placerBulle(){
+    const b = $('#bulle'), rang = document.querySelector('.apres-erreur'), suite = $('#continuer-erreur');
+    if(!b) return;
+    if(!rang || !suite || suite.hidden){ b.style.removeProperty('bottom'); return; }
+    const h = rang.getBoundingClientRect().height, bas = parseFloat(getComputedStyle(rang).bottom) || 14;
+    if(h > 0) b.style.setProperty('bottom', Math.ceil(bas + h + 12) + 'px', 'important');
+  }
+  window.addEventListener('resize', () => placerBulle());
   // Plumo réagit à sa propre vanne : plus le niveau est corsé, plus il en fait.
   const REACTIONS = ['🙈', '👓', '🪶', '💥'];
   function reactionAmi(niveau){
@@ -3696,7 +3706,12 @@
         (M.trouver('hggsp') ? c('matiere', 'hggsp', '🌐', TXT('HGGSP (spécialité 1re, Tle)'), TXT('Puissance, ONU, espace, mémoire, environnement')) : '') +
         (M.trouver('hlp') ? c('matiere', 'hlp', '📜', TXT('HLP (spécialité 1re, Tle)'), TXT('Parole, représentations du monde, recherche de soi')) : '') +
         (M.trouver('nsi') ? c('matiere', 'nsi', '💻', TXT('NSI (spécialité 1re, Tle)'), TXT('Binaire, Python, réseaux, SQL, algorithmes')) : '') +
-        (M.trouver('langlais') ? c('matiere', 'langlais', '🇬🇧', TXT('Anglais (6e → bac)'), TXT('Grammaire, verbes irréguliers, faux amis, axes du bac, compréhension')) : '') +
+        (M.trouver('mathematicien') ? c('matiere', 'mathematicien', '🧠', TXT('Niveau mathématicien'), TXT('Raisonnement, arithmétique, nombres complexes : au-delà du programme.')) : '') +   // v9.0
+        (M.trouver('geneticien') ? c('matiere', 'geneticien', '🧬', TXT('Niveau généticien'), TXT('ADN, mutations, CRISPR, hérédité, génétique des populations : au-delà du programme.')) : '') +
+        (M.trouver('geophysicien') ? c('matiere', 'geophysicien', '🌋', TXT('Niveau géophysicien'), TXT('Sismologie, intérieur de la Terre, plaques, magnétisme, gravité : au-delà du programme.')) : '') +
+        (M.trouver('langlais') ? (fc === 'Sup'   // v8.9 : après le bac, la carte annonce les leçons du supérieur (TOEIC, IELTS, anglais pro…), pas « 6e → bac »
+          ? c('matiere', 'langlais', '🇬🇧', TXT('Anglais du supérieur'), TXT('TOEIC, IELTS, anglais universitaire, scientifique et professionnel, niveau C1'))
+          : c('matiere', 'langlais', '🇬🇧', TXT('Anglais (6e → bac)'), TXT('Grammaire, verbes irréguliers, faux amis, axes du bac, compréhension'))) : '') +
         (M.trouver('anglais-inter') ? c('matiere', 'anglais-inter', '🌐', TXT('Anglais section internationale (6e → BFI)'), TXT('Littérature, Shakespeare, rhétorique, histoire en anglais, jusqu’au BFI')) : '') +   // v6.77
         (window.MATHS ? c('maths', '', '🔢', TXT('Maths'), TXT('De la 6e au bac, avec Prof Pi')) : '') +
         c('matiere', 'histoire', '🏛️', TXT('Histoire-géo & EMC'), TXT('Repères, géographie, citoyenneté')) +
@@ -4354,7 +4369,7 @@
         if(!partie || !partie.attenteErreur) return;
         partie.attenteErreur = false;
         partie.verrou = false;
-        const boutonSuite = $('#continuer-erreur'); if(boutonSuite) boutonSuite.hidden = true;
+        const boutonSuite = $('#continuer-erreur'); if(boutonSuite) boutonSuite.hidden = true; placerBulle();
         const boutonFav = $('#garder-vanne'); if(boutonFav) boutonFav.hidden = true;
         if(partie.finir || (partie.chronoFin && Date.now() >= partie.chronoFin)) return fin();
         partie.i++; return question();
