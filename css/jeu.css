@@ -2165,3 +2165,7 @@ html[data-facile] .ami-3d-wrap,html[data-facile] .ami-3d-corps,html[data-facile]
 .aide-exo-texte li{ margin:4px 0; }
 .aide-exo-titre{ font-weight:800; margin:0 0 6px; }
 .piege-ecran .reponse-libre, .piege-ecran .piege-options{ align-self:start; }
+
+/* v10.9 : bandeau « nouvelle version prête » (hors de #app : il reste affiché d'un écran à l'autre). */
+.maj-prete{ position:fixed; left:50%; bottom:calc(16px + env(safe-area-inset-bottom, 0px)); transform:translateX(-50%); z-index:9999; display:flex; flex-wrap:wrap; align-items:center; justify-content:center; gap:10px;
+  max-width:calc(100% - 24px); padding:10px 16px; border-radius:16px; background:#2b2167; color:#fff; border:1px solid rgba(255,255,255,.25); box-shadow:0 10px 30px rgba(0,0,0,.35); font-weight:600; }
