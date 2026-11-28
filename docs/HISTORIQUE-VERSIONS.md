@@ -5,6 +5,37 @@ Avant la v6.44, chaque version avait son propre fichier VERSION-x.y.txt à la ra
 
 ---
 
+## Version 10.8.0
+
+Série ST2S (sciences et technologies de la santé et du social), la voie technologique la plus suivie pour devenir infirmier ou infirmière, vérifiée sur les programmes officiels et la note de service du 11-09-2026 (session 2027).
+
+- Nouvelle matière « ST2S » avec 15 chapitres :
+  - 1re : biologie et physiopathologie humaines (organisation et motricité, digestion et nutrition, cardio-vasculaire, respiratoire), STSS (santé, bien-être, cohésion sociale et indicateurs ; protection sociale et modes d’intervention), physique-chimie pour la santé ;
+  - Tle : CBPH (milieu intérieur et diabètes ; immunité, grippe, vaccination, antibiorésistance ; reproduction ; gènes et cancer ; chimie : prévenir, analyser, choisir), STSS (politiques de santé ; politiques sociales ; démarche de projet et méthode de l’épreuve).
+- 165 questions rédigées, chacune avec une explication détaillée ; des cas cliniques pour entraîner le raisonnement diagnostique demandé en 2027 ; calculs générés à l’infini (taux d’incidence, prévalence, évolution en %, dilutions, masses, doses en mg/kg, pH).
+- 15 fiches de cours (essentiel, exemple corrigé, méthode, pièges), utilisées par « 💡 Comment répondre ? ».
+- Épreuves corrigées : CBPH 4 h (chimie ≈ 1 h coef. 3, BPH ≈ 3 h coef. 13) au lieu de « 3 h » ; épreuve de STSS ajoutée (3 h, 5 + 13 + 2 points) ; le bac blanc ST2S contient les deux.
+- Test v10.8.
+
+## Version 10.7.0
+
+Audit de sécurité (détail dans docs/SECURITE.md, section « Audit v10.7 »).
+
+- CSP sur toutes les pages (professeur, 3D, Mots City, mentions légales) ; empreintes des scripts en ligne tenues par outils/csp-pages.py.
+- En-têtes HTTP : HSTS, anti-cadre (X-Frame-Options, frame-ancestors), Permissions-Policy, Cross-Origin-Opener-Policy.
+- docs/ n'est plus publié ; dossiers de travail refusés par .htaccess ; bibliothèques PHP credits-lib et veille-publier interdites d'accès direct.
+- Veille : redirections vérifiées une à une ; jeton accepté dans l'en-tête X-Veille-Jeton.
+- Échappement d'un mot de dictée et des scores venus du serveur ; .gitignore complété (réglages, clés).
+- Tests v10.7 (jeu) et 2 tests serveur de plus.
+
+## Version 10.6.1
+
+- Écran de question rangé : le chrono est en haut à droite (il formait une grande colonne vide), « Sûr(e) / Pas sûr(e) » est sous la question, la réponse écrite prend la place des choix.
+- Réponse écrite guidée : « Réponse attendue : un seul mot » (ou « 3 mots »…), et un message plus clair après « Je ne sais pas : montre les choix ».
+- Questions de forme de phrase précisées : une phrase a plusieurs formes à la fois (affirmative ou négative, active ou passive, neutre ou emphatique), donc chaque question dit laquelle on cherche ; explication détaillée pour « C’est Lina qui a gagné. » (fr, en, es).
+- « 💡 Comment répondre ? » sur chaque question (maths et matières) : l’aide s’ouvre sans quitter la question, avec l’essentiel de la leçon et la méthode (fiche de cours, ou explications des autres questions du chapitre). Elle ne donne jamais la réponse de la question posée.
+- Test v10.6.1.
+
 ## Version 10.6.0
 
 Français complété d’après la vérification des programmes officiels.

@@ -94,7 +94,7 @@
     const r = await M.envoyer('classe.php', { action:'resultats', code, cle:d.cle }), z = document.getElementById('classe-liste'); if(!z) return;
     if(!r.ok || !r.d){ z.innerHTML = '<li>' + tx('Pas de connexion : réessaie plus tard.') + '</li>'; return; }
     const e = r.d.eleves || [];
-    z.innerHTML = e.length ? e.map(x => '<li><span>' + esc(x.pseudo) + '</span><strong>' + x.bonnes + ' / ' + x.total + '</strong></li>').join('') : '<li>' + tx('Personne n’a encore joué.') + '</li>';
+    z.innerHTML = e.length ? e.map(x => '<li><span>' + esc(x.pseudo) + '</span><strong>' + (Math.floor(Number(x.bonnes)) || 0) + ' / ' + (Math.floor(Number(x.total)) || 0) + '</strong></li>').join('') : '<li>' + tx('Personne n’a encore joué.') + '</li>';
     if(e.length){ const moy = e.reduce((t, x) => t + 20 * x.bonnes / x.total, 0) / e.length; const m = document.getElementById('classe-moyenne'); if(m) m.textContent = tx('Moyenne de la classe : {0} / 20 · {1} élève(s)', (Math.round(moy * 2) / 2).toString().replace('.', ','), e.length); }
   }
   Object.assign(M.actions, {

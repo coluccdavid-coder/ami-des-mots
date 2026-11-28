@@ -160,6 +160,13 @@
     ['Un déterminant de santé est :', 'Un facteur qui influence l’état de santé', [['Un médicament', 'Pas seulement : il peut être social, environnemental…'], ['Un hôpital', 'Réponse originale, ça oui. Juste, pas du tout.']], 'Exemples : revenu, logement, alimentation, environnement.'],
     ['Le pH sanguin normal est d’environ :', '7,4', [['2', 'Ça, c’est l’estomac.'], ['10', 'Bien trop basique.']], 'Légèrement basique.']
   ];
+  // Questions de la matière ST2S (avec, si demandé, n calculs générés : indicateurs de santé, dilutions). Repli : l'ancienne banque.
+  function banqueST2S(ids, r, nGen = 0){
+    const m = window.MATIERES && MATIERES.trouver('st2s'); if(!m) return ST2S;
+    const l = m.chapitres.filter(c => ids.includes(c.id)).flatMap(c => c.banque || []);
+    for(const c of m.chapitres.filter(c => ids.includes(c.id) && c.gen)) for(let k = 0; k < nGen; k++){ const x = c.gen(r, 'Tle', 'fr'); if(x && x.faux) l.push([x.enonce, x.bon, x.faux.map(f => [f.en, f.vanne]), x.regle]); }
+    return l.length ? l : ST2S;
+  }
   function stl(r){
     const C0 = un(r, [0.5, 1, 2]), f = un(r, [5, 10, 20]), V = un(r, [50, 100, 200]);
     return { titre:'Biochimie-biologie-biotechnologies · physique-chimie et maths', pts:20, contexte:'On dispose d’une solution mère à ' + nb(C0) + ' mol/L. On veut préparer ' + V + ' mL d’une solution diluée ' + f + ' fois.',
@@ -217,7 +224,10 @@
     'tech-stmg-msgn':{ titre:'STMG · management, sciences de gestion et numérique', duree:'4 h', officiel:'Étude de gestion', faire:r => [stmgGestion(r)], matiere:'maths' },
     'tech-stmg-droit':{ titre:'STMG · droit et économie', duree:'4 h', officiel:'Économie + droit', faire:r => [bloc('Droit et économie', 20, '', DROIT_ECO, r, 6)], matiere:'histoire' },
     'tech-sti2d':{ titre:'STI2D · ingénierie + physique-chimie et maths', duree:'4 h + 3 h', officiel:'2I2D et physique-chimie-maths', faire:r => [sti2d(r)], matiere:'physique' },
-    'tech-st2s':{ titre:'ST2S · chimie, biologie et physiopathologie humaines', duree:'3 h', officiel:'Sciences sanitaires et sociales', faire:r => [bloc('Biologie, physiopathologie et santé publique', 20, '', ST2S, r, 6)], matiere:'svt' },
+    // v10.8 : conforme à la note de service du 11-09-2026 (session 2027) : CBPH 4 h (chimie ≈ 1 h, coef. 3 ; BPH ≈ 3 h, coef. 13)
+    // et STSS 3 h (5 + 13 + 2 points). Les questions viennent de la matière ST2S (js/mat-st2s*.js).
+    'tech-st2s':{ titre:'ST2S · chimie, biologie et physiopathologie humaines (CBPH)', duree:'4 h', officiel:'Partie chimie (≈ 1 h, coefficient 3, deux exercices) + partie biologie et physiopathologie humaines (≈ 3 h, coefficient 13, cas clinique et documents) ; 2 points sur 20 de maîtrise de la langue dans chaque partie', faire:r => [bloc('Partie chimie (≈ 1 h)', 4, '', banqueST2S(['st2s-chimie', 'st2s-pcs'], r), r, 4), bloc('Partie biologie et physiopathologie humaines (≈ 3 h)', 16, '', banqueST2S(['st2s-milieu', 'st2s-immuno', 'st2s-repro', 'st2s-genes'], r), r, 10)], matiere:'st2s' },
+    'tech-st2s-stss':{ titre:'ST2S · sciences et techniques sanitaires et sociales (STSS)', duree:'3 h', officiel:'Mobilisation des connaissances (5 points, sans document) + dossier documentaire (13 points, cinq documents au plus) + qualité rédactionnelle (2 points)', faire:r => [bloc('Mobilisation des connaissances', 7, '', banqueST2S(['st2s-pol-sante', 'st2s-pol-sociale', 'st2s-stss-sante', 'st2s-stss-protection'], r), r, 5), bloc('Dossier documentaire : chiffres, indicateurs, démarche de projet', 13, '', banqueST2S(['st2s-projet', 'st2s-stss-sante'], r, 4), r, 8)], matiere:'st2s' },
     'tech-stl':{ titre:'STL · biochimie-biologie-biotechnologies', duree:'3 h', officiel:'Biotechnologies + physique-chimie et maths', faire:r => [stl(r)], matiere:'physique' },
     'tech-std2a':{ titre:'STD2A · analyse et méthodes en design', duree:'4 h', officiel:'Analyse de produits et démarche de design', faire:r => [bloc('Design et arts appliqués', 20, '', STD2A, r, 5)], matiere:'histoire' },
     'tech-sthr':{ titre:'STHR · économie-gestion hôtelière', duree:'4 h', officiel:'Économie-gestion + sciences culinaires et des services', faire:r => [sthr(r)], matiere:'maths' },
@@ -229,7 +239,7 @@
   for(const id of GENERALES) E.BLANCS['tle-' + id] = { titre:P[id].titre, ic:'🎒', niveau:'Tle', epreuves:[[id, 1]], tle:true };
   // Bac technologique : par série, les deux spécialités (coefficient 16) + la philosophie (coefficient 4 en voie technologique).
   E.SERIES_TECHNO = {
-    stmg:['STMG', ['tech-stmg-msgn', 'tech-stmg-droit']], sti2d:['STI2D', ['tech-sti2d']], st2s:['ST2S', ['tech-st2s']], stl:['STL', ['tech-stl']],
+    stmg:['STMG', ['tech-stmg-msgn', 'tech-stmg-droit']], sti2d:['STI2D', ['tech-sti2d']], st2s:['ST2S', ['tech-st2s', 'tech-st2s-stss']], stl:['STL', ['tech-stl']],
     std2a:['STD2A', ['tech-std2a']], sthr:['STHR', ['tech-sthr']], s2tmd:['S2TMD', ['tech-s2tmd']]
   };
   for(const [k, [nom, eps]] of Object.entries(E.SERIES_TECHNO))

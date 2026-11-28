@@ -17,8 +17,11 @@ const faux = http.createServer((q, r) => { let c = ''; q.on('data', d => c += d)
   if(q.url === '/doc-6e.html'){ r.writeHead(200, { 'content-type':'text/html' }); return r.end('<html><body><h1>Attendus de 6e</h1><p>Fractions, décimaux, angles…</p><script>alert(1)</script></body></html>'); }
   if(q.url === '/doc-fr5.html'){ r.writeHead(200, { 'content-type':'text/html' }); return r.end('<h1>Programme de français, cycle 4, classe de 5e (BO 2026)</h1><p>Lecture, grammaire, le récit d’aventure, la poésie de la ville…</p>'); }
   if(q.url === '/doc-dnb.html'){ r.writeHead(200, { 'content-type':'text/html' }); return r.end('<h1>Modalités d’attribution du DNB, session 2026</h1><p>Moyenne finale sur 20 ; épreuves terminales 60 %.</p>'); }
+  // v10.7 : un document officiel qui redirige vers une adresse interne (le serveur PHP lui-même) ne doit pas être suivi.
+  if(q.url === '/doc-redir.html'){ faux.redirections = (faux.redirections || 0) + 1; r.writeHead(302, { location:'http://127.0.0.1:8792/interne' }); return r.end(); }
   if(q.url === '/doc-3e.html'){ r.writeHead(200, { 'content-type':'text/html' }); return r.end('<p>Annales du brevet <a href="https://eduscol.education.fr/sujet-2026.pdf">Sujet 2026</a></p>'); }
   r.writeHead(404); r.end(); }); }).listen(8791);
+const interne = { appels:0 }; http.createServer((q, r) => { interne.appels++; r.writeHead(200); r.end('secret interne'); }).listen(8792);
 const appel = async (methode, chemin, corps, entetes = {}) => { const r = await fetch(B + chemin, { method:methode, headers:Object.assign({ 'content-type':'application/json' }, entetes), body:corps === undefined ? undefined : (typeof corps === 'string' ? corps : JSON.stringify(corps)) }); const t = await r.text(); let j = null; try{ j = JSON.parse(t); }catch(e){} return { st:r.status, j, t, h:r.headers }; };
 function signer(corps, secret = 'whsec_test', t = Math.floor(Date.now() / 1000)){ return 't=' + t + ',v1=' + crypto.createHmac('sha256', secret).update(t + '.' + corps).digest('hex'); }
 const webhook = (ev, sig) => { const c = JSON.stringify(ev); return appel('POST', '/abonnement.php', c, { 'stripe-signature':sig || signer(c) }); };
@@ -118,10 +121,12 @@ if(!process.env.AMI_CONFIG || !process.env.CLE_PUBLIQUE_JSON){
     verif('veille : lit les sources officielles, refuse un domaine non officiel', /✔ proposition à valider : 6e programme/.test(vei.stdout) && /✔ proposition à valider : 3e annales/.test(vei.stdout) && /refusé \(domaine non officiel\)/.test(vei.stdout), vei.stdout + vei.stderr);
     { const tous = JSON.stringify(claude.tous || []); verif('veille : le texte du document part vers Claude (sans les scripts)', /Attendus de 6e/.test(tous) && /Annales du brevet/.test(tous) && !/alert\(1\)/.test(tous), ''); }
     const vei2 = await lancerVeille();
+    verif('veille : une redirection vers une adresse non officielle n’est pas suivie', /✘ 0 : http:\/\/127\.0\.0\.1:8791\/doc-redir\.html/.test(vei.stdout) && faux.redirections >= 1 && interne.appels === 0, { sortie:vei.stdout.slice(0, 300), interne:interne.appels });
     verif('veille : un document déjà lu n’est pas relu', /inchangé : 6e programme/.test(vei2.stdout), vei2.stdout);
     r = await appel('GET', '/programme.php?quoi=maths'); verif('rien n’est publié avant validation', r.j.carte === null, r.j);
     r = await appel('GET', '/programme.php?quoi=contenus'); verif('veille v2 : les questions ne se publient jamais seules, même si la configuration le demande', JSON.stringify(r.j.contenus) === '{}', r.j);
     r = await appel('GET', '/veille.php?jeton=mauvais'); verif('veille par le web : jeton obligatoire', r.st === 403, r.st);
+    r = await appel('GET', '/veille.php', undefined, { 'x-veille-jeton':'mauvais' }); verif('veille par le web : jeton faux dans l’en-tête refusé', r.st === 403, r.st);
     // Coin admin
     let cookie = ''; const adm = async (corps, ck) => { const rr = await fetch(B + '/admin/', { method:corps ? 'POST' : 'GET', redirect:'manual', headers:Object.assign({ cookie:ck || cookie }, corps ? { 'content-type':'application/x-www-form-urlencoded' } : {}), body:corps ? new URLSearchParams(corps).toString() : undefined }); const sc = rr.headers.get('set-cookie'); if(sc) cookie = sc.split(';')[0]; return { st:rr.status, t:await rr.text() }; };
     await adm({ action:'connexion', mdp:'pas-le-bon' }); r = await adm();

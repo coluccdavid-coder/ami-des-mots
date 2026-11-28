@@ -2334,7 +2334,7 @@
     else { for(const e of c.erreurs) if(e.ecrit) noterErreur('dictee:' + e.ecrit + '>' + e.attendu); garder(); }
     const rendu = c.mots.map((m, k) => '<span class="' + (c.ok[k] ? 'mot-ok' : 'mot-ko') + '">' + esc(m) + '</span>').join(' ');
     const r = $('#dictee-retour');
-    if(r) r.innerHTML = (c.juste ? TXT('<p class="piege-bravo">✨ Parfait ! Pas une faute.</p>') : '<p class="piege-vanne">😂 ' + esc(c.erreurs.length ? A_EN().vanneDictee(c.erreurs.find(x => x.ecrit) || c.erreurs[0], c.score) : '« ' + c.enTrop[0] + TXT(' » est en trop : Plumo ne l’a pas dit ! 🤫')) + '</p>' + '<p class="dictee-corrige" lang="en">' + rendu + '</p>') +
+    if(r) r.innerHTML = (c.juste ? TXT('<p class="piege-bravo">✨ Parfait ! Pas une faute.</p>') : '<p class="piege-vanne">😂 ' + esc(c.erreurs.length ? A_EN().vanneDictee(c.erreurs.find(x => x.ecrit) || c.erreurs[0], c.score) : '« ' + esc(c.enTrop[0]) + TXT(' » est en trop : Plumo ne l’a pas dit ! 🤫')) + '</p>' + '<p class="dictee-corrige" lang="en">' + rendu + '</p>') +
       '<p class="piege-bon" lang="en">✅ ' + esc(ph.en) + '</p><p class="petit">🇫🇷 ' + esc(ph.fr) + '</p>' +
       '<button class="moyen plein" data-a="dictee-suivant">' + (d.i + 1 < d.liste.length ? 'Phrase suivante →' : TXT('Résultat')) + '</button>';
     if(z) z.readOnly = true; const vb = $('[data-a="dictee-verifier"]'); if(vb) vb.hidden = true;
@@ -2897,8 +2897,10 @@
       // v6.74 : avant de répondre, l'élève peut dire s'il est sûr de lui (facultatif).
       ((z.prof || q.matiere) && !q.vanneDe && !z.sansVanne ? '<p class="confiance" role="group" aria-label="' + esc(TXT('Avant de répondre :')) + '"><span>' + esc(TXT('Avant de répondre :')) + '</span> ' +
         '<button class="petit-bouton" data-a="qz-conf" data-v="sur" aria-pressed="false">🎯 ' + esc(TXT('Sûr(e)')) + '</button> <button class="petit-bouton" data-a="qz-conf" data-v="doute" aria-pressed="false">🤔 ' + esc(TXT('Pas sûr(e)')) + '</button></p>' : '') +
+      // v10.6.1 : « 💡 Comment répondre ? » — chaque exercice s'explique sans quitter la question (cours du chapitre, sans donner la réponse).
+      (aideExercice(z, q) ? '<div class="aide-exo"><button class="petit-bouton" data-a="qz-aide" aria-expanded="false" aria-controls="qz-aide-texte">💡 ' + esc(TXT('Comment répondre ?')) + '</button><div id="qz-aide-texte" class="aide-exo-texte" hidden></div></div>' : '') +
       // v6.71 : réponse écrite — l'élève tape d'abord sa réponse ; les choix n'apparaissent que s'il se trompe ou les demande.
-      (z.libre ? '<div class="reponse-libre"><label for="qz-libre">' + esc(TXT('✍️ Écris ta réponse')) + '</label> <input id="qz-libre" type="text" autocomplete="off" autocapitalize="off" spellcheck="false" maxlength="80" lang="' + (z.lang || q.lang || 'fr') + '"> ' +
+      (z.libre ? '<div class="reponse-libre"><label for="qz-libre">' + esc(TXT('✍️ Écris ta réponse')) + '</label><p class="libre-aide" id="qz-libre-aide">' + esc(aideLibre(q)) + '</p> <input aria-describedby="qz-libre-aide" id="qz-libre" type="text" autocomplete="off" autocapitalize="off" spellcheck="false" maxlength="80" lang="' + (z.lang || q.lang || 'fr') + '"> ' +
         '<button class="moyen plein" data-a="qz-libre-ok">' + esc(TXT('Valider')) + '</button> <button class="petit-bouton" data-a="qz-libre-choix">' + esc(TXT('Je ne sais pas : montre les choix')) + '</button></div>' : '') +
       '<div class="piege-options"' + (z.libre ? ' hidden' : '') + '>' + z.options.map((o, i) => '<button class="moyen piege-opt" data-a="qz-rep" data-v="' + i + '" lang="' + (z.lang || q.lang || 'en') + '">' + esc(o) + '</button>').join('') + '</div>' +
       '<div class="piege-retour" id="qz-retour" role="status" aria-live="polite"></div></main>');
@@ -2963,6 +2965,46 @@
     .replace(/[«»"“”!?¿¡;:]/g, ' ').replace(/\.(?!\d)/g, ' ').replace(/\s+/g, ' ').trim().replace(ARTICLES, '').trim();
   const sansAccents = s => String(s || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '');
   const variantesLibres = bon => { const s = String(bon || ''), v = [s, s.replace(/\([^)]*\)/g, ' ')], p = s.match(/\(([^)]*)\)/); if(p) v.push(p[1]); return v.map(normLibre).filter(Boolean); };
+  // v10.6.1 : l'explication d'un exercice. On s'appuie sur la fiche de cours du chapitre (l'essentiel et la méthode) ;
+  // sans fiche, sur les explications des autres questions du chapitre. Jamais l'explication de la question posée : elle donnerait la réponse.
+  function aideExercice(z, q){
+    if(!q || q.vanneDe) return null;
+    const mat = q.matiere || (z.prof ? 'maths' : ''), chap = q.chap; if(!mat || !chap) return null;
+    const ui = base.ui, F = window.AMI_COURS && AMI_COURS.get && AMI_COURS.get(mat + '/' + chap, ui);
+    const bon = String(q.bon || '').toLowerCase(), donne = t => bon.length > 2 && String(t).toLowerCase().includes(bon);
+    if(F && Array.isArray(F.essentiel) && F.essentiel.length){
+      return { titre:donne(F.titre || '') ? TXT('La leçon') : (F.titre || ''), points:F.essentiel.filter(t => !donne(t)).slice(0, 4), methode:(F.methode || []).filter(t => !donne(t)).slice(0, 3) };
+    }
+    const MA = window.MATIERES, m = MA && q.matiere && MA.trouver(q.matiere), c = m && m.chapitres.find(x => x.id === chap);
+    if(!c) return null;
+    if(!Array.isArray(c.banque)){
+      // Chapitre fait de calculs générés : la méthode vient d'autres exemples du même chapitre (autres nombres, donc pas la réponse).
+      if(typeof c.gen !== 'function' || !MA.hasard) return null;
+      const vu = new Set(), points = [];
+      for(let g = 1; g <= 12 && points.length < 3; g++){ let x = null; try{ x = c.gen(MA.hasard(g * 7919), q.niveau || '', q.lang || 'fr'); }catch(e){ x = null; }
+        const r = String(x && x.regle || '').trim(); if(r && !donne(r) && !vu.has(r)){ vu.add(r); points.push(r); } }
+      return points.length ? { titre:(MA.nomChap ? MA.nomChap(m, c) : c.nom) || '', points, methode:[] } : null;
+    }
+    const T = window.MATIERES_LANGUES, l = q.lang && q.lang !== 'fr' && T && T[q.lang] && T[q.lang].q && T[q.lang].q[q.matiere + '/' + chap];
+    const banque = Array.isArray(l) && l.length === c.banque.length ? l : c.banque, vu = new Set(), points = [];
+    for(const x of banque){ const r = String(x && x[3] || '').trim(); if(r && r !== String(q.regle || '').trim() && !donne(r) && !vu.has(r)){ vu.add(r); points.push(r); } if(points.length >= 4) break; }
+    return points.length ? { titre:(MA.nomChap ? MA.nomChap(m, c) : c.nom) || '', points, methode:[] } : null;
+  }
+  function aideOuvrir(bouton){
+    const z = qz, q = z && z.liste[z.i], zone = document.getElementById('qz-aide-texte'); if(!q || !zone) return;
+    if(!zone.hidden){ zone.hidden = true; if(bouton) bouton.setAttribute('aria-expanded', 'false'); return; }
+    const a = aideExercice(z, q); if(!a) return;
+    zone.innerHTML = '<p class="aide-exo-titre">📖 ' + esc(a.titre) + '</p><p>' + esc(TXT('Ce qu’il faut savoir pour répondre :')) + '</p><ul>' + a.points.map(t => '<li>' + esc(t) + '</li>').join('') + '</ul>' +
+      (a.methode.length ? '<p>' + esc(TXT('Méthode :')) + '</p><ol>' + a.methode.map(t => '<li>' + esc(t) + '</li>').join('') + '</ol>' : '') +
+      '<p class="petit">' + esc(TXT('Après ta réponse, la correction t’explique cette question en détail.')) + '</p>';
+    zone.hidden = false; if(bouton) bouton.setAttribute('aria-expanded', 'true');
+    z.aideVue = true;
+  }
+  // v10.6.1 : en réponse écrite, l'élève sait quelle longueur de réponse est attendue (sinon il ne sait pas quoi écrire).
+  function aideLibre(q){
+    const n = String(q.bon || '').replace(/\([^)]*\)/g, ' ').trim().split(/\s+/).filter(Boolean).length || 1;
+    return n === 1 ? TXT('Réponse attendue : un seul mot.') : TXT('Réponse attendue : {0} mots.').replace('{0}', n);
+  }
   function libreValider(){
     const z = qz; if(!z || z.repondu || !z.libre) return;
     const champ = $('#qz-libre'), v = champ ? champ.value : ''; if(!String(v).trim()) return;
@@ -2980,7 +3022,7 @@
     z.libreRate = true; z.libre = false;
     const zone = document.querySelector('.reponse-libre'); if(zone) zone.remove();
     const o = document.querySelector('.piege-options'); if(o) o.hidden = false;
-    const r = $('#qz-retour'); if(r) r.innerHTML = '<p class="libre-rate">' + (tape ? '✍️ ' + esc(TXT('Pas tout à fait')) + ' (« ' + esc(tape) + ' »). ' : '') + esc(TXT('Choisis maintenant parmi les propositions.')) + '</p>';
+    const r = $('#qz-retour'); if(r) r.innerHTML = '<p class="libre-rate">' + (tape ? '✍️ ' + esc(TXT('Pas tout à fait')) + ' (« ' + esc(tape) + ' »). ' : '') + esc(tape ? TXT('Choisis maintenant parmi les propositions.') : TXT('Pas grave ! Voici les propositions : choisis celle qui te semble juste. La correction t’expliquera pourquoi.')) + '</p>';
     const b = document.querySelector('.piege-opt'); if(b) b.focus();
   }
   // v6.71 : « 🚩 Signaler une erreur » — la question part dans une liste à relire (Espace parents), sur l'appareil.
@@ -3709,6 +3751,7 @@
         (M.trouver('lallemand') ? c('matiere', 'lallemand', '🇩🇪', TXT('Allemand (LVB, 5e → bac)'), TXT('Cas, place du verbe, parfait, Konjunktiv II')) : '') +
         (M.trouver('philo') ? c('matiere', 'philo', '🤔', TXT('Philosophie (Tle)'), TXT('Auteurs, notions, méthode de la dissertation')) : '') +
         (M.trouver('ses') ? c('matiere', 'ses', '📈', TXT('SES (spécialité 1re, Tle)'), TXT('Marchés, monnaie, inégalités, mobilité sociale')) : '') +
+        (M.trouver('st2s') ? c('matiere', 'st2s', '🩺', TXT('ST2S (1re, Tle) : santé-social, vers infirmier·ère'), TXT('Biologie et physiopathologie, chimie, STSS : le bac techno de la santé')) : '') +   // v10.8
         (M.trouver('hggsp') ? c('matiere', 'hggsp', '🌐', TXT('HGGSP (spécialité 1re, Tle)'), TXT('Puissance, ONU, espace, mémoire, environnement')) : '') +
         (M.trouver('hlp') ? c('matiere', 'hlp', '📜', TXT('HLP (spécialité 1re, Tle)'), TXT('Parole, représentations du monde, recherche de soi')) : '') +
         (M.trouver('nsi') ? c('matiere', 'nsi', '💻', TXT('NSI (spécialité 1re, Tle)'), TXT('Binaire, Python, réseaux, SQL, algorithmes')) : '') +
@@ -4273,6 +4316,7 @@
       case 'qz-conf': if(qz && !qz.repondu){ qz.confiance = qz.confiance === v ? '' : v; document.querySelectorAll('[data-a="qz-conf"]').forEach(x => x.setAttribute('aria-pressed', String(x.dataset.v === qz.confiance))); } return;
       case 'qz-libre-ok': return libreValider();
       case 'qz-libre-choix': return libreChoix('');
+      case 'qz-aide': return aideOuvrir(b);
       case 'qz-signaler': return signalerQuestion(b);
       case 'qz-ecouter': if(qz && qz.liste[qz.i] && qz.liste[qz.i].ecoute) direEcoute(qz.liste[qz.i].ecoute, 'en'); return;
       case 'bj-ecouter': if(window.BLAGUES_EN){ const bj = BLAGUES_EN.duJour(); direEcoute(bj.q + ' … ' + bj.r, 'en'); } return;

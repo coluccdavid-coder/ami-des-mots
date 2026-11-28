@@ -48,7 +48,7 @@ return [
   'veille_domaines_test' => ['127.0.0.1:8791'],
   'veille_sources' => ['domaines' => ['www.education.gouv.fr', 'education.gouv.fr', 'eduscol.education.fr', 'eduscol.education.gouv.fr'],
     'systemes' => ['fr' => ['nom' => 'France', 'domaines' => []], 'it' => ['nom' => 'Italie', 'domaines' => ['www.mim.gov.it']]],
-    'sources' => [['programme', '6e', 'http://127.0.0.1:8791/doc-6e.html'], ['annales', '3e', 'http://127.0.0.1:8791/doc-3e.html'], ['programme', '5e', 'https://pirate.example/x'],
+    'sources' => [['programme', '6e', 'http://127.0.0.1:8791/doc-6e.html'], ['annales', '3e', 'http://127.0.0.1:8791/doc-3e.html'], ['programme', '5e', 'https://pirate.example/x'], ['programme', '4e', 'http://127.0.0.1:8791/doc-redir.html'],
       ['systeme' => 'fr', 'sorte' => 'programme', 'matiere' => 'francais', 'classe' => '5e', 'url' => 'http://127.0.0.1:8791/doc-fr5.html'],
       ['systeme' => 'fr', 'sorte' => 'epreuve', 'matiere' => 'toutes', 'classe' => '3e', 'url' => 'http://127.0.0.1:8791/doc-dnb.html', 'id' => 'diplome-national-du-brevet'],
       ['systeme' => 'it', 'sorte' => 'epreuve', 'matiere' => 'toutes', 'classe' => 'Tle', 'url' => 'https://eduscol.education.fr/pas-italien'],

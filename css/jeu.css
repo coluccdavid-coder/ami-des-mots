@@ -2144,3 +2144,24 @@ html[data-texte="tres-grand"]{ font-size:125%; } html[data-texte="tres-grand"] b
   .ami-3d{transform:none!important;transition:none}
 }
 html[data-facile] .ami-3d-wrap,html[data-facile] .ami-3d-corps,html[data-facile] [class*="ami-vit-"]{animation:none!important}
+
+/* v10.6.1 : écran de question rangé — chrono en haut à droite, « Sûr(e) / Pas sûr(e) » sous la question,
+   réponse écrite à la place des choix. Avant, ces trois éléments se plaçaient au hasard dans la grille. */
+#app .piege-ecran, .piege-ecran{ grid-template-areas:"cat chrono" "head opts" "conf opts" "aide opts" "retour retour"; }
+#app .piege-ecran:has(.contexte-exo), .piege-ecran:has(.contexte-exo){ grid-template-areas:"cat chrono" "ctx ctx" "head opts" "conf opts" "aide opts" "retour retour"; }
+.piege-ecran .chrono-veille{ grid-area:chrono; justify-self:end; align-self:center; margin:0; position:static; }
+.piege-ecran .confiance{ grid-area:conf; align-self:start; justify-content:flex-start; margin:0; }
+.piege-ecran .reponse-libre{ grid-area:opts; align-self:center; justify-content:flex-start; margin:0; width:100%; }
+.piege-ecran .reponse-libre label{ font-size:1.15rem; }
+.piege-ecran .reponse-libre .libre-aide{ flex-basis:100%; margin:-4px 0 0; font-size:.95rem; opacity:.85; }
+@media (max-width: 760px){
+  #app .piege-ecran, .piege-ecran{ grid-template-areas:"cat" "chrono" "head" "conf" "aide" "opts" "retour"; }
+  #app .piege-ecran:has(.contexte-exo), .piege-ecran:has(.contexte-exo){ grid-template-areas:"cat" "chrono" "ctx" "head" "conf" "aide" "opts" "retour"; }
+  .piege-ecran .chrono-veille{ justify-self:center; }
+}
+.piege-ecran .aide-exo{ grid-area:aide; align-self:start; }
+.aide-exo-texte{ margin-top:10px; padding:14px 18px; border-radius:18px; border:1px solid rgba(255,220,120,.35); background:rgba(255,220,120,.08); text-align:left; line-height:1.5; }
+.aide-exo-texte ul,.aide-exo-texte ol{ margin:6px 0 8px; padding-left:22px; }
+.aide-exo-texte li{ margin:4px 0; }
+.aide-exo-titre{ font-weight:800; margin:0 0 6px; }
+.piege-ecran .reponse-libre, .piege-ecran .piege-options{ align-self:start; }

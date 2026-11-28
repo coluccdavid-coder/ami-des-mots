@@ -1,2 +1,13 @@
 node_modules/
 *.zip
+# v10.7 : jamais de réglages secrets ni de clés dans le dépôt.
+config-ami.php
+serveur-php/config.php
+*.pem
+*.p8
+*.key
+.env
+.env.*
+_site/
+_ovh/
+www/
