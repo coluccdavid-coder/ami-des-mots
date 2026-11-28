@@ -12,6 +12,8 @@
   const M = window.AMI_MODULES; if(!M) return;
   const api = () => M.api, tx = (...a) => M.tx(...a);
   M.textes({
+    'Corrigé et barème : ce qui rapporte des points':['Model answer and marking scheme: what earns points', 'Corrección y baremo: lo que da puntos', 'Musterlösung und Bewertung: was Punkte bringt', 'Correzione e punteggio: cosa fa guadagnare punti', 'Correção e grelha: o que vale pontos'],
+    'Compare ta copie point par point : chaque élément présent et juste rapporte les points indiqués entre parenthèses.':['Compare your paper point by point: each correct element present earns the points shown in brackets.', 'Compara tu ejercicio punto por punto: cada elemento presente y correcto da los puntos indicados entre paréntesis.', 'Vergleiche deine Arbeit Punkt für Punkt: Jedes richtige Element bringt die in Klammern angegebenen Punkte.', 'Confronta il tuo elaborato punto per punto: ogni elemento presente e corretto vale i punti tra parentesi.', 'Compara a tua prova ponto por ponto: cada elemento presente e correto vale os pontos indicados entre parênteses.'],
     '🖊️ Rédiger ma copie':['🖊️ Write my paper', '🖊️ Redactar mi ejercicio', '🖊️ Meine Arbeit schreiben', '🖊️ Scrivere il mio elaborato', '🖊️ Escrever a minha prova'],
     '🖊️ Ma copie':['🖊️ My paper', '🖊️ Mi ejercicio', '🖊️ Meine Arbeit', '🖊️ Il mio elaborato', '🖊️ A minha prova'],
     '🖊️ Mes copies':['🖊️ My papers', '🖊️ Mis ejercicios', '🖊️ Meine Arbeiten', '🖊️ I miei elaborati', '🖊️ As minhas provas'],
@@ -59,10 +61,10 @@
     return d ? { key:'eaf:d' + d.idx, sorte:'dissertation', titre:'Dissertation — « ' + d.oeuvre + ' »', sujet:d.sujet, texteSujet:'', oeuvre:d.auteur + ', « ' + d.oeuvre + ' » — parcours « ' + d.parcours + ' »', cles, titreOeuvre:d.oeuvre }
       : { key:'eaf:c' + S.com.idx, sorte:'commentaire', titre:'Commentaire — « ' + S.com.titre + ' »', sujet:'Vous commenterez ce texte (objet d’étude : ' + S.com.objet + ').', texteSujet:'« ' + S.com.titre + ' »\n' + S.com.texte, oeuvre:'', cles:'', titreOeuvre:'' };
   }
-  const NIVEAU = { commentaire:'1re', dissertation:'1re', philo:'Tle', redaction:'3e', developpement:'3e', ses:'Tle', hggsp:'Tle', 'hggsp-etude':'Tle', synthese:'Sup' }, COURTS = ['redaction', 'developpement'];
+  const NIVEAU = { commentaire:'1re', dissertation:'1re', philo:'Tle', redaction:'3e', developpement:'3e', ses:'Tle', hggsp:'Tle', 'hggsp-etude':'Tle', synthese:'Sup', stss:'Tle', cbph:'Tle' }, COURTS = ['redaction', 'developpement'];
   // v7.8 : les autres écrits d'examen (rédaction du brevet, développement construit d'histoire-géo, dissertation de philosophie).
   function depuisEcrit(ep, i){ const e = ep && ep.ecrits && ep.ecrits[+i]; if(!e) return null;
-    return { key:'ecrit:' + e.key, sorte:e.sorte, genre:e.genre || '', titre:e.titre, sujet:e.sujet, texteSujet:e.texteSujet || '', oeuvre:'', cles:'', titreOeuvre:'', duree:e.duree || 240 }; }
+    return Object.assign({ key:'ecrit:' + e.key, sorte:e.sorte, genre:e.genre || '', titre:e.titre, sujet:e.sujet, texteSujet:e.texteSujet || '', oeuvre:'', cles:'', titreOeuvre:'', duree:e.duree || 240 }, e.corrige ? { corrige:e.corrige } : {}); }
   function ouvrir(info){
     const c = copies(); let x = c[info.key];
     if(!x){ const cles = Object.keys(c); if(cles.length >= MAX){ cles.sort((a, b) => (c[a].maj || 0) - (c[b].maj || 0)); delete c[cles[0]]; }
@@ -83,7 +85,10 @@
     ses:{ mots:900, court:400, paras:5, connect:8, pages:'souvent 4 à 6 pages, soit environ 1 000 à 1 800 mots' },
     hggsp:{ mots:600, court:300, paras:4, connect:6, pages:'environ 2 heures de travail, soit 600 à 1 000 mots' },
     'hggsp-etude':{ mots:450, court:220, paras:3, connect:5, pages:'environ 2 heures de travail, soit 450 à 800 mots' },
-    synthese:{ mots:600, court:300, paras:4, connect:6, pages:'pour ce dossier court, environ 600 à 1 000 mots (au CRFPA : quatre pages au plus)' }
+    synthese:{ mots:600, court:300, paras:4, connect:6, pages:'pour ce dossier court, environ 600 à 1 000 mots (au CRFPA : quatre pages au plus)' },
+    // v10.10 : ST2S — épreuve de STSS (réponses rédigées aux questions d’un dossier) et partie biologie de CBPH (cas clinique).
+    stss:{ mots:600, court:300, paras:6, connect:6, pages:'en 3 heures, environ 600 à 1 000 mots : une réponse rédigée par question' },
+    cbph:{ mots:500, court:250, paras:5, connect:5, pages:'environ 500 à 900 mots : une réponse rédigée par question' }
   };
   const AUTEURS = /\b(Platon|Socrate|Aristote|Épicure|Épictète|Sénèque|Marc Aurèle|Augustin|Thomas d[’']Aquin|Montaigne|Machiavel|Descartes|Pascal|Spinoza|Hobbes|Locke|Leibniz|Hume|Rousseau|Voltaire|Diderot|Kant|Hegel|Marx|Nietzsche|Schopenhauer|Kierkegaard|Freud|Bergson|Alain|Husserl|Heidegger|Sartre|Beauvoir|Camus|Arendt|Merleau-Ponty|Levinas|Weil|Lévi-Strauss|Foucault|Bachelard|Popper|Rawls|Jonas|Tocqueville|Mill|Durkheim|Weber)\b/gu;
   function analyser(x){
@@ -145,6 +150,23 @@
       v(docs >= 4, 'Références aux documents (' + docs + ')', 'Chaque idée renvoie au document qui la porte.', 'Dans une note de synthèse, chaque information renvoie à sa source entre parenthèses : (doc. 1), (doc. 2 et 4). Tous les documents doivent être utilisés.');
       v(opinions === 0, 'Neutralité', 'Ta note reste neutre : aucune opinion personnelle.', 'La note de synthèse est neutre : aucune opinion personnelle (« je pense », « à mon avis »…) et aucune connaissance extérieure au dossier.');
       v(annonce >= 2 || /\b(I\.|II\.|I –|II –|première partie|seconde partie)/u.test(t), 'Plan annoncé et apparent', 'Ton plan est annoncé et visible.', 'Annonce ton plan en fin d’introduction, puis fais apparaître deux parties (I, II) et leurs sous-parties (A, B) avec des titres.'); }
+    // v10.10 : ST2S. Ce que vérifie un correcteur de STSS ou de CBPH : chaque question traitée, les documents ou le cas exploités,
+    // des chiffres avec leurs unités, le vocabulaire du programme, un raisonnement en étapes.
+    if(so === 'stss' || so === 'cbph'){
+      const nq = (String(x.texteSujet || '').match(/^\d+\.\s/gm) || []).length, rep = new Set((t.match(/^\s*(\d+)\s*[.)\-–]/gm) || []).map(s => s.replace(/\D/g, ''))).size;
+      if(nq) v(rep >= nq, 'Toutes les questions traitées (' + rep + '/' + nq + ')', 'Chaque question a sa réponse, numérotée comme dans le sujet.', 'Numérote tes réponses comme le sujet (1., 2., 3.…) et ne laisse aucune question sans réponse : chaque question rapporte des points.');
+      const chiffres = compte(t, /\d+(?:[,.]\d+)?\s?(%|points?|g\/L|mmol|kg|m²|ans|personnes|mm³|°C|pour 100 000)/giu);
+      v(chiffres >= 3, 'Données chiffrées avec leurs unités (' + chiffres + ')', 'Tu t’appuies sur des données précises, avec leurs unités.', 'Prouve tes réponses avec les chiffres du sujet, toujours avec leur unité (%, g/L, kg/m²…), et calcule quand on te le demande (taux, évolution, écart en points).');
+      if(so === 'stss'){
+        v(compte(t, /\b(doc(?:ument)?\.?\s*n?°?\s*\d)/giu) >= 3, 'Références aux documents', 'Tu cites les documents qui prouvent chaque idée.', 'Indique d’où vient chaque information : « (doc. 1) », « d’après le document 3 ». La partie 2 vaut 13 points : les documents doivent être exploités.');
+        const notions = compte(t, /\b(déterminants?|inégalités?|prévention|promotion|protection sociale|reste à charge|partenariat|partenaires?|acteurs?|dispositif|politique (?:de santé|sociale)|indicateurs?|évaluation|objectifs?|population cible|territoire|solidarité|décentralisation|financement|usagers?|besoins?)\b/giu);
+        v(notions >= 6, 'Notions du programme (' + notions + ')', 'Tu utilises le vocabulaire précis de STSS.', 'Emploie les notions du programme : déterminant, inégalité, dispositif, partenariat, acteur, financement, indicateur, évaluation… Une notion bien utilisée vaut mieux qu’une longue phrase.');
+      } else {
+        const notions = compte(t, /\b(insuline|glucagon|glycémie|homéostasie|anticorps|antigènes?|lymphocytes?|plasmocytes?|phagocytose|virus|bactéries?|mutations?|gènes?|protéines?|métastases?|biopsie|diagnostic|signes?|hypothèse|cellules?|hormones?|récepteurs?|rétrocontrôle|vaccin\w*|mémoire)\b/giu);
+        v(notions >= 8, 'Vocabulaire scientifique (' + notions + ')', 'Tu emploies le vocabulaire scientifique exact.', 'Nomme précisément les cellules, molécules et mécanismes (insuline, lymphocytes, mutation…) au lieu de mots vagues.');
+        v(compte(t, /\b(donc|entraîne|provoque|conduit à|car|parce que|ce qui|par conséquent|ainsi|d[’']où|alors)\b/giu) >= 6, 'Raisonnement en étapes', 'Tu enchaînes les causes et les conséquences.', 'Raisonne pas à pas : « signe → mécanisme → conséquence ». Les connecteurs (donc, car, ce qui entraîne…) montrent ton raisonnement au correcteur.');
+      }
+    }
     if(so === 'developpement'){
       v(compte(t, /\b(1[0-9]{3}|20[0-9]{2})\b/g) >= 3, 'Dates (' + compte(t, /\b(1[0-9]{3}|20[0-9]{2})\b/g) + ')', 'Tu situes les faits avec des dates précises.', 'Un développement construit doit contenir des repères précis : cite au moins trois dates importantes du thème.');
       v(compte(t, /(?<=[\s’'(«-])[A-ZÀ-ÖØ-Þ][\p{L}’'-]{2,}/gu) >= 4, 'Acteurs et lieux', 'Tu nommes des acteurs, des lieux, des institutions.', 'Nomme des acteurs (personnes, États, organisations) et des lieux précis : ce sont les preuves de tes connaissances.'); }
@@ -201,9 +223,16 @@
     x.corrections = (x.corrections || []).concat([{ date:Date.now(), forme:r.ok + '/' + r.sur }]).slice(-10); A.garder();
     A.poser(A.barre('copies') + '<main class="coin-anglais copie-ecran"><h2>' + esc(tx('Vérification de ta copie')) + '</h2>' + sujetHtml(x) +
       '<p class="gros-score">' + r.ok + '/' + r.sur + '</p><p>' + esc(tx('{0} points de méthode réussis sur {1}. Ce n’est pas une note : c’est ce qu’un correcteur regarde en premier.', r.ok, r.sur)) + '</p>' +
-      '<ul class="copie-verif">' + r.liste.map(i => '<li class="' + (i.ok ? 'ok' : 'ko') + '"><strong>' + (i.ok ? '✅ ' : '✏️ ') + esc(i.titre) + '</strong><br>' + esc(i.detail) + '</li>').join('') + '</ul>' +
+      '<ul class="copie-verif">' + r.liste.map(i => '<li class="' + (i.ok ? 'ok' : 'ko') + '"><strong>' + (i.ok ? '✅ ' : '✏️ ') + esc(i.titre) + '</strong><br>' + esc(i.detail) + '</li>').join('') + '</ul>' + corrigeHtml(x) +
       '<div class="actions serrees"><button class="moyen plein" data-a="copie-reprendre" data-v="' + esc(x.key) + '">' + esc(tx('✏️ Reprendre ma copie')) + '</button>' +
       (M.serveur('copie.php') && A.base().devoirsAccord === true ? '<button class="moyen" data-a="copie-ia">' + esc(tx('✨ Correction détaillée par l’IA')) + '</button>' : '') + '</div></main>');
+  }
+  // v10.10 : corrigé type et barème (sujets qui en ont un), montré APRÈS la vérification : on rédige d'abord, on compare ensuite.
+  function corrigeHtml(x){
+    const esc = api().esc; if(!Array.isArray(x.corrige) || !x.corrige.length) return '';
+    return '<details class="corrige-type" open><summary>📘 ' + esc(tx('Corrigé et barème : ce qui rapporte des points')) + '</summary>' +
+      x.corrige.map(([q, l]) => '<h3>' + esc(q) + '</h3><ul>' + (l || []).map(s => '<li>' + esc(s) + '</li>').join('') + '</ul>').join('') +
+      '<p class="petit">' + esc(tx('Compare ta copie point par point : chaque élément présent et juste rapporte les points indiqués entre parenthèses.')) + '</p></details>';
   }
   async function corrigerIA(){
     lireChamps(); const x = cour, A = api(); if(!x) return liste();
@@ -247,7 +276,7 @@
   });
   // v7.8 : boutons des autres écrits (rédaction du brevet, développement construit, dissertation de philo) sur l'écran d'une épreuve.
   // v8.6 : ouvrir une copie depuis un autre module (ex. la note de synthèse du CRFPA dans « Devenir avocat »).
-  M.copieOuvrir = info => ecrire(ouvrir(Object.assign({ genre:'', texteSujet:'', oeuvre:'', cles:'', titreOeuvre:'', duree:240 }, info)));
+  M.copieOuvrir = info => { const x = ouvrir(Object.assign({ genre:'', texteSujet:'', oeuvre:'', cles:'', titreOeuvre:'', duree:240 }, info)); if(info.corrige) x.corrige = info.corrige; return ecrire(x); };
   M.boutonsEcrits = ep => (ep && ep.ecrits || []).length ? '<section class="domaine sujet-bloc"><h3>' + api().esc(tx('🖊️ Rédiger ma copie')) + '</h3>' + ep.ecrits.map((e, i) => '<div class="sujet-dis"><p><strong>' + api().esc(e.titre) + '</strong></p><p>' + api().esc(e.sujet) + '</p>' +
     '<button class="moyen" data-a="copie-ecrit" data-v="' + i + '">' + api().esc(tx('🖊️ Rédiger ma copie')) + '</button></div>').join('') + '</section>' : '';
   // Bouton « Rédiger ma copie » placé par jeu.js sur l'écran du sujet du bac de français.
