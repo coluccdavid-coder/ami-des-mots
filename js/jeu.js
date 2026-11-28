@@ -559,7 +559,10 @@
   // Couleur de chaque thème (cartes, barre de progression, accents).
   const COUL_THEME = { animaux:'#FF8A3D', manger:'#FF5D6C', maison:'#4D7CFE', habits:'#F06BB1', nature:'#25B26A', ville:'#7A5CFA', musique:'#B04CF0', atelier:'#0FAFBF' };
   const couleurDe = th => COUL_THEME[th] || '#7A5CFA';
+  let majPrete = false;   // v10.9 : une nouvelle version est installée et attend le prochain écran d'accueil
   function poser(html, ecran){
+    // v10.9 : une nouvelle version attend ? On recharge en revenant à un écran d'accueil (jamais au milieu d'une série).
+    if(majPrete && (ecran === 'bienvenue' || /^[^<]*<main class="(accueil\b|[^"]*\b(porte-mots-ecran|matieres-ecran)\b)/.test(String(html).replace(/<header[\s\S]*?<\/header>/, '')))){ majPrete = false; return recharger(); }
     if(typeof fermerFenetre === 'function') fermerFenetre();
     const r = $('#app');
     r.innerHTML = html;
@@ -4159,6 +4162,8 @@
     if(b.tagName === 'A' && b.dataset.a === 'plus') ev.preventDefault();
     switch(b.dataset.a){
       case 'accueil': return depuis3D() ? retour3D() : accueil();
+      case 'maj-recharger': majPrete = false; return recharger();
+      case 'maj-plus-tard': { const x = document.getElementById('maj-prete'); if(x) x.remove(); return; }
       case 'accueil-3d': if(CONFIG.VILLAGE_CACHE) return accueil(); try{ localStorage.setItem('ami_accueil3d', '1'); }catch(e){} location.href = 'monde-3d.html'; return;
       case 'themes': return depuis3D() ? retour3D() : themes();
       case 'theme': return choisirJeu(v);
@@ -4486,14 +4491,30 @@
   // v6.41 : mise à jour sans double rechargement. L'appli garde ses fichiers pour le hors-connexion (sw.js) ; quand une
   // nouvelle version prend la main, on recharge UNE fois, seulement sur la page d'accueil ou dans les premières secondes,
   // pour ne jamais couper une série en cours. updateViaCache:'none' : le navigateur va toujours chercher le dernier sw.js.
+  // v10.9 : mise à jour AUTOMATIQUE partout, y compris sur les ordinateurs où l'onglet (ou l'appli installée) reste ouvert
+  // des jours : le jeu redemande la dernière version toutes les 30 minutes, à chaque retour sur l'onglet et au retour
+  // du réseau. Quand elle est prête : rechargement tout de suite si l'on vient d'ouvrir le jeu ou si l'on est sur l'accueil ;
+  // sinon au prochain retour à l'accueil, avec un bandeau « Mettre à jour » pour ne pas attendre.
   if('serviceWorker' in navigator && location.protocol === 'https:'){
     const avait = !!navigator.serviceWorker.controller, debut = Date.now(); let recharge = false;
-    navigator.serviceWorker.addEventListener('controllerchange', () => {
-      const ecran = ($('#app') || {}).dataset || {};
-      if(!avait || recharge || !(ecran.ecran === 'bienvenue' || Date.now() - debut < 15000)) return;
-      recharge = true; location.reload();
-    });
-    navigator.serviceWorker.register('sw.js', { updateViaCache:'none' }).then(r => r.update && r.update()).catch(() => {});
+    navigator.serviceWorker.addEventListener('controllerchange', () => { if(avait && !recharge){ recharge = true; nouvelleVersion(Date.now() - debut < 15000); } });
+    navigator.serviceWorker.register('sw.js', { updateViaCache:'none' }).then(reg => {
+      let derniere = Date.now();
+      const verifier = () => { derniere = Date.now(); try{ const p = reg.update(); if(p && p.catch) p.catch(() => {}); }catch(e){} };
+      verifier();
+      setInterval(verifier, 30 * 60 * 1000);
+      document.addEventListener('visibilitychange', () => { if(document.visibilityState === 'visible' && Date.now() - derniere > 5 * 60 * 1000) verifier(); });
+      window.addEventListener('online', verifier);
+    }).catch(() => {});
+  }
+  function recharger(){ return (window.__amiRecharger || (() => location.reload()))(); }
+  function nouvelleVersion(toutDeSuite){
+    const ecran = ($('#app') || {}).dataset || {}, main = document.querySelector('#app main'), cls = main ? main.className : '';
+    const surAccueil = ecran.ecran === 'bienvenue' || /^accueil\b|\b(porte-mots-ecran|matieres-ecran)\b/.test(cls);
+    if(toutDeSuite || surAccueil) return recharger();
+    majPrete = true;
+    if(!document.getElementById('maj-prete')) document.body.insertAdjacentHTML('beforeend', '<div class="maj-prete" id="maj-prete" role="status">✨ ' + esc(TXT('Une nouvelle version d’Ami des mots est prête.')) +
+      ' <button class="petit-bouton" data-a="maj-recharger">' + esc(TXT('Mettre à jour')) + '</button> <button class="petit-bouton" data-a="maj-plus-tard" aria-label="' + esc(TXT('Plus tard')) + '">✕</button></div>');
   }
   // v6.0 : ce que les modules peuvent utiliser (rien d'autre).
   MODULES.api = { base:() => base, J, garder, carnetAujourdhui, carnetDe, programmeDe, bienvenue, mathsAccueil, INTERVALLES_CARNET, poser, barre, esc, t, tt, TXT, jour, questionsGo, ami, annonce, bruit, plus, accueil, CONFIG,
@@ -4505,7 +4526,7 @@
   // v6.0 : liens d'invitation (?ligue=, ?classe=, ?parrain=) et autres démarrages de modules.
   { const go = () => setTimeout(() => { for(const f of (window.AMI_MODULES.auDemarrage || [])) try{ f(); }catch(e){} }, 0);
     if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded', go); else go(); }
-  window.AmiDesMots = { questionsGo, formulesOffertes, appliquerCertificat, qzBonne:() => qz && qz.liste[qz.i] ? qz.liste[qz.i].bon : null, CLE_OFFRE, verifierOffre, base, J, affiche, fnv1a, urlVoix, accueil, themes, choisirJeu, commencer, lettresPossibles, distincts, motsDu, aDire, CATALOGUE, MECAS, disponible, nomJeu, aRevoir, noter, jour, defi, revoir, lecon, astuces, aToi, blague, carnet, noteVoix, sansEmojis, direPhrase, direEcoute, iaPrecharger, iaPrendre, vanneObjets, avecArticle, astuce, niveauHumour, fousRires, reglages, CONFIG, COINS, coinOuvert, offreLue, facile, nbMots, restaurer, verifierJeton, plus, ecranPlus, formatCode, rafraichir,
+  window.AmiDesMots = { nouvelleVersion, majPrete:() => majPrete, questionsGo, formulesOffertes, appliquerCertificat, qzBonne:() => qz && qz.liste[qz.i] ? qz.liste[qz.i].bon : null, CLE_OFFRE, verifierOffre, base, J, affiche, fnv1a, urlVoix, accueil, themes, choisirJeu, commencer, lettresPossibles, distincts, motsDu, aDire, CATALOGUE, MECAS, disponible, nomJeu, aRevoir, noter, jour, defi, revoir, lecon, astuces, aToi, blague, carnet, noteVoix, sansEmojis, direPhrase, direEcoute, iaPrecharger, iaPrendre, vanneObjets, avecArticle, astuce, niveauHumour, fousRires, reglages, CONFIG, COINS, coinOuvert, offreLue, facile, nbMots, restaurer, verifierJeton, plus, ecranPlus, formatCode, rafraichir,
     get etat(){ return J(); } };
   garder();
   if(lienDefi || lienSalon){

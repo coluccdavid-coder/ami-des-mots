@@ -28,7 +28,9 @@ const FICHIERS = ${JSON.stringify(fichiers.filter(f => !lourd(f)), null, 1)};
 // v5.75 : la 3D (village, Mots City, three.js, modèles — environ ${(taille3D / 1e6).toFixed(0)} Mo) n'est plus téléchargée d'avance :
 // elle est gardée seulement quand on l'ouvre. Le premier lancement est plus rapide et consomme moins de données.
 const LOURDS = ${JSON.stringify(fichiers.filter(lourd), null, 1)};
-self.addEventListener('install', e => { e.waitUntil(caches.open(CACHE).then(c => c.addAll(FICHIERS)).then(() => self.skipWaiting())); });
+// v10.9 : cache:'reload' — les fichiers de la nouvelle version sont pris sur le serveur, jamais dans le cache HTTP du navigateur
+// (sinon, sur un hébergement qui garde les fichiers quelques minutes, d'anciens fichiers pouvaient entrer dans la nouvelle version).
+self.addEventListener('install', e => { e.waitUntil(caches.open(CACHE).then(c => c.addAll(FICHIERS.map(f => new Request(f, { cache:'reload' })))).then(() => self.skipWaiting())); });
 self.addEventListener('activate', e => { e.waitUntil(caches.keys().then(k => Promise.all(k.filter(x => x !== CACHE).map(x => caches.delete(x)))).then(() => self.clients.claim())); });
 self.addEventListener('fetch', e => {
   const u = new URL(e.request.url);

@@ -5,6 +5,15 @@ Avant la v6.44, chaque version avait son propre fichier VERSION-x.y.txt à la ra
 
 ---
 
+## Version 10.9.0
+
+Mise à jour automatique, y compris sur les ordinateurs.
+
+- Le jeu redemande la dernière version toutes les 30 minutes, à chaque retour sur l’onglet (après 5 minutes) et au retour du réseau. Avant, il ne vérifiait qu’à l’ouverture : un onglet ou une appli installée restés ouverts des jours gardaient l’ancienne version.
+- Quand la nouvelle version est prête : rechargement immédiat si le jeu vient d’être ouvert ou si l’on est sur un écran d’accueil ; sinon au prochain retour à l’accueil (jamais au milieu d’une série), avec un bandeau « Mettre à jour » pour ne pas attendre. Avant, si la version arrivait pendant une activité, rien ne se passait jusqu’à la visite suivante.
+- Le service worker télécharge les fichiers de la nouvelle version sur le serveur (cache:'reload'), jamais dans le cache HTTP du navigateur : sur un hébergement qui garde les fichiers quelques minutes (GitHub Pages), d’anciens fichiers pouvaient sinon entrer dans la nouvelle version.
+- Test v10.9.
+
 ## Version 10.8.0
 
 Série ST2S (sciences et technologies de la santé et du social), la voie technologique la plus suivie pour devenir infirmier ou infirmière, vérifiée sur les programmes officiels et la note de service du 11-09-2026 (session 2027).

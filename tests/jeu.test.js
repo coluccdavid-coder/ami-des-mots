@@ -3839,6 +3839,24 @@ await test('v6.84 : physique-chimie du collège en italien et en portugais — 1
   assert.ok(M.serie('francais', 'homophones', '6e', 5, 2, 'taquin').every(q => q.lang === 'fr'), 'chapitre non traduit (français : homophones) : reste en français (l’EMC est traduite depuis la v7.5)'); A.base.ui = 'fr';
 });
 
+await test('v10.9 : mise à jour automatique partout (vérification régulière, rechargement à l’accueil, bandeau, fichiers jamais repris du cache HTTP)', async () => {
+  const j = lire('js/jeu.js'), sw = lire('sw.js');
+  assert.match(sw, /new Request\(f, \{ cache:'reload' \}\)/); assert.match(sw, /skipWaiting/); assert.match(sw, /clients\.claim/);
+  assert.match(j, /setInterval\(verifier, 30 \* 60 \* 1000\)/); assert.match(j, /visibilitychange/); assert.match(j, /addEventListener\('online', verifier\)/);
+  const w = page(), d = w.document, A = w.AmiDesMots, API = w.AMI_MODULES.api; let n = 0; w.__amiRecharger = () => { n++; };
+  // En pleine série : pas de rechargement, un bandeau ; la série continue.
+  API.matiereSerie('francais', 'cpl-phrases', 5, 'Test'); A.nouvelleVersion(false);
+  assert.strictEqual(n, 0, 'jamais au milieu d’une série'); assert.ok(d.getElementById('maj-prete'), 'bandeau'); assert.ok(A.majPrete());
+  assert.ok(d.querySelector('.piege-opt'), 'la question reste là');
+  // Retour à l'accueil des matières : la nouvelle version se charge.
+  API.matieresAccueil(); assert.strictEqual(n, 1, 'rechargement au retour à l’accueil'); assert.ok(!A.majPrete());
+  // Sur l'accueil, ou juste après l'ouverture : tout de suite. Le bouton du bandeau aussi.
+  n = 0; API.matieresAccueil(); A.nouvelleVersion(false); assert.strictEqual(n, 1);
+  n = 0; API.matiereSerie('francais', 'cpl-phrases', 5, 'Test'); A.nouvelleVersion(true); assert.strictEqual(n, 1);
+  n = 0; API.matiereSerie('francais', 'cpl-phrases', 5, 'Test'); A.nouvelleVersion(false); clic(w, '[data-a="maj-recharger"]'); assert.strictEqual(n, 1, 'bouton Mettre à jour');
+  clic(w, '[data-a="maj-plus-tard"]'); assert.ok(!d.getElementById('maj-prete'), 'le bandeau se ferme');
+});
+
 await test('v10.8 : série ST2S (vers infirmier·ère) conforme aux programmes et aux épreuves 2027 — chapitres 1re et Tle, fiches, calculs justes, bac blanc CBPH + STSS', async () => {
   const w = page(), M = w.MATIERES, m = M.trouver('st2s'), F = w.AMI_COURS, E = w.EPREUVES;
   const attendus = { '1re':['st2s-bph-orga', 'st2s-bph-nutrition', 'st2s-bph-cardio', 'st2s-bph-respi', 'st2s-stss-sante', 'st2s-stss-protection', 'st2s-pcs'], 'Tle':['st2s-milieu', 'st2s-immuno', 'st2s-repro', 'st2s-genes', 'st2s-chimie', 'st2s-pol-sante', 'st2s-pol-sociale', 'st2s-projet'] };
