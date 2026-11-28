@@ -5,6 +5,11 @@ Avant la v6.44, chaque version avait son propre fichier VERSION-x.y.txt à la ra
 
 ---
 
+## Version 10.11.0
+
+- Le bouton « retour » du navigateur (Alt + ←, geste retour, bouton retour du téléphone) fait maintenant comme la flèche ← de l’écran : il remonte d’un écran dans le jeu (et ferme d’abord une fenêtre ouverte) au lieu de quitter tout le site. Sur l’écran d’ouverture, sans flèche, il quitte le site comme avant.
+- Test v10.11.
+
 ## Version 10.10.0
 
 - Mise à jour forcée des appareils restés sur un ancien code : quand la nouvelle version prend la main, le service worker demande à chaque onglet ouvert s’il sait se mettre à jour seul (js/maj-auto.js, chargé sur toutes les pages). Un onglet qui ne répond pas en 3 secondes tourne sur l’ancien code : il est rechargé d’office. Les pages récentes, elles, choisissent le bon moment (jamais au milieu d’une série).

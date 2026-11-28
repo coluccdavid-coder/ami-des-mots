@@ -1323,7 +1323,8 @@ await test('coin maths : niveaux, Prof Pi vanne à l’erreur, progrès gardés,
   let mauvais = null; for(const b of opts){ b.click(); const r = d.querySelector('#qz-retour').textContent; if(/🦝/.test(r)){ mauvais = r; break; } A.ecranPlus; break; }
   if(!mauvais){ clic(w, '[data-a="qz-suivant"]'); const o2 = [...d.querySelectorAll('.piege-opt')]; for(const b of o2){ if(!/AN = /.test(b.textContent)) continue; } o2[o2.length - 1].click(); mauvais = d.querySelector('#qz-retour').textContent; }
   assert.ok(A.etat.maths.chap['3-thales'].n >= 1, 'progrès enregistré');
-  assert.match(d.querySelector('#qz-retour').textContent, /Bravo|Juste|Exact|Parfait|🦝/);
+  // v10.11 : les bravos sont tirés sans répétition (v10.5) et ne contiennent plus forcément « Bravo » : on vérifie la réaction elle-même.
+  assert.ok(d.querySelector('#qz-retour .piege-bravo, #qz-retour .piege-vanne') || /🦝/.test(d.querySelector('#qz-retour').textContent), 'Prof Pi réagit : ' + d.querySelector('#qz-retour').innerHTML.slice(0, 200));
   clic(w, '[data-a="maths"]'); clic(w, '[data-a="maths-examen"]'); assert.match(d.querySelector('.piege-cat').textContent, /Brevet blanc · 3e · 1\/12/);
   for(let i = 0; i < 12; i++){ clic(w, '.piege-opt'); clic(w, '[data-a="qz-suivant"]'); }
   assert.match(d.querySelector('main').textContent, /\/20/); assert.ok(A.etat.maths.examens['3e'] >= 0);
@@ -3837,6 +3838,18 @@ await test('v6.84 : physique-chimie du collège en italien et en portugais — 1
   A.base.ui = 'it'; assert.ok(M.serie('physique', 'elec', '4e', 10, 2, 'taquin').every(q => q.lang === 'it'));
   A.base.ui = 'pt'; assert.ok(M.serie('physique', 'cours-p3', '3e', 10, 2, 'taquin').every(q => q.lang === 'pt'));
   assert.ok(M.serie('francais', 'homophones', '6e', 5, 2, 'taquin').every(q => q.lang === 'fr'), 'chapitre non traduit (français : homophones) : reste en français (l’EMC est traduite depuis la v7.5)'); A.base.ui = 'fr';
+});
+
+await test('v10.11 : le retour du navigateur (Alt + ←) remonte d’un écran dans le jeu au lieu de quitter le site', async () => {
+  const w = page(), d = w.document, API = w.AMI_MODULES.api, attendre = ms => new Promise(r => setTimeout(r, ms));
+  API.matieresAccueil(); clic(w, '[data-a="matiere"][data-v="st2s"]'); assert.ok(d.querySelector('main.matiere-ecran'), 'écran de la matière');
+  const fleche = d.querySelector('#app header.barre .bouton-rond[data-a]'); assert.ok(fleche, 'flèche de l’écran');
+  const cible = fleche.dataset.a; let vu = null; d.addEventListener('click', e => { const b = e.target.closest('[data-a]'); if(b) vu = b.dataset.a; }, true);
+  w.history.back(); await attendre(80);
+  assert.strictEqual(vu, cible, 'le retour du navigateur appuie sur la flèche de l’écran'); assert.ok(!d.querySelector('main.matiere-ecran'), 'on a remonté d’un écran');
+  assert.strictEqual(w.history.state && w.history.state.ami, 'garde', 'la garde est reposée : un autre retour reste dans le jeu');
+  // Une fenêtre ouverte se ferme d'abord.
+  d.body.insertAdjacentHTML('beforeend', '<div id="fenetre"></div>'); assert.ok(w.AmiDesMots.retourNavigateur()); assert.ok(!d.getElementById('fenetre'));
 });
 
 await test('v10.10 : mise à jour forcée des pages restées sur un ancien code (le service worker recharge celles qui ne répondent pas)', async () => {

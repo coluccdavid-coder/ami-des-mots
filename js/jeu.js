@@ -4474,7 +4474,7 @@
   const retourPaiement = /[?&]abonne=1/.test(location.search);
   // Accueil en 3D : un lien du village 3D (?aller=…) ouvre directement un jeu ; « Accueil » y ramène.
   const params = new URLSearchParams(location.search), lienAller = params.get('aller'), lienDefi = params.get('defi'), lienSalon = params.get('salon');
-  if(retourPaiement) try{ history.replaceState(null, '', location.pathname); }catch(e){}
+  if(retourPaiement) try{ history.replaceState(history.state, '', location.pathname); }catch(e){}
   // Au lancement : le certificat gardé est vérifié (hors connexion aussi), puis le serveur est consulté.
   // v5.85 : l'offre signée (gardée, puis celle du serveur) est appliquée avant ; l'écran se redessine si elle change.
   const redessiner = () => { if(!partie && !lienAller && !lienDefi && !lienSalon && !depuis3D()) accueil(); };
@@ -4491,6 +4491,27 @@
   // v6.41 : mise à jour sans double rechargement. L'appli garde ses fichiers pour le hors-connexion (sw.js) ; quand une
   // nouvelle version prend la main, on recharge UNE fois, seulement sur la page d'accueil ou dans les premières secondes,
   // pour ne jamais couper une série en cours. updateViaCache:'none' : le navigateur va toujours chercher le dernier sw.js.
+  // v10.11 : le bouton « retour » du navigateur (Alt + ←, geste retour, bouton retour du téléphone) fait comme la flèche ← de l'écran :
+  // il remonte d'un écran dans le jeu au lieu de quitter le site. Une entrée d'historique « garde » est posée ; à chaque retour,
+  // on ferme d'abord une fenêtre ouverte, sinon on appuie sur la flèche de l'écran, puis on repose la garde. Sur l'écran
+  // d'ouverture (pas de flèche), le retour quitte le site normalement.
+  function retourNavigateur(){
+    const f = $('#fenetre'); if(f){ fermerFenetre(); return true; }
+    const fleche = document.querySelector('#app header.barre .bouton-rond[data-a]'); if(fleche){ fleche.click(); return true; }
+    return false;
+  }
+  try{
+    if(window.history && history.pushState){
+      const etat = Object.assign({}, history.state || {}, { ami:'base' });
+      history.replaceState(etat, '');
+      history.pushState({ ami:'garde' }, '');
+      window.addEventListener('popstate', ev => {
+        if(ev.state && ev.state.ami === 'garde') return;                 // on revient « en avant » sur la garde : rien à faire
+        if(retourNavigateur()) history.pushState({ ami:'garde' }, '');   // on est resté dans le jeu : on repose la garde
+        else history.back();                                              // écran d'ouverture : on quitte vraiment le site
+      });
+    }
+  }catch(e){ /* historique indisponible (aperçu, cadre) : la flèche de l'écran reste là */ }
   // v10.9 : mise à jour AUTOMATIQUE partout, y compris sur les ordinateurs où l'onglet (ou l'appli installée) reste ouvert
   // des jours : le jeu redemande la dernière version toutes les 30 minutes, à chaque retour sur l'onglet et au retour
   // du réseau. Quand elle est prête : rechargement tout de suite si l'on vient d'ouvrir le jeu ou si l'on est sur l'accueil ;
@@ -4526,11 +4547,11 @@
   // v6.0 : liens d'invitation (?ligue=, ?classe=, ?parrain=) et autres démarrages de modules.
   { const go = () => setTimeout(() => { for(const f of (window.AMI_MODULES.auDemarrage || [])) try{ f(); }catch(e){} }, 0);
     if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded', go); else go(); }
-  window.AmiDesMots = { nouvelleVersion, majPrete:() => majPrete, questionsGo, formulesOffertes, appliquerCertificat, qzBonne:() => qz && qz.liste[qz.i] ? qz.liste[qz.i].bon : null, CLE_OFFRE, verifierOffre, base, J, affiche, fnv1a, urlVoix, accueil, themes, choisirJeu, commencer, lettresPossibles, distincts, motsDu, aDire, CATALOGUE, MECAS, disponible, nomJeu, aRevoir, noter, jour, defi, revoir, lecon, astuces, aToi, blague, carnet, noteVoix, sansEmojis, direPhrase, direEcoute, iaPrecharger, iaPrendre, vanneObjets, avecArticle, astuce, niveauHumour, fousRires, reglages, CONFIG, COINS, coinOuvert, offreLue, facile, nbMots, restaurer, verifierJeton, plus, ecranPlus, formatCode, rafraichir,
+  window.AmiDesMots = { retourNavigateur, nouvelleVersion, majPrete:() => majPrete, questionsGo, formulesOffertes, appliquerCertificat, qzBonne:() => qz && qz.liste[qz.i] ? qz.liste[qz.i].bon : null, CLE_OFFRE, verifierOffre, base, J, affiche, fnv1a, urlVoix, accueil, themes, choisirJeu, commencer, lettresPossibles, distincts, motsDu, aDire, CATALOGUE, MECAS, disponible, nomJeu, aRevoir, noter, jour, defi, revoir, lecon, astuces, aToi, blague, carnet, noteVoix, sansEmojis, direPhrase, direEcoute, iaPrecharger, iaPrendre, vanneObjets, avecArticle, astuce, niveauHumour, fousRires, reglages, CONFIG, COINS, coinOuvert, offreLue, facile, nbMots, restaurer, verifierJeton, plus, ecranPlus, formatCode, rafraichir,
     get etat(){ return J(); } };
   garder();
   if(lienDefi || lienSalon){
-    try{ history.replaceState(null, '', location.pathname); }catch(e){}
+    try{ history.replaceState(history.state, '', location.pathname); }catch(e){}
     const d = lienDefi && window.RIGOLADE && RIGOLADE.lireDefi(lienDefi);
     if(d && !coinOuvert('defi-pote')) ecranPlus('accueil');
     else if(d) ecranDefiRecu(d);
@@ -4539,7 +4560,7 @@
     else accueil();
   }
   else if(lienAller){
-    try{ history.replaceState(null, '', location.pathname); }catch(e){}
+    try{ history.replaceState(history.state, '', location.pathname); }catch(e){}
     if(lienAller === 'classique'){ try{ sessionStorage.removeItem('ami_depuis3d'); localStorage.setItem('ami_accueil3d', '0'); }catch(e){} accueil(); }
     else{ try{ sessionStorage.setItem('ami_depuis3d', '1'); }catch(e){} ouvrirDepuis3D(lienAller); }
   }
