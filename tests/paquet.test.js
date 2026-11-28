@@ -20,6 +20,15 @@ function charger(racine, scripts){
   w.document.dispatchEvent(new w.Event('DOMContentLoaded'));
   return w;
 }
+// v8.5 : le dossier de destination peut être DANS le projet (GitHub Pages : _site, OVH : _ovh) sans se recopier en boucle.
+test('un dossier de destination placé dans le projet (_site) ne se recopie pas dans lui-même', () => {
+  const site = path.join(ICI, '_site');
+  try{
+    execFileSync(process.execPath, [path.join(ICI, 'outils/preparer-www.js'), '_site'], { cwd:ICI, stdio:'ignore', timeout:120000 });
+    assert.ok(fs.existsSync(path.join(site, 'index.html')), 'index.html copié');
+    assert.ok(!fs.existsSync(path.join(site, '_site')), 'pas de _site dans _site');
+  } finally { fs.rmSync(site, { recursive:true, force:true }); }
+});
 const srcs = h => [...h.matchAll(/<script defer src="(js\/[^"]+)"><\/script>/g)].map(m => m[1]);
 const pageDev = fs.readFileSync(path.join(ICI, 'index.html'), 'utf8'), pageProd = fs.readFileSync(path.join(DEST, 'index.html'), 'utf8');
 

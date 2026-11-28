@@ -78,7 +78,7 @@
     dissertation:{ mots:900, court:400, paras:5, connect:8, pages:'souvent 4 à 6 pages, soit environ 1 000 à 1 800 mots' },
     philo:{ mots:900, court:400, paras:5, connect:8, pages:'souvent 4 à 8 pages, soit environ 1 000 à 2 000 mots' },
     redaction:{ mots:300, court:150, paras:3, connect:4, pages:'au moins une quarantaine de lignes, soit environ 300 à 450 mots' },
-    developpement:{ mots:180, court:100, paras:2, connect:4, pages:'une vingtaine de lignes, soit environ 180 à 300 mots' }
+    developpement:{ mots:270, court:150, paras:2, connect:4, pages:'au moins trente lignes (brevet 2027), soit environ 270 à 450 mots' }
   };
   const AUTEURS = /\b(Platon|Socrate|Aristote|Épicure|Épictète|Sénèque|Marc Aurèle|Augustin|Thomas d[’']Aquin|Montaigne|Machiavel|Descartes|Pascal|Spinoza|Hobbes|Locke|Leibniz|Hume|Rousseau|Voltaire|Diderot|Kant|Hegel|Marx|Nietzsche|Schopenhauer|Kierkegaard|Freud|Bergson|Alain|Husserl|Heidegger|Sartre|Beauvoir|Camus|Arendt|Merleau-Ponty|Levinas|Weil|Lévi-Strauss|Foucault|Bachelard|Popper|Rawls|Jonas|Tocqueville|Mill|Durkheim|Weber)\b/gu;
   function analyser(x){

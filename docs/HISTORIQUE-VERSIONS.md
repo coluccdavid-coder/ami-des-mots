@@ -5,6 +5,17 @@ Avant la v6.44, chaque version avait son propre fichier VERSION-x.y.txt à la ra
 
 ---
 
+## Version 8.5.0 — Examens à jour du BO spécial n° 4 du 17 septembre 2026
+
+- **Brevet 2027** : le brevet blanc devient « Brevet blanc 2027 » ; barèmes officiels mis à jour (histoire-géographie notée sur 40 avec un exercice sur documents de 15 points et un exercice de 25 points : développement construit d’au moins 30 lignes + croquis, schéma ou frise ; sciences : deux disciplines sur trois annoncées deux mois avant, 1 point de maîtrise de la langue chacune ; maths : 2 points de maîtrise de la langue ; pas de QCM au vrai brevet en maths et en sciences). Coefficients inchangés.
+- **Développement construit** (Mes copies) : sujet et longueur attendue passés à « au moins trente lignes ».
+- **Épreuve anticipée de maths** : automatismes en questions à réponses courtes, 2 points de maîtrise de la langue.
+- **Grand oral (session 2027)** : présentation d’une question (10 min) puis échange avec le jury (10 min) ; le temps sur le projet d’orientation est supprimé. Questions du quiz corrigées.
+- **Correction des copies** : le serveur rappelle la règle 2027 (une copie très défaillante en maîtrise de la langue ne peut pas avoir la moyenne).
+- Espace Officiel : lien vers le BO spécial n° 4.
+- Le test v5.78 vérifie le nouveau libellé des automatismes.
+- **Correctif publication GitHub Pages** : `outils/preparer-www.js _site` recopiait le dossier `_site` dans lui-même à l’infini (`_site/_site/_site/…`), ce qui faisait échouer l’étape « publier » (la 5e vérification en rouge sur chaque fusion). Le dossier de destination est maintenant exclu (`_site`, `_ovh` aussi pour OVH) ; nouveau test dans `tests/paquet.test.js`.
+
 ## Version 8.4.0 — 📼 Le défi rétro étoffé
 
 - **La vraie dictée** (`js/mod-retro-plus.js`) : 8 textes du domaine public (La Fontaine, Daudet, Hugo, Verlaine). Plumo lit groupe par groupe en disant la ponctuation (voix de synthèse, rien n’est enregistré), l’élève écrit, puis correction mot à mot : barème du certificat d’études (dictée sur 10, une faute = 2 points, accent ou majuscule = 1 point, ponctuation non comptée). Le texte peut aussi être dicté par un adulte.

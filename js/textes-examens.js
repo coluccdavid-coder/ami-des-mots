@@ -20,7 +20,7 @@
   S('Informations légales', 'Legal information', 'Información legal', 'Rechtliche Hinweise', 'Informazioni legali', 'Informações legais');
 
   // ── Blancs ──
-  S('Brevet blanc 2026', 'Mock brevet 2026', 'Brevet de prueba 2026', 'Probe-Brevet 2026', 'Brevet di prova 2026', 'Brevet simulado 2026');
+  S('Brevet blanc 2027', 'Mock brevet 2027', 'Brevet de prueba 2027', 'Probe-Brevet 2027', 'Brevet di prova 2027', 'Brevet simulado 2027');
   S('Maths anticipées blanc · spécialité', 'Mock early maths exam · with specialty', 'Matemáticas anticipadas de prueba · con especialidad', 'Probeprüfung vorgezogene Mathematik · mit Schwerpunktfach', 'Matematica anticipata di prova · con specialità', 'Matemática antecipada simulada · com especialidade');
   S('Maths anticipées blanc · sans spécialité', 'Mock early maths exam · without specialty', 'Matemáticas anticipadas de prueba · sin especialidad', 'Probeprüfung vorgezogene Mathematik · ohne Schwerpunktfach', 'Matematica anticipata di prova · senza specialità', 'Matemática antecipada simulada · sem especialidade');
   S('Bac de français blanc', 'Mock French bac', 'Bac de francés de prueba', 'Probe-Bac Französisch', 'Bac di francese di prova', 'Bac de francês simulado');
@@ -135,6 +135,8 @@
   S('Deux spécialités par série, coefficient 16', 'Two specialties per track, weighting 16', 'Dos especialidades por serie, coeficiente 16', 'Zwei Schwerpunktfächer pro Zweig, Gewichtung 16', 'Due specialità per indirizzo, coefficiente 16', 'Duas especialidades por série, coeficiente 16');
   S('Le Grand oral', 'The Grand oral', 'El Gran oral', 'Das Grand oral', 'Il Grand oral', 'O Grand oral');
   S('Déroulé et coefficients', 'How it works and weightings', 'Desarrollo y coeficientes', 'Ablauf und Gewichtung', 'Svolgimento e coefficienti', 'Desenrolar e coeficientes');
+  S('BO spécial n° 4 du 17 septembre 2026', 'Special Official Bulletin no. 4 of 17 September 2026', 'BO especial n.º 4 del 17 de septiembre de 2026', 'Amtsblatt (BO) Sonderausgabe Nr. 4 vom 17. September 2026', 'BO speciale n. 4 del 17 settembre 2026', 'BO especial n.º 4 de 17 de setembro de 2026');
+  S('Nouvelles définitions : brevet 2027, Grand oral, philosophie, épreuves anticipées', 'New definitions: 2027 brevet, Grand oral, philosophy, early exams', 'Nuevas definiciones: brevet 2027, Gran oral, filosofía, pruebas anticipadas', 'Neue Festlegungen: Brevet 2027, Grand oral, Philosophie, vorgezogene Prüfungen', 'Nuove definizioni: brevet 2027, Grand oral, filosofia, prove anticipate', 'Novas definições: brevet 2027, Grand oral, filosofia, provas antecipadas');
   S('Le baccalauréat professionnel', 'The vocational baccalauréat', 'El bachillerato profesional', 'Das berufliche Baccalauréat', 'Il baccalaureato professionale', 'O bacharelato profissional');
   S('Épreuves, calendrier, sujets d’enseignement général', 'Exams, timetable, general-subject papers', 'Pruebas, calendario, exámenes de materias generales', 'Prüfungen, Zeitplan, Prüfungen der allgemeinen Fächer', 'Prove, calendario, prove delle materie generali', 'Provas, calendário, provas das disciplinas gerais');
   S('Le CAP', 'The CAP', 'El CAP', 'Das CAP', 'Il CAP', 'O CAP');

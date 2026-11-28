@@ -22,10 +22,10 @@
     ['Une explication linéaire suit :', 'L’ordre du texte, mouvement par mouvement', [['L’ordre alphabétique des mots', 'Créatif, mais faux.'], ['Seulement la fin du texte', 'Il faut tout le passage, dans l’ordre.']], 'Introduction, lecture, mouvements, conclusion.']
   ];
   const GRAND_ORAL = [
-    ['Le Grand oral dure :', '20 minutes, après 20 minutes de préparation', [['1 heure', 'Plumo a vérifié trois fois : c’est toujours non. Mais c’était audacieux.'], ['10 minutes', 'Plus que ça : 20 minutes.']], 'Présentation, échange, projet d’orientation.'],
+    ['Le Grand oral dure :', '20 minutes, après 20 minutes de préparation', [['1 heure', 'Plumo a vérifié trois fois : c’est toujours non. Mais c’était audacieux.'], ['10 minutes', 'Plus que ça : 20 minutes.']], 'Depuis la session 2027 : présentation d’une question (10 min) puis échange avec le jury (10 min).'],
     ['Sur quoi portent les questions du Grand oral ?', 'Sur une ou deux spécialités suivies en terminale', [['Sur la philosophie uniquement', 'Non : sur les spécialités.'], ['Sur n’importe quel sujet du jour', 'Le candidat prépare deux questions à l’avance.']], 'Le jury choisit l’une des deux questions.'],
-    ['Pendant la présentation de la question, le candidat :', 'Parle sans notes, debout en général', [['Lit sa copie', 'Pas de lecture : on parle à l’oral, vraiment.'], ['Montre un film', 'Celle-là, même un GPS en panne ne l’aurait pas choisie.']], 'Environ 5 minutes.'],
-    ['La dernière partie du Grand oral porte sur :', 'Le lien entre la question et le projet d’orientation', [['Ses vacances', 'Bien tenté ! Plumo donne 10 pour le courage et 0 pour le résultat.'], ['La météo', 'Plumo a failli tomber de sa branche. Il s’est rattrapé de justesse.']], 'Environ 5 minutes.'],
+    ['Pendant la présentation de la question, le candidat :', 'Parle sans notes, debout en général', [['Lit sa copie', 'Pas de lecture : on parle à l’oral, vraiment.'], ['Montre un film', 'Celle-là, même un GPS en panne ne l’aurait pas choisie.']], 'Environ 10 minutes depuis la session 2027 (5 minutes avant). Le support éventuel n’est pas évalué.'],
+    ['Depuis la session 2027, le Grand oral se déroule en :', 'Deux temps de 10 minutes : la présentation d’une question, puis l’échange avec le jury', [['Trois temps, avec un échange final sur le projet d’orientation', 'C’était la règle jusqu’à la session 2026 : ce troisième temps a été supprimé.'], ['Un seul exposé de 20 minutes, sans question du jury', 'Le jury échange bien avec toi pendant 10 minutes.']], 'Note de service du 17 septembre 2026 (BO spécial n° 4).'],
     ['Coefficient du Grand oral en voie générale à partir de la session 2027 :', '8', [['10', '10, c’était jusqu’à la session 2026 incluse.'], ['16', '16, c’est une spécialité.']], 'Et 12 en voie technologique (14 jusqu’en 2026).']
   ];
   Object.assign(E.EPREUVES, {
@@ -33,8 +33,8 @@
       faire:r => [bloc('Déroulé et attendus', 20, '', ORAL_DNB, r, 5)], nonNote:'Entraîne-toi à voix haute : présente ton projet en 5 minutes chrono, devant quelqu’un.' },
     'eaf-oral':{ titre:'Oral de français', matiere:'francais', duree:'20 min, préparation 30 min', officiel:'Explication + grammaire (12 pts), œuvre choisie + entretien (8 pts)',
       faire:r => [bloc('Déroulé et méthode', 20, '', ORAL_EAF, r, 5)], nonNote:'Entraîne-toi à expliquer un extrait à voix haute en 10 minutes.' },
-    'grand-oral':{ titre:'Grand oral', matiere:'francais', duree:'20 min, préparation 20 min', officiel:'Présentation, échange avec le jury, projet d’orientation',
-      faire:r => [bloc('Déroulé et méthode', 20, '', GRAND_ORAL, r, 5)], nonNote:'Prépare tes deux questions et entraîne-toi à les présenter sans notes en 5 minutes.' }
+    'grand-oral':{ titre:'Grand oral', matiere:'francais', duree:'20 min, préparation 20 min', officiel:'Session 2027 : présentation d’une question (10 min) puis échange avec le jury (10 min) · coefficient 8',
+      faire:r => [bloc('Déroulé et méthode', 20, '', GRAND_ORAL, r, 5)], nonNote:'Prépare tes deux questions et entraîne-toi à en présenter une sans notes en 10 minutes.' }
   });
   E.BLANCS['oral-dnb'] = { titre:'Oral du brevet', ic:'🎤', niveau:'3e', epreuves:[['dnb-oral', 1]] };
   E.BLANCS['oral-eaf'] = { titre:'Oral de français', ic:'🎤', niveau:'1re', epreuves:[['eaf-oral', 1]] };
@@ -61,7 +61,8 @@
       ['Les épreuves du brevet', 'https://eduscol.education.gouv.fr/716/les-epreuves-du-dnb', 'Définition officielle des épreuves'],
       ['Les épreuves terminales du bac général', 'https://eduscol.education.gouv.fr/5706/les-epreuves-terminales-du-baccalaureat-general', 'Coefficients, durées, nature'],
       ['Les épreuves terminales du bac technologique', 'https://eduscol.education.gouv.fr/5616/les-epreuves-terminales-du-baccalaureat-technologique', 'Deux spécialités par série, coefficient 16'],
-      ['Le Grand oral', 'https://eduscol.education.gouv.fr/729/presentation-du-grand-oral', 'Déroulé et coefficients']
+      ['Le Grand oral', 'https://eduscol.education.gouv.fr/729/presentation-du-grand-oral', 'Déroulé et coefficients'],
+      ['BO spécial n° 4 du 17 septembre 2026', 'https://www.education.gouv.fr/bo/2026/Special4', 'Nouvelles définitions : brevet 2027, Grand oral, philosophie, épreuves anticipées']
     ]
   };
 })();
