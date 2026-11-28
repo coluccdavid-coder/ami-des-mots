@@ -2454,6 +2454,116 @@
     ]
    ]
   ],
+  "st2s": [
+   [
+    "st2s-bph-orga",
+    "BPH 1re : organisation de l’être humain, appareil locomoteur et motricité",
+    [
+     "1re"
+    ]
+   ],
+   [
+    "st2s-bph-nutrition",
+    "BPH 1re : appareil digestif et nutrition",
+    [
+     "1re"
+    ]
+   ],
+   [
+    "st2s-bph-cardio",
+    "BPH 1re : appareil cardio-vasculaire et circulation",
+    [
+     "1re"
+    ]
+   ],
+   [
+    "st2s-bph-respi",
+    "BPH 1re : appareil respiratoire et échanges gazeux",
+    [
+     "1re"
+    ]
+   ],
+   [
+    "st2s-stss-sante",
+    "STSS 1re : santé, bien-être, cohésion sociale et indicateurs",
+    [
+     "1re",
+     "Tle"
+    ]
+   ],
+   [
+    "st2s-stss-protection",
+    "STSS 1re : protection sociale et modes d’intervention",
+    [
+     "1re",
+     "Tle"
+    ]
+   ],
+   [
+    "st2s-pcs",
+    "Physique-chimie pour la santé (1re) : solutions, dilutions, doses, pH",
+    [
+     "1re",
+     "Tle"
+    ]
+   ],
+   [
+    "st2s-milieu",
+    "CBPH Tle : milieu intérieur, homéostasie et diabètes",
+    [
+     "Tle"
+    ]
+   ],
+   [
+    "st2s-immuno",
+    "CBPH Tle : système immunitaire, grippe, vaccination, antibiorésistance",
+    [
+     "Tle"
+    ]
+   ],
+   [
+    "st2s-repro",
+    "CBPH Tle : appareil reproducteur et transmission de la vie",
+    [
+     "Tle"
+    ]
+   ],
+   [
+    "st2s-genes",
+    "CBPH Tle : gènes, mutations et cancer",
+    [
+     "Tle"
+    ]
+   ],
+   [
+    "st2s-chimie",
+    "CBPH Tle (chimie) : prévenir, analyser, faire des choix responsables",
+    [
+     "Tle"
+    ]
+   ],
+   [
+    "st2s-pol-sante",
+    "STSS Tle : politiques et dispositifs de santé publique",
+    [
+     "Tle"
+    ]
+   ],
+   [
+    "st2s-pol-sociale",
+    "STSS Tle : politiques sociales et action sociale",
+    [
+     "Tle"
+    ]
+   ],
+   [
+    "st2s-projet",
+    "STSS Tle : démarche de projet et méthode de l’épreuve",
+    [
+     "Tle"
+    ]
+   ]
+  ],
   "it-italiano": [
    [
     "it-italiano-college",

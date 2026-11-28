@@ -10,7 +10,8 @@ require __DIR__ . '/lib.php';
 set_time_limit(600);
 $cli = PHP_SAPI === 'cli';
 if (!$cli) {
-  $j = (string) ($_GET['jeton'] ?? ''); $attendu = (string) (ami_config()['veille_jeton'] ?? '');
+  // v10.7 : le jeton peut passer dans l'en-tête « X-Veille-Jeton » (il n'apparaît alors pas dans les journaux du serveur) ; « ?jeton= » reste accepté.
+  $j = (string) ($_SERVER['HTTP_X_VEILLE_JETON'] ?? $_GET['jeton'] ?? ''); $attendu = (string) (ami_config()['veille_jeton'] ?? '');
   if ($attendu === '' || !hash_equals($attendu, $j)) ami_json(['erreur' => 'interdit'], 403);
   header('Content-Type: text/plain; charset=utf-8');
 }
@@ -110,16 +111,26 @@ function consigne_questions(array $src, array $c): string {
 }
 // Sources : veille-sources.php (la config peut les remplacer, pour les tests).
 function telecharger(string $url, string $sys = 'fr'): array {
-  $h = curl_init($url);
-  curl_setopt_array($h, [CURLOPT_RETURNTRANSFER => true, CURLOPT_FOLLOWLOCATION => true, CURLOPT_MAXREDIRS => 3, CURLOPT_TIMEOUT => 60,
-    CURLOPT_USERAGENT => 'AmiDesMots-veille/1.0 (programmes officiels)', CURLOPT_MAXFILESIZE => 15 << 20,
-    CURLOPT_PROTOCOLS => CURLPROTO_HTTPS | CURLPROTO_HTTP, CURLOPT_REDIR_PROTOCOLS => CURLPROTO_HTTPS]);
-  $r = curl_exec($h); $st = (int) curl_getinfo($h, CURLINFO_HTTP_CODE); $type = (string) curl_getinfo($h, CURLINFO_CONTENT_TYPE);
-  $fin = (string) curl_getinfo($h, CURLINFO_EFFECTIVE_URL); curl_close($h);
-  // Après redirection, on reste sur un domaine officiel.
-  $hf = parse_url($fin, PHP_URL_HOST);
-  if (!in_array($hf, veille_domaines($sys), true) && !in_array($hf . ':' . parse_url($fin, PHP_URL_PORT), ami_config()['veille_domaines_test'] ?? [], true)) return [0, '', ''];
-  return [$st, $r === false ? '' : $r, strtolower($type)];
+  // v10.7 : les redirections sont suivies une par une, et chaque étape doit rester sur un domaine officiel en HTTPS
+  // (avant, cURL suivait seul les redirections et le domaine n'était vérifié qu'à l'arrivée : une redirection
+  // pouvait faire appeler au serveur une adresse interne).
+  $autorise = function (string $u) use ($sys): bool {
+    $h = parse_url($u, PHP_URL_HOST); if (!is_string($h) || $h === '') return false;
+    if (in_array($h . ':' . parse_url($u, PHP_URL_PORT), ami_config()['veille_domaines_test'] ?? [], true)) return true;
+    return parse_url($u, PHP_URL_SCHEME) === 'https' && in_array($h, veille_domaines($sys), true);
+  };
+  for ($saut = 0; $saut <= 3; $saut++) {
+    if (!$autorise($url)) return [0, '', ''];
+    $h = curl_init($url);
+    curl_setopt_array($h, [CURLOPT_RETURNTRANSFER => true, CURLOPT_FOLLOWLOCATION => false, CURLOPT_TIMEOUT => 60,
+      CURLOPT_USERAGENT => 'AmiDesMots-veille/1.0 (programmes officiels)', CURLOPT_MAXFILESIZE => 15 << 20,
+      CURLOPT_PROTOCOLS => CURLPROTO_HTTPS | CURLPROTO_HTTP]);
+    $r = curl_exec($h); $st = (int) curl_getinfo($h, CURLINFO_HTTP_CODE); $type = (string) curl_getinfo($h, CURLINFO_CONTENT_TYPE);
+    $suite = (string) curl_getinfo($h, CURLINFO_REDIRECT_URL); curl_close($h);
+    if ($st >= 300 && $st < 400 && $suite !== '') { $url = $suite; continue; }
+    return [$st, $r === false ? '' : $r, strtolower($type)];
+  }
+  return [0, '', ''];
 }
 function texte_html(string $html): string {
   $html = preg_replace('~<(script|style|nav|footer|header)[^>]*>.*?</\1>~is', ' ', $html);

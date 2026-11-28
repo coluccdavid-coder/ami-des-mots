@@ -70,7 +70,7 @@
     const c = r.d.classement || [];
     dernier = { nom:l.nom, moi:null };
     c.forEach((x, i) => { if(x.pseudo === l.pseudo) dernier.moi = { rang:i + 1, points:x.points }; });
-    z.innerHTML = c.filter(x => x.points > 0).length ? c.map((x, i) => '<li class="' + (x.pseudo === l.pseudo ? 'moi' : '') + '"><span>' + (['🥇', '🥈', '🥉'][i] || (i + 1) + '.') + ' ' + A.esc(x.pseudo) + (x.pseudo === l.pseudo ? ' (' + tx('Toi') + ')' : '') + '</span><strong>' + x.points + '</strong></li>').join('')
+    z.innerHTML = c.filter(x => x.points > 0).length ? c.map((x, i) => '<li class="' + (x.pseudo === l.pseudo ? 'moi' : '') + '"><span>' + (['🥇', '🥈', '🥉'][i] || (i + 1) + '.') + ' ' + A.esc(x.pseudo) + (x.pseudo === l.pseudo ? ' (' + tx('Toi') + ')' : '') + '</span><strong>' + (Math.floor(Number(x.points)) || 0) + '</strong></li>').join('')
       : '<li>' + tx('Pas encore de points cette semaine. Joue pour ouvrir le score !') + '</li>';
     const av = document.getElementById('ligue-avant'); if(av && r.d.champion_avant) av.textContent = tx('Champion de la semaine dernière : {0} ({1} points) 👑', r.d.champion_avant.pseudo, r.d.champion_avant.points);
   }

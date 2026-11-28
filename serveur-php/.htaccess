@@ -1,9 +1,11 @@
 # Seuls les points d'entrée publics sont accessibles.
 Options -Indexes
-<FilesMatch "^(lib\.php|paiement-lib\.php|veille-sources\.php|config.*\.php|schema\.sql|.*\.(pem|p8|key|json|sqlite|db|log|bak|sql|md|txt))$">
+<FilesMatch "^(lib\.php|paiement-lib\.php|credits-lib\.php|veille-publier\.php|veille-sources\.php|config.*\.php|schema\.sql|.*\.(pem|p8|key|json|sqlite|db|log|bak|sql|md|txt))$">
   Require all denied
 </FilesMatch>
 <IfModule mod_headers.c>
   Header always set X-Content-Type-Options "nosniff"
   Header always set Referrer-Policy "no-referrer"
+  Header always set X-Frame-Options "DENY"
+  Header always set Strict-Transport-Security "max-age=31536000"
 </IfModule>

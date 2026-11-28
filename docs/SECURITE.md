@@ -54,3 +54,22 @@ Relecture de tous les points d'accès de `serveur-php/` comme le ferait un attaq
 - Régler `cadeau_sel` et `veille_jeton` avec de longues phrases au hasard.
 - Sauvegardes de la base : OVH propose des sauvegardes automatiques de la base MySQL ; vérifier qu'elles sont activées.
 - Le jeton de la veille passe dans l'adresse (`?jeton=`) : il peut apparaître dans les journaux d'OVH. Le changer s'il fuit.
+
+## Audit v10.7 (28 novembre 2026)
+
+Relecture complète : serveur PHP, fonctions Supabase, pages du jeu, publication, historique du dépôt.
+
+Déjà solide et vérifié de nouveau : requêtes préparées partout, webhook Stripe signé (5 minutes), Plus seulement par certificat signé, restauration d'une sauvegarde sans droit Plus, admin protégé (mot de passe haché, limite d'essais, jeton anti-falsification), CORS et limites sur tous les points d'accès, aucun `eval`, liens externes en `noopener`, défi par lien validé, aucune clé secrète dans tout l'historique du dépôt public (209 commits), `npm audit` : 0 vulnérabilité.
+
+| Risque trouvé | Correction |
+| --- | --- |
+| Pages professeur, 3D, Mots City et mentions légales sans politique de sécurité (CSP) | CSP ajoutée ; scripts en ligne autorisés par empreinte (`python3 outils/csp-pages.py` après modification, vérifié par le test v10.7). |
+| Site affichable dans le cadre d'un autre site (vol de clic), pas de HSTS | En-têtes `X-Frame-Options`, `frame-ancestors`, `Strict-Transport-Security`, `Permissions-Policy`, `Cross-Origin-Opener-Policy`. |
+| Dossier `docs/` (notes internes, dont ce bilan) publié sur GitHub Pages et OVH | Exclu de la publication ; dossiers de travail refusés (404) par `.htaccess`. |
+| `credits-lib.php` et `veille-publier.php` appelables directement | Interdits comme les autres bibliothèques. |
+| Veille : redirections suivies par cURL, domaine vérifié seulement à l'arrivée | Chaque redirection est vérifiée (HTTPS et domaine officiel) avant d'être suivie. |
+| Jeton de la veille visible dans les journaux (`?jeton=`) | En-tête `X-Veille-Jeton` accepté (l'ancienne forme reste possible). |
+| Mot tapé en dictée réaffiché sans échappement ; scores du serveur affichés tels quels | Échappés / convertis en nombres. |
+| `.gitignore` limité à `node_modules` et `*.zip` | Ajout des réglages et clés (`config-ami.php`, `*.pem`, `*.p8`, `.env`…). |
+
+À régler par l'exploitant : dans Supabase, définir `AMI_ORIGINES` (sinon toutes les origines sont acceptées par les fonctions) ; épingler les actions GitHub sur une empreinte de commit.

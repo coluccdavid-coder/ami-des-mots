@@ -1,9 +1,9 @@
 // Ami des mots — prépare le dossier www/ embarqué dans l'appli Android (Capacitor) ou publié sur GitHub Pages.
-// --appli : version Android (sans le coin admin). Copie le jeu SANS les outils, tests, serveur, sauvegardes ni node_modules. Usage : node outils/preparer-www.js [dossier]
+// --appli : version Android (sans le coin admin). Copie le jeu SANS les outils, tests, documents internes (docs/), serveur, sauvegardes ni node_modules. Usage : node outils/preparer-www.js [dossier]
 'use strict';
 const fs = require('fs'), path = require('path'), ICI = path.join(__dirname, '..');
 const args = process.argv.slice(2), APPLI = args.includes('--appli'), DEST = path.resolve(args.filter(a => !a.startsWith('--'))[0] || path.join(ICI, 'www'));
-const EXCLUS = new Set(['www', '_site', '_ovh', 'android', 'ios', 'node_modules', 'outils', 'tests', 'serveur', 'serveur-php', '.git', '.github', '.vscode', '.devcontainer']);
+const EXCLUS = new Set(['www', '_site', '_ovh', 'android', 'ios', 'node_modules', 'outils', 'tests', 'docs', 'serveur', 'serveur-php', '.git', '.github', '.vscode', '.devcontainer']);
 const FICHIERS_EXCLUS = /\.(zip|md|txt|bat|sh|sql|pem|log)$|^(package(-lock)?\.json|capacitor\.config\.json|config.*\.php)$/i;
 if(DEST === ICI || ICI.startsWith(DEST + path.sep)) throw new Error('Dossier de destination invalide');
 fs.rmSync(DEST, { recursive:true, force:true }); fs.mkdirSync(DEST, { recursive:true });
