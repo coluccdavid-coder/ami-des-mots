@@ -5,6 +5,22 @@ Avant la v6.44, chaque version avait son propre fichier VERSION-x.y.txt à la ra
 
 ---
 
+## Version 8.4.0 — 📼 Le défi rétro étoffé
+
+- **La vraie dictée** (`js/mod-retro-plus.js`) : 8 textes du domaine public (La Fontaine, Daudet, Hugo, Verlaine). Plumo lit groupe par groupe en disant la ponctuation (voix de synthèse, rien n’est enregistré), l’élève écrit, puis correction mot à mot : barème du certificat d’études (dictée sur 10, une faute = 2 points, accent ou majuscule = 1 point, ponctuation non comptée). Le texte peut aussi être dicté par un adulte.
+- **Quatre nouvelles épreuves** : histoire par cœur, leçons de choses, les mots de l’école d’autrefois, problèmes à l’ancienne (20 questions chacune).
+- **40 questions** pour chacune des cinq épreuves d’origine ; chaque partie tire 20 questions. Le BEPC rétro reste à 20 questions, réparties sur les 9 épreuves.
+- **Le Certificat d’études** : la dictée puis 20 questions, note sur 20, reçu à 10 sauf zéro à la dictée (éliminatoire comme autrefois). Page « Le certif, c’était quoi ? » avec repères et sources (circulaire Duruy de 1866, loi du 28 mars 1882, décret de 1989).
+- **Le duel des générations** : deux joueurs, les mêmes 10 questions, chacun son tour ; les prénoms ne sont pas enregistrés.
+- **Récompenses d’époque** : un bon point par bonne réponse, une image tous les dix bons points (12 à collectionner), tableau d’honneur des meilleures notes.
+- Le test v6.47 suit ces nouveaux chiffres (9 épreuves, séries de 20).
+
+## Version 8.3.0 — Toute la philosophie en italien et en portugais
+
+- Les sept dernières notions sont traduites : la raison, la religion, la science, la technique, le temps, le travail, la vérité (140 questions par langue).
+- La philosophie est désormais entière en italien et en portugais : repères, auteurs, méthode et les 17 notions.
+- Le test qui vérifie qu’une matière non traduite reste en français porte maintenant sur la HGGSP.
+
 ## Version 8.2.0 — ⚖️ Devenir avocat, et cinq notions de philosophie en italien et en portugais
 
 - **Devenir avocat** (Droit, niveau Sup) : 4 leçons de 20 questions, en français, anglais et espagnol (noms en italien et portugais) — le parcours (master 1, CRFPA, 18 mois d’école, CAPA, master 2 depuis 2025, serment), l’examen d’entrée (épreuves et coefficients de la session 2026 publiés par le CNB), la déontologie et la vie du cabinet, la pratique (procès, garde à vue, plaidoirie).
