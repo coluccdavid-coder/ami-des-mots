@@ -445,6 +445,28 @@
     [
      "5e"
     ]
+   ],
+   [
+    "bac-grammaire",
+    "Bac : la question de grammaire de l’oral",
+    [
+     "2nde",
+     "1re"
+    ]
+   ],
+   [
+    "bac-methode",
+    "Bac : méthode du commentaire et de la dissertation",
+    [
+     "1re"
+    ]
+   ],
+   [
+    "langue-2nde",
+    "Langue en 2nde : accords et phrase complexe",
+    [
+     "2nde"
+    ]
    ]
   ],
   "histoire": [
@@ -1902,6 +1924,25 @@
     [
      "3e"
     ]
+   ],
+   [
+    "ecrire",
+    "Écrire en anglais : l’expression écrite (B1 → B2)",
+    [
+     "2nde",
+     "1re",
+     "Tle"
+    ]
+   ],
+   [
+    "parler",
+    "Parler en anglais : prise de parole et interaction",
+    [
+     "3e",
+     "2nde",
+     "1re",
+     "Tle"
+    ]
    ]
   ],
   "philo": [
@@ -2964,6 +3005,93 @@
     "BFI Tle : Connaissance du monde oral and DNL method",
     [
      "Tle"
+    ]
+   ]
+  ],
+  "mathematicien": [
+   [
+    "raisonnement",
+    "Raisonnement et logique",
+    [
+     "1re",
+     "Tle",
+     "Sup"
+    ]
+   ],
+   [
+    "arithmetique",
+    "Arithmétique : divisibilité, PGCD, congruences",
+    [
+     "Tle",
+     "Sup"
+    ]
+   ],
+   [
+    "complexes",
+    "Nombres complexes",
+    [
+     "Tle",
+     "Sup"
+    ]
+   ],
+   [
+    "analyse",
+    "Suites, limites et analyse",
+    [
+     "Tle",
+     "Sup"
+    ]
+   ]
+  ],
+  "geneticien": [
+   [
+    "genetique-moleculaire",
+    "Génétique moléculaire : de l’ADN à la protéine",
+    [
+     "Tle",
+     "Sup"
+    ]
+   ],
+   [
+    "heredite",
+    "Hérédité, méiose et génétique des populations",
+    [
+     "Tle",
+     "Sup"
+    ]
+   ],
+   [
+    "evolution-genomique",
+    "Évolution, phylogénie et génomique",
+    [
+     "Tle",
+     "Sup"
+    ]
+   ]
+  ],
+  "geophysicien": [
+   [
+    "interieur-terre",
+    "Sismologie et intérieur de la Terre",
+    [
+     "Tle",
+     "Sup"
+    ]
+   ],
+   [
+    "geodynamique",
+    "Géodynamique : plaques, magnétisme, gravité",
+    [
+     "Tle",
+     "Sup"
+    ]
+   ],
+   [
+    "volcans-planetes",
+    "Volcans, risques et planètes",
+    [
+     "Tle",
+     "Sup"
     ]
    ]
   ]

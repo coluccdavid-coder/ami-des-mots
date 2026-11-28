@@ -280,6 +280,30 @@
   // ═══════════════ Assemblage ═══════════════
   const exoQS = (titre, pts, contexte, l, r, n) => ({ titre, pts, contexte, questions:QS(tirer(r, l, n)) });
   // v7.8 : sujets de dissertation de philosophie (questions classiques du programme ; les deux premiers sont tombés en 2026).
+  // v8.6 : sujets à rédiger dans « 🖊️ Mes copies » — SES et HGGSP (questions du programme de terminale).
+  const SES_DISS = [
+    'Montrez que le progrès technique est une source de la croissance économique.',
+    'Comment les pouvoirs publics peuvent-ils lutter contre le chômage ?',
+    'Quels sont les fondements du commerce international ?',
+    'Comment la mobilité sociale peut-elle s’expliquer ?',
+    'Dans quelle mesure l’action des pouvoirs publics permet-elle de réduire les inégalités ?'
+  ];
+  const HGGSP_DISS = [
+    'Faire la paix : un défi permanent depuis 1945 ?',
+    'Les océans, des espaces de conquête et de rivalités depuis les années 1960.',
+    'Histoire et mémoires de la Seconde Guerre mondiale en France depuis 1945.',
+    'Le patrimoine, un enjeu de tensions et de rivalités.',
+    'L’environnement, un enjeu des relations internationales depuis 1972.'
+  ];
+  // Études critiques : textes officiels historiques, extraits exacts et courts.
+  const HGGSP_ETUDES = [
+    { titre:'La déclaration Schuman (9 mai 1950)',
+      consigne:'En analysant le document, montrez comment Robert Schuman propose de construire la paix en Europe, puis portez un regard critique sur sa méthode. Vous présenterez le document.',
+      doc:'Robert Schuman, ministre français des Affaires étrangères, déclaration du 9 mai 1950 (extrait) :\n« La paix mondiale ne saurait être sauvegardée sans des efforts créateurs à la mesure des dangers qui la menacent. […] L’Europe ne se fera pas d’un coup, ni dans une construction d’ensemble : elle se fera par des réalisations concrètes créant d’abord une solidarité de fait. »' },
+    { titre:'Le préambule de la Charte des Nations unies (26 juin 1945)',
+      consigne:'En analysant le document, montrez quels objectifs les Nations unies se donnent en 1945, puis portez un regard critique sur leur réalisation. Vous présenterez le document.',
+      doc:'Charte des Nations unies, signée à San Francisco le 26 juin 1945, préambule (extrait) :\n« Nous, peuples des Nations Unies, résolus à préserver les générations futures du fléau de la guerre qui deux fois en l’espace d’une vie humaine a infligé à l’humanité d’indicibles souffrances […] »' }
+  ];
   const PHILO_DISS = ['La science doit-elle être utile ?', 'L’artiste sait-il ce qu’il fait ?', 'Peut-on être libre sans les autres ?', 'Le travail nous rend-il meilleurs ?',
     'La vérité est-elle toujours bonne à dire ?', 'Faut-il craindre la technique ?', 'Le bonheur est-il une affaire privée ?', 'Peut-on se connaître soi-même ?',
     'L’État est-il l’ennemi de la liberté ?', 'Avons-nous des devoirs envers la nature ?', 'Le langage trahit-il la pensée ?', 'Une croyance peut-elle être raisonnable ?'];
@@ -293,10 +317,17 @@
       nonNote:'Synthèse rédigée à faire sur papier, par exemple : « Montrez comment le système nerveux permet une réaction de fuite efficace face à un danger. »' },
     'spe-ses':{ titre:'Spécialité SES', duree:'4 h', officiel:'Dissertation OU épreuve composée (4 + 6 + 10 points)',
       faire:r => [exoQS('Partie 1 · Mobilisation des connaissances', 4, '', SES_P1, r, 3), sesDocument(r), exoQS('Partie 3 · Raisonnement sur dossier documentaire', 10, 'Sujet : montrez que les politiques de soutien de la demande peuvent lutter contre le chômage conjoncturel.', SES_P3, r, 4)], matiere:'histoire',
-      nonNote:'Dissertation possible (sur papier) : « Les ressources et configurations familiales suffisent-elles à expliquer la mobilité sociale ? »' },
+      // v8.6 : deux sujets de dissertation à rédiger dans l'appli (au bac, un dossier documentaire accompagne le sujet).
+      ecrits:r => tirer(r, SES_DISS, 2).map(sujet => ({ key:'ses:' + SES_DISS.indexOf(sujet), sorte:'ses', titre:'Dissertation de SES', sujet, duree:240,
+        texteSujet:'Sujet d’entraînement : au bac, un dossier de trois à quatre documents (textes, tableaux, graphiques) accompagne le sujet. Ici, appuie-toi sur tes connaissances et sur des exemples chiffrés que tu connais.' })),
+      nonNote:'Dissertation possible : « Les ressources et configurations familiales suffisent-elles à expliquer la mobilité sociale ? » — tu peux aussi rédiger une dissertation de SES dans l’appli.' },
     'spe-hggsp':{ titre:'Spécialité HGGSP', duree:'4 h', officiel:'Dissertation (10 pts) + étude critique de document (10 pts)',
       faire:r => [exoQS('Connaissances et méthode', 20, 'Thèmes : guerre et paix, environnement, patrimoine, connaissance, mémoires, océans et espace.', HGGSP, r, 8)], matiere:'histoire',
-      nonNote:'Dissertation sur papier, au choix : « Construire les mémoires des génocides » ou « Le rapport des États-Unis à l’environnement ».' },
+      // v8.6 : comme le jour J, une dissertation ET une étude critique de document, à rédiger dans l'appli.
+      ecrits:r => { const d = un(r, HGGSP_DISS), e = un(r, HGGSP_ETUDES);
+        return [{ key:'hggsp:d' + HGGSP_DISS.indexOf(d), sorte:'hggsp', titre:'Dissertation de HGGSP', sujet:d, duree:120 },
+          { key:'hggsp:e' + HGGSP_ETUDES.indexOf(e), sorte:'hggsp-etude', titre:'Étude critique de document — ' + e.titre, sujet:e.consigne, texteSujet:e.doc, duree:120 }]; },
+      nonNote:'Au choix aussi, sur papier : « Construire les mémoires des génocides » ou « Le rapport des États-Unis à l’environnement ». La dissertation et l’étude critique se rédigent aussi dans l’appli.' },
     'spe-hlp':{ titre:'Spécialité HLP', duree:'4 h', officiel:'Interprétation (10 pts) + essai (10 pts)',
       faire:r => [exoQS('Repères et méthode', 20, 'Thèmes de terminale : « La recherche de soi » et « L’humanité en question ».', HLP, r, 7)], matiere:'francais',
       nonNote:'Essai sur papier, par exemple : « La littérature et les arts peuvent-ils se passer de la sensibilité ? »' },

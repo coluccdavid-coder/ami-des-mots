@@ -1790,6 +1790,8 @@ html.gfx-ultra main h2 .emoji-titre{ -webkit-text-fill-color:initial; }
 /* v5.75 : même raison pour le plateau de jeu : pas de contexte 3D qui « capture » la bulle et les boutons fixes. */
 .partie, main.partie{ transform-style:flat!important; }
 @media (min-width:700px){ .apres-erreur{ flex-wrap:nowrap; } }
+/* v8.7 : sur grand écran, « J’ai compris — continuer » tient sur une ligne (sinon il montait sur la fin de la bulle). */
+@media (min-width:700px){ .apres-erreur .continuer-erreur:not([hidden]){ white-space:nowrap; flex:0 0 auto; width:auto; } }
 .apres-erreur .petit-bouton{ white-space:nowrap; }
 /* v5.75 : chapitres de maths rangés en blocs par domaine */
 /* v6.90 : colonnes en rem (elles grandissent avec le texte) et auto-fit (les colonnes remplies prennent toute la place, sans colonne vide à droite) */
@@ -2084,3 +2086,14 @@ html[data-texte="tres-grand"]{ font-size:125%; } html[data-texte="tres-grand"] b
 .retro-image.cachee{ opacity:.45; }
 .retro-duel input{ font:inherit; padding:6px 10px; border-radius:10px; border:1px solid rgba(255,255,255,.3); }
 .duel-scores{ display:flex; gap:24px; justify-content:center; flex-wrap:wrap; font-size:1.2rem; }
+
+/* v9.0 : camp d'entraînement et fiches de cours */
+.camp-grade { background: var(--carte, #fff8e6); border-radius: 14px; padding: .6rem 1rem; margin: .5rem 0 1rem; }
+.camp-rebours { font-weight: 700; }
+.camp-mission { padding-left: 1.2rem; line-height: 1.8; }
+.camp-mission li.fait { opacity: .7; }
+.fiche-cours h3 { margin: 1rem 0 .3rem; }
+.fiche-cours ul, .fiche-cours ol { padding-left: 1.3rem; line-height: 1.55; }
+.vanne-fiche { font-style: italic; margin-top: 1rem; }
+.liste-notions { list-style: none; padding: 0; }
+.liste-notions li { margin: .3rem 0; }
