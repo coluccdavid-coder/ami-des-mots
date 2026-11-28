@@ -41,10 +41,18 @@
       if(t.aux === 'être') return ['suis', 'es', 'est', 'sommes', 'êtes', 'sont'][i] + ' ' + t.pp + (i >= 3 ? 's' : '');
       return IRR.avoir.pr[i] + ' ' + t.pp;
     }
+    // v10.6 : temps composés de l'indicatif, impératif et subjonctif présent (programmes de 6e 2025 et de 5e 2026).
+    const COMP = { 'plus-que-parfait':'imparfait', 'futur antérieur':'futur', 'passé antérieur':'passé simple' };
+    if(COMP[temps]){ const aux = t.aux === 'être' ? 'être' : 'avoir'; return forme(aux, COMP[temps], i) + ' ' + t.pp + (t.aux === 'être' && i >= 3 ? 's' : ''); }
+    if(temps === 'impératif'){ const IMP = { 'être':['', 'sois', '', 'soyons', 'soyez'], 'avoir':['', 'aie', '', 'ayons', 'ayez'], 'savoir':['', 'sache', '', 'sachons', 'sachez'], 'vouloir':['', 'veuille', '', 'veuillons', 'veuillez'], 'aller':['', 'va', '', 'allons', 'allez'] };
+      if(IMP[v]) return IMP[v][i] || ''; const f = t.pr[i]; return ER.includes(v) && i === 1 ? f.replace(/s$/, '') : f; }
+    if(temps === 'subjonctif présent'){ const SUB = { 'être':['sois', 'sois', 'soit', 'soyons', 'soyez', 'soient'], 'avoir':['aie', 'aies', 'ait', 'ayons', 'ayez', 'aient'], 'aller':['aille', 'ailles', 'aille', 'allions', 'alliez', 'aillent'], 'faire':['fasse', 'fasses', 'fasse', 'fassions', 'fassiez', 'fassent'], 'pouvoir':['puisse', 'puisses', 'puisse', 'puissions', 'puissiez', 'puissent'], 'vouloir':['veuille', 'veuilles', 'veuille', 'voulions', 'vouliez', 'veuillent'], 'savoir':['sache', 'saches', 'sache', 'sachions', 'sachiez', 'sachent'], 'prendre':['prenne', 'prennes', 'prenne', 'prenions', 'preniez', 'prennent'], 'venir':['vienne', 'viennes', 'vienne', 'venions', 'veniez', 'viennent'] };
+      if(SUB[v]) return SUB[v][i]; const rad = t.pr[5].replace(/ent$/, ''); return rad + ['e', 'es', 'e', 'ions', 'iez', 'ent'][i]; }
     return '';
   }
-  const TEMPS_NIV = { '6e':['présent', 'imparfait', 'futur', 'passé composé'], '5e':['présent', 'imparfait', 'futur', 'passé composé', 'passé simple', 'conditionnel'], '4e':['imparfait', 'futur', 'passé simple', 'conditionnel', 'passé composé'] };
-  const tempsDe = n => TEMPS_NIV[n] || ['présent', 'imparfait', 'futur', 'conditionnel', 'passé simple', 'passé composé'];
+  // v10.6 : temps exigés par les programmes (6e : cycle 3 de 2025 ; 5e : cycle 4 de 2026 ; 4e-3e : cycle 4 de 2020).
+  const TEMPS_NIV = { '6e':['présent', 'imparfait', 'futur', 'passé composé', 'plus-que-parfait', 'impératif', 'conditionnel'], '5e':['présent', 'imparfait', 'futur', 'passé simple', 'conditionnel', 'passé composé', 'plus-que-parfait', 'passé antérieur', 'futur antérieur', 'impératif'], '4e':['imparfait', 'futur', 'passé simple', 'conditionnel', 'passé composé', 'plus-que-parfait', 'futur antérieur', 'subjonctif présent'] };
+  const tempsDe = n => TEMPS_NIV[n] || ['présent', 'imparfait', 'futur', 'conditionnel', 'passé simple', 'passé composé', 'plus-que-parfait', 'futur antérieur', 'subjonctif présent'];
   const VAN_CONJ = {
     personne:['« {f} » ? Bon temps, mauvaise personne : le verbe a parlé à quelqu’un d’autre. 📞', '« {f} » ? La terminaison s’est trompée de pronom. Elle cherche encore sa place. 🪑', '« {f} » ? Tout est juste sauf la fin. C’est comme mettre les chaussures de ton voisin. 👟'],
     futcond:['« {f} » ? Futur ou conditionnel… « -rai », c’est sûr ; « -rais », c’est peut-être. Là, tu as hésité au mauvais moment. 🤷', '« {f} » ? Un « s » de trop ou de moins, et le futur devient un rêve. Ou l’inverse. 💭'],
@@ -82,31 +90,54 @@
     'passé composé':'Pretérito perfecto compuesto: être o avoir en presente + participio (concordado con el sujeto después de «être»).',
     'présent':'Presente: cuidado con las terminaciones según la persona (je -e/-s, tu -s, il -e/-t, nous -ons, vous -ez, ils -ent).' };
   const tire = (l, r) => l[Math.floor(r() * l.length)];
+  // v10.6 : nouveaux temps (plus-que-parfait, passé et futur antérieurs, impératif, subjonctif présent) et une explication
+  // détaillée : la règle de formation, puis la conjugaison complète du verbe à ce temps.
+  const REGLE_FR = {
+    'futur':'Futur : infinitif + -ai, -as, -a, -ons, -ez, -ont (irréguliers : je serai, j’irai, je ferai, je viendrai…).',
+    'conditionnel':'Conditionnel présent : radical du futur + terminaisons de l’imparfait (-ais, -ais, -ait, -ions, -iez, -aient).',
+    'imparfait':'Imparfait : radical du « nous » au présent + -ais, -ais, -ait, -ions, -iez, -aient.',
+    'passé simple':'Passé simple : -ai, -as, -a, -âmes, -âtes, -èrent pour les verbes en -er ; -is / -us / -ins pour les autres.',
+    'passé composé':'Passé composé : auxiliaire être ou avoir au présent + participe passé (accordé avec le sujet après « être »).',
+    'plus-que-parfait':'Plus-que-parfait : auxiliaire être ou avoir à l’imparfait + participe passé. Il exprime une action antérieure à une autre action passée.',
+    'futur antérieur':'Futur antérieur : auxiliaire être ou avoir au futur + participe passé. Il exprime une action achevée avant une autre action future.',
+    'passé antérieur':'Passé antérieur : auxiliaire être ou avoir au passé simple + participe passé. Il marque une action achevée juste avant une action au passé simple.',
+    'impératif':'Impératif présent : trois personnes seulement (tu, nous, vous), sans pronom sujet. Les verbes en -er perdent le « s » à la 2e personne du singulier (parle, chante), sauf devant « en » et « y ».',
+    'subjonctif présent':'Subjonctif présent : radical de « ils » au présent + -e, -es, -e, -ions, -iez, -ent, après « que » (irréguliers : que je sois, que j’aie, que j’aille, que je fasse, que je puisse…).',
+    'présent':'Présent : attention aux terminaisons selon la personne (je -e/-s, tu -s, il -e/-t, nous -ons, vous -ez, ils -ent).' };
+  Object.assign(TEMPS_EN, { 'plus-que-parfait':'the pluperfect (plus-que-parfait)', 'futur antérieur':'the future perfect (futur antérieur)', 'passé antérieur':'the past anterior (passé antérieur)', 'impératif':'the imperative (impératif présent)', 'subjonctif présent':'the present subjunctive (subjonctif présent)' });
+  Object.assign(REGLE_EN, { 'plus-que-parfait':'Pluperfect: être or avoir in the imperfect + past participle. It shows an action earlier than another past action.', 'futur antérieur':'Future perfect: être or avoir in the future + past participle. It shows an action completed before another future action.', 'passé antérieur':'Past anterior: être or avoir in the past historic + past participle, for an action completed just before another one in the past historic.', 'impératif':'Imperative: only three persons (tu, nous, vous), with no subject pronoun. -er verbs drop the “s” in the “tu” form (parle, chante).', 'subjonctif présent':'Present subjunctive: stem of “ils” in the present + -e, -es, -e, -ions, -iez, -ent, after “que” (irregular: que je sois, que j’aie, que j’aille, que je fasse, que je puisse…).' });
+  Object.assign(TEMPS_ES, { 'plus-que-parfait':'pluscuamperfecto (plus-que-parfait)', 'futur antérieur':'futuro perfecto (futur antérieur)', 'passé antérieur':'pretérito anterior (passé antérieur)', 'impératif':'imperativo (impératif présent)', 'subjonctif présent':'presente de subjuntivo (subjonctif présent)' });
+  Object.assign(REGLE_ES, { 'plus-que-parfait':'Pluscuamperfecto: être o avoir en imperfecto + participio. Expresa una acción anterior a otra acción pasada.', 'futur antérieur':'Futuro perfecto: être o avoir en futuro + participio. Expresa una acción terminada antes de otra acción futura.', 'passé antérieur':'Pretérito anterior: être o avoir en pretérito perfecto simple + participio, para una acción terminada justo antes de otra.', 'impératif':'Imperativo: solo tres personas (tu, nous, vous), sin pronombre sujeto. Los verbos en -er pierden la «s» en la forma de «tu» (parle, chante).', 'subjonctif présent':'Presente de subjuntivo: raíz de «ils» en presente + -e, -es, -e, -ions, -iez, -ent, después de «que» (irregulares: que je sois, que j’aie, que j’aille, que je fasse…).' });
+  const PERS_IMP = { 1:['2e personne du singulier', '2nd person singular (tu)', '2.ª persona del singular (tu)'], 3:['1re personne du pluriel', '1st person plural (nous)', '1.ª persona del plural (nous)'], 4:['2e personne du pluriel', '2nd person plural (vous)', '2.ª persona del plural (vous)'] };
+  const sujet = (temps, i, f) => temps === 'impératif' ? '' : temps === 'subjonctif présent' ? (i === 2 || i === 5 ? 'qu’' : 'que ') + pron(i, f) : pron(i, f);
+  const dire = (v, temps, i) => { const f = forme(v, temps, i); return f ? sujet(temps, i, f) + f : ''; };
+  const tableauComplet = (v, temps) => (temps === 'impératif' ? [1, 3, 4] : [0, 1, 2, 3, 4, 5]).map(i => dire(v, temps, i)).filter(Boolean).join(', ');
   function genConjugaison(r, niveau, langue){
     const en = langue === 'en', es = langue === 'es', VAN = en ? VAN_CONJ_EN : es ? VAN_CONJ_ES : VAN_CONJ;
-    const verbes = Object.keys(IRR).concat(ER, IR), v = verbes[Math.floor(r() * verbes.length)];
     const temps = tire(tempsDe(niveau), r);
-    let i = Math.floor(r() * 6);
-    if(temps === 'passé composé' && tableau(v).aux === 'être') i = [2, 5][Math.floor(r() * 2)];
-    const bon = pron(i, forme(v, temps, i)) + forme(v, temps, i);
+    const verbes = Object.keys(IRR).concat(ER, IR).filter(x => !(temps === 'impératif' && x === 'pouvoir')), v = verbes[Math.floor(r() * verbes.length)];
+    let i = temps === 'impératif' ? [1, 3, 4][Math.floor(r() * 3)] : Math.floor(r() * 6);
+    if(['passé composé', 'plus-que-parfait', 'futur antérieur', 'passé antérieur'].includes(temps) && tableau(v).aux === 'être') i = [2, 5][Math.floor(r() * 2)];
+    const bon = dire(v, temps, i);
     const faux = [], ajoute = (txt, type) => { if(txt && txt !== bon && !faux.some(f => f.en === txt)) faux.push({ en:txt, vanne:tire(VAN[type], r) }); };
     // Erreurs typiques : mauvaise personne, futur/conditionnel, autre temps, forme « régularisée » d'un irrégulier.
-    const j = [1, 0, 0, 4, 3, 2][i]; ajoute(pron(i, forme(v, temps, j)) + forme(v, temps, j), 'personne');
-    if(temps === 'futur') ajoute(pron(i, forme(v, 'conditionnel', i)) + forme(v, 'conditionnel', i), 'futcond');
-    if(temps === 'conditionnel') ajoute(pron(i, forme(v, 'futur', i)) + forme(v, 'futur', i), 'futcond');
+    const j = temps === 'impératif' ? { 1:4, 3:4, 4:1 }[i] : [1, 0, 0, 4, 3, 2][i]; { const f = forme(v, temps, j); if(f) ajoute(sujet(temps, i, f) + f, 'personne'); }
+    if(temps === 'futur') ajoute(dire(v, 'conditionnel', i), 'futcond');
+    if(temps === 'conditionnel') ajoute(dire(v, 'futur', i), 'futcond');
+    if(temps === 'impératif'){ const f = tableau(v).pr[i]; ajoute(f, 'temps'); ajoute(pron(i, f) + f, 'temps'); }
+    if(temps === 'subjonctif présent'){ const f = forme(v, 'présent', i); ajoute(sujet(temps, i, f) + f, 'temps'); }
+    if(temps === 'plus-que-parfait') ajoute(dire(v, 'passé composé', i), 'temps');
+    if(temps === 'futur antérieur') ajoute(dire(v, 'futur', i), 'temps');
+    if(temps === 'passé antérieur') ajoute(dire(v, 'plus-que-parfait', i), 'temps');
     if(IRR[v] && (temps === 'futur' || temps === 'conditionnel')){ const reg = v.replace(/e$/, '') + (temps === 'futur' ? T_FUT[i] : T_IMP[i]); ajoute(pron(i, reg) + reg, 'invente'); }
     if(IRR[v] && temps === 'passé simple' && !['être', 'avoir', 'aller', 'voir', 'savoir'].includes(v)){ const reg = v.replace(/(re|ir|oir)$/, '') + ['ai', 'as', 'a', 'âmes', 'âtes', 'èrent'][i]; ajoute(pron(i, reg) + reg, 'invente'); }
     for(const t2 of melanger(['présent', 'imparfait', 'futur', 'passé simple', 'passé composé'].filter(x => x !== temps), r)){ if(faux.length >= 3) break;
-      if(t2 === 'passé composé' && tableau(v).aux === 'être' && i !== 2 && i !== 5) continue; const f = forme(v, t2, i); ajoute(pron(i, f) + f, 'temps'); }
-    if(es) return { consigne:'Conjugación', lang:'es', enonce:'Conjuga «' + v + '» en ' + TEMPS_ES[temps] + ' con «' + (i === 0 ? 'je' : P[i]) + '».', bon, faux:faux.slice(0, 3), regle:REGLE_ES[temps] || REGLE_ES['présent'] };
-    if(en) return { consigne:'Conjugation', lang:'en', enonce:'Conjugate “' + v + '” in ' + TEMPS_EN[temps] + ' with “' + (i === 0 ? 'je' : P[i]) + '”.', bon, faux:faux.slice(0, 3), regle:REGLE_EN[temps] || REGLE_EN['présent'] };
-    return { consigne:'Conjugaison', enonce:'Conjugue « ' + v + ' » ' + (/^[aeiou]/.test(temps) ? 'à l’' : 'au ') + temps + ' avec « ' + (i === 0 ? 'je' : P[i]) + ' ».', bon, faux:faux.slice(0, 3),
-      regle:temps === 'futur' ? 'Futur : infinitif + -ai, -as, -a, -ons, -ez, -ont (irréguliers : je serai, j’irai, je ferai, je viendrai…).' :
-        temps === 'conditionnel' ? 'Conditionnel : radical du futur + terminaisons de l’imparfait (-ais, -ais, -ait, -ions, -iez, -aient).' :
-        temps === 'imparfait' ? 'Imparfait : radical du « nous » au présent + -ais, -ais, -ait, -ions, -iez, -aient.' :
-        temps === 'passé simple' ? 'Passé simple : -ai, -as, -a, -âmes, -âtes, -èrent pour les verbes en -er ; -is / -us / -ins pour les autres.' :
-        temps === 'passé composé' ? 'Passé composé : auxiliaire être ou avoir au présent + participe passé (accordé avec le sujet après « être »).' :
-        'Présent : attention aux terminaisons selon la personne (je -e/-s, tu -s, il -e/-t, nous -ons, vous -ez, ils -ent).' };
+      if(t2 === 'passé composé' && tableau(v).aux === 'être' && i !== 2 && i !== 5) continue; ajoute(dire(v, t2, i), 'temps'); }
+    const qui = temps === 'impératif' ? null : (i === 0 ? 'je' : P[i]), tab = tableauComplet(v, temps);
+    if(es) return { consigne:'Conjugación', lang:'es', enonce:'Conjuga «' + v + '» en ' + TEMPS_ES[temps] + (qui ? ' con «' + qui + '»' : ', ' + PERS_IMP[i][2]) + '.', bon, faux:faux.slice(0, 3), regle:(REGLE_ES[temps] || REGLE_ES['présent']) + ' Conjugación completa: «' + tab + '».' };
+    if(en) return { consigne:'Conjugation', lang:'en', enonce:'Conjugate “' + v + '” in ' + TEMPS_EN[temps] + (qui ? ' with “' + qui + '”' : ', ' + PERS_IMP[i][1]) + '.', bon, faux:faux.slice(0, 3), regle:(REGLE_EN[temps] || REGLE_EN['présent']) + ' Full conjugation: “' + tab + '”.' };
+    return { consigne:'Conjugaison', enonce:'Conjugue « ' + v + ' » ' + (/^[aeiou]/.test(temps) ? 'à l’' : 'au ') + temps + (qui ? ' avec « ' + qui + ' »' : ', ' + PERS_IMP[i][0]) + '.', bon, faux:faux.slice(0, 3),
+      regle:(REGLE_FR[temps] || REGLE_FR['présent']) + ' Conjugaison complète : ' + tab + '.' };
   }
   const melanger = (l, r) => window.MATIERES.melanger(l, r);
   // Homophones : on choisit le bon mot dans une phrase.

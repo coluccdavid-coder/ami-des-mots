@@ -5,6 +5,21 @@ Avant la v6.44, chaque version avait son propre fichier VERSION-x.y.txt à la ra
 
 ---
 
+## Version 10.6.0
+
+Français complété d’après la vérification des programmes officiels.
+
+- Conjugaison : le générateur propose maintenant le plus-que-parfait, le futur antérieur, le passé antérieur, l’impératif présent (tu, nous, vous, sans pronom) et le subjonctif présent (« que je… », à partir de la 4e). Chaque correction donne la règle de formation puis la conjugaison complète du verbe, en français, anglais et espagnol.
+- Le subjonctif n’est plus proposé en 5e dans « Conjugaison : subjonctif, impératif… » ; sept questions d’impératif, de conditionnel et de temps composés le remplacent.
+- Nouveaux chapitres (20 questions chacun, traduits en anglais et en espagnol, avec fiche de cours) :
+  - 6e : récits des origines, poésie, théâtre « se masquer, jouer, déjouer », récits d’aventure, monstres ;
+  - 5e : comédie et société sens dessus dessous, fables, paroles rapportées, registres, néologismes, valeurs du présent et de l’imparfait ;
+  - 4e : informer, s’informer, déformer ? (presse, fait et opinion, sources), la ville, discours indirect et indirect libre ;
+  - 3e : se raconter, dénoncer, progrès et rêves scientifiques, dystopies ;
+  - 2nde : littérature d’idées et presse, poésie du Moyen Âge au XVIIIe siècle, valeurs des temps, lexique ;
+  - 1re : subordonnées circonstancielles et choix du mode.
+- Test v10.6.
+
 ## Version 10.5.0 — Maths complétées d’après les programmes, Plumo vivant, bravos jamais répétés
 
 - Maths (js/maths-2026-complements.js, 6 langues, corrections calculées, explications détaillées) : 6e multiplier et diviser des décimaux, encadrer, médiatrice / bissectrice / cercle circonscrit ; 5e hauteurs, médianes, médiatrices ; 2nde parité, écart type, boîte à moustaches, stabilisation des fréquences ; 1re approximation affine, dérivée de g(ax + b), projeté orthogonal, indépendance et épreuves de Bernoulli, variance ; terminale récurrence, équations différentielles, intégration par parties, sommes de variables aléatoires et loi des grands nombres. Une fiche de cours par notion (js/cours-fiches-complements.js).
