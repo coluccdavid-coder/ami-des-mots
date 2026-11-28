@@ -78,6 +78,19 @@
     'Rien à revoir : étape validée.':['Nothing to review: step done.', 'Nada que repasar: etapa validada.', 'Nichts zu wiederholen: Schritt erledigt.', 'Niente da ripassare: tappa superata.', 'Nada para rever: etapa validada.'],
     'Pas de fiche perso avec « question = réponse » : étape validée. Écris-en une dans ton cahier pour la prochaine fois !':['No personal “question = answer” card: step done. Write one in your notebook for next time!', 'No hay fichas «pregunta = respuesta»: etapa validada. ¡Escribe una en tu cuaderno para la próxima vez!', 'Keine eigene „Frage = Antwort“-Karte: Schritt erledigt. Schreib eine in dein Heft für das nächste Mal!', 'Nessuna scheda «domanda = risposta»: tappa superata. Scrivine una nel quaderno per la prossima volta!', 'Nenhuma ficha «pergunta = resposta»: etapa validada. Escreve uma no caderno para a próxima vez!'],
     'Raisonnement, arithmétique, nombres complexes : au-delà du programme.':['Reasoning, number theory, complex numbers: beyond the curriculum.', 'Razonamiento, aritmética, números complejos: más allá del programa.', 'Beweisen, Zahlentheorie, komplexe Zahlen: über den Lehrplan hinaus.', 'Ragionamento, aritmetica, numeri complessi: oltre il programma.', 'Raciocínio, aritmética, números complexos: para além do programa.'],
+    '📝 Séries d’examen':['📝 Exam runs', '📝 Series de examen', '📝 Prüfungsserien', '📝 Serie d’esame', '📝 Séries de exame'],
+    '20 questions au format de l’examen, 20 minutes, sans vanne ni correction pendant l’épreuve : note sur 20 et corrigé à la fin. Meilleure note : {0}.':['20 questions in the exam format, 20 minutes, no jokes or corrections during the test: mark out of 20 and corrections at the end. Best mark: {0}.', '20 preguntas con el formato del examen, 20 minutos, sin bromas ni corrección durante la prueba: nota sobre 20 y corrección al final. Mejor nota: {0}.', '20 Fragen im Prüfungsformat, 20 Minuten, ohne Sprüche und Korrektur während der Prüfung: Note von 20 und Korrektur am Ende. Beste Note: {0}.', '20 domande nel formato dell’esame, 20 minuti, senza battute né correzione durante la prova: voto su 20 e correzione alla fine. Voto migliore: {0}.', '20 perguntas no formato do exame, 20 minutos, sem piadas nem correção durante a prova: nota em 20 e correção no fim. Melhor nota: {0}.'],
+    'Note : {0} / 20':['Mark: {0} / 20', 'Nota: {0} / 20', 'Note: {0} / 20', 'Voto: {0} / 20', 'Nota: {0} / 20'],
+    '{0} bonne(s) réponse(s) sur {1}.':['{0} correct answer(s) out of {1}.', '{0} respuesta(s) correcta(s) de {1}.', '{0} richtige Antwort(en) von {1}.', '{0} risposta/e giusta/e su {1}.', '{0} resposta(s) certa(s) em {1}.'],
+    '✏️ Corrigé':['✏️ Corrections', '✏️ Corrección', '✏️ Korrektur', '✏️ Correzione', '✏️ Correção'],
+    'Ta réponse :':['Your answer:', 'Tu respuesta:', 'Deine Antwort:', 'La tua risposta:', 'A tua resposta:'],
+    'Pas de réponse (temps écoulé)':['No answer (time up)', 'Sin respuesta (tiempo agotado)', 'Keine Antwort (Zeit abgelaufen)', 'Nessuna risposta (tempo scaduto)', 'Sem resposta (tempo esgotado)'],
+    'Bonne réponse :':['Correct answer:', 'Respuesta correcta:', 'Richtige Antwort:', 'Risposta giusta:', 'Resposta certa:'],
+    'Tout est juste : rien à corriger.':['Everything is right: nothing to correct.', 'Todo está bien: nada que corregir.', 'Alles richtig: nichts zu korrigieren.', 'Tutto giusto: niente da correggere.', 'Tudo certo: nada a corrigir.'],
+    'Plumo a lu ta copie trois fois pour trouver une faute. Il est reparti bredouille. Chapeau ! 🎩':['Plumo read your paper three times looking for a mistake. He left empty-handed. Hats off! 🎩', 'Plumo leyó tu examen tres veces buscando un fallo. Se fue con las manos vacías. ¡Chapó! 🎩', 'Plumo hat deine Arbeit dreimal nach einem Fehler durchsucht. Er ging leer aus. Hut ab! 🎩', 'Plumo ha letto il tuo compito tre volte cercando un errore. È rimasto a mani vuote. Chapeau! 🎩', 'O Plumo leu o teu teste três vezes à procura de um erro. Saiu de mãos vazias. Chapéu! 🎩'],
+    'Plumo a sorti son stylo rouge, mais il a aussi vu de belles réponses. Le corrigé est là pour la suite. 🖍️':['Plumo got his red pen out, but he also saw some fine answers. The corrections are here for next time. 🖍️', 'Plumo sacó su boli rojo, pero también vio buenas respuestas. Aquí tienes la corrección para la próxima. 🖍️', 'Plumo hat den Rotstift gezückt, aber auch schöne Antworten gesehen. Die Korrektur hilft beim nächsten Mal. 🖍️', 'Plumo ha tirato fuori la penna rossa, ma ha visto anche belle risposte. La correzione è qui per la prossima volta. 🖍️', 'O Plumo pegou na caneta vermelha, mas também viu boas respostas. A correção fica aqui para a próxima. 🖍️'],
+    'Le stylo rouge de Plumo a bien travaillé aujourd’hui. Bonne nouvelle : chaque erreur corrigée ici ne sera plus faite le jour J. 💪':['Plumo’s red pen worked hard today. Good news: every mistake corrected here will not happen on the day. 💪', 'El boli rojo de Plumo ha trabajado mucho hoy. Buena noticia: cada error corregido aquí no se repetirá el día del examen. 💪', 'Plumos Rotstift hatte heute viel zu tun. Gute Nachricht: Jeder Fehler, der hier korrigiert wird, passiert am Prüfungstag nicht mehr. 💪', 'La penna rossa di Plumo ha lavorato molto oggi. Buona notizia: ogni errore corretto qui non si ripeterà il giorno dell’esame. 💪', 'A caneta vermelha do Plumo trabalhou muito hoje. Boa notícia: cada erro corrigido aqui não se repete no dia do exame. 💪'],
+    '— (pas encore)':['— (not yet)', '— (todavía no)', '— (noch nicht)', '— (non ancora)', '— (ainda não)'],
     'Recrue':['Recruit', 'Recluta', 'Rekrut', 'Recluta', 'Recruta'], 'Soldat':['Private', 'Soldado', 'Soldat', 'Soldato', 'Soldado'], 'Caporal':['Corporal', 'Cabo', 'Gefreiter', 'Caporale', 'Cabo'],
     'Sergent':['Sergeant', 'Sargento', 'Unteroffizier', 'Sergente', 'Sargento'], 'Adjudant':['Warrant officer', 'Brigada', 'Feldwebel', 'Maresciallo', 'Sargento-ajudante'], 'Lieutenant':['Lieutenant', 'Teniente', 'Leutnant', 'Tenente', 'Tenente'],
     'Capitaine':['Captain', 'Capitán', 'Hauptmann', 'Capitano', 'Capitão'], 'Commandant':['Major', 'Comandante', 'Major', 'Maggiore', 'Major'], 'Colonel':['Colonel', 'Coronel', 'Oberst', 'Colonnello', 'Coronel'], 'Général':['General', 'General', 'General', 'Generale', 'General'],
@@ -220,6 +233,46 @@
       return A.questionsGo(copie(l), { titre:tx('4. Mes fiches perso'), retour:'matieres', fin:z => { etapeFaite('fiches'); gagner(z.bonnes); accueil(); } }); }
   }
 
+  // ───── Séries d'examen : 20 questions au format de l'examen, 20 minutes, sans vanne pendant, note sur 20 et corrigé ─────
+  const SERIES_EXAMEN = {
+    brevet:{ parts:[['francais', '3e', 6], ['maths', '3e', 6], ['histoire', '3e', 4], ['svt', '3e', 2], ['physique', '3e', 2]] },
+    eaf:{ parts:[['francais', '1re', 20]] },
+    eam:{ parts:[['maths', '1re', 20]] },
+    bac:{ parts:[['philo', 'Tle', 6], ['maths', 'Tle', 6], ['langlais', 'Tle', 4], ['histoire', 'Tle', 4]] },
+    sup:{ parts:[['mathematicien', 'Sup', 7], ['geneticien', 'Sup', 7], ['geophysicien', 'Sup', 6]] }
+  };
+  const N_EXAMEN = 20, MINUTES_EXAMEN = 20;
+  function questionsExamen(k){
+    const S = SERIES_EXAMEN[k], A = api(); if(!S) return [];
+    let l = [];
+    for(const [mid, niv, n] of S.parts){
+      if(mid === 'maths'){ if(window.MATHS && MATHS.NIVEAUX.includes(niv)) l = l.concat(MATHS.serie(niv, n, hasard(), ton()).map(q => Object.assign({}, q, { matiere:'maths' }))); continue; }
+      if(EXPERTS.includes(mid)){ l = l.concat(questionsMelange(mid, n)); continue; }
+      const Mx = MATR(); if(!Mx || !Mx.trouver(mid) || !Mx.chapitres(mid, niv).length || !A.serieMatiere) continue;
+      l = l.concat(A.serieMatiere(mid, 'melange', n, niv));
+    }
+    // Si une matière manque, on complète avec la première pour garder 20 questions.
+    if(l.length && l.length < N_EXAMEN){ const [mid, niv] = S.parts[0]; const plus = mid === 'maths' ? (window.MATHS ? MATHS.serie(niv, N_EXAMEN - l.length, hasard(), ton()).map(q => Object.assign({}, q, { matiere:'maths' })) : []) : EXPERTS.includes(mid) ? questionsMelange(mid, N_EXAMEN - l.length) : (A.serieMatiere ? A.serieMatiere(mid, 'melange', N_EXAMEN - l.length, niv) : []); l = l.concat(plus); }
+    const vus = new Set(); return melanger(l.filter(q => { const c = q.enonce + '\u0001' + q.bon; if(vus.has(c)) return false; vus.add(c); return true; })).slice(0, N_EXAMEN);
+  }
+  const virg = n => String(n).replace('.', ',');
+  function serieExamen(k){
+    const A = api(), x = EXAMENS.find(e => e[0] === k), l = questionsExamen(k); if(!x || !l.length) return accueil();
+    A.questionsGo(copie(l), { titre:'📝 ' + tx(x[1]), retour:'matieres', sansVanne:true, finA:Date.now() + MINUTES_EXAMEN * 60000, fin:z => {
+      const c = camp(), esc = A.esc, n = z.liste.length, note = Math.round(z.bonnes / n * 40) / 2;
+      c.examens = c.examens && typeof c.examens === 'object' ? c.examens : {};
+      const e = c.examens[k] = c.examens[k] && typeof c.examens[k] === 'object' ? c.examens[k] : {}; e.derniere = note; e.meilleure = Math.max(+e.meilleure || 0, note);
+      gagner(z.bonnes * 2 + (note >= 10 ? 20 : 0));
+      const rep = new Map((z.reponses || []).map(r => [r.q, r])), fautes = z.liste.filter(q => !(rep.get(q) || {}).juste);
+      const phrase = note >= 18 ? 'Plumo a lu ta copie trois fois pour trouver une faute. Il est reparti bredouille. Chapeau ! 🎩' : note >= 10 ? 'Plumo a sorti son stylo rouge, mais il a aussi vu de belles réponses. Le corrigé est là pour la suite. 🖍️' : 'Le stylo rouge de Plumo a bien travaillé aujourd’hui. Bonne nouvelle : chaque erreur corrigée ici ne sera plus faite le jour J. 💪';
+      A.poser(A.barre('matieres') + '<main class="coin-anglais matieres-ecran fin-examen"><div class="ami-moyen">' + A.ami(note >= 10 ? 'fete' : 'malin') + '</div>' +
+        '<h2>' + esc(tx('Note : {0} / 20', virg(note))) + '</h2><p>' + esc(tx('{0} bonne(s) réponse(s) sur {1}.', z.bonnes, n)) + '</p><p>' + esc(tx(phrase)) + '</p>' +
+        '<h3>' + esc(tx('✏️ Corrigé')) + '</h3>' + (fautes.length ? '<ol class="corrige-examen">' + fautes.map(q => { const r = rep.get(q);
+          return '<li><p><strong>' + esc(q.enonce || '') + '</strong></p><p>' + esc(tx('Ta réponse :')) + ' ' + esc(r ? r.choix : tx('Pas de réponse (temps écoulé)')) + '</p><p>' + esc(tx('Bonne réponse :')) + ' <strong>' + esc(q.bon) + '</strong></p>' + (q.regle ? '<p class="petit">' + esc(q.regle) + '</p>' : '') + '</li>'; }).join('') + '</ol>' : '<p>' + esc(tx('Tout est juste : rien à corriger.')) + '</p>') +
+        '<div class="actions"><button class="moyen plein" data-a="camp-examen" data-v="' + esc(k) + '">' + esc(tx('🔁 Recommencer')) + '</button> <button class="moyen" data-a="camp">' + esc(tx('↩️ Retour au camp')) + '</button></div></main>');
+    } });
+  }
+
   // ───── Compte à rebours ─────
   function rebours(){ const o = camp().objectif, x = EXAMENS.find(e => e[0] === o.examen); if(!x || !x[0] || !/^\d{4}-\d{2}-\d{2}$/.test(o.date || '')) return '';
     const j = Math.round((new Date(o.date + 'T12:00:00') - new Date(aujourdhui() + 'T12:00:00')) / 864e5); if(j < 0) return '';
@@ -237,6 +290,8 @@
       (m.fini ? '<p>' + esc(tx('✅ Mission accomplie ! Repos, soldat. Reviens demain pour la suivante.')) + '</p>' : '<div class="actions"><button class="gros plein" data-a="camp-etape">' + esc(tx('▶️ Étape suivante')) + '</button></div>') + '</section>' +
       '<section><h3>' + esc(tx('🪂 Séries sans filet')) + '</h3><div class="cartes-anglais">' + MATS.concat([['tout', '🎲', 'Tout mélangé']]).filter(x => x[0] === 'maths' || x[0] === 'tout' || (MATR() && MATR().trouver(x[0]))).map(x =>
         M.carte('camp-sansfilet', x[0], x[1], esc(tx(x[2])), esc(tx('Chrono serré, aucun indice : une erreur et la série s’arrête. Record : {0}.', Math.floor(+c.records[x[0]]) || 0)))).join('') + '</div></section>' +
+      '<section><h3>' + esc(tx('📝 Séries d’examen')) + '</h3><div class="cartes-anglais">' + EXAMENS.filter(e => e[0]).sort((a, b) => (b[0] === c.objectif.examen) - (a[0] === c.objectif.examen)).map(e => { const ex = (c.examens || {})[e[0]];
+        return M.carte('camp-examen', e[0], '📝', esc(tx(e[1])), esc(tx('20 questions au format de l’examen, 20 minutes, sans vanne ni correction pendant l’épreuve : note sur 20 et corrigé à la fin. Meilleure note : {0}.', ex && ex.meilleure != null ? virg(ex.meilleure) + ' / 20' : tx('— (pas encore)')))); }).join('') + '</div></section>' +
       '<section><div class="cartes-anglais">' + M.carte('camp-base', 'francais', '📚', esc(tx('📚 Base de connaissances')).replace(/^📚 /, ''), esc(tx('Toutes les notions du programme, avec leur fiche de cours, et tes propres fiches.'))) +
         M.carte('examens', '', '📝', esc(tx('📝 Examens blancs')).replace(/^📝 /, ''), '') + (window.AMI_CAHIER ? M.carte('cahier', '', '📒', esc(tx('📒 Mon cahier')).replace(/^📒 /, ''), '') : '') + '</div></section>' +
       '<section><h3>' + esc(tx('🗓️ Mon objectif')) + '</h3><p><label>' + esc(tx('Examen visé')) + ' <select id="camp-examen">' + EXAMENS.map(e => '<option value="' + e[0] + '"' + (e[0] === c.objectif.examen ? ' selected' : '') + '>' + esc(tx(e[1])) + '</option>').join('') + '</select></label> ' +
@@ -266,10 +321,11 @@
     'camp-base':v => base(v, false), 'camp-base-tout':v => base(v, true),
     'camp-fiche':v => { const [k, d] = String(v || '').split('|'); return ecranFiche(k, d); },
     'camp-entrainer':v => entrainer(v),
+    'camp-examen':v => serieExamen(v),
     'camp-sansfilet':v => sansFilet(v), 'camp-sansfilet-notion':v => sansFilet(v),
     'camp-objectif':() => { const A = api(), c = camp(), d = document, e = d.getElementById('camp-examen'), t = d.getElementById('camp-date');
       const ex = e && EXAMENS.some(x => x[0] === e.value) ? e.value : '', da = t && /^\d{4}-\d{2}-\d{2}$/.test(t.value) ? t.value : '';
       c.objectif = { examen:ex, date:da }; A.garder(); return accueil(); }
   });
-  window.AMI_CAMP = { GRADES, gradeDe, camp, mission, notions, leconDuJour, accueil, base, sansFilet, etapeSuivante, validerJour };
+  window.AMI_CAMP = { SERIES_EXAMEN, questionsExamen, serieExamen, GRADES, gradeDe, camp, mission, notions, leconDuJour, accueil, base, sansFilet, etapeSuivante, validerJour };
 })();
