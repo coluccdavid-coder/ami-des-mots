@@ -5,6 +5,27 @@ Avant la v6.44, chaque version avait son propre fichier VERSION-x.y.txt à la ra
 
 ---
 
+## Version 10.5.0 — Maths complétées d’après les programmes, Plumo vivant, bravos jamais répétés
+
+- Maths (js/maths-2026-complements.js, 6 langues, corrections calculées, explications détaillées) : 6e multiplier et diviser des décimaux, encadrer, médiatrice / bissectrice / cercle circonscrit ; 5e hauteurs, médianes, médiatrices ; 2nde parité, écart type, boîte à moustaches, stabilisation des fréquences ; 1re approximation affine, dérivée de g(ax + b), projeté orthogonal, indépendance et épreuves de Bernoulli, variance ; terminale récurrence, équations différentielles, intégration par parties, sommes de variables aléatoires et loi des grands nombres. Une fiche de cours par notion (js/cours-fiches-complements.js).
+- Plumo vivant (js/plumo-vivant.js) : respiration plus marquée, gestes au repos tirés au hasard toutes les 3 à 7 secondes (regarder autour, pencher la tête, sautiller, se dandiner, gonfler ses plumes, hocher la tête, faire un tour), le hibou se tourne vers le pointeur et réagit quand on le touche. Tout s’arrête si le système demande moins d’animations ou en mode facile.
+- Bravos jamais répétés : plus de 300 phrases composées par langue (ouverture × réaction de Plumo), tirées sans remise grâce à la mémoire des vannes ; utilisées par les matières, le coin maths et le labo de sciences, et une fois sur deux en français.
+- Nouveau test v10.5.
+
+## Version 10.4.0 — Anglais du lycée au programme de 2025, premières corrections du rapport de conformité
+
+- Anglais 2nde, 1re et terminale : les chapitres « Les axes du programme de 2nde » et « Les axes de 1re et de terminale » décrivaient le programme de 2019 (huit axes, thèmes « L’art de vivre ensemble » et « Gestes fondateurs et mondes en mouvement »). Ils suivent désormais le programme de langues vivantes du BO n° 22 du 29 mai 2025 : six axes par classe, l’axe 6 obligatoire (Commonwealth en 2nde, aires anglophones américaines en 1re, Royaume-Uni et ses nations en terminale), niveaux B1+ (2nde, 1re) et B2 (terminale) en LVA. Nouveau fichier js/mat-anglais-axes-2025.js ; fiches de cours réécrites.
+- SVT (gamètes) : l’énoncé précise « chez l’être humain » ; la réponse devient « 23 chromosomes : un seul chromosome de chaque paire », avec une explication complète (46 chromosomes en 23 paires, méiose, fécondation), en 6 langues.
+- Tests : la suite principale libère la mémoire après chaque test (`--expose-gc`) ; elle dépassait 4 Go sans cela.
+- Nouveau test v10.4.
+
+## Version 10.3.1 — Camp d’entraînement lisible
+
+- Le cadre du grade avait un fond crème sous un texte presque blanc : il prend maintenant le fond translucide des autres cartes, texte clair.
+- La mission du jour affichait deux numérotations (« 1. » à gauche et « ⬜ 1. » au centre) : la liste n’a plus de puces et reste groupée au centre, alignée à gauche.
+- Fiches de cours, corrigés d’examen et Grand oral blanc : listes alignées à gauche, support et grille lisibles sur fond sombre.
+- Nouveau test v10.3.1.
+
 ## Version 10.3.0 — Grand oral blanc au camp d’entraînement
 
 - Nouveau module js/mod-grand-oral.js, accessible depuis le camp (carte « 🎤 Grand oral blanc »), au format de la session 2027.

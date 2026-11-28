@@ -3050,7 +3050,7 @@
       else if(!z.prof && !q.matiere && Math.random() < 0.35) bravoTrash = TT.arrogant({ mots:true }, memoireVannes());
       else if(dtQ > 25000 && TT.lent) bravoTrash = TT.lent(memoireVannes()) + ' Mais c’est juste ! ✅';
     }
-    if(juste && !bravoTrash && !z.bravo && TT && TT.bonneReponse) bravoTrash = TT.bonneReponse((J().maths || {}).ton || 'taquin', z.suite, memoireVannes(), anglaisSeul);
+    if(juste && !bravoTrash && !z.bravo && TT && TT.bonneReponse) bravoTrash = (Math.abs(z.suite) < 3 && Math.random() < 0.5 && window.PLUMO_VARIETE) ? bravoVarie([], anglaisSeul ? 'en' : 'fr') : TT.bonneReponse((J().maths || {}).ton || 'taquin', z.suite, memoireVannes(), anglaisSeul);   // v10.5 : la moitié du temps, une phrase composée (jamais la même)
     // v5.91 : 3 d'affilée → Plumo prévient qu'il appelle ses potes ; la 4e → la bande débarque et vanne Plumo (jamais le joueur).
     let bande = null, raccrochage = '';
     if(TT && TT.bandePotes && !anglaisSeul){
@@ -3569,6 +3569,12 @@
     // Une vanne modèle ({f}, {j}) est reconnue même une fois les nombres remplacés : on compare sans les chiffres.
     return { age:t => { const i = l.lastIndexOf(empreinteVanne(t)); return i < 0 ? -1 : l.length - i; }, noter:retenirVanne };
   }
+  // v10.5 : un « bravo » qui ne se répète pas : la liste de l'écran + plus de 300 phrases composées (js/plumo-vivant.js), tirées sans remise.
+  function bravoVarie(liste, lang){
+    const P = window.PLUMO_VARIETE, TT = window.TRASH_TALK, tout = (liste || []).concat(P ? P.bravos(lang || 'fr') : []);
+    if(!tout.length) return '';
+    return TT && TT.choisir ? TT.choisir(tout, {}, memoireVannes()) : tout[Math.floor(Math.random() * tout.length)];
+  }
   function retenirVanne(t){
     const j = J(); if(!Array.isArray(j.vannesDites)) j.vannesDites = [];
     // On retient la vanne sans ce qui change d'une fois à l'autre (nombres, réponse) ni l'explication 💡.
@@ -3636,7 +3642,7 @@
   function mathsSerie(cible, n, titre, fin){
     const M = window.MATHS, e = etatMaths(), liste = M.serie(cible, n, Math.floor(Math.random() * 1e9), e.ton);
     if(!liste.length) return mathsAccueil();
-    questionsGo(liste, { titre, retour:'maths', prof:true, lang:M.tr.langue(), bravo:() => { const b = BRAVO_PROF(); return b[Math.floor(Math.random() * b.length)]; },
+    questionsGo(liste, { titre, retour:'maths', prof:true, lang:M.tr.langue(), bravo:() => bravoVarie(BRAVO_PROF(), M.tr.langue()),
       onReponse:(juste, q) => { const s = e.chap[q.chap] || (e.chap[q.chap] = { ok:0, n:0 }); s.n++; if(juste) s.ok++; else noterErreur('maths:' + q.chap); garder(); },
       fin:fin || (z => finJeuMaths(z, titre)) });
   }
@@ -3784,7 +3790,7 @@
     const M = window.MATIERES, e = etatMatieres(), liste = M.serie(id, cible, e.niveau, n, Math.floor(Math.random() * 1e9), etatMaths().ton);
     if(!liste.length) return matiereAccueil(id);
     const lq = liste.every(q => q.lang && q.lang !== 'fr') ? liste[0].lang : 'fr', BR = lq !== 'fr' && window.MATIERES_LANGUES && MATIERES_LANGUES[lq] && MATIERES_LANGUES[lq].bravo;
-    questionsGo(liste, { titre, retour:'matiere', lang:lq, sujet:id, bravo:BR ? () => BR[Math.floor(Math.random() * BR.length)] : undefined,
+    questionsGo(liste, { titre, retour:'matiere', lang:lq, sujet:id, bravo:BR ? () => bravoVarie(BR, lq) : undefined,
       onReponse:(juste, q) => { const k = id + ':' + q.chap, s = e.chap[k] || (e.chap[k] = { ok:0, n:0 }); s.n++; if(juste) s.ok++; else noterErreur('mat:' + id + ':' + q.chap); garder(); },
       fin:fin || (z => finMatiere(z, titre, id, undefined, cible)) });
   }
@@ -3946,7 +3952,7 @@
   function sciencesGo(theme){
     const SC = window.SCIENCES; if(!SC) return accueil();
     const ton = etatMaths().ton, liste = SC.serie(theme, SERIE_N, Math.floor(Math.random() * 1e9), ton), t = SC.THEMES.find(x => x.id === theme);
-    questionsGo(liste, { titre:(t ? t.e + ' ' + t.titre : TXT('🎲 Sciences')), retour:'sciences', lang:SC.langue ? SC.langue() : 'fr', humeurFaux:'mdr', bravo:SC.bravo && SC.bravo() ? () => SC.bravo() : undefined,
+    questionsGo(liste, { titre:(t ? t.e + ' ' + t.titre : TXT('🎲 Sciences')), retour:'sciences', lang:SC.langue ? SC.langue() : 'fr', humeurFaux:'mdr', bravo:SC.bravo && SC.bravo() ? () => bravoVarie(((window.SCIENCES_LANGUES || {})[SC.langue ? SC.langue() : 'fr'] || {}).bravo || [SC.bravo()], SC.langue ? SC.langue() : 'fr') : undefined,
       onReponse:(juste, q) => { if(!juste) noterErreur('sciences:' + q.id); },
       fin:z => { J().plumes += z.bonnes; garder(); bruit('fin'); poser(barre('sciences') + '<main class="centre"><div class="ami-moyen">' + ami(z.bonnes >= Math.ceil(z.liste.length * .8) ? 'fete' : 'mdr') + TXT('</div><h2>🔬 Résultat du labo</h2><p class="gros-score">') + z.bonnes + '/' + z.liste.length + '</p><p>' + (z.bonnes >= Math.ceil(z.liste.length * .8) ? TXT('Le labo s’incline : prix Nobel de la récré ! 🏅') : TXT('Le labo a bien rigolé. Revanche ?')) + '</p><p>🪶 +' + z.bonnes + ' plumes</p><div class="actions serrees"><button class="moyen plein" data-a="sciences-theme" data-v="' + esc(theme) + TXT('">🔁 Encore</button><button class="moyen" data-a="sciences">🚀 Labo</button></div></main>')); } });
   }

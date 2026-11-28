@@ -238,14 +238,15 @@
     ['Pour insister sur un verbe : do / does / did + base.', 'Pour insister sur un élément : It is / was … who / that …'],
     ['« I do liked it » → I did like it.', 'Oublier « who / that » dans la clivée.'],
     'Plumo jure : « I did do my homework! » Le chien, lui, a mangé la preuve. 🐶');
-  f('langlais/axes', 'Les axes du cycle terminal',
-    ['Le programme de 1re et Tle s’organise en huit axes : identités et échanges ; espace privé et espace public ; art et pouvoir ; citoyenneté et mondes virtuels ; fictions et réalités ; innovations scientifiques et responsabilité ; diversité et inclusion ; territoire et mémoire.',
-     'Chaque document étudié se relie à un axe : on le présente, on l’analyse, on le met en relation avec d’autres.',
-     'À l’oral : présenter un document, dégager une problématique, donner un point de vue argumenté.'],
-    'Un article sur les réseaux sociaux et le harcèlement en ligne : quel axe ?', ['Le sujet touche le numérique et le vivre-ensemble.', 'Axe « Citoyenneté et mondes virtuels ».', 'Problématique possible : Are social networks a threat to democracy and to individuals?'],
-    ['Relie le thème du document aux huit axes.', 'Formule une problématique en anglais.'],
-    ['Résumer le document sans le relier à un axe.', 'Oublier de donner son point de vue.'],
-    'Plumo a rangé un article sur la pizza dans « Identités et échanges ». Il n’avait pas tort : la pizza a beaucoup voyagé. 🍕');
+  f('langlais/axes', 'Les axes de 1re et de terminale (programme de 2025)',
+    ['1re : identités et échanges ; diversité et inclusion ; art et pouvoir ; innovations scientifiques et responsabilité ; l’être humain et la nature ; les aires anglophones américaines (axe 6, obligatoire).',
+     'Tle : espace privé et espace public ; territoire et mémoire ; fictions et réalités ; enjeux et formes de la communication ; citoyenneté et mondes virtuels ; le Royaume-Uni et ses nations (axe 6, obligatoire).',
+     'En voie générale, cinq axes sur six par an, dont l’axe 6 ; en voie technologique, au moins trois. Niveaux visés en LVA : B1+ en 1re, B2 en Tle (LVB : B1).',
+     'Chaque document se relie à un axe : on le présente, on l’analyse, on le met en relation avec d’autres, on donne un point de vue argumenté.'],
+    'Un article sur l’indépendance de l’Écosse : quel axe, et en quelle classe ?', ['Le sujet porte sur les nations qui composent le Royaume-Uni.', 'Axe 6 de terminale, « Le Royaume-Uni et ses nations » (obligatoire).', 'Problématique possible : Is the United Kingdom still united?'],
+    ['Repère d’abord la classe (1re ou Tle), puis l’axe.', 'Formule une problématique en anglais.'],
+    ['Réciter les huit axes communs de l’ancien programme, remplacés en 2026 par six axes différents en 1re et en Tle.', 'Oublier de donner son point de vue.'],
+    'Plumo a rangé un article sur la pizza dans « Identités et échanges ». En 1re, il n’avait pas tort : la pizza a beaucoup voyagé. 🍕');
   f('langlais/methode', 'Le bac et l’attestation de langues',
     ['Au bac général, l’anglais (LVA) est évalué en contrôle continu, avec une attestation de niveau pour chaque activité (compréhension et expression, écrites et orales).',
      'Niveau visé en fin de terminale : B2 en LVA, B1 en LVB.',
