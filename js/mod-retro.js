@@ -161,6 +161,7 @@
     ['Larousse, Journal de l’année 1969 : le latin en sixième', 'https://www.larousse.fr/archives/journaux_annee/1969/305/education']
   ];
 
+  const SERIE = 20, P = () => window.AMI_RETRO_PLUS ? window.AMI_RETRO : null;   // v8.4 : le module « plus » ajoute dictée, certif, duel et récompenses
   const enFrancais = () => { const b = api() && api().base(); return !b || !b.ui || b.ui === 'fr'; };
   const melanger = a => { const t = a.slice(); for(let i = t.length - 1; i > 0; i--){ const j = Math.floor(Math.random() * (i + 1)); [t[i], t[j]] = [t[j], t[i]]; } return t; };
   const enQuestion = (e, x, i) => {
@@ -174,30 +175,40 @@
     const A = api(), esc = A.esc;
     A.poser(A.barre('matieres') + '<main class="coin-anglais retro-ecran"><h2>📼 Le défi rétro</h2>' +
       '<p class="intro">Retour en 1978 ! Des épreuves « comme à l’époque », pour se mesurer en famille. Les parents et grands-parents vont-ils faire mieux que toi ?</p>' +
-      '<p class="petit retro-avert">Questions inspirées des programmes des années 70 : ce ne sont pas de vrais sujets d’examen.</p>' +
-      '<div class="cartes-anglais">' +
-        M.carte('retro-bepc', '', '🎓', 'Le Grand BEPC rétro', '20 questions des cinq épreuves, noté sur 20, avec mention') +
-        EPREUVES.map(e => M.carte('retro-go', e.id, e.ic, esc(e.nom), esc(e.sous) + ' · 20 questions')).join('') +
+      '<p class="petit retro-avert">Questions inspirées des programmes d’autrefois : ce ne sont pas de vrais sujets d’examen.</p>' +
+      (P() ? '<p class="retro-resume"><button class="petit-bouton" data-a="retro-cahier">' + esc(P().resume()) + ' · 🏅 tableau d’honneur</button></p>' : '') +
+      '<h3>🎓 Les grands examens</h3><div class="cartes-anglais">' +
+        (P() ? M.carte('retro-dictee', '', '✒️', 'La vraie dictée', 'Plumo dicte, tu écris, correction mot à mot comme au certif') +
+          M.carte('retro-certif', '', '📜', 'Le Certificat d’études', 'Années 50 : la dictée, puis 20 questions, reçu ou ajourné') : '') +
+        M.carte('retro-bepc', '', '🎓', 'Le Grand BEPC rétro', '20 questions de toutes les épreuves, noté sur 20, avec mention') +
+        (P() ? M.carte('retro-duel', '', '⚔️', 'Le duel des générations', 'Enfant contre parent ou grand-parent : les mêmes questions') : '') +
+      '</div><h3>📚 Les épreuves</h3><div class="cartes-anglais">' +
+        EPREUVES.map(e => M.carte('retro-go', e.id, e.ic, esc(e.nom), esc(e.sous) + ' · ' + Math.min(SERIE, e.q.length) + ' questions tirées parmi ' + e.q.length)).join('') +
+      '</div><div class="cartes-anglais">' +
         M.carte('retro-programme', '', '📜', 'Le programme des années 70', 'Tiers-temps, maths modernes, collège unique, BEPC : les vrais repères') +
+        (P() ? M.carte('retro-certif-page', '', '🏫', 'Le certif, c’était quoi ?', 'De Victor Duruy (1866) à 1989 : les repères sourcés') : '') +
       '</div></main>');
   }
-  function fin(z, titre){
+  function fin(z, titre, id){
     const A = api(), esc = A.esc, n = Math.round(z.bonnes / z.liste.length * 20);
     const j = A.J(); j.plumes += z.bonnes; A.garder(); A.bruit('fin');
+    const recomp = P() ? P().recompenser(z.bonnes, id, n) : '';
     A.poser(A.barre('retro') + '<main class="centre retro-fin"><div class="ami-moyen">' + A.ami(n >= 14 ? 'fete' : 'mdr') + '</div><h2>' + esc(titre) + '</h2>' +
       '<p class="gros-score">' + n + '/20</p><p><strong>' + esc('Résultat : ' + MENTIONS(n)) + '</strong></p>' +
       '<p>' + esc(n >= 16 ? 'Ton instit de 1978 t’aurait donné un bon point ET une image !' : n >= 10 ? 'Admis ! Tu aurais eu ta place sur le banc de la communale.' : 'Pas de panique : en 1978 aussi, on révisait ses tables le soir.') + '</p>' +
-      '<p>🪶 +' + z.bonnes + ' plumes</p>' +
+      '<p>🪶 +' + z.bonnes + ' plumes</p>' + recomp +
       '<div class="actions serrees"><button class="moyen plein" data-a="retro">📼 Autre épreuve</button><button class="moyen" data-a="retro-programme">📜 Le programme des années 70</button></div></main>');
   }
   function lancer(id){
     const e = EPREUVES.find(x => x.id === id); if(!e) return accueilRetro();
-    const liste = melanger(e.q.map((x, i) => enQuestion(e, x, i)));
-    api().questionsGo(liste, { titre:e.ic + ' ' + e.nom, retour:'retro', sujet:'sciences', fin:z => fin(z, e.ic + ' ' + e.nom) });
+    const liste = melanger(e.q.map((x, i) => enQuestion(e, x, i))).slice(0, SERIE);   // v8.4 : 20 questions tirées parmi 40
+    api().questionsGo(liste, { titre:e.ic + ' ' + e.nom, retour:'retro', sujet:'sciences', fin:z => fin(z, e.ic + ' ' + e.nom, e.id) });
   }
   function bepc(){
-    const liste = melanger([].concat(...EPREUVES.map(e => melanger(e.q.map((x, i) => enQuestion(e, x, i))).slice(0, 4))));
-    api().questionsGo(liste, { titre:'🎓 Le Grand BEPC rétro', retour:'retro', sujet:'sciences', fin:z => fin(z, '🎓 Ton BEPC rétro') });
+    // v8.4 : 20 questions au total, réparties sur toutes les épreuves (3 au plus par épreuve).
+    const par = Math.ceil(SERIE / EPREUVES.length);
+    const liste = melanger([].concat(...EPREUVES.map(e => melanger(e.q.map((x, i) => enQuestion(e, x, i))).slice(0, par)))).slice(0, SERIE);
+    api().questionsGo(liste, { titre:'🎓 Le Grand BEPC rétro', retour:'retro', sujet:'sciences', fin:z => fin(z, '🎓 Ton BEPC rétro', 'bepc') });
   }
   function programme(){
     const A = api(), esc = A.esc;
