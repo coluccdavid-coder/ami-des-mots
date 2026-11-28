@@ -2051,3 +2051,17 @@ html[data-texte="tres-grand"]{ font-size:125%; } html[data-texte="tres-grand"] b
 .sujet-eaf .sujet-bloc{ text-align:left; }
 .sujet-eaf .texte-sujet{ margin:10px 0; padding:12px 16px; border-left:4px solid rgba(110,231,183,.7); background:rgba(255,255,255,.05); border-radius:12px; line-height:1.6; }
 .sujet-eaf .sujet-dis{ margin:12px 0; padding:10px 14px; border:1px solid rgba(255,255,255,.15); border-radius:14px; }
+
+/* v7.7 : rédiger sa copie et la faire corriger */
+.copie-ecran textarea{ width:100%; box-sizing:border-box; font-size:1rem; line-height:1.55; }
+.copie-ecran .copie-verif{ list-style:none; padding:0; }
+.copie-ecran .copie-verif li{ margin:10px 0; padding:10px 14px; border-radius:14px; background:rgba(255,255,255,.05); text-align:left; }
+.copie-ecran .copie-verif li.ok{ border-left:4px solid rgba(110,231,183,.8); }
+.copie-ecran .copie-verif li.ko{ border-left:4px solid rgba(251,191,36,.85); }
+.copie-ecran .copie-bareme{ width:100%; border-collapse:collapse; text-align:left; }
+.copie-ecran .copie-bareme th, .copie-ecran .copie-bareme td{ padding:6px 8px; vertical-align:top; }
+
+/* v7.9 : conditions réelles d'examen */
+.mode-examen{ margin:8px auto; max-width:760px; }
+.releve-examen{ text-align:left; }
+.releve-examen details{ margin:8px 0; padding:8px 12px; border-radius:12px; background:rgba(255,255,255,.05); }

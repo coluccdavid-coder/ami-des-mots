@@ -3658,7 +3658,7 @@
   const nomClasse = n => n === 'Sup' ? TXT('Après le bac') : n;
   const filtreClasse = () => { const e = etatMatieres(); return e.classe && !e.tout ? e.classe : ''; };
   // Un examen de niveau n est-il pour la classe choisie ? Avant la 3e, on prépare déjà le brevet ; en 2nde, les épreuves de 1re.
-  const examenPourClasse = n => { const c = filtreClasse(); if(!c || c === 'Sup') return true;
+  const examenPourClasse = n => { const c = filtreClasse(); if(!c) return true; if(c === 'Sup') return false;   // v7.7 : après le bac, plus de brevet ni de bac
     return n === c || (['6e', '5e', '4e'].includes(c) && n === '3e') || (c === '2nde' && n === '1re') || (c === 'Tle' && /^Tle/.test(n)); };
   function choixClasse(ecran){
     const M = window.MATIERES, e = etatMatieres(); if(!M) return '';
@@ -3792,7 +3792,7 @@
   function examensAccueil(){
     qz = null; blanc = null; const E = window.EPREUVES, e = etatMatieres(); if(!E) return matieresAccueil();
     poser(barre('matieres') + TXT('<main class="coin-anglais matieres-ecran"><h2>📝 Brevet & bac blancs</h2><p class="pieges-intro">Construits comme les vrais sujets 2026 : mêmes parties, mêmes types d’exercices, même barème. Une note sur 20 par épreuve, puis la moyenne avec les coefficients officiels. Et Plumo qui vanne chaque erreur. 😏</p>') +
-      ongletsExamens('examens') + choixClasse('examens') + (['6e', '5e', '4e'].includes(filtreClasse()) ? '<p class="petit">' + TXT('Le brevet se passe en fin de 3e : ces sujets te montrent ce qui t’attend.') + '</p>' : '') + '<div class="cartes-anglais">' + Object.entries(E.BLANCS).filter(([k, x]) => !x.tle && !x.techno && !x.pro && !/^(oral-dnb|oral-eaf|grand-oral)$/.test(k) && examenPourClasse(x.niveau)).map(([k, x]) => '<button class="carte-anglais" data-a="examen-go" data-v="' + k + '"><span class="ic">' + x.ic + '</span><strong>' + esc(TXT(x.titre)) + '</strong><small>' + esc(x.niveau) + ' · ' +
+      ongletsExamens('examens') + choixClasse('examens') + (filtreClasse() === 'Sup' ? '<p class="pieges-intro">' + TXT('🎓 Après le bac, plus de brevet ni de bac à passer. Pour revoir quand même un ancien examen, touche « Voir toutes les matières ».') + '</p>' : '') + (['6e', '5e', '4e'].includes(filtreClasse()) ? '<p class="petit">' + TXT('Le brevet se passe en fin de 3e : ces sujets te montrent ce qui t’attend.') + '</p>' : '') + '<div class="cartes-anglais">' + Object.entries(E.BLANCS).filter(([k, x]) => !x.tle && !x.techno && !x.pro && !/^(oral-dnb|oral-eaf|grand-oral)$/.test(k) && examenPourClasse(x.niveau)).map(([k, x]) => '<button class="carte-anglais" data-a="examen-go" data-v="' + k + '"><span class="ic">' + x.ic + '</span><strong>' + esc(TXT(x.titre)) + '</strong><small>' + esc(x.niveau) + ' · ' +
         x.epreuves.map(p => esc(TXT(E.EPREUVES[p[0]].titre))).join(', ') + (e.notes['blanc-' + k] != null ? TXT(' · dernière note : ') + virg(e.notes['blanc-' + k]) + '/20' : '') + '</small></button>').join('') + '</div>' +
       (E.SPES && examenPourClasse('Tle') ? TXT('<section class="domaine"><h3>🎒 Terminale : spécialités et philosophie</h3><div class="cartes-anglais"><button class="carte-anglais" data-a="bac-tle"><span class="ic">🎓</span><strong>Bac blanc de terminale</strong><small>2 spécialités au choix + philosophie, coefficients officiels') +
         (e.notes['blanc-bac-tle'] != null ? TXT(' · dernière note : ') + virg(e.notes['blanc-bac-tle']) + '/20' : '') + '</small></button>' +
@@ -3800,7 +3800,7 @@
           (e.notes['blanc-' + k] != null ? ' · ' + virg(e.notes['blanc-' + k]) + '/20' : '') + '</small></button>').join('') + '</div></section>' : '') +
       (E.BLANCS['grand-oral'] ? '<section class="domaine"><h3>🎤 Les oraux</h3><div class="cartes-anglais">' + ['oral-dnb', 'oral-eaf', 'grand-oral'].filter(k => examenPourClasse(E.BLANCS[k].niveau)).map(k => { const x = E.BLANCS[k], ep = E.EPREUVES[x.epreuves[0][0]];
         return '<button class="carte-anglais" data-a="examen-go" data-v="' + k + '"><span class="ic">🎤</span><strong>' + esc(TXT(x.titre)) + '</strong><small>' + esc(x.niveau) + ' · ' + esc(ep.duree) + '</small></button>'; }).join('') + '</div></section>' : '') +
-      (E.BLANCS['bac-pro'] && (!filtreClasse() || ['2nde', '1re', 'Tle', 'Sup'].includes(filtreClasse())) ? '<section class="domaine"><h3>🔧 Voie professionnelle</h3><div class="cartes-anglais">' + ['bac-pro', 'cap'].map(k => { const x = E.BLANCS[k];
+      (E.BLANCS['bac-pro'] && (!filtreClasse() || ['2nde', '1re', 'Tle'].includes(filtreClasse())) ? '<section class="domaine"><h3>🔧 Voie professionnelle</h3><div class="cartes-anglais">' + ['bac-pro', 'cap'].map(k => { const x = E.BLANCS[k];
         return '<button class="carte-anglais" data-a="examen-go" data-v="' + k + '"><span class="ic">' + x.ic + '</span><strong>' + esc(TXT(x.titre)) + '</strong><small>' + x.epreuves.map(p => esc(E.EPREUVES[p[0]].titre.replace(/^(Bac pro|CAP) · /, ''))).join(', ') +
           (e.notes['blanc-' + k] != null ? ' · ' + virg(e.notes['blanc-' + k]) + '/20' : '') + '</small></button>'; }).join('') + '</div></section>' : '') +
       (E.SERIES_TECHNO && examenPourClasse('Tle') ? '<section class="domaine"><h3>🛠️ Bac technologique</h3><div class="cartes-anglais">' + Object.entries(E.BLANCS).filter(([, x]) => x.techno).map(([k, x]) => '<button class="carte-anglais" data-a="examen-go" data-v="' + k + '"><span class="ic">' + x.ic + '</span><strong>' + esc(TXT(x.titre)) + '</strong><small>' +
@@ -3826,18 +3826,45 @@
     const groupe = (t, l) => '<section class="domaine"><h3>' + t + '</h3><div class="cartes-anglais">' + l.map(a => '<div class="carte-annale"><button class="carte-anglais" data-a="annale-go" data-v="' + a.id + '"><span class="ic">🗂️</span><strong>' + esc(TXT(a.titre)) + TXT('</strong><small>Jumeau du sujet ') + esc(a.ref) +
       (e.notes['annale-' + a.id] != null ? TXT(' · ta note : ') + virg(e.notes['annale-' + a.id]) + '/20' : '') + '</small></button><a class="lien-officiel" href="' + esc(a.url) + '" target="_blank" rel="noopener">📄 Sujet officiel (PDF)</a></div>').join('') + '</div></section>';
     poser(barre('matieres') + TXT('<main class="coin-anglais matieres-ecran"><h2>🗂️ Annales 2026</h2><p class="pieges-intro">Pour chaque vrai sujet 2026 : un sujet jumeau construit pareil, avec d’autres nombres et d’autres textes. Le vrai sujet officiel est à côté, sur le site du ministère.</p>') +
-      ongletsExamens('annales') + choixClasse('annales') + '<div class="domaines">' + (examenPourClasse('3e') ? groupe('🎓 Brevet 2026', E.ANNALES.filter(a => /^dnb/.test(a.id))) : '') + (examenPourClasse('1re') ? groupe(TXT('🎒 Bac 2026 · épreuves anticipées de 1re'), E.ANNALES.filter(a => !/^dnb/.test(a.id) && !a.tle)) : '') + (examenPourClasse('Tle') ? groupe(TXT('🎓 Bac 2026 · terminale : spécialités et philo'), E.ANNALES.filter(a => a.tle)) : '') + '</div></main>');
+      ongletsExamens('annales') + choixClasse('annales') + (filtreClasse() === 'Sup' ? '<p class="pieges-intro">' + TXT('🎓 Après le bac, plus de brevet ni de bac à passer. Pour revoir quand même un ancien examen, touche « Voir toutes les matières ».') + '</p>' : '') + '<div class="domaines">' + (examenPourClasse('3e') ? groupe('🎓 Brevet 2026', E.ANNALES.filter(a => /^dnb/.test(a.id))) : '') + (examenPourClasse('1re') ? groupe(TXT('🎒 Bac 2026 · épreuves anticipées de 1re'), E.ANNALES.filter(a => !/^dnb/.test(a.id) && !a.tle)) : '') + (examenPourClasse('Tle') ? groupe(TXT('🎓 Bac 2026 · terminale : spécialités et philo'), E.ANNALES.filter(a => a.tle)) : '') + '</div></main>');
   }
   // Une épreuve (ou une annale) se joue avec le moteur de questions ; chaque question rapporte ses points.
-  function jouerEpreuve(ep, retour, fin){
+  // v7.9 : en conditions réelles (finA), ni vanne ni correction pendant l'épreuve, et le chrono officiel ferme la copie.
+  function jouerEpreuve(ep, retour, fin, finA){
     ep.gagnes = 0;
-    questionsGo(ep.liste, { titre:'📝 ' + TXT(ep.titre), retour, lang:'fr', prof:ep.matiere === 'maths', sujet:ep.matiere,
+    questionsGo(ep.liste, Object.assign({ titre:'📝 ' + TXT(ep.titre), retour, lang:'fr', prof:ep.matiere === 'maths', sujet:ep.matiere,
       onReponse:(juste, q) => { if(juste) ep.gagnes += q.pts; else noterErreur('epr:' + (ep.ref || ep.id)); },
-      fin:() => fin(window.EPREUVES.note20(ep.gagnes, ep.total)) });
+      fin:z => fin(window.EPREUVES.note20(ep.gagnes, ep.total), z) }, finA ? { finA, sansVanne:true } : {}));
+  }
+  // Durée officielle d'une épreuve, en minutes, lue dans son libellé (« 3 h (1 h 10 + …) », « écrit 4 h + oral », « 1 h 30 », « 20 min »).
+  const minutesEpreuve = d => { d = String(d || ''); if(/compris/.test(d)) return 30; const h = /(\d+)\s*h(?:\s*(\d+))?/.exec(d); if(h) return +h[1] * 60 + (+h[2] || 0); const m = /(\d+)\s*min/.exec(d); return m ? +m[1] : 60; };
+  function ligneMode(ex){
+    if(ex.i > 0) return ex.examen ? '<p class="mode-examen">' + TXT('🎓 Conditions réelles d’examen') + '</p>' : '';
+    return '<p class="mode-examen">' + (ex.examen ? TXT('🎓 Conditions réelles : chrono officiel, ni vanne ni correction pendant l’épreuve, relevé de notes et corrigé à la fin.') + ' <button class="petit-bouton" data-a="examen-reel">' + TXT('Revenir à l’entraînement') + '</button>'
+      : '<button class="moyen" data-a="examen-reel">' + TXT('🎓 Passer en conditions réelles d’examen') + '</button>') + '</p>';
+  }
+  function partieRedigee(){
+    const ex = blanc, ep = ex && ex.ep; if(!ep) return examensAccueil(); ex.attenteEcrit = true;
+    const s = ep.sujetChoisi, copie = ep.sujets && s && MODULES.boutonCopie ? '<section class="domaine sujet-bloc"><p><strong>' + esc(s.sujet || ('« ' + s.titre + ' »')) + '</strong></p>' + MODULES.boutonCopie(ep.choixV || 'com') + '</section>'
+      : (MODULES.boutonsEcrits ? MODULES.boutonsEcrits(ep) : '');
+    poser(barre('examens') + '<main class="coin-anglais sujet-eaf"><p class="chrono-veille" role="timer">⏱️ ' + chrono(ex.finA) + '</p><h2>' + TXT('✍️ Partie rédigée') + '</h2><p class="pieges-intro">' +
+      TXT('Rédige maintenant ta copie, avec le temps qui reste au chrono. Quand tu as fini, rends-la.') + '</p>' + copie + '<p><button class="gros" data-a="examen-rendre">' + TXT('📤 Rendre ma copie et continuer') + '</button></p></main>');
+  }
+  function rendreCopie(){
+    const ex = blanc; if(!ex) return examensAccueil(); const d = ex.details && ex.details[ex.details.length - 1];
+    if(d){ const l = Object.values(J().copies || {}).filter(c => (c.maj || 0) >= (ex.debutEp || 0)); d.ecrit = l.length ? Math.max(...l.map(c => (String(c.texte || '').match(/\S+/g) || []).length)) : 0; }
+    ex.attenteEcrit = false; ex.i++; ex.ep = null; blancEpreuve();
+  }
+  function releveExamen(ex){
+    const item = (q, l2) => '<li><p>' + esc(q.enonce) + '</p>' + l2 + '<p>✅ ' + TXT('Bonne réponse :') + ' ' + esc(q.bon) + '</p>' + (q.regle ? '<p class="petit">💡 ' + esc(q.regle) + '</p>' : '') + '</li>';
+    return '<section class="domaine releve-examen"><h3>' + TXT('📋 Relevé de notes') + '</h3>' + (ex.details || []).map(d => { const z = d.z || {}, err = (z.reponses || []).filter(r => !r.juste), sans = (z.liste || []).slice(z.i || 0);
+      return '<details><summary>🔎 ' + esc(TXT(d.titre)) + ' — ' + virg(d.note) + '/20 · ' + (err.length + sans.length) + TXT(' erreur(s) ou réponse(s) manquante(s)') + '</summary>' +
+        (err.length || sans.length ? '<ol class="correction-controle">' + err.map(r => item(r.q, '<p>❌ ' + TXT('Ta réponse :') + ' ' + esc(r.choix) + '</p>')).join('') + sans.map(q => item(q, '<p>⏱️ ' + TXT('Pas de réponse (temps écoulé).') + '</p>')).join('') + '</ol>' : '<p>' + TXT('Aucune erreur dans cette épreuve.') + '</p>') +
+        (d.ecrit != null ? '<p class="petit">✍️ ' + TXT('Partie rédigée : ') + d.ecrit + TXT(' mots rendus. Fais-la corriger dans 🖊️ Mes copies : elle n’est pas comptée dans cette note.') + '</p>' : '') + '</details>'; }).join('') + '</section>';
   }
   function blancGo(k, perso){
     const E = window.EPREUVES, x = perso || (E && E.BLANCS[k]); if(!x) return examensAccueil();
-    blanc = { k, x, i:0, notes:[], graine:Math.floor(Math.random() * 1e9) }; blancEpreuve();
+    blanc = { k, x, i:0, notes:[], details:[], examen:false, graine:Math.floor(Math.random() * 1e9) }; blancEpreuve();
   }
   function blancEpreuve(){
     const ex = blanc, E = window.EPREUVES; if(!ex || !E) return examensAccueil();
@@ -3848,30 +3875,34 @@
         '<ul class="pieges-cats">' + ex.x.epreuves.map((p, i) => '<li><span>' + esc(TXT(E.EPREUVES[p[0]].titre)) + (ex.x.epreuves.length > 1 ? ' <small>coef. ' + virg(p[1]) + '</small>' : '') + '</span><strong>' + virg(ex.notes[i]) + '/20</strong></li>').join('') + '</ul>' +
         '<p class="note-examen">' + (ex.x.epreuves.length > 1 ? 'Moyenne : ' : '') + virg(moy) + ' / 20</p><p><strong>' + mentionDe(moy) + '</strong></p><p>🦉 ' + verdictAmi(moy) + '</p>' +
         (ex.x.bilan ? '<p class="petit">' + esc(ex.x.bilan) + '</p>' : '') + nonNotes.map(t => '<p class="petit">✍️ ' + esc(t).replace(/\n/g, '<br>') + '</p>').join('') +
-        '<div class="actions serrees"><button class="moyen plein" data-a="examen-go" data-v="' + ex.k + '">🔁 Un autre sujet</button><button class="moyen" data-a="annales">🗂️ Les annales</button></div></main>');
+        (ex.examen ? releveExamen(ex) : '') + '<div class="actions serrees"><button class="moyen plein" data-a="examen-go" data-v="' + ex.k + '">🔁 Un autre sujet</button><button class="moyen" data-a="annales">🗂️ Les annales</button></div></main>');
     }
-    const [id] = ex.x.epreuves[ex.i], ep = E.construire(id, ex.graine + ex.i * 7919); ex.ep = ep;
-    if(ep.sujets) return ecranSujetEAF(ep, 'examens', 'examen-sujet', '<p class="piege-cat">' + esc(TXT(ex.x.titre)) + TXT(' · épreuve ') + (ex.i + 1) + '/' + ex.x.epreuves.length + '</p><h2>' + esc(TXT(ep.titre)) + '</h2><p>⏱️ Au vrai examen : ' + esc(ep.duree) + '</p>');
-    poser(barre('examens') + '<main class="centre"><div class="ami-moyen">' + ami('malin') + '</div><p class="piege-cat">' + esc(TXT(ex.x.titre)) + TXT(' · épreuve ') + (ex.i + 1) + '/' + ex.x.epreuves.length + '</p><h2>' + esc(TXT(ep.titre)) + '</h2>' +
+    const [id] = ex.x.epreuves[ex.i], ep = ex.ep && ex.ep.id === id && !ex.ep.choix ? ex.ep : E.construire(id, ex.graine + ex.i * 7919); ex.ep = ep;
+    if(ep.sujets) return ecranSujetEAF(ep, 'examens', 'examen-sujet', ligneMode(ex) + '<p class="piege-cat">' + esc(TXT(ex.x.titre)) + TXT(' · épreuve ') + (ex.i + 1) + '/' + ex.x.epreuves.length + '</p><h2>' + esc(TXT(ep.titre)) + '</h2><p>⏱️ Au vrai examen : ' + esc(ep.duree) + '</p>');
+    poser(barre('examens') + '<main class="centre"><div class="ami-moyen">' + ami('malin') + '</div>' + ligneMode(ex) + '<p class="piege-cat">' + esc(TXT(ex.x.titre)) + TXT(' · épreuve ') + (ex.i + 1) + '/' + ex.x.epreuves.length + '</p><h2>' + esc(TXT(ep.titre)) + '</h2>' +
       '<p>⏱️ Au vrai examen : ' + esc(ep.duree) + TXT('<br>📋 Barème officiel : ') + esc(ep.officiel) + '</p><p>' + ep.liste.length + TXT(' questions dans l’appli. Prends ton temps : c’est le jour J pour de faux. 📝</p>') +
-      (ep.nonNote ? '<p class="petit">✍️ ' + esc(ep.nonNote).replace(/\n/g, '<br>') + '</p>' : '') + TXT('<button class="gros" data-a="examen-suite">C’est parti ▶</button></main>'));
+      (ep.nonNote ? '<p class="petit">✍️ ' + esc(ep.nonNote).replace(/\n/g, '<br>') + '</p>' : '') + TXT('<button class="gros" data-a="examen-suite">C’est parti ▶</button></main>').replace('</main>', (ep.ecrits && MODULES.boutonsEcrits && !ex.examen ? MODULES.boutonsEcrits(ep) : '') + '</main>'));
   }
   // v7.6 : bac de français — d'abord le sujet complet, puis le choix commentaire OU dissertation, comme le jour J.
   function ecranSujetEAF(ep, retour, action, entete){
+    const sansCopie = blanc && blanc.examen && blanc.ep === ep;   // v7.9 : en conditions réelles, la copie se rédige après les questions
     const S = ep.sujets, c = S.com;
     poser(barre(retour) + '<main class="coin-anglais sujet-eaf"><div class="ami-moyen centre">' + ami('malin') + '</div>' + entete +
       TXT('<p class="pieges-intro">📄 Lis tout le sujet, puis choisis : le commentaire OU une dissertation. Au vrai bac, tu as 4 heures et tu rédiges sur papier.</p>') +
       '<section class="domaine sujet-bloc"><h3>' + TXT('Sujet 1 · Commentaire') + '</h3><p class="petit">Objet d’étude : ' + esc(c.objet) + '</p><p><strong>Vous commenterez ce texte.</strong></p>' +
         '<blockquote class="texte-sujet"><p><strong>« ' + esc(c.titre) + ' »</strong></p><p>' + esc(c.texte).replace(/\n/g, '<br>') + '</p></blockquote><p class="petit">Texte d’entraînement écrit pour Ami des mots.</p>' +
-        '<button class="moyen plein" data-a="' + action + '" data-v="com">' + TXT('📖 Je travaille le commentaire') + '</button></section>' +
+        '<button class="moyen plein" data-a="' + action + '" data-v="com">' + TXT('📖 Je travaille le commentaire') + '</button>' + (MODULES.boutonCopie && !sansCopie ? ' ' + MODULES.boutonCopie('com') : '') + '</section>' +
       '<section class="domaine sujet-bloc"><h3>' + TXT('Sujet 2 · Dissertation') + '</h3><p class="petit">Objet d’étude : ' + esc(S.objetDis) + '. Choisis le sujet sur l’œuvre que tu as étudiée en classe.</p>' +
         S.dis.map((d, i) => '<div class="sujet-dis"><p><strong>' + esc(d.auteur) + ', « ' + esc(d.oeuvre) + ' »</strong> — parcours « ' + esc(d.parcours) + ' »</p><p>' + esc(d.sujet) + '</p>' +
-          '<button class="moyen" data-a="' + action + '" data-v="dis' + i + '">' + TXT('✍️ Je travaille cette dissertation') + '</button></div>').join('') + '</section>' +
+          '<button class="moyen" data-a="' + action + '" data-v="dis' + i + '">' + TXT('✍️ Je travaille cette dissertation') + '</button>' + (MODULES.boutonCopie && !sansCopie ? ' ' + MODULES.boutonCopie('dis' + i) : '') + '</div>').join('') + '</section>' +
       (ep.nonNote ? '<p class="petit">✍️ ' + esc(ep.nonNote) + '</p>' : '') + '</main>');
   }
   function blancSuite(){
     const ex = blanc; if(!ex || !ex.ep) return examensAccueil();
-    jouerEpreuve(ex.ep, 'examens', note => { ex.notes.push(note); ex.i++; ex.ep = null; blancEpreuve(); });
+    if(ex.examen){ ex.finA = Date.now() + minutesEpreuve(ex.ep.duree) * 60000; ex.debutEp = Date.now(); }
+    jouerEpreuve(ex.ep, 'examens', (note, z) => { ex.notes.push(note); (ex.details = ex.details || []).push({ titre:ex.ep.titre, note, z });
+      if(ex.examen && (ex.ep.ecrits && ex.ep.ecrits.length || ex.ep.sujetChoisi) && (MODULES.boutonCopie || MODULES.boutonsEcrits) && Date.now() < ex.finA) return partieRedigee();
+      ex.i++; ex.ep = null; blancEpreuve(); }, ex.examen ? ex.finA : null);
   }
   let annaleEnCours = null;
   function annaleGo(id){
@@ -4156,6 +4187,8 @@
       case 'examens': return examensAccueil();
       case 'examen-go': return blancGo(v);
       case 'examen-suite': return blancSuite();
+      case 'examen-reel': if(blanc && blanc.i === 0){ blanc.examen = !blanc.examen; } return blancEpreuve();
+      case 'examen-rendre': return rendreCopie();
       case 'examen-sujet': if(blanc && blanc.ep) window.EPREUVES.choisirSujet(blanc.ep, v); return blancSuite();
       case 'annale-sujet': if(annaleEnCours) window.EPREUVES.choisirSujet(annaleEnCours, v); return annaleSuite();
       case 'annales': return annalesAccueil();
@@ -4401,7 +4434,9 @@
   MODULES.api = { base:() => base, J, garder, carnetAujourdhui, carnetDe, programmeDe, bienvenue, mathsAccueil, INTERVALLES_CARNET, poser, barre, esc, t, tt, TXT, jour, questionsGo, ami, annonce, bruit, plus, accueil, CONFIG,
     etatMatieres, matiereAccueil, matieresAccueil, matiereSerie, noterErreur, codePlumes, plumesActives, retour:() => { qz = null; return accueil(); },
     serieMatiere:(id, cible, n, niveau) => window.MATIERES ? MATIERES.serie(id, cible, niveau || etatMatieres().niveau, n, Math.floor(Math.random() * 1e9), etatMaths().ton) : [],
-    serieMaths:(n, niveau, graine) => window.MATHS ? MATHS.serie(niveau || etatMaths().niveau, n, graine != null ? graine : Math.floor(Math.random() * 1e9), etatMaths().ton) : [], etatMaths, questionsBattle:typeof questionsBattle === 'function' ? questionsBattle : null, cartesModules };
+    serieMaths:(n, niveau, graine) => window.MATHS ? MATHS.serie(niveau || etatMaths().niveau, n, graine != null ? graine : Math.floor(Math.random() * 1e9), etatMaths().ton) : [], etatMaths, questionsBattle:typeof questionsBattle === 'function' ? questionsBattle : null, cartesModules,
+    epreuveCourante:() => (blanc && blanc.ep) || annaleEnCours || null,
+    examenFinA:() => blanc && blanc.examen && blanc.attenteEcrit ? blanc.finA : null, rendreCopie };   // v7.9 : chrono officiel de la partie rédigée   // v7.7 : le sujet du bac de français en cours (pour rédiger sa copie)
   // v6.0 : liens d'invitation (?ligue=, ?classe=, ?parrain=) et autres démarrages de modules.
   { const go = () => setTimeout(() => { for(const f of (window.AMI_MODULES.auDemarrage || [])) try{ f(); }catch(e){} }, 0);
     if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded', go); else go(); }
