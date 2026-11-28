@@ -27,7 +27,7 @@ function page(langue, config, avant){
   w.TextEncoder = TextEncoder; w.TextDecoder = TextDecoder;
   w.__fetch = []; w.fetch = async (u) => { w.__fetch.push(String(u)); return { ok:true, json:async () => (w.__reponse || { actif:false }) }; };
   if(avant) avant(w);
-  for(const f of ['js/donnees.js', 'js/voix.js', 'js/phrases-enregistrees.js', 'js/textes.js', 'js/textes-plus.js', 'js/textes-ecrans.js', 'js/textes-examens.js', 'js/articulation.js', 'js/genres.js', 'js/confusions.js', 'js/vannes.js', 'js/pieges.js', 'js/anglais.js', 'js/clash.js', 'js/histoires.js', 'js/blagues-en.js', 'js/parcours.js', 'js/rigolade.js', 'js/clash-plus.js', 'js/salon.js', 'js/juge.js', 'js/vannes-libres.js', 'js/maths-en.js', 'js/maths-es.js', 'js/maths-de.js', 'js/maths-it.js', 'js/maths-pt.js', 'js/maths.js', 'js/maths-2026-5e.js', 'js/maths-2026-2nde.js', 'js/maths-2026-1re.js', 'js/maths-2026-autres.js', 'js/maths-2026-college.js', 'js/sciences-en.js', 'js/sciences-es.js', 'js/sciences-de.js', 'js/sciences-it.js', 'js/sciences-pt.js', 'js/sciences.js', 'js/sciences-plus.js', 'js/trash-talk.js', 'js/vannes-arrogantes.js', 'js/vannes-fraiches.js', 'js/bande-images.js', 'js/bande-plumo.js', 'js/achats.js', 'js/rappels.js', 'js/epreuves.js', 'js/epreuves-spe.js', 'js/epreuves-plus.js', 'js/epreuves-oraux.js', 'js/epreuves-pro.js', 'js/matieres.js', 'js/mat-trad-es.js', 'js/mat-trad-en.js', 'js/mat-trad-en-sciences.js', 'js/mat-trad-en-sup.js', 'js/mat-trad-en-langues.js', 'js/mat-trad-en-francais.js', 'js/mat-trad-communs.js', 'js/mat-trad-es-sciences.js', 'js/mat-trad-es-sup.js', 'js/mat-trad-es-specialites.js', 'js/mat-trad-es-allemand.js', 'js/mat-trad-es-francais.js', 'js/mat-trad-de-histoire.js', 'js/mat-trad-de-sciences.js', 'js/mat-trad-it-svt.js', 'js/mat-trad-pt-svt.js', 'js/mat-trad-it-physique.js', 'js/mat-trad-pt-physique.js', 'js/mat-trad-it-techno.js', 'js/mat-trad-pt-techno.js', 'js/mat-trad-it-histoire.js', 'js/mat-trad-it-lycee.js', 'js/mat-trad-pt-histoire.js', 'js/mat-trad-pt-lycee.js', 'js/mat-trad-it-sup.js', 'js/mat-trad-pt-sup.js', 'js/mat-francais.js', 'js/mat-histoire.js', 'js/mat-histoire-sgm.js', 'js/mat-svt-pc.js', 'js/mat-sup.js', 'js/mat-anglais.js', 'js/mat-renfort.js', 'js/mat-langues.js', 'js/mat-specialites.js', 'js/mat-anglais-sup.js', 'js/mat-sup-droit.js', 'js/mat-sup-medecine.js', 'js/mat-sup-astro.js', 'js/mat-philo-notions.js', 'js/vannes-cash.js', 'js/vannes-ironie.js', 'js/vannes-mots.js', 'js/offre.js', 'js/jeu.js', 'js/mod-base.js', 'js/mod-ligue.js', 'js/mod-saisons.js', 'js/mod-veille.js', 'js/mod-oral.js', 'js/mod-classe.js', 'js/mod-parrainage.js', 'js/mod-ia.js', 'js/mod-lecon.js', 'js/mod-devoirs.js', 'js/mod-retro.js', 'js/mod-retro-plus.js', 'js/mod-trimestres.js', 'js/mod-revision.js', 'js/mod-documents.js', 'js/mod-ifsi.js', 'js/mod-avocat.js', 'js/mod-cahier.js', 'js/cours-fiches.js', 'js/cours-fiches-college.js', 'js/cours-fiches-lycee.js', 'js/cours-fiches-plus.js', 'js/cours-fiches-maths-college.js', 'js/cours-fiches-maths-lycee.js', 'js/mod-intensif.js', 'js/mod-copie.js', 'js/examens-monde.js', 'js/mod-veille-programmes.js', 'js/systemes-scolaires.js', 'js/pays-commun.js', 'js/pays-italie.js', 'js/pays-espagne.js', 'js/pays-allemagne.js', 'js/pays-usa.js', 'js/pays-italie2.js', 'js/pays-espagne2.js', 'js/pays-allemagne2.js', 'js/pays-usa2.js', 'js/pays-portugal.js', 'js/mod-parcours-pays.js', 'js/mod-section-internationale.js', 'js/gb-moteur.js', 'js/gb-maths.js', 'js/gb-english.js', 'js/gb-sciences.js', 'js/gb-humanites.js', 'js/gb-options.js', 'js/gb-plus.js', 'js/gb-programme.js', 'js/gb-programme-plus.js', 'js/gb-examens.js', 'js/gb-sats-reels.js', 'js/gb-options2.js', 'js/nasa.js', 'js/mat-trad-en-nasa.js', 'js/mat-trad-es-nasa.js', 'js/mat-histoire-pgm.js', 'js/mat-cours.js', 'js/mat-cours-francais.js', 'js/mat-cours-histoire.js', 'js/mat-cours-geo-emc.js', 'js/mat-cours-sciences.js', 'js/mat-cours-physique.js', 'js/mat-cours-lycee-lettres.js', 'js/mat-cours-lycee-sciences.js', 'js/mat-cours-specialites.js', 'js/mat-cours-college-fin.js', 'js/mat-techno.js', 'js/mat-cours-emc.js', 'js/mat-cpl-sciences.js', 'js/mat-cpl-lettres.js', 'js/mat-cpl-partiels.js', 'js/mat-langues-cpl.js', 'js/epreuves-dnb-techno.js', 'js/mat-arts-eps-lca.js', 'js/mat-anglais-college-plus.js', 'js/mat-anglais-college-plus2.js', 'js/mat-anglais-college-fin.js', 'js/mat-langues-college-plus.js', 'js/mat-sciences-college-plus.js', 'js/mat-niveaux.js', 'js/mat-histoire-college-plus.js', 'js/mat-college-plus-final.js', 'js/mat-geo-emc-plus.js', 'js/mat-histoire-6-4-plus.js', 'js/mat-histoire-6-4-suite.js', 'js/mat-histoire-3e-plus.js', 'js/mat-svt-college-plus.js', 'js/mat-astro-plus.js', 'js/mat-physique-college-plus.js', 'js/mat-techno-college-plus.js', 'js/mat-francais-college-fin.js', 'js/mat-langues-lv2-fin.js', 'js/mat-geo-emc-fin.js', 'js/mat-sup-medecine-plus.js', 'js/mat-sup-medecine-plus2.js', 'js/mat-sup-infirmier.js', 'js/mat-sup-infirmier-2.js', 'js/mat-sup-avocat.js', 'js/mat-sup-droit-plus.js', 'js/mat-sup-droit-plus2.js', 'js/mat-sup-droit-plus3.js', 'js/mat-sup-anglais-nasa-fin.js', 'js/mat-philo-plus.js', 'js/mat-philo-plus2.js', 'js/mat-philo-plus3.js', 'js/mat-anglais-lycee-fin.js', 'js/mat-svt-lycee-fin.js', 'js/mat-physique-lycee-fin.js', 'js/mat-histoire-lycee-fin.js', 'js/mat-specialites-fin.js', 'js/mat-specialites-fin2.js', 'js/mat-langues-lycee-fin.js', 'js/mat-anglais-international.js', 'js/mat-anglais-international2.js', 'js/mat-francais-bac.js', 'js/mat-francais-bac-trad.js', 'js/mat-anglais-ecrire.js', 'js/mat-mathematicien.js', 'js/mat-experts-sciences.js', 'js/mat-experts-plus.js', 'js/mat-experts-plus2.js', 'js/mat-noms.js', 'js/mat-noms-it-pt.js', 'js/mat-histoire-3e-programme.js', 'js/mat-histoire-5e4e-programme.js', 'js/mat-geo-programme.js', 'js/mat-emc-lycee.js', 'js/mat-histoire-niveaux.js', 'js/themes.js', 'js/mod-angleterre.js', 'js/mod-programmes.js']) w.eval(lire(f));
+  for(const f of ['js/donnees.js', 'js/voix.js', 'js/phrases-enregistrees.js', 'js/textes.js', 'js/textes-plus.js', 'js/textes-ecrans.js', 'js/textes-examens.js', 'js/articulation.js', 'js/genres.js', 'js/confusions.js', 'js/vannes.js', 'js/pieges.js', 'js/anglais.js', 'js/clash.js', 'js/histoires.js', 'js/blagues-en.js', 'js/parcours.js', 'js/rigolade.js', 'js/clash-plus.js', 'js/salon.js', 'js/juge.js', 'js/vannes-libres.js', 'js/maths-en.js', 'js/maths-es.js', 'js/maths-de.js', 'js/maths-it.js', 'js/maths-pt.js', 'js/maths.js', 'js/maths-2026-5e.js', 'js/maths-2026-2nde.js', 'js/maths-2026-1re.js', 'js/maths-2026-autres.js', 'js/maths-2026-college.js', 'js/sciences-en.js', 'js/sciences-es.js', 'js/sciences-de.js', 'js/sciences-it.js', 'js/sciences-pt.js', 'js/sciences.js', 'js/sciences-plus.js', 'js/trash-talk.js', 'js/vannes-arrogantes.js', 'js/vannes-fraiches.js', 'js/bande-images.js', 'js/bande-plumo.js', 'js/achats.js', 'js/rappels.js', 'js/epreuves.js', 'js/epreuves-spe.js', 'js/epreuves-plus.js', 'js/epreuves-oraux.js', 'js/epreuves-pro.js', 'js/matieres.js', 'js/mat-trad-es.js', 'js/mat-trad-en.js', 'js/mat-trad-en-sciences.js', 'js/mat-trad-en-sup.js', 'js/mat-trad-en-langues.js', 'js/mat-trad-en-francais.js', 'js/mat-trad-communs.js', 'js/mat-trad-es-sciences.js', 'js/mat-trad-es-sup.js', 'js/mat-trad-es-specialites.js', 'js/mat-trad-es-allemand.js', 'js/mat-trad-es-francais.js', 'js/mat-trad-de-histoire.js', 'js/mat-trad-de-sciences.js', 'js/mat-trad-it-svt.js', 'js/mat-trad-pt-svt.js', 'js/mat-trad-it-physique.js', 'js/mat-trad-pt-physique.js', 'js/mat-trad-it-techno.js', 'js/mat-trad-pt-techno.js', 'js/mat-trad-it-histoire.js', 'js/mat-trad-it-lycee.js', 'js/mat-trad-pt-histoire.js', 'js/mat-trad-pt-lycee.js', 'js/mat-trad-it-sup.js', 'js/mat-trad-pt-sup.js', 'js/mat-francais.js', 'js/mat-histoire.js', 'js/mat-histoire-sgm.js', 'js/mat-svt-pc.js', 'js/mat-sup.js', 'js/mat-anglais.js', 'js/mat-renfort.js', 'js/mat-langues.js', 'js/mat-specialites.js', 'js/mat-anglais-sup.js', 'js/mat-sup-droit.js', 'js/mat-sup-medecine.js', 'js/mat-sup-astro.js', 'js/mat-philo-notions.js', 'js/vannes-cash.js', 'js/vannes-ironie.js', 'js/vannes-mots.js', 'js/offre.js', 'js/jeu.js', 'js/mod-base.js', 'js/mod-ligue.js', 'js/mod-saisons.js', 'js/mod-veille.js', 'js/mod-oral.js', 'js/mod-classe.js', 'js/mod-parrainage.js', 'js/mod-ia.js', 'js/mod-lecon.js', 'js/mod-devoirs.js', 'js/mod-retro.js', 'js/mod-retro-plus.js', 'js/mod-trimestres.js', 'js/mod-revision.js', 'js/mod-documents.js', 'js/mod-ifsi.js', 'js/mod-avocat.js', 'js/mod-cahier.js', 'js/cours-fiches.js', 'js/cours-fiches-college.js', 'js/cours-fiches-lycee.js', 'js/cours-fiches-plus.js', 'js/cours-fiches-maths-college.js', 'js/cours-fiches-maths-lycee.js', 'js/cours-fiches-anglais.js', 'js/cours-fiches-en.js', 'js/mod-intensif.js', 'js/mod-grand-oral.js', 'js/mod-copie.js', 'js/examens-monde.js', 'js/mod-veille-programmes.js', 'js/systemes-scolaires.js', 'js/pays-commun.js', 'js/pays-italie.js', 'js/pays-espagne.js', 'js/pays-allemagne.js', 'js/pays-usa.js', 'js/pays-italie2.js', 'js/pays-espagne2.js', 'js/pays-allemagne2.js', 'js/pays-usa2.js', 'js/pays-portugal.js', 'js/mod-parcours-pays.js', 'js/mod-section-internationale.js', 'js/gb-moteur.js', 'js/gb-maths.js', 'js/gb-english.js', 'js/gb-sciences.js', 'js/gb-humanites.js', 'js/gb-options.js', 'js/gb-plus.js', 'js/gb-programme.js', 'js/gb-programme-plus.js', 'js/gb-examens.js', 'js/gb-sats-reels.js', 'js/gb-options2.js', 'js/nasa.js', 'js/mat-trad-en-nasa.js', 'js/mat-trad-es-nasa.js', 'js/mat-histoire-pgm.js', 'js/mat-cours.js', 'js/mat-cours-francais.js', 'js/mat-cours-histoire.js', 'js/mat-cours-geo-emc.js', 'js/mat-cours-sciences.js', 'js/mat-cours-physique.js', 'js/mat-cours-lycee-lettres.js', 'js/mat-cours-lycee-sciences.js', 'js/mat-cours-specialites.js', 'js/mat-cours-college-fin.js', 'js/mat-techno.js', 'js/mat-cours-emc.js', 'js/mat-cpl-sciences.js', 'js/mat-cpl-lettres.js', 'js/mat-cpl-partiels.js', 'js/mat-langues-cpl.js', 'js/epreuves-dnb-techno.js', 'js/mat-arts-eps-lca.js', 'js/mat-anglais-college-plus.js', 'js/mat-anglais-college-plus2.js', 'js/mat-anglais-college-fin.js', 'js/mat-langues-college-plus.js', 'js/mat-sciences-college-plus.js', 'js/mat-niveaux.js', 'js/mat-histoire-college-plus.js', 'js/mat-college-plus-final.js', 'js/mat-geo-emc-plus.js', 'js/mat-histoire-6-4-plus.js', 'js/mat-histoire-6-4-suite.js', 'js/mat-histoire-3e-plus.js', 'js/mat-svt-college-plus.js', 'js/mat-astro-plus.js', 'js/mat-physique-college-plus.js', 'js/mat-techno-college-plus.js', 'js/mat-francais-college-fin.js', 'js/mat-langues-lv2-fin.js', 'js/mat-geo-emc-fin.js', 'js/mat-sup-medecine-plus.js', 'js/mat-sup-medecine-plus2.js', 'js/mat-sup-infirmier.js', 'js/mat-sup-infirmier-2.js', 'js/mat-sup-avocat.js', 'js/mat-sup-droit-plus.js', 'js/mat-sup-droit-plus2.js', 'js/mat-sup-droit-plus3.js', 'js/mat-sup-anglais-nasa-fin.js', 'js/mat-philo-plus.js', 'js/mat-philo-plus2.js', 'js/mat-philo-plus3.js', 'js/mat-anglais-lycee-fin.js', 'js/mat-svt-lycee-fin.js', 'js/mat-physique-lycee-fin.js', 'js/mat-histoire-lycee-fin.js', 'js/mat-specialites-fin.js', 'js/mat-specialites-fin2.js', 'js/mat-langues-lycee-fin.js', 'js/mat-anglais-international.js', 'js/mat-anglais-international2.js', 'js/mat-francais-bac.js', 'js/mat-francais-bac-trad.js', 'js/mat-francais-bac-oeuvres.js', 'js/mat-philo-epreuves.js', 'js/mat-anglais-ecrire.js', 'js/mat-mathematicien.js', 'js/mat-experts-sciences.js', 'js/mat-experts-plus.js', 'js/mat-experts-plus2.js', 'js/mat-trad-en-experts.js', 'js/mat-noms.js', 'js/mat-noms-it-pt.js', 'js/mat-histoire-3e-programme.js', 'js/mat-histoire-5e4e-programme.js', 'js/mat-geo-programme.js', 'js/mat-emc-lycee.js', 'js/mat-histoire-niveaux.js', 'js/themes.js', 'js/mod-angleterre.js', 'js/mod-programmes.js']) w.eval(lire(f));
   FENETRES.push(w);
   return w;
 }
@@ -3837,6 +3837,145 @@ await test('v6.84 : physique-chimie du collège en italien et en portugais — 1
   A.base.ui = 'it'; assert.ok(M.serie('physique', 'elec', '4e', 10, 2, 'taquin').every(q => q.lang === 'it'));
   A.base.ui = 'pt'; assert.ok(M.serie('physique', 'cours-p3', '3e', 10, 2, 'taquin').every(q => q.lang === 'pt'));
   assert.ok(M.serie('francais', 'homophones', '6e', 5, 2, 'taquin').every(q => q.lang === 'fr'), 'chapitre non traduit (français : homophones) : reste en français (l’EMC est traduite depuis la v7.5)'); A.base.ui = 'fr';
+});
+
+await test('v10.3 : 🎤 Grand oral blanc au camp — deux questions, tirage par le jury, 20 + 10 + 10 minutes chronométrées, relances, grille en cinq critères, rien d’enregistré', async () => {
+  const w = page(), d = w.document, G = w.AMI_GRAND_ORAL; assert.ok(G, 'module chargé');
+  bouton(w, 'camp'); assert.ok(d.querySelector('[data-a="camp-go"]'), 'carte au camp');
+  bouton(w, 'camp-go'); assert.match(d.body.textContent, /Rien n’est enregistré/); assert.ok(!/getUserMedia|MediaRecorder/.test(lire('js/mod-grand-oral.js')), 'aucun micro');
+  // Il faut deux questions, et de vraies questions.
+  bouton(w, 'camp-go-tirage'); assert.match(d.body.textContent, /Écris tes deux questions/);
+  d.getElementById('go-q0').value = 'L’eau'; d.getElementById('go-q1').value = 'Pourquoi le climat change-t-il ?'; bouton(w, 'camp-go-tirage'); assert.match(d.body.textContent, /reconnu la moustache/);
+  const qs = ['Comment garantir l’accès à l’eau potable ?', 'Pourquoi le climat change-t-il ?'];
+  d.getElementById('go-q0').value = qs[0]; bouton(w, 'camp-go-tirage');
+  assert.ok(qs.includes(d.querySelector('.go-question').textContent), 'question tirée parmi les deux'); assert.ok(d.getElementById('go-chrono') && d.getElementById('go-support'));
+  assert.ok(Math.abs(G.finA() - Date.now() - G.PREP * 60000) < 5000, 'préparation de 20 minutes');
+  d.getElementById('go-support').value = 'Accroche\n1. constat\n2. solutions'; bouton(w, 'camp-go-expose');
+  assert.match(d.querySelector('.go-support').textContent, /2\. solutions/); assert.ok(Math.abs(G.finA() - Date.now() - G.EXPOSE * 60000) < 5000, 'présentation de 10 minutes');
+  G.etatCourant().debutExpose = Date.now() - 10 * 60000; bouton(w, 'camp-go-echange');
+  assert.match(d.body.textContent, /Question du jury 1 \/ 6/); const vues = [d.querySelector('.go-relance').textContent];
+  for(let i = 0; i < 5; i++){ bouton(w, 'camp-go-relance'); vues.push(d.querySelector('.go-relance').textContent); }
+  assert.strictEqual(new Set(vues).size, 6, 'six relances différentes'); assert.ok(!d.querySelector('[data-a="camp-go-relance"]'), 'plus de question après la sixième');
+  bouton(w, 'camp-go-grille'); assert.strictEqual(d.querySelectorAll('.go-grille fieldset').length, 5); assert.match(d.body.textContent, /Présentation : 10:00/);
+  d.querySelectorAll('.go-grille input[value="4"]').forEach(x => { x.checked = true; }); bouton(w, 'camp-go-noter');
+  assert.match(d.body.textContent, /Note indicative : 20 \/ 20/); assert.strictEqual(G.etat().essais.length, 1); assert.strictEqual(G.meilleure(), 20);
+  // Une présentation trop courte coûte 2 points et le dit.
+  bouton(w, 'camp-go'); bouton(w, 'camp-go-tirage'); bouton(w, 'camp-go-expose'); bouton(w, 'camp-go-echange'); bouton(w, 'camp-go-grille');
+  assert.match(d.body.textContent, /moins de 8 minutes/); bouton(w, 'camp-go-noter'); assert.match(d.body.textContent, /Note indicative : 13 \/ 20/);
+  assert.ok(d.querySelector('[data-a="matiere-chap"][data-v="philo|grand-oral"]'), 'lien vers le chapitre');
+  const html = w.AMI_MODULES.cartes.parents.map(f => { try{ return f(); }catch(e){ return ''; } }).join(''); assert.match(html, /Grand oral blanc : 2 essai\(s\), meilleure note indicative 20 \/ 20/);
+  // En anglais, l'écran est traduit.
+  const we = page('en'); bouton(we, 'camp-go'); assert.match(we.document.body.textContent, /Mock Grand oral/); assert.match(we.document.body.textContent, /Nothing is recorded/);
+});
+
+await test('v10.2 : philosophie (Tle) — méthode de la dissertation et de l’explication, Grand oral 2027, en 5 langues, avec fiche ; faits du Grand oral corrigés', async () => {
+  const w = page(), M = w.MATIERES, T = w.MATIERES_LANGUES, F = w.AMI_COURS, P = M.trouver('philo');
+  for(const id of ['methode-bac', 'grand-oral']){
+    const c = P.chapitres.find(x => x.id === id); assert.ok(c, id); assert.strictEqual(c.banque.length, 20, id); assert.deepEqual([...c.niv], ['Tle']);
+    for(const L of ['en', 'es', 'it', 'pt']){ const q = T[L].q['philo/' + id]; assert.ok(q && q.length === 20, L + ' ' + id); q.forEach((x, i) => assert.notStrictEqual(x[0], c.banque[i][0], L + ' ' + id + ' ' + i)); }
+    const x = F.get('philo/' + id); assert.ok(x && x.essentiel.length >= 3 && x.exemple.etapes.length >= 2 && x.methode.length >= 2 && x.pieges.length >= 1, 'fiche ' + id); assert.ok(w.JUGE.juger(x.vanne).ok, x.vanne);
+  }
+  const go = P.chapitres.find(x => x.id === 'grand-oral').banque;
+  assert.strictEqual(go.find(q => /voie générale à partir de la session 2027/.test(q[0]))[1], '8');
+  assert.strictEqual(go.find(q => /voie technologique à partir de la session 2027/.test(q[0]))[1], '12');
+  assert.match(go.find(q => /projet d’orientation/.test(q[0]))[1], /session 2024/);
+  for(const L of ['it', 'pt']) assert.ok(page(L).MATIERES.serie('philo', 'grand-oral', 'Tle', 10, 4, 'taquin').every(q => q.lang === L), L);
+  const src = lire('js/epreuves-oraux.js'); assert.doesNotMatch(src, /jusqu’à la session 2026 : ce troisième temps/); assert.doesNotMatch(src, /Parle sans notes/); assert.match(src, /à partir de la session 2024/);
+});
+
+await test('v10.1 : français de 1re — un chapitre par objet d’étude du bac (poésie, idées, roman, théâtre), œuvres et parcours 2026-2027, traduits, avec fiche', async () => {
+  const w = page(), M = w.MATIERES, F = w.AMI_COURS, fr = M.trouver('francais');
+  const ids = ['bac-poesie', 'bac-idees', 'bac-roman', 'bac-theatre'];
+  for(const id of ids){
+    const c = fr.chapitres.find(x => x.id === id); assert.ok(c, id);
+    assert.strictEqual(c.banque.length, 20, id); assert.ok(c.niv.includes('1re'), id);
+    assert.strictEqual(new Set(c.banque.map(q => q[0])).size, 20, id + ' : énoncés uniques');
+    const x = F.get('francais/' + id); assert.ok(x, 'fiche ' + id);
+    assert.ok(x.essentiel.length >= 3 && x.exemple.etapes.length >= 2 && x.methode.length >= 2 && x.pieges.length >= 1, id);
+    assert.ok(w.JUGE.juger(x.vanne).ok, id + ' : ' + x.vanne);
+  }
+  const txt = ids.map(id => fr.chapitres.find(x => x.id === id).banque.map(q => q[0] + ' ' + q[1]).join(' ')).join(' ');
+  for(const m of [/La Boétie/, /Fontenelle/, /Graffigny/, /Chevalier de la charrette/, /Pot-Bouille/, /Télumée/, /Le Menteur/, /On ne badine pas/, /Pour un oui ou pour un non/]) assert.match(txt, m);
+  const n = fr.chapitres.filter(c => (c.niv || []).includes('1re')).reduce((s, c) => s + c.banque.length, 0);
+  assert.ok(n >= 200, 'questions de français en 1re : ' + n);
+  for(const lang of ['en', 'es']) for(const id of ids){ const q = w.MATIERES_LANGUES[lang].q['francais/' + id]; assert.ok(q && q.length === 20, lang + ' ' + id); }
+  assert.match(w.MATIERES_LANGUES.en.q['francais/bac-theatre'][1][0], /^Who is Dorante/); assert.match(w.MATIERES_LANGUES.es.q['francais/bac-theatre'][1][0], /^¿Quién es Dorante/);
+});
+
+await test('v10.0 : toutes les notions d’anglais ont leur fiche ; l’Espace parents résume le camp (grade, classe atteinte, tests de passage, séries d’examen)', async () => {
+  const w = page(), d = w.document, F = w.AMI_COURS, M = w.MATIERES, CAMP = w.AMI_CAMP;
+  const sans = M.trouver('langlais').chapitres.filter(c => !c.theme && !F.a('langlais/' + c.id)).map(c => c.id); assert.strictEqual(sans.join(', '), '', 'anglais sans fiche');
+  assert.ok(F.cles().length >= 264, 'fiches : ' + F.cles().length);
+  for(const k of F.de('langlais').map(x => x.cle)){ const x = F.get(k); assert.ok(x.essentiel.length >= 3 && x.exemple.etapes.length >= 2 && x.methode.length >= 1 && x.pieges.length >= 1, k); assert.ok(w.JUGE.juger(x.vanne).ok, k + ' : ' + x.vanne); }
+  bouton(w, 'camp-fiche', 'langlais/ang-usa'); assert.match(d.body.textContent, /Rosa Parks/);
+  // Sans activité au camp, rien dans l'Espace parents ; ensuite, un résumé.
+  const html = () => w.AMI_MODULES.cartes.parents.map(f => { try{ return f(); }catch(e){ return ''; } }).join('');
+  assert.ok(!/parents-camp/.test(html()));
+  const c = CAMP.camp(); c.pts = 650; c.serie = 4; c.acquis = ['maths/6-decimaux']; c.passages = { 'maths/6e':16 }; c.avance = { maths:'5e' }; c.examens = { brevet:{ meilleure:13.5, derniere:12 } };
+  const j = w.AmiDesMots.J(); j.matieres = Object.assign({}, j.matieres, { niveau:'6e' }); j.maths = Object.assign({}, j.maths, { niveau:'6e' });
+  const h = html(); assert.match(h, /parents-camp/); assert.match(h, /Grade : Sergent/); assert.match(h, /Maths : 5e \(en avance\)/); assert.match(h, /Test de passage 6e : 16 \/ 20/); assert.match(h, /Brevet 13,5\/20/);
+});
+
+await test('v9.9 : prendre de l’avance — bilan de l’année, test de passage (15/20), classe suivante par matière, retour possible', async () => {
+  const w = page(), d = w.document, A = w.AmiDesMots, CAMP = w.AMI_CAMP;
+  const j = A.J(); j.matieres = Object.assign({}, j.matieres, { niveau:'6e' }); j.maths = Object.assign({}, j.maths, { niveau:'6e' }); w.AMI_MODULES.api.garder();
+  for(const mid of ['francais', 'langlais', 'maths']){ assert.strictEqual(CAMP.niveauDe(mid), '6e', mid); assert.strictEqual(CAMP.suivant(mid, '6e'), '5e', mid); }
+  bouton(w, 'camp'); assert.ok(d.querySelector('[data-a="camp-annee"]'), 'carte « Prendre de l’avance »');
+  bouton(w, 'camp-annee'); assert.strictEqual(d.querySelectorAll('.avance-matiere').length, 3); assert.match(d.body.textContent, /Test de passage en 5e/); assert.match(d.body.textContent, /Notions acquises : 0 \/ \d+/);
+  // Test raté : on reste en 6e.
+  bouton(w, 'camp-passage', 'maths'); assert.ok(d.querySelector('#chrono-veille')); let k = 0;
+  const bonne = () => { const e = (d.querySelector('.piege-fr') || {}).textContent; return (w.__liste || []).find(q => q.enonce === e); };
+  const avant = w.AMI_MODULES.api.questionsGo; w.AMI_MODULES.api.questionsGo = (l, o) => { w.__liste = l; return avant(l, o); };
+  bouton(w, 'camp-passage', 'maths');
+  while(d.querySelector('.piege-opt') && k++ < 25){ const q = bonne(); [...d.querySelectorAll('.piege-opt')].find(b => !q || b.textContent !== q.bon).click(); }
+  assert.match(d.body.textContent, /Pas encore : il faut 15 \/ 20/); assert.strictEqual(CAMP.niveauDe('maths'), '6e');
+  // Test réussi : la 5e s'ouvre en maths, et seulement en maths.
+  bouton(w, 'camp-passage', 'maths'); k = 0;
+  while(d.querySelector('.piege-opt') && k++ < 25){ const q = bonne(); [...d.querySelectorAll('.piege-opt')].find(b => q && b.textContent === q.bon).click(); }
+  assert.match(d.body.textContent, /Bravo ! La 5e s’ouvre en Maths/); assert.strictEqual(CAMP.niveauDe('maths'), '5e'); assert.strictEqual(CAMP.niveauDe('francais'), '6e');
+  assert.ok(w.AMI_CAMP.camp().passages['maths/6e'] >= 15);
+  bouton(w, 'camp-base', 'maths'); assert.match(d.body.textContent, /Classe : 5e \(en avance\)/); assert.ok(d.querySelector('[data-v="maths/5-relatifs-somme"]'), 'notions de 5e');
+  assert.ok(CAMP.bilan('maths').niv === '5e' && CAMP.suivant('maths', '5e') === '4e');
+  // Retour à sa classe.
+  bouton(w, 'camp-annee'); assert.match(d.body.textContent, /Revenir à ma classe \(6e\)/); clic(w, '[data-a="camp-avance-retour"][data-v="maths"]'); assert.strictEqual(CAMP.niveauDe('maths'), '6e');
+  // Une avance n'est jamais en dessous de la classe réelle ; au bout du programme, place aux niveaux experts.
+  w.AMI_CAMP.camp().avance = { francais:'5e' }; j.matieres.niveau = '4e'; w.AMI_MODULES.api.garder(); assert.strictEqual(CAMP.niveauDe('francais'), '4e');
+  j.maths.niveau = 'Tle'; w.AMI_MODULES.api.garder(); assert.strictEqual(CAMP.suivant('maths', 'Tle'), null); bouton(w, 'camp-annee'); assert.match(d.body.textContent, /place aux niveaux experts/);
+});
+
+await test('v9.8 : fiches de cours dans la langue de l’interface — les 13 fiches des niveaux experts en anglais', async () => {
+  const w = page(), F = w.AMI_COURS;
+  const FR = /(?<![\p{L}’])(une|est|et|ou|avec|pour|donc|puis|quel|quelle|combien|tu|ton|tes|le|sur|dans|pas|aussi|c’est|ça|qui|que)(?![\p{L}’])/iu;
+  const experts = F.cles().filter(k => /^(mathematicien|geneticien|geophysicien)\//.test(k)); assert.strictEqual(experts.length, 13);
+  for(const k of experts){ assert.ok(F.traduite(k, 'en'), 'en ' + k); const fr = F.get(k), en = F.get(k, 'en');
+    for(const champ of ['essentiel', 'methode', 'pieges']) assert.strictEqual(en[champ].length, fr[champ].length, k + ' ' + champ);
+    assert.strictEqual(en.exemple.etapes.length, fr.exemple.etapes.length, k + ' étapes'); assert.strictEqual(en.lang, 'en');
+    const tout = [en.titre, en.exemple.enonce, en.vanne].concat(en.essentiel, en.exemple.etapes, en.methode, en.pieges).join(' | ');
+    const mm = tout.match(FR); assert.ok(!mm, k + ' : « ' + (mm && mm[0]) + ' »'); assert.ok(w.JUGE.juger(en.vanne).ok, en.vanne); }
+  // Sans traduction (ou en français), la fiche française est servie telle quelle.
+  assert.strictEqual(F.get('maths/4-pythagore', 'en'), F.get('maths/4-pythagore')); assert.strictEqual(F.get('geneticien/heredite', 'fr').titre, 'Hérédité et génétique des populations');
+  // À l'écran : interface anglaise → fiche anglaise (avec lang="en") ; interface française → fiche française.
+  const we = page('en-GB'), de = we.document; bouton(we, 'camp-fiche', 'geophysicien/climat');
+  assert.match(de.body.textContent, /greenhouse effect/); assert.ok(de.querySelector('.fiche-cours [lang="en"]'));
+  const d = w.document; bouton(w, 'camp-fiche', 'geophysicien/climat'); assert.match(d.body.textContent, /effet de serre/);
+});
+
+await test('v9.7 : niveaux généticien et géophysicien entièrement traduits en anglais (questions, vannes, règles)', async () => {
+  const w = page(), M = w.MATIERES, T = w.MATIERES_LANGUES.en.q;
+  for(const mid of ['geneticien', 'geophysicien']){ const chs = M.trouver(mid).chapitres; assert.ok(chs.length >= 4);
+  for(const c of chs){ const t = T[mid + '/' + c.id]; assert.ok(t && t.length === c.banque.length, 'en ' + c.id);
+    t.forEach((q, i) => { assert.strictEqual(q[2].length, c.banque[i][2].length, c.id + ' ' + i); assert.strictEqual(new Set([q[1], ...q[2].map(f => f[0])]).size, 4, c.id + ' ' + i); assert.notStrictEqual(q[0], c.banque[i][0]); for(const f of q[2]) assert.ok(w.JUGE.juger(f[1]).ok, f[1]); }); }
+  const Me = page('en-GB').MATIERES; for(const c of chs) assert.ok(Me.serie(mid, c.id, 'Sup', 8, 3, 'taquin').every(q => q.lang === 'en'), 'en ' + c.id); }
+  assert.strictEqual(T['geneticien/genetique-moleculaire'][4][1], 'AUG'); assert.strictEqual(T['geophysicien/interieur-terre'][4][1], 'Inge Lehmann, in 1936');
+});
+
+await test('v9.6 : niveau mathématicien entièrement traduit en anglais (questions, vannes, règles)', async () => {
+  const w = page(), M = w.MATIERES, T = w.MATIERES_LANGUES.en.q;
+  const chs = M.trouver('mathematicien').chapitres; assert.ok(chs.length >= 5);
+  for(const c of chs){ const t = T['mathematicien/' + c.id]; assert.ok(t && t.length === c.banque.length, 'en ' + c.id);
+    t.forEach((q, i) => { assert.strictEqual(q[2].length, c.banque[i][2].length, c.id + ' ' + i); assert.strictEqual(new Set([q[1], ...q[2].map(f => f[0])]).size, 4, c.id + ' ' + i); assert.notStrictEqual(q[0], c.banque[i][0]); for(const f of q[2]) assert.ok(w.JUGE.juger(f[1]).ok, f[1]); }); }
+  const Me = page('en-GB').MATIERES; for(const c of chs) assert.ok(Me.serie('mathematicien', c.id, 'Sup', 8, 3, 'taquin').every(q => q.lang === 'en'), 'en ' + c.id);
+  assert.strictEqual(T['mathematicien/probabilites'][6][1], 'yes: you then win with probability 2/3');
 });
 
 await test('v9.5 : chaque notion de maths, de la 6e à la terminale, a sa fiche de cours rédigée', async () => {

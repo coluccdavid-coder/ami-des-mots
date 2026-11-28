@@ -467,6 +467,34 @@
     [
      "2nde"
     ]
+   ],
+   [
+    "bac-poesie",
+    "Bac : la poésie du XIXe au XXIe siècle",
+    [
+     "1re"
+    ]
+   ],
+   [
+    "bac-idees",
+    "Bac : la littérature d’idées du XVIe au XVIIIe siècle",
+    [
+     "1re"
+    ]
+   ],
+   [
+    "bac-roman",
+    "Bac : le roman et le récit du Moyen Âge au XXIe siècle",
+    [
+     "1re"
+    ]
+   ],
+   [
+    "bac-theatre",
+    "Bac : le théâtre du XVIIe au XXIe siècle",
+    [
+     "1re"
+    ]
    ]
   ],
   "histoire": [
@@ -2075,6 +2103,20 @@
    [
     "n-verite",
     "La vérité",
+    [
+     "Tle"
+    ]
+   ],
+   [
+    "methode-bac",
+    "Méthode du bac : la dissertation et l’explication de texte",
+    [
+     "Tle"
+    ]
+   ],
+   [
+    "grand-oral",
+    "Le Grand oral : convaincre en 20 minutes",
     [
      "Tle"
     ]

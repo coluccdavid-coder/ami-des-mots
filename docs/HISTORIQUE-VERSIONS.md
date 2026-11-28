@@ -5,6 +5,63 @@ Avant la v6.44, chaque version avait son propre fichier VERSION-x.y.txt à la ra
 
 ---
 
+## Version 10.3.0 — Grand oral blanc au camp d’entraînement
+
+- Nouveau module js/mod-grand-oral.js, accessible depuis le camp (carte « 🎤 Grand oral blanc »), au format de la session 2027.
+- L’élève écrit ses deux questions (gardées sur l’appareil ; un thème sans point d’interrogation est refusé avec une vanne de Plumo), le jury en tire une.
+- 20 minutes de préparation chronométrées avec un support facultatif, 10 minutes de présentation (arrêt automatique au bout de 10 minutes), puis 10 minutes d’échange : six questions de relance tirées parmi seize, qu’un proche peut lire à voix haute.
+- Auto-évaluation sur les cinq critères de la grille indicative (quatre niveaux chacun) : note indicative sur 20, moins 2 points si la présentation dure moins de 8 minutes ; critère à travailler en priorité ; lien vers le chapitre « Grand oral ».
+- Rien n’est enregistré (ni voix ni image) ; les essais apparaissent dans l’Espace parents. Écrans traduits en anglais, espagnol, allemand, italien et portugais.
+- Nouveau test v10.3.
+
+## Version 10.2.0 — Philosophie de terminale : méthode du bac et Grand oral
+
+- Nouveau chapitre de philosophie « Méthode du bac : la dissertation et l’explication de texte » (20 questions) : analyse du sujet, problématique, plan, transitions, conclusion, explication sans paraphrase, en fait / en droit, gestion du brouillon.
+- Nouveau chapitre « Le Grand oral : convaincre en 20 minutes » (20 questions) : modalités de la session 2027 (note de service du 17 septembre 2026), jury, support, grille d’évaluation, logos / ethos / pathos, attitude face au jury.
+- Les deux chapitres en anglais, espagnol, italien et portugais, et une fiche de cours pour chacun.
+- Correction des questions existantes sur le Grand oral : le troisième temps (projet d’orientation) a été supprimé à partir de la session 2024, et non 2026 ; le candidat peut s’appuyer sur un support préparé (il ne « parle pas sans notes »).
+- Nouveau test v10.2.
+
+## Version 10.1.0 — Français de 1re : un chapitre par objet d’étude du bac
+
+- Quatre nouveaux chapitres de 1re (domaine « Le bac de français »), 20 questions chacun : poésie du XIXe au XXIe siècle, littérature d’idées du XVIe au XVIIIe siècle, roman et récit du Moyen Âge au XXIe siècle, théâtre du XVIIe au XXIe siècle.
+- Œuvres et parcours au programme 2026-2027 (Rimbaud, Ponge, Dorion ; La Boétie, Fontenelle, Graffigny ; Chrétien de Troyes, Zola, Simone Schwarz-Bart ; Corneille, Musset, Sarraute), plus les notions d’analyse de chaque genre.
+- Questions traduites en anglais et en espagnol (titres et parcours gardés en français, entre « »).
+- Une fiche de cours par objet d’étude : l’essentiel, un exemple pas à pas, la méthode, les pièges, une vanne de Plumo.
+- Nouveau test v10.1.
+
+## Version 10.0.0
+
+**📚 La base de connaissances est complète en français, anglais et maths** : les 20 notions d’anglais qui n’avaient pas de fiche en ont une (js/cours-fiches-anglais.js) — cours de l’année de la 6e à la 3e, grammaire de 6e et de 5e, jours/heures/nombres, pays et fêtes anglophones, Royaume-Uni, Irlande, États-Unis, axes de 2nde, compréhension de l’écrit, pièges de traduction, It’s time / I’d rather, et l’anglais du supérieur (certifications, anglais universitaire, scientifique, professionnel, niveau C1). Total : 264 fiches ; chaque chapitre de français, d’anglais et de maths, de la 6e au bac, a sa fiche rédigée.
+
+**👨‍👩‍👧 Espace parents : le camp d’entraînement d’un coup d’œil** — grade, points, jours d’affilée, notions acquises, classe atteinte dans chaque matière (avec « en avance »), notes des tests de passage et meilleures notes des séries d’examen. Rien ne s’affiche tant que l’enfant n’a pas utilisé le camp.
+
+## Version 9.9.0
+
+**🚀 Prendre de l’avance** (camp d’entraînement) : un élève qui a appris toutes les leçons de son année peut préparer la classe suivante, **matière par matière** (français, anglais, maths).
+- **Bilan de l’année** : pour chaque matière, la classe en cours et les notions acquises (validées à 7/10 dans le camp).
+- **Test de passage** : 20 questions de toute l’année, 20 minutes, sans vanne pendant l’épreuve ; **15/20** pour réussir. Corrigé détaillé à la fin, dernière note gardée.
+- **Classe suivante** : réussi, la matière passe au niveau supérieur (6e → 5e → … → Tle) — leçon du jour, séries sans filet, base de connaissances et fiches suivent ; +100 points. On peut en être en 5e en maths et en 6e en français.
+- **Retour possible** à sa classe à tout moment ; une avance n’est jamais en dessous de la classe réelle (si l’élève change de classe, l’avance s’efface d’elle-même).
+- **Au bout du programme** (1re en français, Tle en anglais et en maths) : place aux niveaux experts.
+- La révision espacée des erreurs continue dans la mission du jour.
+
+## Version 9.8.0
+
+**📚 Fiches de cours dans la langue de l’interface** : une fiche peut maintenant avoir sa traduction (AMI_COURS.traduire / get(clé, langue)). Avec l’interface en anglais, la fiche s’affiche en anglais (balisée lang="en" pour les lecteurs d’écran) ; sans traduction, la version française reste affichée.
+- **Les 13 fiches des niveaux experts sont traduites en anglais** (js/cours-fiches-en.js) : mathématicien, généticien, géophysicien. Ces trois niveaux sont donc entièrement en anglais (questions, vannes, règles et fiches).
+- Les chapitres « Écrire » et « Parler » restent en français, comme toute la matière « Anglais (6e → bac) », faite pour les francophones qui apprennent l’anglais.
+
+## Version 9.7.0
+
+**🧬 Niveau généticien et 🌋 niveau géophysicien traduits en anglais** (js/mat-trad-en-experts.js) : 8 chapitres, 160 questions avec leurs vannes et leurs règles — génétique moléculaire, hérédité, évolution et génomique, génétique médicale ; sismologie, géodynamique, volcans et planètes, climat. Les trois niveaux experts sont maintenant entièrement disponibles en anglais (260 questions).
+- Restent en français pour l’instant : chapitres « Écrire » et « Parler » d’anglais, fiches de cours.
+
+## Version 9.6.0
+
+**🧠 Niveau mathématicien traduit en anglais** (js/mat-trad-en-experts.js) : les 5 chapitres — raisonnement et logique, arithmétique, nombres complexes, suites et analyse, probabilités avancées — soit 100 questions avec leurs vannes et leurs règles. Avec l’interface en anglais, les séries de ce niveau sortent maintenant en anglais.
+- Restent en français pour l’instant : niveaux généticien et géophysicien, chapitres « Écrire » et « Parler » d’anglais, fiches de cours (prochaines livraisons).
+
 ## Version 9.5.0
 
 **📚 Toutes les notions de maths, de la 6e à la terminale, ont leur fiche de cours** (js/cours-fiches-maths-lycee.js) : 44 fiches de plus.
