@@ -5,6 +5,39 @@ Avant la v6.44, chaque version avait son propre fichier VERSION-x.y.txt à la ra
 
 ---
 
+## Version 9.5.0
+
+**📚 Toutes les notions de maths, de la 6e à la terminale, ont leur fiche de cours** (js/cours-fiches-maths-lycee.js) : 44 fiches de plus.
+- **2nde** : intervalles, fonction carré, signe d’une fonction affine, évolutions réciproques, ensembles de nombres, valeur absolue, encadrement de racines, quotient nul, tableaux de signes, colinéarité, norme, équation cartésienne, coefficient multiplicateur, proportion de proportion, quartiles, fréquences conditionnelles, tests de dépistage, logique, Python.
+- **1re** : automatismes de l’épreuve anticipée, discriminant, forme canonique, signe du trinôme, suites récurrentes, sommes de termes, tangente, dérivée d’un produit, variations, produit scalaire et angle, équation de cercle, espérance.
+- **Tle** : limites de suites, dérivées composées, primitives, géométrie dans l’espace, équations avec exp et ln, croissances comparées, convexité, TVI, sinus et cosinus, primitives de eˣ et 1/x, loi binomiale (espérance, variance), représentation paramétrique.
+- La base de connaissances compte maintenant 244 fiches.
+
+## Version 9.4.0
+
+**📚 Toutes les notions de maths du collège ont leur fiche de cours** (js/cours-fiches-maths-college.js) : 61 fiches de plus, de la 6e à la 3e — arrondis, nombres mixtes, divisibilité, programmes de calcul, unités d’aire et de volume, probabilités, droite graduée, symétrie axiale, quadrilatères, patrons ; relatifs, expressions littérales, remises, événement contraire, décomposition en facteurs premiers, carrés et cubes, développer et factoriser, contre-exemple, suites de motifs, fréquences, aire du disque, angles et parallélisme, parallélogrammes, Scratch ; puissances de 10, produit en croix, moyenne pondérée, deux dés, translation et rotation, fonctions, étendue, variables et boucles ; volumes, fractions irréductibles, notation scientifique, antécédents, latitude et longitude, sections, débit, lecture graphique, Python.
+- La base de connaissances compte maintenant 200 fiches : tout le français, toutes les maths du collège, l’essentiel des maths du lycée et de l’anglais, et les niveaux experts.
+
+## Version 9.3.0
+
+**📚 44 nouvelles fiches de cours** (js/cours-fiches-plus.js) — la base de connaissances passe à 139 fiches :
+- **Français : toutes les notions ont maintenant leur fiche** — cours de l’année de la 6e à la 1re, « Œuvres, mouvements et épreuve du bac » (programme 2026-2027), orthographe rectifiée de 1990, « Dire l’amour », groupe nominal et étymologie, « Voyager en poésie, devenir héros ».
+- **Maths du collège : 30 notions de plus** — décimaux, division euclidienne, conversions, durées, angles, cercle, solides, fractions (simplifier, comparer, multiplier, diviser), réduire, aire du triangle, échelles, nombres premiers, volumes (pavé, cylindre, pyramide, cône, boule), triangles, symétrie centrale, ratio, double distributivité, vitesse, réciproque de Pythagore, racine carrée, produit nul, évolutions, inéquations, agrandissement, homothétie.
+
+**Niveaux experts : un chapitre de plus chacun** (js/mat-experts-plus2.js), 20 questions et une fiche :
+- 🧠 Mathématicien : probabilités avancées (Bayes et tests médicaux, Monty Hall, paradoxe des anniversaires, lois usuelles, théorème central limite).
+- 🧬 Généticien : génétique médicale (modes de transmission, drépanocytose et paludisme, cancers, thérapie génique, dépistage, éthique).
+- 🌋 Géophysicien : climat, océans et atmosphère (effet de serre, albédo, montée des mers, circulation océanique, El Niño, carottes de glace, accords de Montréal et de Paris).
+
+## Version 9.2.0
+
+**📝 Séries d’examen au camp d’entraînement** : pour le brevet, le bac de français, les maths anticipées, le bac et le niveau supérieur (niveaux experts), 20 questions au format de l’examen (brevet : français, maths, histoire-géo, SVT, physique ; bac : philosophie, maths, anglais, histoire-géo…), chronométrées (20 minutes), sans vanne ni correction pendant l’épreuve comme un vrai examen. À la fin : note sur 20, verdict de Plumo, corrigé de chaque erreur (ta réponse, la bonne réponse, la règle) ; meilleure note gardée. L’examen choisi comme objectif apparaît en premier.
+
+**📚 28 fiches de cours du lycée** (js/cours-fiches-lycee.js), avec l’essentiel, un exemple corrigé, la méthode, les pièges et une vanne :
+- **Maths** : vecteurs, équations de droites, fonctions de référence, taux d’évolution, probabilités (2nde) ; dérivation, suites, exponentielle, produit scalaire, probabilités conditionnelles, cercle trigonométrique (1re) ; limites, logarithme, primitives et intégrales, loi binomiale, dénombrement (Tle).
+- **Anglais** : present perfect en be + -ing, déduction, wish, phrasal verbs, mots de liaison, conditionnel passé, have something done, V-ing ou to, inversion, insistance, axes du cycle terminal, bac et attestation de langues (oral de 10 minutes, session 2027).
+- La base de connaissances compte maintenant 95 fiches.
+
 ## Version 9.1.0
 
 **📚 46 nouvelles fiches de cours** (js/cours-fiches-college.js) — la base de connaissances couvre maintenant l’essentiel du collège :

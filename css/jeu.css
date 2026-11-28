@@ -2097,3 +2097,8 @@ html[data-texte="tres-grand"]{ font-size:125%; } html[data-texte="tres-grand"] b
 .vanne-fiche { font-style: italic; margin-top: 1rem; }
 .liste-notions { list-style: none; padding: 0; }
 .liste-notions li { margin: .3rem 0; }
+
+/* v9.2 : corrigé des séries d'examen */
+.corrige-examen { padding-left: 1.3rem; }
+.corrige-examen li { margin: .8rem 0; }
+.corrige-examen p { margin: .15rem 0; }

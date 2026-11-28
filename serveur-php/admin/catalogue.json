@@ -3041,6 +3041,14 @@
      "Tle",
      "Sup"
     ]
+   ],
+   [
+    "probabilites",
+    "Probabilités avancées",
+    [
+     "Tle",
+     "Sup"
+    ]
    ]
   ],
   "geneticien": [
@@ -3067,6 +3075,14 @@
      "Tle",
      "Sup"
     ]
+   ],
+   [
+    "genetique-medicale",
+    "Génétique médicale",
+    [
+     "Tle",
+     "Sup"
+    ]
    ]
   ],
   "geophysicien": [
@@ -3089,6 +3105,14 @@
    [
     "volcans-planetes",
     "Volcans, risques et planètes",
+    [
+     "Tle",
+     "Sup"
+    ]
+   ],
+   [
+    "climat",
+    "Climat, océans et atmosphère",
     [
      "Tle",
      "Sup"
