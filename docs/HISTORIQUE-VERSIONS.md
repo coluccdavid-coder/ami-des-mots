@@ -5,6 +5,63 @@ Avant la v6.44, chaque version avait son propre fichier VERSION-x.y.txt à la ra
 
 ---
 
+## Version 8.2.0 — ⚖️ Devenir avocat, et cinq notions de philosophie en italien et en portugais
+
+- **Devenir avocat** (Droit, niveau Sup) : 4 leçons de 20 questions, en français, anglais et espagnol (noms en italien et portugais) — le parcours (master 1, CRFPA, 18 mois d’école, CAPA, master 2 depuis 2025, serment), l’examen d’entrée (épreuves et coefficients de la session 2026 publiés par le CNB), la déontologie et la vie du cabinet, la pratique (procès, garde à vue, plaidoirie).
+- **Espace « ⚖️ Devenir avocat »** sur l’écran Droit (`js/mod-avocat.js`) : CRFPA blanc (40 questions, 60 min, sans vanne, note sur 20 et corrigé), révision avec les vannes, grand oral blanc (12 sujets sur les libertés et droits fondamentaux, 1 h de préparation chronométrée, méthode de l’exposé, questions possibles du jury), liens officiels du CNB.
+- **Philosophie en italien et en portugais** : l’inconscient, la justice, le langage, la liberté, la nature (100 questions par langue).
+- Le test qui vérifiait qu’une notion non traduite reste en français porte maintenant sur « la raison ».
+
+## Version 8.1.0 — Cinq notions de philosophie en italien et en portugais
+
+- Notions traduites (20 questions chacune, vannes et règles comprises) : l’art, le bonheur, la conscience, le devoir, l’État.
+- Titres d’œuvres dans la langue (Critica del giudizio, Etica Nicomachea, O ser e o nada, O espírito das leis…) ; noms des auteurs à l’italienne ou à la portugaise quand l’usage existe (Cartesio, Machiavelli, Espinosa, Maquiavel…).
+- Restent en français pour l’instant : inconscient, justice, langage, liberté, nature, raison, religion, science, technique, temps, travail, vérité.
+- Test v8.1 ; le test v8.0 vérifie maintenant qu’une notion pas encore traduite (l’inconscient) reste en français.
+
+## Version 8.0.0 — SES et méthode de philosophie en italien et en portugais
+
+- Nouveaux fichiers `js/mat-trad-it-lycee.js` et `js/mat-trad-pt-lycee.js` pour les matières du lycée.
+- SES traduite en entier : 1re (marchés, monnaie, socialisation), Tle (inégalités, mobilité, commerce international) et le cours (60 questions, vannes comprises).
+- Philosophie : « Auteurs, notions et méthode » et « Auteurs et distinctions conceptuelles » (40 questions). Les titres d’œuvres sont donnés dans la langue (Discorso sul metodo, O contrato social…).
+- Reste en français pour l’instant en italien et en portugais : les 17 notions de philosophie, HGGSP, HLP, NSI, droit, médecine, astrophysique.
+- Test v8.0.
+
+## Version 7.9.0 — Conditions réelles d’examen (brevet blanc, bac blancs)
+
+- Sur la première épreuve d’un examen blanc, un bouton « 🎓 Passer en conditions réelles d’examen » (et « Revenir à l’entraînement »).
+- En conditions réelles :
+  - chaque épreuve a son chrono officiel (3 h pour le français du brevet, 2 h pour les maths, 4 h pour le bac de français ou la philosophie…) ; à la fin du temps, la copie est ramassée ;
+  - ni vanne, ni correction, ni aide « avant de répondre » pendant l’épreuve : on répond et on passe à la question suivante ;
+  - quand une épreuve a une partie rédigée (rédaction et développement construit du brevet, commentaire ou dissertation du bac de français, dissertation de philosophie), l’écran « ✍️ Partie rédigée » arrive après les questions, avec le temps qui reste ; la copie se rédige dans l’appli (sans vérification ni correction avant de l’avoir rendue), puis « 📤 Rendre ma copie et continuer » ;
+  - à la fin : les notes, la moyenne avec les coefficients officiels, la mention, puis le **relevé de notes** avec le corrigé de chaque épreuve (ta réponse, la bonne réponse, la règle) et le nombre de mots rendus pour chaque partie rédigée, à faire corriger dans « 🖊️ Mes copies ».
+- Le mode entraînement ne change pas.
+- Tests : v7.9 (brevet blanc complet en conditions réelles, avec la rédaction rendue).
+
+## Version 7.8.0 — Rédiger aussi la rédaction du brevet, le développement construit et la dissertation de philosophie
+
+- **Brevet blanc, français** : l’écran de l’épreuve propose les deux sujets de rédaction (réflexion OU imagination, comme le jour J), à rédiger dans l’appli ; chrono d’1 h 30. Trois paires de sujets.
+- **Brevet blanc, histoire-géographie** : le développement construit porte sur le même thème que l’exercice tiré ; chrono de 30 min.
+- **Bac blanc de philosophie** : deux sujets de dissertation tirés parmi douze (dont les deux sujets tombés en 2026) ; chrono de 4 h.
+- **Vérification sans IA adaptée à chaque écrit** :
+  - rédaction d’imagination : longueur (environ 300 à 450 mots), paragraphes, émotions, organisateurs du récit, mots du sujet, registre (pas de problématique exigée) ;
+  - rédaction de réflexion : arguments et exemples, conclusion ;
+  - développement construit : dates, acteurs et lieux, paragraphes, connecteurs ;
+  - philosophie : problématique, définition des termes, annonce du plan, références philosophiques expliquées, exemples, conclusion.
+- **Correction par l’IA** (`copie.php`) : un barème officiel par écrit (brevet : rédaction en 4 critères, développement construit en 3 ; philosophie : problématisation, argumentation, construction, expression). Les rédactions et développements sont acceptés dès 80 mots. Toujours avec l’accord d’un parent et sans réécrire la copie.
+- Le chrono s’adapte à la durée de chaque épreuve.
+- Tests : v7.8 côté jeu ; 2 tests serveur de plus.
+
+## Version 7.7.0 — Rédiger sa copie du bac de français et la faire corriger, en expliquant
+
+- Sur l’écran du sujet, chaque sujet (commentaire et trois dissertations) a un bouton « 🖊️ Rédiger ma copie ».
+- Écran de rédaction (`js/mod-copie.js`) : le sujet reste affiché (texte à commenter ou sujet de dissertation avec l’œuvre et le parcours), un brouillon, la copie, le nombre de mots, le chrono des 4 heures du bac, l’enregistrement automatique dans l’appareil. On peut s’arrêter et reprendre plus tard depuis « 🖊️ Mes copies » (carte dans les matières ; suppression avec confirmation).
+- **Vérification sans IA, gratuite** : longueur, paragraphes, problématique et annonce du plan dans l’introduction, conclusion, citations, analyse des procédés (commentaire) ou appui sur l’œuvre (dissertation), connecteurs, lien avec le sujet, registre, longueur des phrases. Chaque point réussi ou à retravailler est expliqué. Ce n’est pas une note.
+- **Correction détaillée par l’IA, en option** (`serveur-php/copie.php`) : barème sur 20 en quatre critères (compréhension et problématique /5, construction /5, analyse et argumentation /6, langue /4), explication de chaque critère, points forts, passages à retravailler avec un conseil, remarques de langue, conseil principal. La note est recalculée par le serveur à partir des critères. L’IA explique mais ne réécrit jamais la copie.
+  - Seulement avec l’accord d’un parent (le même que pour l’aide aux devoirs) ; 5 plumes si les plumes sont allumées, rendues si l’IA échoue ; au plus `copie_par_jour` corrections par jour et par IP (10, dans `config.php`). Rien n’est gardé côté serveur.
+- Classe « Après le bac » : les onglets Blancs et Annales n’affichent plus ni brevet ni bac (on les a déjà passés) ; un message l’explique, et « Voir toutes les matières » les remontre si on veut. La voie professionnelle n’apparaît plus non plus après le bac.
+- Tests : v7.7 côté jeu ; 5 tests serveur pour `copie.php` (403 sans accord, 400 copie courte, note recalculée, balises neutralisées, 502 avec plumes rendues).
+
 ## Version 7.6.0 — Bac de français : on lit le sujet, puis on choisit commentaire ou dissertation
 
 - Avant les questions, l’écran affiche le sujet complet, comme le jour J :

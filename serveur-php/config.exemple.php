@@ -49,6 +49,8 @@ return [
   // Vannes écrites en direct par l'IA à chaque question (vannes-direct.php) : true/false, et plafond par appareil et par jour.
   'vannes_direct' => true,
   'vannes_direct_par_jour' => 300,
+  'controle_par_jour' => 20,                        // v7.3 : contrôles fabriqués par l'IA, par jour et par IP
+  'copie_par_jour' => 10,                           // v7.7 : copies entières corrigées par l'IA, par jour et par IP
 
   // Coin admin du serveur (veille) : mot de passe en empreinte. Pour la fabriquer :
   //   php -r "echo password_hash('mon-mot-de-passe', PASSWORD_DEFAULT), PHP_EOL;"

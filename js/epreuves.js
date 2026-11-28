@@ -182,6 +182,15 @@
   const REDACTION = [['Sujet de réflexion', 'Selon vous, le silence peut-il être plus inquiétant que le bruit ? Vous répondrez dans un développement organisé et argumenté.'],
     ['Sujet d’imagination', 'Le narrateur raconte, des années plus tard, ce qu’il a découvert cette nuit-là. Votre texte mêlera récit et émotions.']];
 
+  // v7.8 : sujets de rédaction du brevet à rédiger dans l'appli (par paires, comme le jour J : réflexion OU imagination).
+  const PAIRES_REDAC = [REDACTION,
+    [['Sujet de réflexion', 'Selon vous, faut-il toujours dire la vérité à ses amis ? Vous répondrez dans un développement organisé et argumenté, en vous appuyant sur des exemples précis.'],
+     ['Sujet d’imagination', 'Un objet oublié au fond d’un grenier change soudain le regard que le narrateur porte sur sa famille. Racontez, en mêlant récit, description et émotions.']],
+    [['Sujet de réflexion', 'Selon vous, les voyages nous changent-ils vraiment ? Vous répondrez dans un développement organisé et argumenté, en vous appuyant sur des exemples précis.'],
+     ['Sujet d’imagination', 'Le jour de la rentrée, le narrateur croise un élève que personne ne semble voir. Racontez la suite, en mêlant récit et émotions.']]];
+  const ecritsRedaction = r => un(r, PAIRES_REDAC).map(([t, sujet], i) => ({ key:'dnb-redac:' + PAIRES_REDAC.findIndex(p => p.some(x => x[1] === sujet)) + ':' + i, sorte:'redaction', titre:'Rédaction (brevet) — ' + t, sujet, duree:90,
+    genre:/imagination/i.test(t) ? 'imagination' : 'reflexion' }));
+
   // ───────────── DNB · Histoire-géographie (40 pts) et EMC (20 pts) ─────────────
   const HG_GEO = [
     { titre:'Analyser et comprendre des documents en géographie — Les espaces productifs et leurs évolutions', pts:15, contexte:'Document (rédigé pour Ami des mots) : « Depuis les années 1970, beaucoup d’anciennes régions industrielles, comme le Nord ou la Lorraine, ont perdu des usines face à la concurrence mondiale. Les nouvelles usines s’installent plutôt près des grandes villes, des autoroutes, des ports et des frontières. Un constructeur automobile étranger a ainsi choisi le Valenciennois : main-d’œuvre qualifiée, terrains disponibles, autoroutes et proximité de l’Europe du Nord. Être connecté au monde devient un atout décisif. »',
@@ -509,11 +518,13 @@
   const EPREUVES = {
     // DNB 2026
     'dnb-francais':{ titre:'Français', matiere:'francais', duree:'3 h (1 h 10 + 20 min + 1 h 30)', officiel:'Compréhension et grammaire 50 pts · dictée 10 pts · rédaction 40 pts',
-      faire:r => [texteExo(un(r, TEXTES_DNB)), exoDictee(r, 5)], nonNote:'Rédaction (40 points) : à faire sur papier, elle n’est pas notée par l’appli. Sujets au choix :\n' + REDACTION.map(x => '• ' + x[0] + ' : ' + x[1]).join('\n'), surPoints:60 },
+      faire:r => [texteExo(un(r, TEXTES_DNB)), exoDictee(r, 5)], ecrits:r => ecritsRedaction(r), nonNote:'Rédaction (40 points) : à faire sur papier, elle n’est pas notée par l’appli. Sujets au choix :\n' + REDACTION.map(x => '• ' + x[0] + ' : ' + x[1]).join('\n'), surPoints:60 },
     'dnb-maths':{ titre:'Mathématiques', matiere:'maths', duree:'2 h (20 min sans calculatrice + 1 h 40)', officiel:'Automatismes 6 pts · problèmes 14 pts (dont 2 pts de rédaction)',
       faire:r => { const a = r() < 0.5; return [exoAuto(r, AUTO_DNB, a ? 9 : 8, 6)].concat(a ? [exoGeoHomothetie(r), exoProgramme(r), exoTarifs(r)] : [exoGeoTriangles(r), exoFonctions(r), exoStatsEnergie(r), exoLutin(r)]); } },
     'dnb-histoire':{ titre:'Histoire-géographie', matiere:'histoire', duree:'2 h avec l’EMC', officiel:'Géographie 15 pts · développement construit 18 pts · repères 7 pts',
-      faire:r => { const d = un(r, HG_DEV); return [un(r, HG_GEO), { titre:d.titre, pts:18, contexte:'Développement construit : prépare les idées et l’ordre de ton texte.', questions:d.questions }, exoReperes(r, 4, 7)]; } },
+      faire:r => { const d = un(r, HG_DEV); return [un(r, HG_GEO), { titre:d.titre, pts:18, contexte:'Développement construit : prépare les idées et l’ordre de ton texte.', questions:d.questions }, exoReperes(r, 4, 7)]; },
+      ecrits:(r, exos) => { const d = exos.find(x => /^Maîtriser différents langages/.test(x.titre)), theme = d ? d.titre.replace(/^.*?—\s*/, '') : '';
+        return theme ? [{ key:'dnb-dev:' + theme, sorte:'developpement', titre:'Développement construit (brevet) — ' + theme, sujet:'Rédigez un développement construit d’une vingtaine de lignes sur le thème : « ' + theme + ' ». Vous utiliserez des dates, des acteurs et des lieux précis.', duree:30 }] : []; } },
     'dnb-emc':{ titre:'Enseignement moral et civique', matiere:'histoire', duree:'compris dans les 2 h', officiel:'Situation pratique 20 pts', faire:r => [un(r, EMC)] },
     'dnb-sciences':{ titre:'Sciences', matiere:'svt', duree:'1 h (30 min + 30 min)', officiel:'Physique-chimie 10 pts · SVT 10 pts',
       faire:r => [(r() < 0.5 ? scPhysiqueF1 : scPhysiqueTrain)(r), (r() < 0.5 ? svtChauveSouris : svtVaccin)(r)] },
@@ -567,7 +578,7 @@
   function construire(id, graine){
     const e = EPREUVES[id]; if(!e) return null; const r = hasard(graine), exos = e.faire(r);
     return { id, titre:e.titre, matiere:e.matiere, duree:e.duree, officiel:e.officiel, nonNote:e.nonNote || '', liste:aplatir(exos, e.matiere), total:exos.reduce((t, x) => t + x.pts, 0),
-      graine, sujets:e.sujets ? sujetsEAF(hasard(graine + 1)) : null };
+      graine, sujets:e.sujets ? sujetsEAF(hasard(graine + 1)) : null, ecrits:e.ecrits ? e.ecrits(hasard(graine + 3), exos) : null };
   }
   // v7.6 : l'élève a lu le sujet et choisi « com » (commentaire) ou « dis0 », « dis1 », « dis2 » (une des trois dissertations).
   function choisirSujet(ep, choix){
@@ -575,7 +586,7 @@
     const m = /^dis(\d)$/.exec(choix || ''), d = m && ep.sujets.dis[+m[1]];
     const exos = d ? [exoDissertation(d.idx), pts(bacOeuvres(r), 4), pts(bacMethode(r), 4), pts(exoGrammaireOral(r, 4), 4)]
       : [exoCommentaire(COMMENTAIRES[ep.sujets.com.idx]), pts(bacMethode(r), 4), pts(exoGrammaireOral(r, 4), 4)];
-    ep.choix = d ? 'dis' : 'com'; ep.sujetChoisi = d ? d : ep.sujets.com; ep.liste = aplatir(exos, ep.matiere); ep.total = exos.reduce((t, x) => t + x.pts, 0); return ep;
+    ep.choix = d ? 'dis' : 'com'; ep.choixV = d ? choix : 'com'; ep.sujetChoisi = d ? d : ep.sujets.com; ep.liste = aplatir(exos, ep.matiere); ep.total = exos.reduce((t, x) => t + x.pts, 0); return ep;
   }
   function annale(id, graine){
     const a = ANNALES.find(x => x.id === id); if(!a) return null; const r = hasard(graine), exos = a.faire(r);

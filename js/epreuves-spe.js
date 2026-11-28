@@ -279,6 +279,10 @@
 
   // ═══════════════ Assemblage ═══════════════
   const exoQS = (titre, pts, contexte, l, r, n) => ({ titre, pts, contexte, questions:QS(tirer(r, l, n)) });
+  // v7.8 : sujets de dissertation de philosophie (questions classiques du programme ; les deux premiers sont tombés en 2026).
+  const PHILO_DISS = ['La science doit-elle être utile ?', 'L’artiste sait-il ce qu’il fait ?', 'Peut-on être libre sans les autres ?', 'Le travail nous rend-il meilleurs ?',
+    'La vérité est-elle toujours bonne à dire ?', 'Faut-il craindre la technique ?', 'Le bonheur est-il une affaire privée ?', 'Peut-on se connaître soi-même ?',
+    'L’État est-il l’ennemi de la liberté ?', 'Avons-nous des devoirs envers la nature ?', 'Le langage trahit-il la pensée ?', 'Une croyance peut-elle être raisonnable ?'];
   const P = {
     'spe-maths':{ titre:'Spécialité mathématiques', duree:'4 h', officiel:'4 exercices (5 + 5 + 4 + 6 points), calculatrice autorisée',
       faire:r => [speProba(r), speVF(r), speEspace(r), speAnalyse(r)], matiere:'maths' },
@@ -305,7 +309,9 @@
       nonNote:'Synthèse sur papier, par exemple : « Taking into account the specificities of the documents, show how art explores the power of lies. »' },
     'philo':{ titre:'Philosophie', duree:'4 h, coefficient 8', officiel:'Dissertation (au choix entre 2 sujets) ou explication de texte',
       faire:r => [exoQS('Notions, auteurs et méthode', 20, '', PHILO, r, 7)], matiere:'francais',
-      nonNote:'Sujets tombés en 2026 : « La science doit-elle être utile ? » ; « L’artiste sait-il ce qu’il fait ? » — à traiter sur papier.' }
+      // v7.8 : deux sujets de dissertation à rédiger dans l'appli (comme le jour J, on en choisit un).
+      ecrits:r => tirer(r, PHILO_DISS, 2).map(sujet => ({ key:'philo:' + PHILO_DISS.indexOf(sujet), sorte:'philo', titre:'Dissertation de philosophie', sujet, duree:240 })),
+      nonNote:'Sujets tombés en 2026 : « La science doit-elle être utile ? » ; « L’artiste sait-il ce qu’il fait ? » — tu peux aussi rédiger ta dissertation dans l’appli.' }
   };
   Object.assign(E.EPREUVES, P);
   E.SPES = ['spe-maths', 'spe-pc', 'spe-svt', 'spe-ses', 'spe-hggsp', 'spe-hlp', 'spe-nsi', 'spe-si', 'spe-llcer'];
