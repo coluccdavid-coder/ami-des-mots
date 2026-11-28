@@ -6,6 +6,6 @@
   const ep = E.EPREUVES['dnb-sciences'], avant = ep.faire;
   const techno = r => ({ titre:'Technologie', pts:10, contexte:'Objets et systèmes techniques, énergie, information, programmation (programme de technologie 2024).',
     questions:M.serie('techno', 'examen', '3e', 6, Math.floor(r() * 1e9) + 1, 'taquin').map(x => ({ q:x.enonce, bon:x.bon, faux:x.faux.map(f => [f.en, f.vanne]), regle:x.regle })) });
-  ep.officiel = 'Deux disciplines sur trois, tirées au sort : physique-chimie, SVT, technologie (10 pts chacune)';
+  ep.officiel = 'Deux disciplines sur trois (physique-chimie, SVT, technologie), annoncées deux mois avant l’examen · 10 pts chacune, dont 1 pt de maîtrise de la langue · pas de QCM au vrai brevet';
   ep.faire = r => { const [pc, svt] = avant(r), k = Math.floor(r() * 3); return k === 0 ? [pc, svt] : k === 1 ? [pc, techno(r)] : [svt, techno(r)]; };
 })();

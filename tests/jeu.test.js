@@ -2018,7 +2018,7 @@ await test('v5.78 : brevet & bac blancs et annales construits comme les sujets 2
   assert.strictEqual(tot('dnb-francais'), 60); assert.strictEqual(tot('dnb-histoire'), 40); assert.strictEqual(tot('dnb-emc'), 20); assert.strictEqual(tot('dnb-sciences'), 20);
   assert.strictEqual(tot('eam-spe'), 20); assert.strictEqual(tot('eam-commun'), 20);
   assert.strictEqual(E.construire('eam-spe', 9).liste.filter(q => /Automatismes/.test(q.consigne)).length, 8, '8 automatismes en QCM comme le sujet officiel');
-  assert.strictEqual(E.BLANCS.brevet.epreuves.map(p => p[1]).join(','), '2,2,1.5,0.5,2,2', 'coefficients officiels du DNB 2026 (HG 1,5 et EMC 0,5 séparés, oral 2)');
+  assert.strictEqual(E.BLANCS.brevet.epreuves.map(p => p[1]).join(','), '2,2,1.5,0.5,2,2', 'coefficients officiels du DNB 2027, inchangés (HG 1,5 et EMC 0,5 séparés, oral 2)');
   assert.strictEqual(E.moyenne([10, 20], [2, 2]), 15);
   // Des milliers de sujets : jamais de réponse vide, de doublon, de NaN, et toutes les vannes passent le juge.
   for(let g = 1; g < 120; g++) for(const id of Object.keys(E.EPREUVES)) for(const q of E.construire(id, g).liste){
@@ -2041,7 +2041,7 @@ await test('v5.78 : brevet & bac blancs et annales construits comme les sujets 2
   assert.ok($('.contexte-exo') || /Automatismes/.test($('.piege-consigne').textContent), 'énoncé ou automatismes'); let k = 0;
   while($('[data-a="qz-rep"]:not([disabled])') && k < 40){ const b = $$('[data-a="qz-rep"]'); b[k % b.length].click(); k++; const s = $('[data-a="qz-suivant"]'); if(s) s.click(); }
   assert.match($('main').textContent, /[\d,]+ \/ 20/); assert.ok(A.J().matieres.notes['annale-dnb26-maths-ag'] >= 0);
-  clic('examens'); clic('examen-go', 'bac-maths-spe'); assert.match($('main').textContent, /Automatismes \(QCM\) 6 pts/); clic('examen-suite');
+  clic('examens'); clic('examen-go', 'bac-maths-spe'); assert.match($('main').textContent, /Automatismes 6 pts \(questions à réponses courtes\)/); clic('examen-suite');
   while($('[data-a="qz-rep"]:not([disabled])')){ $('[data-a="qz-rep"]').click(); const s = $('[data-a="qz-suivant"]'); if(s) s.click(); }
   assert.match($('main').textContent, /[\d,]+ \/ 20/);
 });
@@ -3024,7 +3024,7 @@ await test('v6.40 : séries de 20 questions, titres d’examens et écran Offici
   for(const l of ['en', 'es', 'it', 'pt']) for(const x of titres) if(/[a-zé]{3}/.test(x)) assert.notStrictEqual(w.L(x, l), x, l + ' : ' + x);
   for(const l of ['it', 'pt']) for(const m of M.LISTE){ const n = w.MATIERES_LANGUES[l].noms[m.id]; for(const c of m.chapitres){ assert.ok(n && n.ch[c.id], l + ' ' + m.id + '/' + c.id); assert.ok(n.dom[c.dom], l + ' domaine ' + c.dom); } }
   // L'écran des blancs en italien affiche les titres traduits.
-  w.AmiDesMots.base.ui = 'it'; clic('examens'); assert.ok(d.body.textContent.includes('Brevet di prova 2026'));
+  w.AmiDesMots.base.ui = 'it'; clic('examens'); assert.ok(d.body.textContent.includes('Brevet di prova 2027'));
 });
 await test('v6.41 : une nouvelle version s’affiche dès la première visite (rechargement unique, jamais en pleine série)', async () => {
   const j = lire('js/jeu.js');
@@ -3837,6 +3837,17 @@ await test('v6.84 : physique-chimie du collège en italien et en portugais — 1
   A.base.ui = 'it'; assert.ok(M.serie('physique', 'elec', '4e', 10, 2, 'taquin').every(q => q.lang === 'it'));
   A.base.ui = 'pt'; assert.ok(M.serie('physique', 'cours-p3', '3e', 10, 2, 'taquin').every(q => q.lang === 'pt'));
   assert.ok(M.serie('francais', 'homophones', '6e', 5, 2, 'taquin').every(q => q.lang === 'fr'), 'chapitre non traduit (français : homophones) : reste en français (l’EMC est traduite depuis la v7.5)'); A.base.ui = 'fr';
+});
+
+await test('v8.5 : examens à jour du BO spécial n° 4 du 17 septembre 2026 — brevet 2027, Grand oral sans projet d’orientation, maths anticipées', async () => {
+  const w = page(), E = w.EPREUVES, P = E.EPREUVES;
+  assert.strictEqual(E.BLANCS.brevet.titre, 'Brevet blanc 2027');
+  assert.match(P['dnb-histoire'].officiel, /exercice 1 \(documents\) 15 pts[\s\S]*25 pts dont 7/); assert.match(P['dnb-sciences'].officiel, /technologie[\s\S]*1 pt de maîtrise de la langue/);
+  assert.match(P['dnb-maths'].officiel, /2 pts de maîtrise de la langue[\s\S]*pas de QCM/); assert.match(P['eam-spe'].officiel, /réponses courtes/);
+  assert.match(P['grand-oral'].officiel, /10 min[\s\S]*10 min[\s\S]*coefficient 8/); assert.doesNotMatch(P['grand-oral'].officiel, /orientation/);
+  const ex = P['dnb-histoire'].ecrits(() => 0.3, P['dnb-histoire'].faire(() => 0.3)); if(ex.length) assert.match(ex[0].sujet, /au moins trente lignes/);
+  assert.match(require('fs').readFileSync(require('path').join(__dirname, '..', 'serveur-php', 'copie.php'), 'utf8'), /ne peut pas obtenir la moyenne/);
+  assert.ok(w.document.documentElement.outerHTML.length > 0);
 });
 
 await test('v8.4 : défi rétro étoffé — vraie dictée corrigée mot à mot, Certificat d’études, duel des générations, bons points et images', async () => {

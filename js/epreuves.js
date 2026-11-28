@@ -516,22 +516,22 @@
   const texteExo = t => ({ titre:'Compréhension et grammaire — ' + t.titre, pts:50, contexte:t.texte + '\n\n— ' + t.source, questions:t.questions });
 
   const EPREUVES = {
-    // DNB 2026
-    'dnb-francais':{ titre:'Français', matiere:'francais', duree:'3 h (1 h 10 + 20 min + 1 h 30)', officiel:'Compréhension et grammaire 50 pts · dictée 10 pts · rédaction 40 pts',
+    // DNB : épreuves de la session 2027 (note de service du 11 septembre 2026, BO spécial n° 4 du 17 septembre 2026)
+    'dnb-francais':{ titre:'Français', matiere:'francais', duree:'3 h (1 h 10 + 20 min + 1 h 30)', officiel:'Compréhension et grammaire 50 pts · dictée 10 pts · rédaction 40 pts (réflexion ou imagination, dictionnaire autorisé) · maîtrise de la langue évaluée partout',
       faire:r => [texteExo(un(r, TEXTES_DNB)), exoDictee(r, 5)], ecrits:r => ecritsRedaction(r), nonNote:'Rédaction (40 points) : à faire sur papier, elle n’est pas notée par l’appli. Sujets au choix :\n' + REDACTION.map(x => '• ' + x[0] + ' : ' + x[1]).join('\n'), surPoints:60 },
-    'dnb-maths':{ titre:'Mathématiques', matiere:'maths', duree:'2 h (20 min sans calculatrice + 1 h 40)', officiel:'Automatismes 6 pts · problèmes 14 pts (dont 2 pts de rédaction)',
+    'dnb-maths':{ titre:'Mathématiques', matiere:'maths', duree:'2 h (20 min sans calculatrice + 1 h 40)', officiel:'Automatismes 6 pts (réponses courtes, sans calculatrice) · problèmes 14 pts, dont 2 pts de maîtrise de la langue · au vrai brevet, pas de QCM : ici, l’entraînement se fait en choix multiples',
       faire:r => { const a = r() < 0.5; return [exoAuto(r, AUTO_DNB, a ? 9 : 8, 6)].concat(a ? [exoGeoHomothetie(r), exoProgramme(r), exoTarifs(r)] : [exoGeoTriangles(r), exoFonctions(r), exoStatsEnergie(r), exoLutin(r)]); } },
-    'dnb-histoire':{ titre:'Histoire-géographie', matiere:'histoire', duree:'2 h avec l’EMC', officiel:'Géographie 15 pts · développement construit 18 pts · repères 7 pts',
+    'dnb-histoire':{ titre:'Histoire-géographie', matiere:'histoire', duree:'2 h avec l’EMC', officiel:'Noté sur 40 · exercice 1 (documents) 15 pts, dont 2 de rédaction · exercice 2 : développement construit d’au moins 30 lignes + croquis, schéma ou frise, 25 pts dont 7 pour le croquis ou la frise (ici : les repères)',
       faire:r => { const d = un(r, HG_DEV); return [un(r, HG_GEO), { titre:d.titre, pts:18, contexte:'Développement construit : prépare les idées et l’ordre de ton texte.', questions:d.questions }, exoReperes(r, 4, 7)]; },
       ecrits:(r, exos) => { const d = exos.find(x => /^Maîtriser différents langages/.test(x.titre)), theme = d ? d.titre.replace(/^.*?—\s*/, '') : '';
-        return theme ? [{ key:'dnb-dev:' + theme, sorte:'developpement', titre:'Développement construit (brevet) — ' + theme, sujet:'Rédigez un développement construit d’une vingtaine de lignes sur le thème : « ' + theme + ' ». Vous utiliserez des dates, des acteurs et des lieux précis.', duree:30 }] : []; } },
-    'dnb-emc':{ titre:'Enseignement moral et civique', matiere:'histoire', duree:'compris dans les 2 h', officiel:'Situation pratique 20 pts', faire:r => [un(r, EMC)] },
-    'dnb-sciences':{ titre:'Sciences', matiere:'svt', duree:'1 h (30 min + 30 min)', officiel:'Physique-chimie 10 pts · SVT 10 pts',
+        return theme ? [{ key:'dnb-dev:' + theme, sorte:'developpement', titre:'Développement construit (brevet) — ' + theme, sujet:'Rédigez un développement construit d’au moins trente lignes sur le thème : « ' + theme + ' ». Vous utiliserez des dates, des acteurs et des lieux précis.', duree:45 }] : []; } },
+    'dnb-emc':{ titre:'Enseignement moral et civique', matiere:'histoire', duree:'compris dans les 2 h', officiel:'Situation pratique 20 pts, dont 2 pts de rédaction', faire:r => [un(r, EMC)] },
+    'dnb-sciences':{ titre:'Sciences', matiere:'svt', duree:'1 h (30 min + 30 min)', officiel:'Deux disciplines parmi physique-chimie, SVT et technologie, annoncées deux mois avant · 10 pts chacune, dont 1 pt de maîtrise de la langue · pas de QCM au vrai brevet',
       faire:r => [(r() < 0.5 ? scPhysiqueF1 : scPhysiqueTrain)(r), (r() < 0.5 ? svtChauveSouris : svtVaccin)(r)] },
     // Épreuve anticipée de maths (1re)
-    'eam-spe':{ titre:'Maths anticipées · avec spécialité', matiere:'maths', duree:'2 h, sans calculatrice', officiel:'Automatismes (QCM) 6 pts · exercices 14 pts',
+    'eam-spe':{ titre:'Maths anticipées · avec spécialité', matiere:'maths', duree:'2 h, sans calculatrice', officiel:'Automatismes 6 pts (questions à réponses courtes) · exercices 14 pts · 2 pts de maîtrise de la langue (note de service de septembre 2026)',
       faire:r => [exoAuto(r, AUTO_SPE, 8, 6), bacProbaArbre(r), bacVraiFaux(r), bacProduitScalaire(r)] },
-    'eam-commun':{ titre:'Maths anticipées · sans spécialité', matiere:'maths', duree:'2 h, sans calculatrice', officiel:'Automatismes (QCM) 6 pts · exercices 14 pts',
+    'eam-commun':{ titre:'Maths anticipées · sans spécialité', matiere:'maths', duree:'2 h, sans calculatrice', officiel:'Automatismes 6 pts (questions à réponses courtes) · exercices 14 pts · 2 pts de maîtrise de la langue (note de service de septembre 2026)',
       faire:r => [exoAuto(r, AUTO_COMMUN.concat(AUTO_DNB.slice(1, 5), AUTO_SPE.slice(2, 3)), 8, 6), bacTableau(r), bacPlacements(r)] },
     // Bac de français (1re)
     'eaf':{ titre:'Français (épreuves anticipées)', matiere:'francais', duree:'écrit 4 h + oral', officiel:'Écrit : commentaire ou dissertation · oral : explication + question de grammaire',
@@ -539,7 +539,7 @@
   };
   // Examens blancs : plusieurs épreuves, coefficients officiels.
   const BLANCS = {
-    brevet:{ titre:'Brevet blanc 2026', ic:'🎓', niveau:'3e', epreuves:[['dnb-francais', 2], ['dnb-maths', 2], ['dnb-histoire', 1.5], ['dnb-emc', 0.5], ['dnb-sciences', 2]],
+    brevet:{ titre:'Brevet blanc 2027', ic:'🎓', niveau:'3e', epreuves:[['dnb-francais', 2], ['dnb-maths', 2], ['dnb-histoire', 1.5], ['dnb-emc', 0.5], ['dnb-sciences', 2]],
       bilan:'Au vrai brevet, ces épreuves comptent pour 60 % et le contrôle continu pour 40 % ; l’oral compte aussi. Diplôme à partir de 10/20 de moyenne finale.' },
     'bac-maths-spe':{ titre:'Maths anticipées blanc · spécialité', ic:'🔢', niveau:'1re', epreuves:[['eam-spe', 1]] },
     'bac-maths':{ titre:'Maths anticipées blanc · sans spécialité', ic:'🔢', niveau:'1re', epreuves:[['eam-commun', 1]] },
