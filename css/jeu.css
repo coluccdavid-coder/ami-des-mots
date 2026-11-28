@@ -2169,3 +2169,8 @@ html[data-facile] .ami-3d-wrap,html[data-facile] .ami-3d-corps,html[data-facile]
 /* v10.9 : bandeau « nouvelle version prête » (hors de #app : il reste affiché d'un écran à l'autre). */
 .maj-prete{ position:fixed; left:50%; bottom:calc(16px + env(safe-area-inset-bottom, 0px)); transform:translateX(-50%); z-index:9999; display:flex; flex-wrap:wrap; align-items:center; justify-content:center; gap:10px;
   max-width:calc(100% - 24px); padding:10px 16px; border-radius:16px; background:#2b2167; color:#fff; border:1px solid rgba(255,255,255,.25); box-shadow:0 10px 30px rgba(0,0,0,.35); font-weight:600; }
+/* v10.10 : corrigé type et barème après la vérification d'une copie. */
+.corrige-type{ margin:18px 0; padding:14px 18px; border-radius:18px; border:1px solid rgba(120,220,170,.4); background:rgba(120,220,170,.08); text-align:left; line-height:1.5; }
+.corrige-type summary{ font-weight:800; cursor:pointer; }
+.corrige-type h3{ margin:14px 0 4px; font-size:1.02rem; }
+.corrige-type ul{ margin:4px 0; padding-left:22px; }

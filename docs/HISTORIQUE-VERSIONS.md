@@ -5,6 +5,14 @@ Avant la v6.44, chaque version avait son propre fichier VERSION-x.y.txt à la ra
 
 ---
 
+## Version 10.10.0
+
+- Mise à jour forcée des appareils restés sur un ancien code : quand la nouvelle version prend la main, le service worker demande à chaque onglet ouvert s’il sait se mettre à jour seul (js/maj-auto.js, chargé sur toutes les pages). Un onglet qui ne répond pas en 3 secondes tourne sur l’ancien code : il est rechargé d’office. Les pages récentes, elles, choisissent le bon moment (jamais au milieu d’une série).
+- ST2S : 6 sujets rédigés type bac 2027 — 3 dossiers de STSS (renoncement aux soins des jeunes, maintien à domicile des personnes âgées, surpoids de l’enfant ; 5 + 13 + 2 points) et 3 cas cliniques de CBPH (diabète de type 2, grippe en établissement pour personnes âgées, dépistage du cancer colorectal). Documents originaux, données fictives annoncées.
+- Chaque sujet a un corrigé question par question avec le détail des points ; il s’affiche après la vérification de la copie. Vérification de méthode sans IA propre à la ST2S : toutes les questions traitées, chiffres avec unités, références aux documents, notions du programme, vocabulaire scientifique, raisonnement en étapes.
+- Les bacs blancs ST2S (CBPH et STSS) ont maintenant leur partie rédigée, tirée parmi ces sujets.
+- Tests v10.10 (dont un test qui exécute le service worker avec deux onglets, l’un récent, l’autre ancien).
+
 ## Version 10.9.0
 
 Mise à jour automatique, y compris sur les ordinateurs.
